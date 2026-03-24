@@ -714,7 +714,7 @@
     let viewportAtScale1 = null;
     let previewScale = 1;
     let selectedId = null;
-    const SNAP_PX = 8;
+    const SNAP_PX = 4;
 
     const fonts = new Map();
     let currentFontKey = "helvetica";
@@ -888,6 +888,12 @@
 
     function selectedElement(){
       return elements.find(e => e.id === selectedId) || null;
+    }
+
+    function syncBoxSelectionClasses(){
+      boxLayer.querySelectorAll('.box').forEach((box) => {
+        box.classList.toggle('selected', box.dataset.id === selectedId);
+      });
     }
 
     function refreshMetrics(){
@@ -1089,20 +1095,14 @@
         boxLayer.appendChild(box);
 
         box.addEventListener("pointerdown", (e) => {
-          e.stopPropagation();
-          selectedId = el.id;
-          renderElementList();
-          renderInspector();
-          renderBoxes();
-        });
-
-        box.addEventListener("pointerdown", (e) => {
           if (e.target.classList.contains("handle")) return;
           e.preventDefault();
           e.stopPropagation();
           selectedId = el.id;
           renderElementList();
           renderInspector();
+          syncBoxSelectionClasses();
+
           const start = { x: e.clientX, y: e.clientY, ox: el.x, oy: el.y };
           box.setPointerCapture(e.pointerId);
 
@@ -1118,6 +1118,9 @@
           };
 
           const up = () => {
+            if (box.hasPointerCapture?.(e.pointerId)) {
+              box.releasePointerCapture(e.pointerId);
+            }
             box.removeEventListener("pointermove", move);
             box.removeEventListener("pointerup", up);
             box.removeEventListener("pointercancel", up);
@@ -1135,6 +1138,8 @@
           selectedId = el.id;
           renderElementList();
           renderInspector();
+          syncBoxSelectionClasses();
+
           const start = { x: e.clientX, y: e.clientY, ow: el.w, oh: el.h };
           handle.setPointerCapture(e.pointerId);
 
@@ -1150,6 +1155,9 @@
           };
 
           const up = () => {
+            if (handle.hasPointerCapture?.(e.pointerId)) {
+              handle.releasePointerCapture(e.pointerId);
+            }
             handle.removeEventListener("pointermove", move);
             handle.removeEventListener("pointerup", up);
             handle.removeEventListener("pointercancel", up);
@@ -1435,7 +1443,7 @@
         selectedId = null;
         renderElementList();
         renderInspector();
-        renderBoxes();
+        syncBoxSelectionClasses();
       }
     });
 
@@ -1473,11 +1481,8 @@
       if (e.key === 'ArrowDown') { ny += step; moved = true; }
       if (moved){
         e.preventDefault();
-        nx = clamp(nx, 0, bounds.w - el.w);
-        ny = clamp(ny, 0, bounds.h - el.h);
-        const snapped = applySnapXY(nx, ny, el, bounds, elements);
-        el.x = snapped.x;
-        el.y = snapped.y;
+        el.x = clamp(nx, 0, bounds.w - el.w);
+        el.y = clamp(ny, 0, bounds.h - el.h);
         renderBoxes();
       }
     });
