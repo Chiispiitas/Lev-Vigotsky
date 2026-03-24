@@ -1021,61 +1021,87 @@
       inspectorColorHex.addEventListener("blur", () => syncStaticColor(inspectorColorHex.value));
     }
 
-    function drawTextLayer(){
-      textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+    function getElementTextAndConfig(el, nameIndex, names, nameStyle){
+      if (el.type === "name"){
+        return {
+          text: names[nameIndex] || "",
+          cfg: nameStyle,
+          nextNameIndex: nameIndex + 1
+        };
+      }
+      return {
+        text: el.text || "",
+        cfg: {
+          key: currentFontKey,
+          size: clamp(parseFloat(el.size || 24), 6, 140),
+          color: normalizeHex(el.color || "#111111"),
+          align: el.align || "center",
+          bold: false,
+          italic: false
+        },
+        nextNameIndex: nameIndex
+      };
+    }
+
+    function drawElementsToContext(ctx, options = {}){
+      const {
+        names = parseNames(),
+        coordScale = 1,
+        fontScale = 1,
+        clearWidth = null,
+        clearHeight = null
+      } = options;
+
+      if (clearWidth != null && clearHeight != null){
+        ctx.clearRect(0, 0, clearWidth, clearHeight);
+      }
       if (!pdfDoc) return;
 
-      const names = parseNames();
       const nameStyle = getNameFont();
-      const nameFields = elements.filter(e => e.type === "name");
       let nameIndex = 0;
 
       for (const el of elements){
         ensureInBounds(el);
-        let text = "";
-        let cfg;
+        const payload = getElementTextAndConfig(el, nameIndex, names, nameStyle);
+        nameIndex = payload.nextNameIndex;
+        const text = payload.text;
+        const cfg = payload.cfg;
 
-        if (el.type === "name"){
-          text = names[nameIndex] || "";
-          nameIndex++;
-          cfg = nameStyle;
-        } else {
-          text = el.text || "";
-          cfg = {
-            key: currentFontKey,
-            size: clamp(parseFloat(el.size || 24), 6, 140),
-            color: normalizeHex(el.color || "#111111"),
-            align: el.align || "center",
-            bold: false,
-            italic: false
-          };
+        const drawSize = Math.max(1, cfg.size * fontScale);
+        const drawX = el.x * coordScale;
+        const drawYTop = el.y * coordScale;
+        const drawW = Math.max(10, el.w * coordScale);
+
+        ctx.save();
+        ctx.font = `${cfg.italic ? 'italic ' : ''}${cfg.bold ? 'bold ' : ''}${drawSize}px ${canvasFontStack(cfg)}`;
+        ctx.fillStyle = cfg.color;
+        ctx.textBaseline = 'alphabetic';
+        ctx.textAlign = cfg.align;
+
+        let x = drawX;
+        if (cfg.align === 'center') x = drawX + drawW / 2;
+        if (cfg.align === 'right') x = drawX + drawW;
+        const y = drawYTop + drawSize * 0.82;
+
+        const measured = ctx.measureText(text).width;
+        if (measured > drawW && measured > 0){
+          const scale = drawW / measured;
+          ctx.translate(x, y);
+          ctx.scale(scale, 1);
+          ctx.translate(-x, -y);
         }
-
-        const fontStyle = `${cfg.italic ? 'italic ' : ''}${cfg.bold ? 'bold ' : ''}${cfg.size}px ${canvasFontStack(cfg)}`;
-        textCtx.font = fontStyle;
-        textCtx.fillStyle = cfg.color;
-        textCtx.textBaseline = 'alphabetic';
-        textCtx.textAlign = cfg.align;
-
-        let x = el.x;
-        if (cfg.align === 'center') x = el.x + el.w / 2;
-        if (cfg.align === 'right') x = el.x + el.w;
-        const y = el.y + cfg.size * 0.82;
-
-        const maxW = Math.max(10, el.w);
-        const measured = textCtx.measureText(text).width;
-        if (measured > maxW && measured > 0){
-          const scale = maxW / measured;
-          textCtx.save();
-          textCtx.translate(x, y);
-          textCtx.scale(scale, 1);
-          textCtx.translate(-x, -y);
-          textCtx.fillText(text, x, y);
-          textCtx.restore();
-        } else {
-          textCtx.fillText(text, x, y);
-        }
+        ctx.fillText(text, x, y);
+        ctx.restore();
       }
+    }
+
+    function drawTextLayer(){
+      drawElementsToContext(textCtx, {
+        coordScale: 1,
+        fontScale: previewScale || 1,
+        clearWidth: textCanvas.width,
+        clearHeight: textCanvas.height
+      });
     }
 
     function renderBoxes(){
@@ -1318,75 +1344,47 @@
       return true;
     }
 
+    async function renderTextOverlayDataUrl(pageNames, width, height){
+      const overlay = document.createElement('canvas');
+      const exportDpr = Math.max(2, window.devicePixelRatio || 1);
+      overlay.width = Math.round(width * exportDpr);
+      overlay.height = Math.round(height * exportDpr);
+      overlay.style.width = `${width}px`;
+      overlay.style.height = `${height}px`;
+      const octx = overlay.getContext('2d');
+      octx.setTransform(exportDpr, 0, 0, exportDpr, 0, 0);
+      octx.clearRect(0, 0, width, height);
+      drawElementsToContext(octx, {
+        names: pageNames,
+        coordScale: 1 / previewScale,
+        fontScale: 1
+      });
+      return overlay.toDataURL('image/png');
+    }
+
     async function exportPdf(){
       if (!validateExport()) return;
 
       const names = parseNames();
       const nameFields = elements.filter(e => e.type === 'name');
-      const staticFields = elements.filter(e => e.type === 'static');
       const pagesNeeded = Math.ceil(names.length / nameFields.length);
       const bg = await getBackgroundImageDataUrl();
       const orientation = bg.width >= bg.height ? 'landscape' : 'portrait';
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ orientation, unit: 'pt', format: [bg.width, bg.height] });
 
-      const nameStyle = getNameFont();
-      const font = currentFont();
-
-      if (font?.type === 'custom' && font.dataUrl){
-        const b64 = base64FromDataUrl(font.dataUrl);
-        if (b64){
-          const vfsName = `${font.jsPdfName}.ttf`;
-          doc.addFileToVFS(vfsName, b64);
-          doc.addFont(vfsName, font.jsPdfName, 'normal');
-        }
-      }
-
       for (let p = 0; p < pagesNeeded; p++){
         if (p > 0) doc.addPage([bg.width, bg.height], orientation);
         doc.addImage(bg.dataUrl, 'JPEG', 0, 0, bg.width, bg.height, undefined, 'FAST');
 
-        // static text on every page
-        for (const el of staticFields){
-          const xPdf = el.x / previewScale;
-          const yPdfTop = el.y / previewScale;
-          const wPdf = el.w / previewScale;
-          const cfg = {
-            key: currentFontKey,
-            size: clamp(parseFloat(el.size || 24), 6, 140),
-            color: normalizeHex(el.color || '#111111'),
-            align: el.align || 'center',
-            bold: false,
-            italic: false
-          };
-          const {r, g, b} = hexToRgb(cfg.color);
-          doc.setFont(font?.jsPdfName || 'helvetica', jsPdfFontStyle(cfg));
-          doc.setFontSize(cfg.size);
-          doc.setTextColor(r, g, b);
-          let x = xPdf;
-          if (cfg.align === 'center') x = xPdf + wPdf / 2;
-          if (cfg.align === 'right') x = xPdf + wPdf;
-          const yPdf = yPdfTop + cfg.size * 0.82;
-          doc.text(el.text || '', x, yPdf, { align: cfg.align, maxWidth: wPdf });
+        const base = p * nameFields.length;
+        const pageNames = [];
+        for (let i = 0; i < nameFields.length; i++){
+          pageNames.push(names[base + i] || '');
         }
 
-        const base = p * nameFields.length;
-        for (let i = 0; i < nameFields.length; i++){
-          const el = nameFields[i];
-          const line = names[base + i] || '';
-          const xPdf = el.x / previewScale;
-          const yPdfTop = el.y / previewScale;
-          const wPdf = el.w / previewScale;
-          const {r, g, b} = hexToRgb(nameStyle.color);
-          doc.setFont(font?.jsPdfName || 'helvetica', jsPdfFontStyle(nameStyle));
-          doc.setFontSize(nameStyle.size);
-          doc.setTextColor(r, g, b);
-          let x = xPdf;
-          if (nameStyle.align === 'center') x = xPdf + wPdf / 2;
-          if (nameStyle.align === 'right') x = xPdf + wPdf;
-          const yPdf = yPdfTop + nameStyle.size * 0.82;
-          doc.text(line, x, yPdf, { align: nameStyle.align, maxWidth: wPdf });
-        }
+        const overlayDataUrl = await renderTextOverlayDataUrl(pageNames, bg.width, bg.height);
+        doc.addImage(overlayDataUrl, 'PNG', 0, 0, bg.width, bg.height, undefined, 'FAST');
       }
 
       doc.save(`certificados_${new Date().toISOString().slice(0,10)}.pdf`);
