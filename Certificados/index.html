@@ -1455,6 +1455,10 @@
     });
 
     document.addEventListener('keydown', (e) => {
+      const target = e.target;
+      const tag = (target && target.tagName ? target.tagName.toLowerCase() : '');
+      const isTypingField = !!(target && (target.isContentEditable || tag === 'input' || tag === 'textarea' || tag === 'select'));
+      if (isTypingField) return;
       if (!selectedId) return;
       const el = selectedElement();
       if (!el) return;
