@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline Board Quiz Arcade</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <main id="stage">
+    <div class="bg checker c1"></div>
+    <div class="bg checker c2"></div>
+    <div class="bg rays r1"></div>
+    <div class="bg rays r2"></div>
+
+    <section id="poolScreen" class="screen active">
+      <div class="title-card slant">
+        <div class="badge">UEPLV</div>
+        <h1>Interactive Quiz</h1>
+        <p>Load a Kahoot-style XLSX question pool and play with teams on one interactive board.</p>
+      </div>
+
+      <div class="pool-layout">
+        <div id="dropZone" class="drop-zone">
+          <input id="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+          <div class="doc-icon">📄</div>
+          <h2>Question Pool</h2>
+          <p>Select your Kahoot-format <strong>.xlsx</strong> file. Multiple-choice questions use 2–4 answers; typed-answer questions use only 1 answer.</p>
+          <button id="chooseFileBtn" class="arcade-btn primary">Choose XLSX</button>
+          <button id="loadSampleBtn" class="arcade-btn secondary">Use Included Sample</button>
+        </div>
+
+        <aside class="setup-card">
+          <h2>Setup</h2>
+          <div id="fileStatus" class="status">No question pool loaded.</div>
+
+          <div class="team-selector">
+            <span>Teams</span>
+            <div class="segments">
+              <button class="seg active" data-team-count="2">2</button>
+              <button class="seg" data-team-count="4">4</button>
+            </div>
+          </div>
+
+          <div id="poolStats" class="stats">
+            <div><b>0</b><span>Questions</span></div>
+            <div><b>0</b><span>Choice</span></div>
+            <div><b>0</b><span>Typed</span></div>
+          </div>
+
+          <button id="goTeamsBtn" class="arcade-btn start" disabled>Continue ▶</button>
+        </aside>
+      </div>
+
+      <div class="fixed-note">Fixed board view. It does not responsively reflow; small windows crop the board.</div>
+    </section>
+
+    <section id="teamScreen" class="screen">
+      <div class="ribbon">
+        <button id="backToPoolBtn" class="small-btn">◀ Pool</button>
+        <h2>Team Selection</h2>
+        <button id="startGameBtn" class="small-btn accent">Start ▶</button>
+      </div>
+      <div id="teamEditorGrid" class="team-grid team-editor two"></div>
+    </section>
+
+    <section id="gameScreen" class="screen">
+      <div class="game-bar">
+        <div id="roundChip" class="chip">Question 1 / 1</div>
+        <div class="timer-box">
+          <span>TIME</span>
+          <b id="timerValue">20</b>
+          <div class="timer-track"><i id="timerFill"></i></div>
+        </div>
+      </div>
+
+      <div class="question-card slant">
+        <div id="questionTypeBadge" class="type-badge">Multiple Choice</div>
+        <h2 id="questionText">Question</h2>
+        <div id="correctAnswerReveal" class="answer-reveal"></div>
+      </div>
+
+      <div id="gameTeamGrid" class="team-grid game-grid two"></div>
+
+      <div id="countdownOverlay" class="countdown-overlay hidden">
+        <div class="countdown-card">
+          <span>Answers locked!</span>
+          <b id="countdownNumber">3</b>
+        </div>
+      </div>
+
+      <div id="betweenQuestionPanel" class="between hidden">
+        <div id="betweenSummary">Results</div>
+        <button id="nextQuestionBtn" class="arcade-btn start">Next ▶</button>
+      </div>
+    </section>
+
+    <section id="podiumScreen" class="screen">
+      <div id="confettiLayer" class="confetti-layer"></div>
+      <div class="podium-title">
+        <div class="badge">FINAL RESULTS</div>
+        <h1>Podium</h1>
+      </div>
+      <div id="podiumArea" class="podium-area"></div>
+      <button id="playAgainBtn" class="arcade-btn start play-again">Load Another Pool ↻</button>
+    </section>
+  </main>
+  <script src="js/app.js"></script>
+</body>
+</html>
