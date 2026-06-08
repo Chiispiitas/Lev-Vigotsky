@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sleepy Dog Volume Meter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="arcade-shell" aria-live="polite">
+    <button id="settingsBtn" class="settings-button" type="button" aria-label="Open settings menu" aria-controls="settingsMenu" aria-expanded="false">
+      <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <path d="M27.5 7h9l2.1 7.1c1.7.6 3.3 1.2 4.8 2l6.5-3.6 6.4 6.4-3.6 6.5c.8 1.5 1.5 3.1 2 4.8l7.3 2.3v9l-7.3 2.2c-.5 1.6-1.2 3.2-2 4.7l3.6 6.7-6.4 6.4-6.6-3.7c-1.5.8-3.1 1.5-4.7 2L36.5 57h-9l-2.1-7.2c-1.7-.5-3.3-1.2-4.8-2l-6.5 3.7-6.4-6.4 3.6-6.6c-.8-1.5-1.5-3.1-2-4.8L2 31.5v-9l7.3-2.3c.5-1.7 1.2-3.3 2-4.8l-3.6-6.5 6.4-6.4 6.5 3.6c1.5-.8 3.1-1.5 4.8-2L27.5 7Z"/>
+        <circle cx="32" cy="32" r="10"/>
+      </svg>
+    </button>
+
+    <section class="main-display">
+      <div class="speed-lines speed-a"></div>
+      <div class="speed-lines speed-b"></div>
+      <div class="starburst star-a"></div>
+      <div class="starburst star-b"></div>
+
+      <div class="scene-frame" id="dogStage" role="button" tabindex="0" aria-label="Tap to start or stop microphone listening">
+        <div class="scene-title">NOISE WATCH</div>
+        <img id="dogSprite" src="assets/dog-sleeping.png" alt="Sleeping dog classroom noise mascot" draggable="false" />
+      </div>
+
+      <section class="meter-console" aria-label="Live microphone volume meter">
+        <div class="meter-top">
+          <div class="status-pill" id="statusPill">Tap dog to start</div>
+          <div class="current-readout"><span id="currentValue">0</span><small>%</small></div>
+          <div class="peak-chip"><span>MAX</span><strong><span id="peakValue">0</span>%</strong></div>
+        </div>
+
+        <div class="meter-track" aria-label="Volume level">
+          <div class="meter-gloss"></div>
+          <div class="zone quiet-zone"></div>
+          <div class="meter-fill" id="meterFill"></div>
+          <div class="threshold-line warning-line" id="warningLine"><span>WARN</span></div>
+          <div class="threshold-line alarm-line" id="alarmLine"><span>ALARM</span></div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div class="menu-backdrop" id="menuBackdrop" hidden></div>
+
+  <aside class="settings-menu" id="settingsMenu" aria-hidden="true">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="settings-header">
+        <div>
+          <p>CLASSROOM SETUP</p>
+          <h1 id="settingsTitle">Settings</h1>
+        </div>
+        <button id="closeSettingsBtn" class="close-button" type="button" aria-label="Close settings menu">×</button>
+      </div>
+
+      <div class="settings-grid">
+        <label class="slider-card" for="warningSlider">
+          <span>Warning threshold</span>
+          <input id="warningSlider" type="range" min="10" max="95" value="55" />
+          <output id="warningOut">55%</output>
+        </label>
+
+        <label class="slider-card" for="alarmSlider">
+          <span>Alarm threshold</span>
+          <input id="alarmSlider" type="range" min="15" max="100" value="75" />
+          <output id="alarmOut">75%</output>
+        </label>
+
+        <label class="slider-card" for="sensitivitySlider">
+          <span>Mic sensitivity</span>
+          <input id="sensitivitySlider" type="range" min="60" max="220" value="130" />
+          <output id="sensitivityOut">130%</output>
+        </label>
+      </div>
+
+      <div class="menu-actions">
+        <button id="startBtn" class="menu-main-button" type="button">Start Microphone</button>
+        <button id="resetBtn" class="menu-button" type="button">Reset Max</button>
+        <button id="testBtn" class="menu-button" type="button">Test Alarm</button>
+        <button id="muteBtn" class="menu-button" type="button">Mute Alarm</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="permission-note" id="permissionNote">
+    Microphone access is required. Use HTTPS or localhost if the browser blocks it.
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
