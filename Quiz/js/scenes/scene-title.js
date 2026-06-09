@@ -20,6 +20,7 @@ function bindTitleStart() {
   ----------------------------------------------  */
   const enterMenu = (event) => {
     if (!screens.title.classList.contains("active")) return;
+    if (event && event.type === "keydown" && event.key === "F11") return;
     if (event && event.type === "keydown") event.preventDefault();
     playSound("start");
     startBgm("title");

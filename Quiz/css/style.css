@@ -3718,3 +3718,45 @@ h2, .ribbon h2, .question-card h2 {
 .tug-topbar h2 {
   grid-column: 2;
 }
+
+
+/* -------------------------------------------------------------
+# V39 Title Screen Position Fix
+--------------------------------------------------------------*/
+.owl-title-screen {
+  align-content: start !important;
+  justify-items: center !important;
+}
+
+.owl-title-card {
+  margin-top: 150px !important;
+  min-height: 625px !important;
+  grid-template-columns: 1fr 500px !important;
+  padding: 46px 68px !important;
+}
+
+.owl-hero-wrap {
+  height: 470px !important;
+}
+
+.owl-pop-ring {
+  width: 430px !important;
+  height: 430px !important;
+}
+
+.title-owl {
+  width: 490px !important;
+  height: 490px !important;
+}
+
+.owl-title-card h1 {
+  font-size: 86px !important;
+}
+
+.owl-title-card .title-eyebrow {
+  font-size: 38px !important;
+}
+
+.owl-title-card .press-any {
+  font-size: 36px !important;
+}
