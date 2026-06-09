@@ -1,0 +1,9 @@
+/*--------------------------------------------------------------
+# Porky Style Fonts
+--------------------------------------------------------------*/
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fredoka:wght@500;600;700&display=swap");
+
+/* Main */
+:root {
+     --font-main: "Fredoka", "Baloo 2", "Arial Rounded MT Bold", "Comic Sans MS", "Trebuchet MS", Arial, sans-serif;
+}

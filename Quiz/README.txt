@@ -1,37 +1,56 @@
-Offline Board Quiz Arcade v3
-============================
+Whiteboard Game Collection
+==========================
+
+Offline HTML5 classroom quiz game for an interactive board.
 
 How to use:
-1. Extract the ZIP.
-2. Open index.html in a recent Chrome, Edge, or Chromium-based interactive-board browser.
-3. Load a Kahoot-format .xlsx file, or press "Use Included Sample."
-4. Choose 2 or 4 teams.
-5. Each team has its own emoji picker, name field, and onscreen keyboard.
-6. Play the game.
+1. Extract the ZIP file.
+2. Open index.html in a modern Chromium-based browser such as Chrome or Edge.
+3. Load an XLSX question pool, use the included sample, or create a new pool.
+4. Edit the pool in the modal if needed.
+5. Export the pool as a Kahoot-format XLSX if you want to reuse it later.
+6. Continue to team setup and play.
 
-Controls:
-- Mouse / touch for normal classroom use.
-- In the game screen, press R on the physical keyboard to reset to the question pool.
-- In the game screen, press F on the physical keyboard to finish early and go straight to the podium.
+Question pool editor:
+- Exported pools can be loaded back into the app.
+- Type-answer question: fill only Answer 1.
+- Multiple-choice question: fill 2 to 4 answers.
+- Correct answer(s): use 1, 2, 3, 4 for multiple-choice. For type-answer, Answer 1 is accepted.
+- Time limit is in seconds.
 
-Kahoot XLSX format expected:
-- Header row with Question, Answer 1, Answer 2, Answer 3, Answer 4, Time limit, Correct answer(s).
-- Multiple choice: 2 to 4 answer options.
-- Type answer: only 1 answer option.
+Keyboard shortcuts during the game:
+- R = reset to the question pool screen.
+- F = finish early and show the podium.
 
-New behavior in v3:
-- When all answers are locked, or when time runs out, a center countdown appears.
-- After the countdown, each team panel is tinted green/red with a large checkmark or cross.
-- The Reset button is no longer visible on screen; use physical keyboard R.
-- Physical keyboard F ends the game early and opens the podium.
+Audio:
+- assets/title.mp3 loops on the title/menu screens.
+- assets/round.mp3 loops during active questions and stops when results appear.
+- assets/podium.mp3 plays once on the podium screen.
 
 Layout:
-- Fixed 1920x1080 board view, displayed with a constant scale.
-- The layout is intentionally not responsive. Smaller windows crop the board instead of rearranging it.
+The app uses a fixed board view and does not responsively reflow. Small windows crop the board.
+
+Code structure:
+- index.html uses the same large comment sections used in the reference project.
+- css/fonts.css keeps the font declarations separate.
+- css/style.css contains the visual styles with section headers.
+- js/scenes/scene-manager.js manages scene registration, screen switching, and scene lifecycle hooks.
+- js/scenes/scene-title.js handles the title scene.
+- js/scenes/scene-pool-select.js handles the question pool/setup scene.
+- js/scenes/scene-team-select.js handles the team selection scene.
+- js/scenes/scene-quiz.js handles the quiz/round scene.
+- js/scenes/scene-results.js handles the final results/podium scene.
+- js/app.js remains only for shared state, audio, scene setup, global keyboard shortcuts, and common helpers. XLSX loading/export and pool editor logic now live in js/scenes/scene-pool-select.js.
+
+The code style now follows the David Santana scene-header pattern so it is easier to expand with new modes later.
 
 
-Audio note:
-This version includes generated arcade sounds using the browser Web Audio API. No audio files are required. Sound starts after the first click, tap, or key press due to browser autoplay rules.
+Version v22 changes:
+- Global click sparkles now work across title, pool, mode selection, team selection, quiz, and results screens.
+- Locked answers now cover the full team panel with a blue moving-stripe screen and rotating fun phrases.
 
-Font note:
-The game restores the rounded early-2000s style with Fredoka/Baloo web fonts when internet is available, plus cute system fallbacks when offline.
+Version 25 notes:
+- Added Tug-of-War mode as a Student-led mode.
+- Tug-of-War is limited to two teams.
+- Added embedded penguin sprites in assets/img.
+- Correct answers pull the rope; pull strength increases over time.

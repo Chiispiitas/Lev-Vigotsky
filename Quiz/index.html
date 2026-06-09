@@ -1,110 +1,271 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- ==============================================
+    *  Head
+============================================== -->
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Offline Board Quiz Arcade</title>
-  <link rel="stylesheet" href="css/styles.css" />
+
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Whiteboard Game Collection</title>
+    <meta content="Whiteboard Game Collection - David Santana" name="description">
+
+    <!-- Main -->
+    <link href="css/fonts.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
 </head>
+
+<!-- ==============================================
+    *  Body
+============================================== -->
 <body>
-  <main id="stage">
-    <div class="bg checker c1"></div>
-    <div class="bg checker c2"></div>
-    <div class="bg rays r1"></div>
-    <div class="bg rays r2"></div>
 
-    <section id="poolScreen" class="screen active">
-      <div class="title-card slant">
-        <div class="badge">UEPLV</div>
-        <h1>Interactive Quiz</h1>
-        <p>Load a Kahoot-style XLSX question pool and play with teams on one interactive board.</p>
-      </div>
+    <main id="stage">
+        <div class="bg checker c1"></div>
+        <div class="bg checker c2"></div>
+        <div class="bg rays r1"></div>
+        <div class="bg rays r2"></div>
 
-      <div class="pool-layout">
-        <div id="dropZone" class="drop-zone">
-          <input id="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-          <div class="doc-icon">📄</div>
-          <h2>Question Pool</h2>
-          <p>Select your Kahoot-format <strong>.xlsx</strong> file. Multiple-choice questions use 2–4 answers; typed-answer questions use only 1 answer.</p>
-          <button id="chooseFileBtn" class="arcade-btn primary">Choose XLSX</button>
-          <button id="loadSampleBtn" class="arcade-btn secondary">Use Included Sample</button>
-        </div>
-
-        <aside class="setup-card">
-          <h2>Setup</h2>
-          <div id="fileStatus" class="status">No question pool loaded.</div>
-
-          <div class="team-selector">
-            <span>Teams</span>
-            <div class="segments">
-              <button class="seg active" data-team-count="2">2</button>
-              <button class="seg" data-team-count="4">4</button>
+        <section id="titleScreen" class="screen active">
+            <div class="title-screen-card">
+                <div class="title-eyebrow">MR. DAVID'S</div>
+                <h1>Whiteboard Game Collection</h1>
+                <div class="title-ring">★</div>
+                <p class="press-any">PRESS ANY BUTTON</p>
+                <p class="title-hint">Tap, click, or use the keyboard</p>
             </div>
-          </div>
+        </section>
 
-          <div id="poolStats" class="stats">
-            <div><b>0</b><span>Questions</span></div>
-            <div><b>0</b><span>Choice</span></div>
-            <div><b>0</b><span>Typed</span></div>
-          </div>
+        <section id="poolScreen" class="screen">
+            <div class="title-card slant compact-title sonic-title">
+                <div class="badge">MR. DAVID'S</div>
+                <h1>Whiteboard Game Collection</h1>
+            </div>
 
-          <button id="goTeamsBtn" class="arcade-btn start" disabled>Continue ▶</button>
-        </aside>
-      </div>
+            <div class="pool-layout">
+                <div id="dropZone" class="drop-zone">
+                    <input id="fileInput" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                    <div class="doc-icon">📄</div>
+                    <h2>Question Pool</h2>
+                    <div class="pool-actions-main">
+                        <button id="chooseFileBtn" class="arcade-btn primary">Load XLSX</button>
+                        <button id="newPoolBtn" class="arcade-btn secondary">New Pool</button>
+                        <button id="loadSampleBtn" class="arcade-btn secondary">Sample</button>
+                    </div>
+                </div>
 
-      <div class="fixed-note">Fixed board view. It does not responsively reflow; small windows crop the board.</div>
-    </section>
+                <aside class="setup-card">
+                    <h2>Setup</h2>
+                    <div id="fileStatus" class="status">No question pool loaded.</div>
 
-    <section id="teamScreen" class="screen">
-      <div class="ribbon">
-        <button id="backToPoolBtn" class="small-btn">◀ Pool</button>
-        <h2>Team Selection</h2>
-        <button id="startGameBtn" class="small-btn accent">Start ▶</button>
-      </div>
-      <div id="teamEditorGrid" class="team-grid team-editor two"></div>
-    </section>
+                    <div id="poolStats" class="stats">
+                        <div><b>0</b><span>Questions</span></div>
+                        <div><b>0</b><span>Choice</span></div>
+                        <div><b>0</b><span>Typed</span></div>
+                    </div>
 
-    <section id="gameScreen" class="screen">
-      <div class="game-bar">
-        <div id="roundChip" class="chip">Question 1 / 1</div>
-        <div class="timer-box">
-          <span>TIME</span>
-          <b id="timerValue">20</b>
-          <div class="timer-track"><i id="timerFill"></i></div>
+                    <div class="pool-manage-buttons">
+                        <button id="editPoolBtn" class="arcade-btn secondary" disabled>Edit Pool</button>
+                        <button id="exportPoolBtn" class="arcade-btn secondary" disabled>Export XLSX</button>
+                    </div>
+                    <button id="goTeamsBtn" class="arcade-btn start" disabled>Continue ▶</button>
+                </aside>
+            </div>
+        </section>
+
+
+        <section id="modeScreen" class="screen">
+            <div class="ribbon">
+                <button id="backToPoolFromModeBtn" class="small-btn">◀ Pool</button>
+                <h2>Mode Selection</h2>
+                <div class="mode-ribbon-end"></div>
+            </div>
+
+            <div class="mode-selection-layout">
+                <article class="mode-category-card student-led-card">
+                    <div class="mode-tag">STUDENT-LED</div>
+                    <h2>Student-led</h2>
+                    <p>Games that keep sending questions to each team at their own pace. They end by limit, time, or team condition.</p>
+
+                    <div class="mode-button-grid">
+                        <button id="btnModeTug" class="mode-btn mode-ready student-mode-ready">
+                            <span class="mode-icon">🪢</span>
+                            <strong>Tug-of-war</strong>
+                            <small>2 teams only</small>
+                        </button>
+                        <button class="mode-btn mode-placeholder" disabled>
+                            <span class="mode-icon">🏰</span>
+                            <strong>Color Kingdoms</strong>
+                            <small>Coming soon</small>
+                        </button>
+                    </div>
+                </article>
+
+                <article class="mode-category-card teacher-led-card">
+                    <div class="mode-tag">TEACHER-LED</div>
+                    <h2>Teacher-led</h2>
+                    <p>Games that follow the full question pool until the end. The teacher controls when the next round starts.</p>
+
+                    <div class="mode-button-grid one-mode">
+                        <button id="btnModeQuiz" class="mode-btn mode-ready">
+                            <span class="mode-icon">🎯</span>
+                            <strong>Quiz</strong>
+                            <small></small>
+                        </button>
+                    </div>
+                </article>
+            </div>
+            <div id="modeChoiceBar" class="mode-choice-bar hidden">
+                <div class="mode-choice-copy">
+                    <div class="badge small-badge">NEXT STEP</div>
+                    <h3 id="modeChoiceTitle">Choose teams</h3>
+                    <p id="modeChoiceHint">Pick a game mode first.</p>
+                </div>
+
+                <div class="mode-choice-controls">
+                    <div class="mode-team-picker">
+                        <span>Teams</span>
+                        <div class="segments mode-team-segments">
+                            <button id="modeTeam2Btn" class="seg mode-team-seg" data-mode-team-count="2">2</button>
+                            <button id="modeTeam4Btn" class="seg mode-team-seg" data-mode-team-count="4">4</button>
+                        </div>
+                    </div>
+
+                    <button id="continueModeBtn" class="arcade-btn start" disabled>Continue ▶</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="teamScreen" class="screen">
+            <div class="ribbon">
+                <button id="backToPoolBtn" class="small-btn">◀ Modes</button>
+                <h2>Team Selection</h2>
+                <button id="startGameBtn" class="small-btn accent">Start ▶</button>
+            </div>
+            <div id="teamEditorGrid" class="team-grid team-editor two"></div>
+        </section>
+
+        <section id="gameScreen" class="screen">
+            <div class="game-bar">
+                <div id="roundChip" class="chip">Question 1 / 1</div>
+                <div class="timer-box">
+                    <span>TIME</span>
+                    <b id="timerValue">20</b>
+                    <div class="timer-track"><i id="timerFill"></i></div>
+                </div>
+            </div>
+
+            <div class="question-card slant">
+                <div id="questionTypeBadge" class="type-badge">Multiple Choice</div>
+                <h2 id="questionText">Question</h2>
+                <div id="correctAnswerReveal" class="answer-reveal"></div>
+            </div>
+
+            <div id="gameTeamGrid" class="team-grid game-grid two"></div>
+
+            <div id="countdownOverlay" class="countdown-overlay hidden">
+                <div class="countdown-card">
+                    <b id="countdownNumber">3</b>
+                </div>
+            </div>
+
+            <div id="betweenQuestionPanel" class="between hidden">
+                <div id="betweenSummary">Results</div>
+                <button id="nextQuestionBtn" class="arcade-btn start">Next ▶</button>
+            </div>
+        </section>
+
+
+        <section id="tugScreen" class="screen">
+            <div class="tug-topbar ribbon">
+                <button id="backToTeamsFromTugBtn" class="small-btn">◀ Teams</button>
+                <h2>Tug-of-War</h2>
+                <div class="mode-ribbon-end"></div>
+            </div>
+
+            <div class="tug-arena">
+                <div class="tug-team-name tug-left-name" id="tugLeftName">Team 1</div>
+                <div class="tug-team-name tug-right-name" id="tugRightName">Team 2</div>
+
+                <img id="tugPenguinLeft" class="tug-penguin tug-penguin-left" src="assets/img/penguin-blue-regular.png" alt="Blue penguin">
+                <img id="tugPenguinRight" class="tug-penguin tug-penguin-right" src="assets/img/penguin-pink-regular.png" alt="Pink penguin">
+
+                <div class="tug-rope-track">
+                    <div id="tugRopeLine" class="tug-rope-line"></div>
+                    <div class="tug-center-line"></div>
+                    <div class="tug-end-line left"></div>
+                    <div class="tug-end-line right"></div>
+                </div>
+            </div>
+
+            <div id="tugQuestionGrid" class="tug-question-grid"></div>
+        </section>
+
+        <section id="podiumScreen" class="screen">
+            <div id="confettiLayer" class="confetti-layer"></div>
+            <div class="podium-title">
+                <div class="badge">FINAL RESULTS</div>
+                <h1>Podium</h1>
+            </div>
+            <div id="podiumArea" class="podium-area"></div>
+            <button id="playAgainBtn" class="arcade-btn start play-again">Load Another Pool ↻</button>
+        </section>
+
+        <div id="poolEditorModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="poolEditorTitle">
+            <div class="modal-card pool-editor-card">
+                <div class="modal-head">
+                    <div>
+                        <div class="badge small-badge">QUESTION POOL</div>
+                        <h2 id="poolEditorTitle">Pool Editor</h2>
+                    </div>
+                    <button id="closePoolEditorBtn" class="small-btn">Close ✕</button>
+                </div>
+
+                <div class="editor-toolbar">
+                    <button id="addQuestionBtn" class="arcade-btn secondary">+ Add Questions</button>
+                    <button id="clearPoolEditorBtn" class="arcade-btn secondary danger-soft">Clear</button>
+                    <div class="editor-toolbar-spacer"></div>
+                    <button id="savePoolEditorBtn" class="arcade-btn primary">Save Pool</button>
+                    <button id="exportEditorBtn" class="arcade-btn start">Export XLSX</button>
+                </div>
+
+                <div class="editor-table-wrap">
+                    <table class="editor-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Prompt / Question</th>
+                                <th>Answer 1</th>
+                                <th>Answer 2</th>
+                                <th>Answer 3</th>
+                                <th>Answer 4</th>
+                                <th>Time</th>
+                                <th>Type</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="poolEditorRows"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
+    </main>
 
-      <div class="question-card slant">
-        <div id="questionTypeBadge" class="type-badge">Multiple Choice</div>
-        <h2 id="questionText">Question</h2>
-        <div id="correctAnswerReveal" class="answer-reveal"></div>
-      </div>
+    <!-- Database / Main -->
+    <script src="js/app.js"></script>
 
-      <div id="gameTeamGrid" class="team-grid game-grid two"></div>
+    <!-- Scenes -->
+    <script src="js/scenes/scene-manager.js"></script>
+    <script src="js/scenes/scene-title.js"></script>
+    <script src="js/scenes/scene-pool-select.js"></script>
+    <script src="js/scenes/scene-mode-select.js"></script>
+    <script src="js/scenes/scene-team-select.js"></script>
+    <script src="js/scenes/scene-quiz.js"></script>
+    <script src="js/scenes/scene-tug-of-war.js"></script>
+    <script src="js/scenes/scene-results.js"></script>
 
-      <div id="countdownOverlay" class="countdown-overlay hidden">
-        <div class="countdown-card">
-          <span>Answers locked!</span>
-          <b id="countdownNumber">3</b>
-        </div>
-      </div>
-
-      <div id="betweenQuestionPanel" class="between hidden">
-        <div id="betweenSummary">Results</div>
-        <button id="nextQuestionBtn" class="arcade-btn start">Next ▶</button>
-      </div>
-    </section>
-
-    <section id="podiumScreen" class="screen">
-      <div id="confettiLayer" class="confetti-layer"></div>
-      <div class="podium-title">
-        <div class="badge">FINAL RESULTS</div>
-        <h1>Podium</h1>
-      </div>
-      <div id="podiumArea" class="podium-area"></div>
-      <button id="playAgainBtn" class="arcade-btn start play-again">Load Another Pool ↻</button>
-    </section>
-  </main>
-  <script src="js/app.js"></script>
 </body>
 </html>
