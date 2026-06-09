@@ -426,7 +426,7 @@ function getCorrectLabel(q) {
 function isCorrect(q, team) {
   if (!team.submitted) return false;
   if (q.type === "choice") return getCorrectIndexes(q).includes(team.answer);
-  return getAcceptedTyped(q).has(normalize(team.answerText));
+  return isTypedAnswerCorrect(q, team.answerText);
 }
 
 /* ---------------------------------------------- 

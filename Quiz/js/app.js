@@ -950,6 +950,16 @@ function normalize(value) {
     .replace(/\s+/g, " ").trim();
 }
 
+
+/* ---------------------------------------------- 
+     Is Typed Answer Correct 
+----------------------------------------------  */
+function isTypedAnswerCorrect(q, value) {
+  const typed = normalize(value);
+  if (!typed) return false;
+  return [...getAcceptedTyped(q)].some(answer => answer && typed.includes(answer));
+}
+
 /* ---------------------------------------------- 
      Esc 
 ----------------------------------------------  */

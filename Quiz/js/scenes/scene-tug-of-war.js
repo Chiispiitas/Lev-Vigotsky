@@ -143,6 +143,8 @@ function createTugPanelState(teamId) {
           answer: null,
           answerText: "",
           correct: false,
+          skipped: false,
+          cooldownUntil: 0,
           timeLimit: null
      };
 }
@@ -190,7 +192,10 @@ function createTugQuestionCard(panel) {
           </div>
           ${q.type == "choice" ? tugChoiceBody(q, panel.teamId) : tugTypeBody(panel.teamId)}
           <div class="tug-feedback" data-tug-feedback="${panel.teamId}"></div>
-          <button class="arcade-btn start tug-next-btn hidden" data-tug-next="${panel.teamId}">Next ▶</button>
+          <div class="tug-card-actions">
+               <button class="arcade-btn secondary tug-skip-btn" data-tug-skip="${panel.teamId}">Skip ⏭</button>
+               <button class="arcade-btn start tug-next-btn hidden" data-tug-next="${panel.teamId}">Next ▶</button>
+          </div>
      `;
 
      bindTugCardButtons(card, panel.teamId, q);
@@ -236,6 +241,14 @@ function bindTugCardButtons(card, teamId, q) {
                button.addEventListener("click", function() {
                     handleTugKey(teamId, button.dataset.key);
                });
+          });
+     }
+
+     const skipButton = card.querySelector(".tug-skip-btn");
+     if (skipButton) {
+          skipButton.addEventListener("click", function() {
+               playSound("back");
+               skipTugQuestion(teamId);
           });
      }
 
@@ -351,6 +364,87 @@ function showTugLockedScreen(card, teamId) {
      card.appendChild(screen);
 }
 
+
+/* ---------------------------------------------- 
+     Skip Tug Question 
+----------------------------------------------  */
+function skipTugQuestion(teamId) {
+     const panel = getTugPanel(teamId);
+     const q = getTugQuestion(teamId);
+     const card = document.querySelector(`[data-tug-team-card="${teamId}"]`);
+     if (!panel || !q || !card || panel.submitted || panel.revealed || state.tug.finished) { return; }
+
+     panel.submitted = true;
+     panel.revealed = true;
+     panel.skipped = true;
+     panel.correct = false;
+     panel.answer = null;
+     panel.answerText = "";
+     panel.cooldownUntil = performance.now() + 3000;
+
+     revealTugSkippedAnswer(card, q, panel, teamId);
+     startTugNextCooldown(teamId, 3);
+}
+
+/* ---------------------------------------------- 
+     Reveal Tug Skipped Answer 
+----------------------------------------------  */
+function revealTugSkippedAnswer(card, q, panel, teamId) {
+     const lockScreen = card.querySelector(".locked-praise-screen");
+     if (lockScreen) { lockScreen.remove(); }
+
+     revealTugOptions(card, q, panel);
+     card.classList.add("result-incorrect");
+
+     const mark = document.createElement("div");
+     mark.className = "result-mark tug-result-mark";
+     mark.textContent = "✕";
+     card.appendChild(mark);
+
+     const feedback = card.querySelector(`[data-tug-feedback="${teamId}"]`);
+     if (feedback) {
+          feedback.textContent = `Answer: ${getCorrectLabel(q)}`;
+     }
+
+     const skipButton = card.querySelector(".tug-skip-btn");
+     if (skipButton) {
+          skipButton.disabled = true;
+          skipButton.classList.add("hidden");
+     }
+
+     playSound("wrong");
+}
+
+/* ---------------------------------------------- 
+     Start Tug Next Cooldown 
+----------------------------------------------  */
+function startTugNextCooldown(teamId, seconds) {
+     const nextButton = document.querySelector(`[data-tug-next="${teamId}"]`);
+     if (!nextButton || state.tug.finished) { return; }
+
+     let remaining = seconds;
+     nextButton.classList.remove("hidden");
+     nextButton.disabled = true;
+     nextButton.textContent = `Cooldown ${remaining}`;
+
+     const interval = setInterval(function() {
+          remaining -= 1;
+          if (!nextButton.isConnected || state.tug.finished) {
+               clearInterval(interval);
+               return;
+          }
+
+          if (remaining <= 0) {
+               clearInterval(interval);
+               nextButton.disabled = false;
+               nextButton.textContent = "Next ▶";
+          }
+          else {
+               nextButton.textContent = `Cooldown ${remaining}`;
+          }
+     }, 1000);
+}
+
 /* ---------------------------------------------- 
      Reveal Tug Answer 
 ----------------------------------------------  */
@@ -387,6 +481,12 @@ function revealTugAnswer(teamId) {
      }
      else {
           playSound("wrong");
+     }
+
+     const skipButton = card.querySelector(".tug-skip-btn");
+     if (skipButton) {
+          skipButton.disabled = true;
+          skipButton.classList.add("hidden");
      }
 
      const nextButton = card.querySelector(".tug-next-btn");
@@ -624,7 +724,7 @@ function getTugQuestion(teamId) {
 ----------------------------------------------  */
 function isTugCorrect(q, panel) {
      if (q.type == "choice") { return getCorrectIndexes(q).includes(panel.answer); }
-     return getAcceptedTyped(q).has(normalize(panel.answerText));
+     return isTypedAnswerCorrect(q, panel.answerText);
 }
 
 /* ---------------------------------------------- 
