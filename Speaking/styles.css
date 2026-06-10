@@ -657,8 +657,8 @@ button {
   bottom: 0;
   z-index: 20;
   display: none;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 7px;
   width: min(100%, 560px);
   transform: translateX(-50%);
   padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
@@ -677,7 +677,8 @@ button {
   min-height: 52px;
   border-radius: 17px;
   font-weight: 1000;
-  letter-spacing: -.02em;
+  letter-spacing: -.03em;
+  font-size: .82rem;
 }
 
 .primary-action {
@@ -865,4 +866,55 @@ button {
 
 .student-actions .ghost-button {
   min-height: 46px;
+}
+
+.bulk-panel {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(234,244,255,.92));
+}
+
+.bulk-panel::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  bottom: -44px;
+  width: 150px;
+  height: 94px;
+  border-radius: 28px;
+  background: repeating-linear-gradient(45deg, rgba(19,117,255,.11) 0 12px, rgba(255,216,69,.18) 12px 24px);
+  transform: rotate(-12deg);
+}
+
+.bulk-copy {
+  position: relative;
+  z-index: 1;
+  margin: -4px 0 12px;
+  color: var(--muted);
+  font-size: .9rem;
+  line-height: 1.38;
+  font-weight: 780;
+}
+
+.bulk-actions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.bulk-actions .ghost-button {
+  min-height: 48px;
+  font-size: .9rem;
+}
+
+@media (min-width: 430px) {
+  .bulk-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .bulk-actions .ghost-button:last-child {
+    grid-column: 1 / -1;
+  }
 }

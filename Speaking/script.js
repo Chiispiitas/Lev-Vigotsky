@@ -1138,6 +1138,7 @@ function init() {
   renderQuickNotes();
   bindEvents();
   updatePreview();
+  saveStudentDraft();
 }
 
 function bindEvents() {
@@ -1147,15 +1148,20 @@ function bindEvents() {
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
   $("#saveReport").addEventListener("click", saveCurrentReport);
   $("#copyReport").addEventListener("click", copyCurrentReport);
-  $("#exportTxt").addEventListener("click", exportCurrentTxt);
+  $("#exportClassCsvBar").addEventListener("click", exportClassCsv);
+  $("#exportClassPdfBar").addEventListener("click", exportClassPdf);
   $("#shareWhatsapp").addEventListener("click", shareCurrentWhatsapp);
   $("#openHistory").addEventListener("click", openHistory);
   $("#closeHistory").addEventListener("click", () => historyDialog.close());
+  $("#exportClassCsv").addEventListener("click", exportClassCsv);
+  $("#exportClassPdf").addEventListener("click", exportClassPdf);
+  $("#copyClassSummary").addEventListener("click", copyClassSummary);
   $("#exportCsv").addEventListener("click", exportAllCsv);
+  $("#exportAllPdf").addEventListener("click", exportAllPdf);
   $("#clearHistory").addEventListener("click", clearHistory);
 
-  activityInput.addEventListener("input", () => { state.activity = activityInput.value.trim() || "Oral speaking assessment"; updatePreview(); });
-  teacherComment.addEventListener("input", () => { state.comment = teacherComment.value.trim(); updatePreview(); });
+  activityInput.addEventListener("input", () => { state.activity = activityInput.value.trim() || "Oral speaking assessment"; updatePreview(); saveStudentDraft(); });
+  teacherComment.addEventListener("input", () => { state.comment = teacherComment.value.trim(); updatePreview(); saveStudentDraft(); });
   $("#previousStudent").addEventListener("click", () => moveStudent(-1));
   $("#nextStudent").addEventListener("click", () => moveStudent(1));
   $("#resetCurrent").addEventListener("click", () => { clearAssessment(true); updatePreview(); saveStudentDraft(); showToast("Current student reset"); });
@@ -1185,17 +1191,16 @@ function getSelectedStudent() {
 }
 
 function renderClasses() {
-  const status = loadStatus();
   classGrid.innerHTML = "";
   CLASS_DATA.forEach((klass) => {
-    const doneCount = Object.keys(status[klass.id] || {}).length;
+    const doneCount = countAssessedInClass(klass);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "class-card";
     button.innerHTML = `
       <h3>${escapeHtml(klass.label)}</h3>
       <p>${escapeHtml(klass.specialty)} · Paralelo ${escapeHtml(klass.section)}</p>
-      <span class="class-badge">${doneCount}/${klass.students.length} saved</span>
+      <span class="class-badge">${doneCount}/${klass.students.length} graded</span>
     `;
     button.addEventListener("click", () => selectClass(klass.id));
     classGrid.appendChild(button);
@@ -1317,6 +1322,7 @@ function renderQuickNotes() {
       if (input.checked) state.notes.add(note);
       else state.notes.delete(note);
       updatePreview();
+      saveStudentDraft();
     });
     quickNotes.appendChild(label);
   });
@@ -1370,6 +1376,7 @@ function clearQuickNotes() {
   state.notes.clear();
   document.querySelectorAll("#quickNotes input").forEach(input => input.checked = false);
   updatePreview();
+  saveStudentDraft();
 }
 
 function clearAssessment(keepStudent = true) {
@@ -1539,7 +1546,8 @@ function saveStudentDraft() {
     scores: state.scores,
     notes: Array.from(state.notes),
     comment: state.comment,
-    activity: state.activity
+    activity: state.activity,
+    updatedAt: new Date().toISOString()
   }));
 }
 
@@ -1605,39 +1613,423 @@ function renderHistory() {
   });
 }
 
-function exportAllCsv() {
-  const reports = loadReports();
-  if (!reports.length) { showToast("No reports to export"); return; }
+const RUBRIC_SHORT = [
+  "English only",
+  "No reading",
+  "Task coverage",
+  "Time",
+  "Vocabulary / grammar",
+  "Fluency / pronunciation",
+  "Respectful listening"
+];
+
+function getDraftForStudent(classId, studentNumber) {
+  try {
+    return JSON.parse(localStorage.getItem(`lv-draft-${classId}-${studentNumber}`) || "null");
+  } catch (error) {
+    return null;
+  }
+}
+
+function hasDraftData(draft) {
+  if (!draft) return false;
+  const scoreCount = Object.keys(draft.scores || {}).length;
+  const noteCount = Array.isArray(draft.notes) ? draft.notes.length : 0;
+  const comment = String(draft.comment || "").trim();
+  return scoreCount > 0 || noteCount > 0 || comment.length > 0;
+}
+
+function buildLatestSavedMap(reports = loadReports()) {
+  const map = new Map();
+  reports.forEach(report => {
+    const key = `${report.classId}|${report.studentNumber}`;
+    if (!map.has(key)) map.set(key, report);
+  });
+  return map;
+}
+
+function buildReportFromDraft(klass, student, draft) {
+  const rows = RUBRIC.map((criterion) => {
+    const selected = draft?.scores?.[criterion.id];
+    const option = Number.isInteger(selected?.optionIndex) ? criterion.options[selected.optionIndex] : null;
+    return {
+      criterion: criterion.title,
+      max: criterion.max,
+      level: option ? option.label : "Not marked",
+      points: option ? option.points : 0,
+      observation: option ? option.description : ""
+    };
+  });
+  const total = rows.reduce((sum, row) => sum + Number(row.points || 0), 0);
+  const updatedAt = draft?.updatedAt || new Date().toISOString();
+  return {
+    id: `draft-${klass.id}-${student.n}`,
+    createdAt: updatedAt,
+    date: safeDateLabel(updatedAt),
+    classId: klass.id,
+    classLabel: klass.label,
+    course: klass.course,
+    section: klass.section,
+    specialty: klass.specialty,
+    tutor: klass.tutor,
+    studentNumber: student.n,
+    studentName: student.name,
+    activity: draft?.activity || "Oral speaking assessment",
+    total: Math.round(total * 100) / 100,
+    rows,
+    notes: Array.isArray(draft?.notes) ? draft.notes : [],
+    comment: draft?.comment || "",
+    text: ""
+  };
+}
+
+function getMarkedCount(report) {
+  return (report?.rows || []).filter(row => row.level !== "Not marked").length;
+}
+
+function countAssessedInClass(klass) {
+  const latestSaved = buildLatestSavedMap(loadReports().filter(report => report.classId === klass.id));
+  return klass.students.reduce((count, student) => {
+    const draft = getDraftForStudent(klass.id, student.n);
+    const saved = latestSaved.get(`${klass.id}|${student.n}`);
+    const report = hasDraftData(draft) ? buildReportFromDraft(klass, student, draft) : saved;
+    return count + (getMarkedCount(report) > 0 ? 1 : 0);
+  }, 0);
+}
+
+function getClassExportRows() {
+  const klass = getSelectedClass();
+  if (!klass) return [];
+  saveStudentDraft();
+  const latestSaved = buildLatestSavedMap(loadReports().filter(report => report.classId === klass.id));
+  return klass.students.map(student => {
+    const draft = getDraftForStudent(klass.id, student.n);
+    const saved = latestSaved.get(`${klass.id}|${student.n}`);
+    const report = hasDraftData(draft) ? buildReportFromDraft(klass, student, draft) : saved || null;
+    const marked = getMarkedCount(report);
+    return {
+      klass,
+      student,
+      report,
+      marked,
+      status: marked > 0 ? "Assessed" : "Pending"
+    };
+  });
+}
+
+function getLatestSavedRows() {
+  const latestSaved = buildLatestSavedMap(loadReports());
+  return Array.from(latestSaved.values()).map(report => {
+    const klass = CLASS_DATA.find(item => item.id === report.classId) || {
+      id: report.classId,
+      label: report.classLabel,
+      course: report.course,
+      section: report.section,
+      specialty: report.specialty,
+      tutor: report.tutor,
+      students: []
+    };
+    const student = { n: report.studentNumber, name: report.studentName };
+    const marked = getMarkedCount(report);
+    return { klass, student, report, marked, status: marked > 0 ? "Assessed" : "Pending" };
+  });
+}
+
+function buildGradeCsv(rows) {
   const header = [
-    "Date", "Class", "Student Number", "Student", "Activity", "Total",
+    "Class", "Course", "Section", "Student Number", "Student", "Status", "Activity", "Date", "Total /10", "Marked Criteria",
     ...RUBRIC.flatMap(criterion => [criterion.title + " Level", criterion.title + " Points"]),
-    "Quick Notes", "Comment"
+    "Quick Notes", "Teacher Comment"
   ];
 
-  const rows = reports.map(report => {
-    const rowMap = Object.fromEntries(report.rows.map(row => [row.criterion, row]));
+  const body = rows.map(({ klass, student, report, status, marked }) => {
+    const rowMap = Object.fromEntries((report?.rows || []).map(row => [row.criterion, row]));
     return [
-      report.date,
-      report.classLabel,
-      report.studentNumber,
-      report.studentName,
-      report.activity,
-      formatScore(report.total),
-      ...RUBRIC.flatMap(criterion => [rowMap[criterion.title]?.level || "", formatScore(rowMap[criterion.title]?.points || 0)]),
-      (report.notes || []).join(" | "),
-      report.comment || ""
+      klass?.label || report?.classLabel || "",
+      klass?.course || report?.course || "",
+      klass?.section || report?.section || "",
+      student?.n || report?.studentNumber || "",
+      student?.name || report?.studentName || "",
+      status,
+      report?.activity || "",
+      report?.date || "",
+      status === "Assessed" ? formatScore(report?.total || 0) : "",
+      marked || 0,
+      ...RUBRIC.flatMap(criterion => [
+        rowMap[criterion.title]?.level || "",
+        rowMap[criterion.title] ? formatScore(rowMap[criterion.title].points || 0) : ""
+      ]),
+      (report?.notes || []).join(" | "),
+      report?.comment || ""
     ];
   });
 
-  const csv = [header, ...rows].map(row => row.map(csvCell).join(";")).join("\n");
-  downloadBlob("﻿" + csv, `speaking-reports-${dateForFilename()}.csv`, "text/csv;charset=utf-8");
-  showToast("CSV exported");
+  return [header, ...body].map(row => row.map(csvCell).join(";")).join("\n");
+}
+
+function getRowsStats(rows) {
+  const assessedRows = rows.filter(row => row.status === "Assessed");
+  const scores = assessedRows.map(row => Number(row.report?.total || 0));
+  const average = scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+  return {
+    total: rows.length,
+    assessed: assessedRows.length,
+    pending: rows.length - assessedRows.length,
+    average: Math.round(average * 100) / 100
+  };
+}
+
+function exportClassCsv() {
+  const klass = getSelectedClass();
+  if (!klass) { showToast("Select a class first"); return; }
+  const rows = getClassExportRows();
+  const csv = buildGradeCsv(rows);
+  downloadBlob("﻿" + csv, `${safeFilename(klass.label)}-speaking-grades-${dateForFilename()}.csv`, "text/csv;charset=utf-8");
+  showToast("Class CSV exported");
+}
+
+function exportAllCsv() {
+  const rows = getLatestSavedRows();
+  if (!rows.length) { showToast("No saved grades to export"); return; }
+  const csv = buildGradeCsv(rows);
+  downloadBlob("﻿" + csv, `all-speaking-grades-${dateForFilename()}.csv`, "text/csv;charset=utf-8");
+  showToast("All saved grades exported as CSV");
+}
+
+function exportClassPdf() {
+  const klass = getSelectedClass();
+  if (!klass) { showToast("Select a class first"); return; }
+  const rows = getClassExportRows();
+  const html = buildPrintableGradeHtml(rows, {
+    title: "Speaking Performance Grade Report",
+    subtitle: `${klass.label} · ${klass.course} · Paralelo ${klass.section}`,
+    includePending: true
+  });
+  openPrintableReport(html, `${safeFilename(klass.label)}-speaking-grades-${dateForFilename()}.html`);
+}
+
+function exportAllPdf() {
+  const rows = getLatestSavedRows();
+  if (!rows.length) { showToast("No saved grades to export"); return; }
+  const html = buildPrintableGradeHtml(rows, {
+    title: "Speaking Performance Grade Report",
+    subtitle: "Latest saved speaking grades from this device",
+    includePending: false
+  });
+  openPrintableReport(html, `all-speaking-grades-${dateForFilename()}.html`);
+}
+
+async function copyClassSummary() {
+  const klass = getSelectedClass();
+  if (!klass) { showToast("Select a class first"); return; }
+  const rows = getClassExportRows();
+  const stats = getRowsStats(rows);
+  const assessed = rows.filter(row => row.status === "Assessed");
+  const lines = [
+    "SPEAKING PERFORMANCE CLASS SUMMARY",
+    `Class: ${klass.label}`,
+    `Generated: ${formatDateTime(new Date())}`,
+    `Assessed: ${stats.assessed}/${stats.total}`,
+    `Pending: ${stats.pending}`,
+    `Average: ${stats.assessed ? formatScore(stats.average) : "N/A"} / 10`,
+    "",
+    "GRADES"
+  ];
+  if (!assessed.length) lines.push("No assessed students yet.");
+  assessed.forEach(({ student, report }) => {
+    lines.push(`#${student.n} ${student.name}: ${formatScore(report.total)} / 10`);
+  });
+  const pending = rows.filter(row => row.status !== "Assessed");
+  if (pending.length) {
+    lines.push("", "PENDING");
+    pending.forEach(({ student }) => lines.push(`#${student.n} ${student.name}`));
+  }
+
+  try {
+    await navigator.clipboard.writeText(lines.join("\n"));
+    showToast("Class summary copied");
+  } catch (error) {
+    fallbackCopy(lines.join("\n"));
+    showToast("Class summary copied");
+  }
+}
+
+function buildPrintableGradeHtml(rows, options = {}) {
+  const title = options.title || "Speaking Performance Grade Report";
+  const subtitle = options.subtitle || "";
+  const stats = getRowsStats(rows);
+  const generated = formatDateTime(new Date());
+  const grouped = rows.reduce((map, row) => {
+    const key = row.klass?.label || row.report?.classLabel || "Class";
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push(row);
+    return map;
+  }, new Map());
+
+  const summaryCards = `
+    <section class="summary-grid">
+      <div><span>Total students</span><strong>${stats.total}</strong></div>
+      <div><span>Assessed</span><strong>${stats.assessed}</strong></div>
+      <div><span>Pending</span><strong>${stats.pending}</strong></div>
+      <div><span>Average</span><strong>${stats.assessed ? `${formatScore(stats.average)} / 10` : "N/A"}</strong></div>
+    </section>
+  `;
+
+  const classSections = Array.from(grouped.entries()).map(([classLabel, classRows]) => {
+    const first = classRows[0] || {};
+    const klass = first.klass || {};
+    const mainRows = classRows.map(({ student, report, status, marked }) => `
+      <tr class="${status === "Assessed" ? "" : "pending"}">
+        <td class="num">${escapeHtml(student?.n || report?.studentNumber || "")}</td>
+        <td><strong>${escapeHtml(student?.name || report?.studentName || "")}</strong></td>
+        <td class="score">${status === "Assessed" ? escapeHtml(formatScore(report?.total || 0)) : "-"}</td>
+        <td>${escapeHtml(status)}</td>
+        <td>${escapeHtml(marked || 0)}/${RUBRIC.length}</td>
+        <td>${escapeHtml(report?.activity || "")}</td>
+        <td>${escapeHtml((report?.notes || []).join(" · "))}</td>
+        <td>${escapeHtml(report?.comment || "")}</td>
+      </tr>
+    `).join("");
+
+    const detailRows = classRows.filter(row => row.status === "Assessed").map(({ student, report }) => {
+      const rowMap = Object.fromEntries((report?.rows || []).map(row => [row.criterion, row]));
+      const cells = RUBRIC.map((criterion, index) => {
+        const row = rowMap[criterion.title];
+        return `<td>${row ? `${escapeHtml(row.level)}<br><b>${escapeHtml(formatScore(row.points))}/${escapeHtml(formatScore(row.max))}</b>` : "-"}</td>`;
+      }).join("");
+      return `
+        <tr>
+          <td class="num">${escapeHtml(student?.n || "")}</td>
+          <td><strong>${escapeHtml(student?.name || "")}</strong></td>
+          ${cells}
+        </tr>
+      `;
+    }).join("");
+
+    return `
+      <section class="class-section">
+        <h2>${escapeHtml(classLabel)}</h2>
+        <p class="class-meta">${escapeHtml(klass.course || "")} ${klass.section ? `· Paralelo ${escapeHtml(klass.section)}` : ""} ${klass.tutor ? `· Tutor(a): ${escapeHtml(klass.tutor)}` : ""}</p>
+        <h3>General grade table</h3>
+        <table>
+          <thead>
+            <tr>
+              <th class="num">No.</th>
+              <th>Student</th>
+              <th class="score">Score /10</th>
+              <th>Status</th>
+              <th>Rubric</th>
+              <th>Activity</th>
+              <th>Quick notes</th>
+              <th>Teacher comment</th>
+            </tr>
+          </thead>
+          <tbody>${mainRows}</tbody>
+        </table>
+        <h3>Rubric details</h3>
+        ${detailRows ? `
+        <table class="detail-table">
+          <thead>
+            <tr>
+              <th class="num">No.</th>
+              <th>Student</th>
+              ${RUBRIC_SHORT.map(label => `<th>${escapeHtml(label)}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>${detailRows}</tbody>
+        </table>` : `<p class="empty-note">No assessed students for rubric detail yet.</p>`}
+      </section>
+    `;
+  }).join("");
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${escapeHtml(title)}</title>
+<style>
+  @page { size: A4 landscape; margin: 10mm; }
+  * { box-sizing: border-box; }
+  body { margin: 0; color: #16223e; font-family: Arial, Helvetica, sans-serif; background: #f3f7ff; }
+  .page { max-width: 1180px; margin: 0 auto; padding: 18px; }
+  header { padding: 18px 20px; color: #fff; background: linear-gradient(135deg, #1375ff, #084bb5); border-radius: 18px; }
+  .eyebrow { margin: 0 0 6px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; opacity: .84; }
+  h1 { margin: 0; font-size: 30px; letter-spacing: -.04em; }
+  .subtitle { margin: 8px 0 0; font-weight: 700; opacity: .92; }
+  .generated { margin: 6px 0 0; font-size: 12px; opacity: .82; }
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0; }
+  .summary-grid div { padding: 12px; border: 1px solid #d8e4ff; border-radius: 14px; background: #fff; }
+  .summary-grid span { display: block; color: #65708a; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+  .summary-grid strong { display: block; margin-top: 5px; font-size: 22px; }
+  .class-section { margin-top: 16px; padding: 14px; border: 1px solid #d8e4ff; border-radius: 16px; background: #fff; page-break-inside: avoid; }
+  h2 { margin: 0; font-size: 22px; color: #084bb5; }
+  .class-meta { margin: 5px 0 12px; color: #65708a; font-size: 12px; font-weight: 700; }
+  h3 { margin: 14px 0 7px; font-size: 14px; color: #17233f; }
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; table-layout: fixed; }
+  th, td { border: 1px solid #d7def0; padding: 6px; vertical-align: top; word-wrap: break-word; }
+  th { color: #fff; background: #1375ff; font-size: 10px; text-transform: uppercase; letter-spacing: .03em; }
+  tbody tr:nth-child(even) { background: #f8fbff; }
+  .pending { color: #68738b; background: #fff9eb !important; }
+  .num { width: 38px; text-align: center; }
+  .score { width: 62px; text-align: center; font-weight: 800; }
+  .detail-table th:nth-child(2), .detail-table td:nth-child(2) { width: 190px; }
+  .detail-table td { font-size: 9.6px; }
+  .empty-note { margin: 0; padding: 10px; border: 1px dashed #d7def0; border-radius: 10px; color: #65708a; }
+  footer { margin-top: 14px; color: #65708a; font-size: 11px; text-align: center; }
+  @media print {
+    body { background: #fff; }
+    .page { max-width: none; padding: 0; }
+    header, .summary-grid div, .class-section { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <p class="eyebrow">Unidad Educativa Particular Lev Vigotsky · English Area</p>
+      <h1>${escapeHtml(title)}</h1>
+      <p class="subtitle">${escapeHtml(subtitle)}</p>
+      <p class="generated">Generated: ${escapeHtml(generated)} · Teacher: Mr. David Santana</p>
+    </header>
+    ${summaryCards}
+    ${classSections || `<p class="empty-note">No saved grades available.</p>`}
+    <footer>Generated by Speaking Report Maker. Scores follow the 2026-2027 oral speaking rubric.</footer>
+  </main>
+</body>
+</html>`;
+}
+
+function openPrintableReport(html, fallbackFilename) {
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    downloadBlob(html, fallbackFilename, "text/html;charset=utf-8");
+    showToast("Popup blocked. Printable HTML exported instead.");
+    return;
+  }
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+  }, 450);
+  showToast("PDF layout opened. Choose Save as PDF.");
+}
+
+function safeDateLabel(isoDate) {
+  const date = new Date(isoDate);
+  if (Number.isNaN(date.getTime())) return "";
+  return formatDateTime(date);
 }
 
 function clearHistory() {
   if (!confirm("Clear all saved reports from this device?")) return;
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(STATUS_KEY);
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith("lv-draft-")) localStorage.removeItem(key);
+  });
   renderHistory();
   renderClasses();
   showToast("History cleared");
