@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1875ff" />
+  <title>Speaking Report Maker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="background-art" aria-hidden="true">
+    <div class="burst burst-one"></div>
+    <div class="burst burst-two"></div>
+    <div class="checker checker-one"></div>
+    <div class="checker checker-two"></div>
+  </div>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true">🦉</div>
+      <div>
+        <p class="eyebrow">Lev Vigotsky · English Area</p>
+        <h1>Speaking Report Maker</h1>
+      </div>
+      <button class="icon-button" id="openHistory" type="button" aria-label="Open saved reports">☰</button>
+    </header>
+
+    <main>
+      <section class="screen screen-active" id="classScreen" aria-labelledby="classTitle">
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow dark">Step 1</p>
+            <h2 id="classTitle">Select a class</h2>
+            <p class="hero-copy">Choose the course first. Then select the student, mark the rubric, add quick notes, and send the report to WhatsApp.</p>
+          </div>
+          <div class="phone-chip">Mobile ready</div>
+        </div>
+
+        <div class="class-grid" id="classGrid"></div>
+      </section>
+
+      <section class="screen" id="assessmentScreen" aria-labelledby="assessmentTitle">
+        <div class="class-strip">
+          <button class="back-button" id="backToClasses" type="button">← Classes</button>
+          <div>
+            <p class="eyebrow dark">Selected class</p>
+            <h2 id="assessmentTitle">Assessment</h2>
+            <p id="classMeta" class="small-muted"></p>
+          </div>
+        </div>
+
+        <section class="panel student-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Step 2</p>
+              <h3>Student and activity</h3>
+            </div>
+            <span class="student-count" id="studentCount">0 students</span>
+          </div>
+
+          <label class="field-label" for="activityInput">Activity title</label>
+          <input class="text-input" id="activityInput" type="text" value="Oral speaking assessment" autocomplete="off" />
+
+          <label class="field-label" for="studentSearch">Find student</label>
+          <input class="text-input" id="studentSearch" type="search" placeholder="Type a name or list number…" autocomplete="off" />
+
+          <label class="field-label" for="studentSelect">Student</label>
+          <select class="text-input" id="studentSelect"></select>
+
+          <div class="student-actions">
+            <button class="ghost-button" id="previousStudent" type="button">← Previous</button>
+            <button class="ghost-button" id="nextStudent" type="button">Next →</button>
+            <button class="ghost-button danger" id="resetCurrent" type="button">Reset</button>
+          </div>
+        </section>
+
+        <section class="score-card" aria-live="polite">
+          <div>
+            <p class="eyebrow light">Current score</p>
+            <strong id="scoreValue">0 / 10</strong>
+            <span id="scoreStatus">No criteria marked yet</span>
+          </div>
+          <div class="score-ring" id="scoreRing">0%</div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head sticky-mini">
+            <div>
+              <p class="eyebrow dark">Step 3</p>
+              <h3>Rubric checklist</h3>
+            </div>
+            <button class="ghost-button" id="markExcellent" type="button">All excellent</button>
+          </div>
+          <div class="rubric-list" id="rubricList"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Step 4</p>
+              <h3>Quick observations</h3>
+            </div>
+            <button class="ghost-button" id="clearNotes" type="button">Clear</button>
+          </div>
+          <div class="quick-notes" id="quickNotes"></div>
+
+          <label class="field-label" for="teacherComment">Teacher comment</label>
+          <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
+        </section>
+
+        <section class="panel preview-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Step 5</p>
+              <h3>Report preview</h3>
+            </div>
+            <button class="ghost-button" id="refreshPreview" type="button">Refresh</button>
+          </div>
+          <pre id="reportPreview" class="report-preview"></pre>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <nav class="action-bar" id="actionBar" aria-label="Report actions">
+    <button id="saveReport" type="button" class="secondary-action">Save</button>
+    <button id="copyReport" type="button" class="secondary-action">Copy</button>
+    <button id="exportTxt" type="button" class="secondary-action">TXT</button>
+    <button id="shareWhatsapp" type="button" class="primary-action">WhatsApp</button>
+  </nav>
+
+  <dialog class="history-dialog" id="historyDialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow dark">Local history</p>
+        <h2>Saved reports</h2>
+      </div>
+      <button class="icon-button dark-icon" id="closeHistory" type="button" aria-label="Close history">×</button>
+    </div>
+    <div class="history-actions">
+      <button class="ghost-button" id="exportCsv" type="button">Export all CSV</button>
+      <button class="ghost-button danger" id="clearHistory" type="button">Clear history</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
