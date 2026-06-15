@@ -36,8 +36,16 @@ document.querySelectorAll("[data-answer]").forEach(function(button) {
 ----------------------------------------------  */
 async function startCamera() {
      if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (location.protocol == "file:") {
+          setStatus("Camera cannot open from file://. Open this scanner from the QR on the Wix/HTTPS site or run a local server.", true);
+          return;
+     }
      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+     if (!window.jsQR) {
+          setStatus("Scanner library did not load. Check internet connection or use manual backup.", true);
           return;
      }
      try {

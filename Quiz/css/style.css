@@ -4550,3 +4550,84 @@ h2, .ribbon h2, .question-card h2 {
 .paper-roster-panel .paper-button-row .arcade-btn:hover {
   transform: translateY(-2px) scale(1.01) !important;
 }
+
+
+/* -------------------------------------------------------------
+# V43 Paper Mode Print QR And Camera Fixes
+--------------------------------------------------------------*/
+.paper-session-qr {
+  overflow: visible !important;
+}
+
+.paper-session-qr small {
+  display: block;
+  margin-top: 6px;
+  color: #16407d;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.paper-session-link a {
+  display: inline-block;
+  margin: 7px auto;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #16407d;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.paper-print-area {
+  display: none !important;
+}
+
+.paper-roster-panel {
+  grid-template-rows: auto auto minmax(0, 1fr) 78px !important;
+  padding-bottom: 22px !important;
+  overflow: hidden !important;
+}
+
+.paper-roster-list {
+  min-height: 0 !important;
+  margin-bottom: 10px !important;
+  padding-bottom: 8px !important;
+}
+
+.paper-roster-panel .paper-button-row {
+  min-height: 70px !important;
+  height: 70px !important;
+  align-self: end !important;
+  overflow: visible !important;
+  padding-bottom: 2px !important;
+}
+
+.paper-roster-panel .paper-button-row .arcade-btn {
+  min-height: 60px !important;
+  height: 60px !important;
+  padding: 8px 9px !important;
+  line-height: 1.04 !important;
+}
+
+.paper-scanner-panel {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 999 !important;
+  display: grid;
+  place-items: center;
+  background: rgba(22,64,125,.56) !important;
+}
+
+.paper-scanner-panel.hidden {
+  display: none !important;
+}
+
+.paper-scanner-status.bad {
+  background: #ffe1e5 !important;
+  color: #a51226 !important;
+  border: 3px solid rgba(165,18,38,.22) !important;
+}
+
+@media print {
+  #stage { display: none !important; }
+}
