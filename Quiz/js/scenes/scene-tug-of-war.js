@@ -607,8 +607,17 @@ function applyTugPenguinPose(penguin, side, pose, finalShift, tilt) {
      const poseData = sideMap[pose] || sideMap.regular;
 
      if (penguin.dataset.poseSrc != poseData.src) {
-          penguin.src = poseData.src;
+          penguin.onerror = function() {
+               penguin.dataset.assetMissing = "true";
+               penguin.removeAttribute("src");
+               penguin.classList.add("sprite-missing");
+          };
+          penguin.onload = function() {
+               penguin.dataset.assetMissing = "false";
+               penguin.classList.remove("sprite-missing");
+          };
           penguin.dataset.poseSrc = poseData.src;
+          penguin.src = poseData.src;
      }
 
      penguin.style.setProperty("--drag-x", `${finalShift}px`);

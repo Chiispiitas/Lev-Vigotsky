@@ -3760,3 +3760,793 @@ h2, .ribbon h2, .question-card h2 {
 .owl-title-card .press-any {
   font-size: 36px !important;
 }
+
+/* -------------------------------------------------------------
+# V40 Base Format Selection + Paper Mode
+--------------------------------------------------------------*/
+.base-mode-layout {
+  position: relative;
+  z-index: 2;
+  width: 1580px;
+  height: 790px;
+  margin: 34px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+}
+
+.base-mode-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 22px;
+  padding: 60px 64px;
+  border: 9px solid #fff;
+  border-radius: 50px;
+  color: #16407d;
+  background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(214,244,255,.94));
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transform: rotate(-1deg);
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.base-mode-card:hover {
+  transform: rotate(-1deg) translateY(-10px) scale(1.02);
+  filter: brightness(1.04);
+}
+
+.base-mode-card.paper-card {
+  transform: rotate(1deg);
+  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,237,164,.94));
+}
+
+.base-mode-card.paper-card:hover {
+  transform: rotate(1deg) translateY(-10px) scale(1.02);
+}
+
+.base-mode-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -80px -90px auto;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  background: rgba(255, 179, 74, .34);
+}
+
+.base-mode-icon {
+  font-size: 118px;
+  filter: drop-shadow(0 12px 0 rgba(22,64,125,.16));
+}
+
+.base-mode-tag {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: linear-gradient(#fff171, #ff9d2f);
+  border: 5px solid #fff;
+  color: #16407d;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+.base-mode-card h2 {
+  margin: 0;
+  font-size: 74px;
+  line-height: .92;
+  text-shadow: 0 6px 0 #fff;
+}
+
+.base-mode-card p {
+  width: 82%;
+  margin: 0;
+  font-size: 27px;
+  font-weight: 800;
+  line-height: 1.12;
+  color: rgba(22,64,125,.84);
+}
+
+.paper-ribbon h2 {
+  font-size: 40px;
+}
+
+.paper-lobby-layout {
+  width: 1760px;
+  height: 875px;
+  margin: 18px auto 0;
+  display: grid;
+  grid-template-columns: 500px 720px 500px;
+  gap: 24px;
+}
+
+.paper-panel {
+  overflow: hidden;
+  border: 7px solid #fff;
+  border-radius: 34px;
+  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(221,245,255,.96));
+  color: #16407d;
+  box-shadow: 0 14px 0 rgba(22,64,125,.16), 0 28px 44px rgba(22,64,125,.18);
+  padding: 22px;
+}
+
+.paper-panel-head {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.paper-step {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(#fff171, #ff9d2f);
+  border: 4px solid #fff;
+  font-size: 28px;
+  font-weight: 900;
+  box-shadow: 0 6px 0 rgba(22,64,125,.18);
+}
+
+.paper-panel h3 {
+  margin: 0;
+  font-size: 31px;
+  line-height: 1;
+}
+
+.paper-panel p {
+  margin: 4px 0 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: rgba(22,64,125,.72);
+}
+
+.paper-field {
+  display: block;
+  margin: 12px 0;
+}
+
+.paper-field span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.paper-field input,
+.paper-manual-scan input {
+  width: 100%;
+  height: 46px;
+  border: 4px solid rgba(22,64,125,.22);
+  border-radius: 16px;
+  padding: 0 12px;
+  color: #16407d;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+  outline: none;
+  background: rgba(255,255,255,.92);
+}
+
+.paper-field.compact {
+  width: 118px;
+  margin: 0;
+}
+
+.paper-camera-choice {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.paper-choice {
+  min-height: 54px;
+  border: 4px solid #fff;
+  border-radius: 18px;
+  background: linear-gradient(#fff, #dff2ff);
+  color: #16407d;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 900;
+  box-shadow: 0 6px 0 rgba(22,64,125,.14);
+}
+
+.paper-choice.active {
+  background: linear-gradient(#a9ffba, #38c96b);
+}
+
+.paper-lobby-status {
+  margin-top: 16px;
+  padding: 14px;
+  min-height: 62px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.7);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.paper-lobby-status.bad {
+  background: rgba(255, 210, 216, .92);
+  color: #b5122a;
+}
+
+.paper-card-count-row,
+.paper-button-row {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.paper-roster-list {
+  height: 575px;
+  overflow: auto;
+  padding-right: 8px;
+}
+
+.paper-roster-row {
+  display: grid;
+  grid-template-columns: 38px 86px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 7px;
+  padding: 8px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.64);
+}
+
+.paper-roster-row span,
+.paper-roster-row b {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.paper-roster-row input {
+  height: 34px;
+  border: 3px solid rgba(22,64,125,.18);
+  border-radius: 12px;
+  color: #16407d;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 0 9px;
+}
+
+.paper-session-qr {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  margin: 18px 0;
+  border: 5px dashed rgba(22,64,125,.2);
+  border-radius: 24px;
+  background: rgba(255,255,255,.54);
+  font-size: 22px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.paper-session-qr img {
+  width: 260px;
+  height: 260px;
+  border: 8px solid #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 0 rgba(22,64,125,.12);
+}
+
+.paper-session-link {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.68);
+  word-break: break-all;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.paper-print-area {
+  display: none;
+}
+
+.paper-game-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  width: 1760px;
+  margin: 22px auto 0;
+}
+
+.paper-session-chip {
+  justify-self: start;
+}
+
+.paper-game-layout {
+  width: 1760px;
+  height: 960px;
+  margin: 16px auto 0;
+  display: grid;
+  grid-template-columns: 1fr 450px;
+  gap: 24px;
+}
+
+.paper-question-zone {
+  display: grid;
+  grid-template-rows: 240px 1fr 92px;
+  gap: 18px;
+}
+
+.paper-question-card {
+  height: 220px;
+  padding: 32px 42px;
+}
+
+.paper-question-card h2 {
+  font-size: 46px;
+  line-height: 1.08;
+}
+
+.paper-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.paper-option {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  align-items: center;
+  gap: 18px;
+  min-height: 180px;
+  padding: 22px;
+  border: 8px solid #fff;
+  border-radius: 32px;
+  background: linear-gradient(135deg, #fff, #e6f6ff);
+  color: #16407d;
+  box-shadow: 0 10px 0 rgba(22,64,125,.13);
+}
+
+.paper-option b {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: linear-gradient(#fff171, #ff9d2f);
+  color: #16407d;
+  font-size: 44px;
+  box-shadow: 0 6px 0 rgba(22,64,125,.16);
+}
+
+.paper-option span {
+  font-size: 35px;
+  font-weight: 900;
+  line-height: 1.06;
+}
+
+.paper-option.correct {
+  background: linear-gradient(135deg, #78ec8e, #25ba5e);
+  color: #fff;
+  text-shadow: 0 3px 0 rgba(0,0,0,.16);
+}
+
+.paper-game-controls {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: center;
+}
+
+.paper-live-panel {
+  border: 7px solid #fff;
+  border-radius: 34px;
+  background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,241,182,.96));
+  box-shadow: 0 14px 0 rgba(22,64,125,.16);
+  padding: 20px;
+  color: #16407d;
+}
+
+.paper-live-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.paper-live-head h3 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.paper-live-head span {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.paper-live-answers {
+  height: 840px;
+  overflow: auto;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.paper-answer-row {
+  display: grid;
+  grid-template-columns: 1fr 58px;
+  gap: 10px;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.66);
+  color: #16407d;
+}
+
+.paper-answer-row b {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 17px;
+}
+
+.paper-answer-row span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 36px;
+  border-radius: 12px;
+  background: #d8e6f5;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.paper-answer-row.answered span {
+  background: #ffe378;
+}
+
+.paper-answer-row.correct span {
+  background: #38c96b;
+  color: #fff;
+}
+
+.paper-answer-row.wrong span {
+  background: #f2526a;
+  color: #fff;
+}
+
+.paper-scanner-panel {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(22,64,125,.5);
+}
+
+.paper-scanner-card {
+  width: 760px;
+  padding: 24px;
+  border: 7px solid #fff;
+  border-radius: 34px;
+  background: linear-gradient(135deg, #fff, #ddf5ff);
+  color: #16407d;
+  box-shadow: var(--shadow);
+}
+
+.paper-scanner-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.paper-scanner-head h3 {
+  margin: 0;
+  font-size: 34px;
+}
+
+#paperScannerVideo {
+  display: block;
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  border: 6px solid #16407d;
+  border-radius: 24px;
+  background: #0e1a2a;
+}
+
+.paper-scanner-status {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.74);
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.paper-scanner-status.bad {
+  color: #b5122a;
+  background: #ffd2d8;
+}
+
+.paper-manual-scan {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+}
+
+.paper-manual-answer {
+  width: 56px;
+  height: 46px;
+  border: 4px solid #fff;
+  border-radius: 14px;
+  background: linear-gradient(#fff171, #ff9d2f);
+  color: #16407d;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.printable-paper-card,
+.paper-print-sheet-title {
+  display: none;
+}
+
+@media print {
+  body * { visibility: hidden !important; }
+  #paperPrintArea, #paperPrintArea * { visibility: visible !important; }
+  #paperPrintArea {
+    display: block !important;
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    color: #123865;
+    background: #fff;
+  }
+  .paper-print-sheet-title {
+    display: block !important;
+    font: 900 18pt Arial, sans-serif;
+    margin: 8mm;
+  }
+  .printable-paper-card {
+    display: inline-block !important;
+    vertical-align: top;
+    width: 62mm;
+    height: 86mm;
+    margin: 4mm;
+    padding: 3mm;
+    border: 1.5mm solid #173b6d;
+    border-radius: 6mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    font-family: Arial, sans-serif;
+    color: #173b6d;
+    background: #fff;
+  }
+  .paper-card-name { font-size: 16pt; font-weight: 900; line-height: 1.05; }
+  .paper-card-id { font-size: 8pt; color: #456; margin-top: 1mm; }
+  .paper-answer-qr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; margin-top: 3mm; }
+  .paper-answer-qr { text-align: center; border: .5mm solid #d7e2ee; border-radius: 3mm; padding: 1mm; }
+  .paper-answer-qr b { display: block; font-size: 20pt; line-height: 1; }
+  .paper-qr-img img { width: 22mm; height: 22mm; }
+  .paper-card-note { font-size: 8pt; margin-top: 2mm; text-align: center; }
+}
+
+
+/* -------------------------------------------------------------
+# V41 Paper Mode Hardcoded Wix And Q Cards
+--------------------------------------------------------------*/
+.paper-lobby-layout {
+  height: 875px !important;
+  grid-template-columns: 500px 720px 500px !important;
+}
+
+.paper-setup-panel {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  align-content: start;
+}
+
+.paper-roster-panel {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.paper-roster-list {
+  height: auto !important;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 8px;
+  margin-bottom: 12px;
+}
+
+.paper-roster-panel .paper-button-row {
+  margin: 0 !important;
+  align-self: end;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px !important;
+}
+
+.paper-roster-panel .paper-button-row .arcade-btn {
+  min-height: 56px;
+  padding: 8px 10px;
+  font-size: 17px;
+  line-height: 1.05;
+}
+
+.qcard-printable {
+  display: none;
+}
+
+.paper-qcard-code img {
+  image-rendering: auto;
+}
+
+@media print {
+  .qcard-printable {
+    display: inline-block !important;
+    position: relative !important;
+    width: 178mm !important;
+    height: 178mm !important;
+    margin: 4mm !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    color: #111 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+  }
+
+  .paper-qcard-code {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    width: 86mm !important;
+    height: 54mm !important;
+    transform: translate(-50%, -50%) !important;
+    display: grid !important;
+    place-items: center !important;
+    background: #000 !important;
+  }
+
+  .paper-qcard-code img {
+    width: 49mm !important;
+    height: 49mm !important;
+    filter: invert(1) !important;
+  }
+
+  .paper-qcard-letter {
+    position: absolute !important;
+    font: 700 9pt Arial, sans-serif !important;
+    color: #555 !important;
+  }
+
+  .paper-qcard-letter.a { left: 50% !important; top: 42mm !important; transform: translateX(-50%) !important; }
+  .paper-qcard-letter.b { right: 46mm !important; top: 50% !important; transform: translateY(-50%) !important; }
+  .paper-qcard-letter.c { left: 50% !important; bottom: 42mm !important; transform: translateX(-50%) !important; }
+  .paper-qcard-letter.d { left: 46mm !important; top: 50% !important; transform: translateY(-50%) !important; }
+
+  .paper-qcard-corner {
+    position: absolute !important;
+    font: 700 11pt Arial, sans-serif !important;
+    color: #222 !important;
+  }
+
+  .top-left { left: 7mm !important; top: 8mm !important; writing-mode: vertical-rl !important; transform: rotate(180deg) !important; }
+  .top-right { right: 8mm !important; top: 8mm !important; }
+  .bottom-left { left: 7mm !important; bottom: 8mm !important; transform: rotate(180deg) !important; }
+  .bottom-right { right: 8mm !important; bottom: 8mm !important; writing-mode: vertical-rl !important; }
+
+  .paper-qcard-brand {
+    position: absolute !important;
+    font: 700 8pt Arial, sans-serif !important;
+    color: #cfd2d6 !important;
+  }
+
+  .top-brand { left: 50% !important; top: 26mm !important; transform: translateX(-50%) !important; }
+  .left-brand { left: 18mm !important; top: 50% !important; transform: translateY(-50%) rotate(-90deg) !important; }
+  .right-brand { right: 18mm !important; top: 50% !important; transform: translateY(-50%) rotate(90deg) !important; }
+
+  .paper-qcard-name {
+    position: absolute !important;
+    left: 50% !important;
+    top: 13mm !important;
+    transform: translateX(-50%) !important;
+    font: 800 11pt Arial, sans-serif !important;
+    color: #222 !important;
+    max-width: 75mm !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .paper-qcard-cut {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    text-align: center !important;
+    font: 700 8pt Arial, sans-serif !important;
+    color: #999 !important;
+    border-top: 1px dashed #aaa !important;
+  }
+
+  .top-cut { top: 23mm !important; }
+  .bottom-cut { bottom: 23mm !important; }
+}
+
+
+/* -------------------------------------------------------------
+# V42 Console And Paper Panel Fixes
+--------------------------------------------------------------*/
+.tug-penguin.sprite-missing {
+  opacity: 0 !important;
+}
+
+.tug-arena::after {
+  content: "";
+}
+
+.tug-penguin.sprite-missing + .tug-penguin.sprite-missing ~ .tug-rope-track::before {
+  content: "Add external penguin PNGs to assets/img for Tug-of-War";
+  position: absolute;
+  left: 50%;
+  top: -58px;
+  transform: translateX(-50%);
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.86);
+  color: #16407d;
+  font-weight: 900;
+  font-size: 18px;
+  white-space: nowrap;
+  box-shadow: 0 6px 0 rgba(22,64,125,.12);
+}
+
+.paper-lobby-layout {
+  height: 850px !important;
+  margin-top: 14px !important;
+}
+
+.paper-panel {
+  box-sizing: border-box !important;
+}
+
+.paper-roster-panel {
+  grid-template-rows: auto auto minmax(0, 1fr) 70px !important;
+  padding-bottom: 18px !important;
+}
+
+.paper-roster-list {
+  min-height: 0 !important;
+  max-height: none !important;
+  margin-bottom: 8px !important;
+}
+
+.paper-roster-panel .paper-button-row {
+  min-height: 62px !important;
+  overflow: visible !important;
+  align-self: stretch !important;
+  align-items: stretch !important;
+}
+
+.paper-roster-panel .paper-button-row .arcade-btn {
+  min-height: 56px !important;
+  height: 56px !important;
+  transform: none;
+}
+
+.paper-roster-panel .paper-button-row .arcade-btn:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+}

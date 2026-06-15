@@ -1,6 +1,6 @@
 Penguin sprite files are intentionally not embedded in this ZIP.
 
-Place the following external PNG files in this folder:
+Place these external PNG files here if you want Tug-of-War mode to display characters:
 
 penguin-blue-regular.png
 penguin-blue-stressed.png
@@ -11,4 +11,4 @@ penguin-pink-stressed.png
 penguin-pink-win.png
 penguin-pink-lose.png
 
-The app expects these filenames for Tug-of-War mode.
+The game references these filenames from assets/img/.

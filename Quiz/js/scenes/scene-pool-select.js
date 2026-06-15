@@ -118,7 +118,7 @@ function bindPool() {
   $("#goTeamsBtn").addEventListener("click", () => {
     if (!state.questions.length) return;
     playSound("start");
-    showScreen("modeSelect");
+    showScreen("baseModeSelect");
   });
 }
 /* ---------------------------------------------- 

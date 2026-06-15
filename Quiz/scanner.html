@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Whiteboard Paper Scanner</title>
+    <link href="css/scanner.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+</head>
+<body>
+    <main class="scanner-app">
+        <header class="scanner-header">
+            <div>
+                <span>MR. DAVID'S</span>
+                <h1>Paper Scanner</h1>
+            </div>
+            <button id="btnStartCamera">Start Camera</button>
+        </header>
+
+        <section class="session-card">
+            <p>Session</p>
+            <b id="scannerSessionId">No session</b>
+            <small id="scannerApiStatus">Wix API not configured</small>
+        </section>
+
+        <section class="camera-card">
+            <video id="scannerVideo" muted playsinline></video>
+            <canvas id="scannerCanvas" hidden></canvas>
+            <div id="scannerStatus">Scan a printed Q-card. Rotate the chosen answer above the code.</div>
+        </section>
+
+        <section class="manual-card">
+            <h2>Manual Backup</h2>
+            <input id="manualCardId" type="text" placeholder="Card ID, e.g. P01">
+            <div class="answer-buttons">
+                <button data-answer="A">A</button>
+                <button data-answer="B">B</button>
+                <button data-answer="C">C</button>
+                <button data-answer="D">D</button>
+            </div>
+        </section>
+
+        <section class="log-card">
+            <h2>Scans</h2>
+            <div id="scanLog"></div>
+        </section>
+    </main>
+    <script src="js/scanner.js"></script>
+</body>
+</html>

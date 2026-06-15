@@ -435,6 +435,8 @@ const state = {
   activeGameTeamId: null,
   editorQuestions: [],
   selectedMode: "",
+  baseMode: "",
+  paper: null,
   tug: null
 };
 
@@ -450,6 +452,10 @@ const screens = {
   title: $("#titleScreen"),
   pool: $("#poolScreen"),
   poolSelect: $("#poolScreen"),
+  baseMode: $("#baseModeScreen"),
+  baseModeSelect: $("#baseModeScreen"),
+  paperLobby: $("#paperLobbyScreen"),
+  paperGame: $("#paperGameScreen"),
   mode: $("#modeScreen"),
   modeSelect: $("#modeScreen"),
   teams: $("#teamScreen"),
@@ -793,6 +799,8 @@ function init() {
     if ((screens.title && screens.title.classList.contains("active")) ||
         (screens.pool && screens.pool.classList.contains("active")) ||
         (screens.mode && screens.mode.classList.contains("active")) ||
+        (screens.baseMode && screens.baseMode.classList.contains("active")) ||
+        (screens.paperLobby && screens.paperLobby.classList.contains("active")) ||
         (screens.teams && screens.teams.classList.contains("active"))) {
       startBgm("title");
     }
@@ -831,6 +839,11 @@ function setupScenes() {
 
   sceneManager.setAliases({
     pool: "poolSelect",
+    base: "baseModeSelect",
+    baseMode: "baseModeSelect",
+    paperLobby: "paperLobby",
+    paper: "paperLobby",
+    paperGame: "paperGame",
     modes: "modeSelect",
     mode: "modeSelect",
     teams: "teamSelect",
@@ -840,7 +853,7 @@ function setupScenes() {
     podium: "results"
   });
 
-  ["title", "poolSelect", "modeSelect", "teamSelect", "quiz", "tugOfWar", "results"].forEach(name => {
+  ["title", "poolSelect", "baseModeSelect", "modeSelect", "paperLobby", "paperGame", "teamSelect", "quiz", "tugOfWar", "results"].forEach(name => {
     if (typeof definitions[name] === "function") {
       sceneManager.register(name, definitions[name](sceneApi));
     }
@@ -855,7 +868,7 @@ function setupScenes() {
 function showScreen(name, payload = {}) {
   if (window.SceneManager && window.SceneManager.go(name, payload)) return;
 
-  const legacyAliases = { poolSelect: "pool", modeSelect: "mode", teamSelect: "teams", quiz: "game", results: "podium" };
+  const legacyAliases = { poolSelect: "pool", baseModeSelect: "baseMode", modeSelect: "mode", paperLobby: "paperLobby", paperGame: "paperGame", teamSelect: "teams", quiz: "game", results: "podium" };
   const legacyName = legacyAliases[name] || name;
   Object.values(screens).forEach(screen => screen && screen.classList.remove("active"));
   if (screens[legacyName]) screens[legacyName].classList.add("active");

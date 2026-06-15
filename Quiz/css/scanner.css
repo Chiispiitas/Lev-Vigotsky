@@ -1,0 +1,22 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(135deg, #7ed1ff, #fff08a 50%, #ff9f45); color: #123865; }
+.scanner-app { width: min(960px, 100%); min-height: 100vh; margin: 0 auto; padding: 18px; display: grid; gap: 14px; }
+.scanner-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px; border: 5px solid #fff; border-radius: 26px; background: rgba(255,255,255,.78); box-shadow: 0 10px 0 rgba(22,64,125,.16); }
+.scanner-header span { display: inline-block; padding: 7px 13px; border-radius: 999px; background: #ffb43d; color: #123865; font-weight: 900; letter-spacing: .5px; }
+.scanner-header h1 { margin: 8px 0 0; font-size: clamp(32px, 8vw, 58px); line-height: .9; }
+button { border: 4px solid #fff; border-radius: 18px; background: linear-gradient(#fff171, #ff9d2f); color: #123865; font-weight: 900; font-size: 18px; padding: 12px 16px; box-shadow: 0 6px 0 rgba(22,64,125,.15); }
+.session-card, .camera-card, .manual-card, .log-card { padding: 16px; border: 5px solid #fff; border-radius: 24px; background: rgba(255,255,255,.82); box-shadow: 0 8px 0 rgba(22,64,125,.12); }
+.session-card p, .session-card b, .session-card small { display: block; margin: 0 0 4px; overflow-wrap: anywhere; }
+.session-card p { font-size: 14px; font-weight: 800; text-transform: uppercase; opacity: .75; }
+.session-card b { font-size: 23px; }
+.session-card small { font-weight: 800; }
+#scannerVideo { width: 100%; height: min(58vh, 520px); object-fit: cover; border-radius: 18px; background: #0e1a2a; border: 4px solid #123865; }
+#scannerStatus { margin-top: 10px; padding: 12px; border-radius: 16px; background: #e8f5ff; font-weight: 900; }
+#scannerStatus.bad { background: #ffd1d9; color: #a40f25; }
+.manual-card h2, .log-card h2 { margin: 0 0 10px; }
+#manualCardId { width: 100%; height: 52px; border: 4px solid rgba(18,56,101,.28); border-radius: 16px; padding: 0 12px; font-size: 20px; font-weight: 800; color: #123865; }
+.answer-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
+.answer-buttons button { font-size: 26px; padding: 14px 0; }
+#scanLog { display: grid; gap: 8px; }
+.log-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #fff; font-weight: 800; }
+.log-row span:last-child { display: grid; place-items: center; width: 42px; height: 34px; border-radius: 12px; background: #ffe173; font-size: 20px; }

@@ -91,8 +91,163 @@
                     <button id="goTeamsBtn" class="arcade-btn start" disabled>Continue ▶</button>
                 </aside>
             </div>
+        
         </section>
 
+        <section id="baseModeScreen" class="screen">
+            <div class="ribbon">
+                <button id="backToPoolFromBaseBtn" class="small-btn">◀ Pool</button>
+                <h2>Game Format</h2>
+                <div class="mode-ribbon-end"></div>
+            </div>
+
+            <div class="base-mode-layout">
+                <article id="btnBaseWhiteboard" class="base-mode-card whiteboard-card">
+                    <div class="base-mode-icon">🖥️</div>
+                    <div class="base-mode-tag">WHITEBOARD-BASED</div>
+                    <h2>Whiteboard</h2>
+                    <p>Teams play directly on the interactive board. Continue to Student-led or Teacher-led modes.</p>
+                    <button class="arcade-btn start">Choose Whiteboard ▶</button>
+                </article>
+
+                <article id="btnBasePaper" class="base-mode-card paper-card">
+                    <div class="base-mode-icon">📄</div>
+                    <div class="base-mode-tag">PAPER-BASED</div>
+                    <h2>Paper Mode</h2>
+                    <p>Print QR answer cards, project the question, and scan student cards with a camera or phone.</p>
+                    <button class="arcade-btn start">Choose Paper ▶</button>
+                </article>
+            </div>
+        </section>
+
+        <section id="paperLobbyScreen" class="screen">
+            <div class="ribbon paper-ribbon">
+                <button id="backToBaseFromPaperBtn" class="small-btn">◀ Format</button>
+                <h2>Paper Mode Lobby</h2>
+                <button id="startPaperGameBtn" class="small-btn accent">Start ▶</button>
+            </div>
+
+            <div class="paper-lobby-layout">
+                <section class="paper-panel paper-setup-panel">
+                    <div class="paper-panel-head">
+                        <span class="paper-step">1</span>
+                        <div>
+                            <h3>Session Setup</h3>
+                            <p>Only multiple-choice questions are used. Typed questions are skipped in Paper Mode.</p>
+                        </div>
+                    </div>
+
+                    <label class="paper-field">
+                        <span>Session title</span>
+                        <input id="paperSessionTitle" type="text" maxlength="42" value="Whiteboard Paper Quiz">
+                    </label>
+
+                    <div class="paper-camera-choice">
+                        <button id="paperUseBoardCameraBtn" class="paper-choice active" data-paper-camera="board">📷 Use this device camera</button>
+                        <button id="paperUsePhoneCameraBtn" class="paper-choice" data-paper-camera="phone">📱 Use external phone</button>
+                    </div>
+
+                    <div class="paper-lobby-status" id="paperLobbyStatus">Ready to configure printable cards.</div>
+                </section>
+
+                <section class="paper-panel paper-roster-panel">
+                    <div class="paper-panel-head">
+                        <span class="paper-step">2</span>
+                        <div>
+                            <h3>Printable Cards</h3>
+                            <p>Configure up to 60 named Q-cards. Students rotate one card to put A, B, C or D above the code.</p>
+                        </div>
+                    </div>
+
+                    <div class="paper-card-count-row">
+                        <label class="paper-field compact">
+                            <span>Cards</span>
+                            <input id="paperCardCount" type="number" min="1" max="60" value="24">
+                        </label>
+                        <button id="paperApplyCardCountBtn" class="arcade-btn secondary">Apply</button>
+                        <button id="paperClearNamesBtn" class="arcade-btn secondary">Clear Names</button>
+                    </div>
+
+                    <div id="paperRosterList" class="paper-roster-list"></div>
+
+                    <div class="paper-button-row">
+                        <button id="paperGenerateCardsBtn" class="arcade-btn primary">Generate Cards</button>
+                        <button id="paperPrintCardsBtn" class="arcade-btn secondary">Print / Save PDF</button>
+                        <button id="paperDownloadCardsBtn" class="arcade-btn secondary">Download Cards HTML</button>
+                    </div>
+                </section>
+
+                <section class="paper-panel paper-session-panel">
+                    <div class="paper-panel-head">
+                        <span class="paper-step">3</span>
+                        <div>
+                            <h3>Session QR</h3>
+                            <p>Syncs to the hardcoded Wix CMS backend, then scan this QR with the phone scanner.</p>
+                        </div>
+                    </div>
+                    <button id="paperCreateSessionBtn" class="arcade-btn start">Create / Sync Session</button>
+                    <div id="paperSessionQr" class="paper-session-qr">QR will appear here</div>
+                    <div id="paperSessionLink" class="paper-session-link"></div>
+                    <button id="paperOpenBoardScannerBtn" class="arcade-btn secondary">Open Camera Panel</button>
+                </section>
+            </div>
+
+            <div id="paperPrintArea" class="paper-print-area"></div>
+        </section>
+
+        <section id="paperGameScreen" class="screen">
+            <div class="paper-game-topbar">
+                <div id="paperRoundChip" class="chip">Paper Question 1 / 1</div>
+                <div id="paperSessionChip" class="chip paper-session-chip">No session</div>
+                <button id="paperBackToLobbyBtn" class="small-btn">◀ Lobby</button>
+            </div>
+
+            <div class="paper-game-layout">
+                <section class="paper-question-zone">
+                    <div class="question-card slant paper-question-card">
+                        <div class="type-badge">Paper Multiple Choice</div>
+                        <h2 id="paperQuestionText">Question</h2>
+                    </div>
+
+                    <div id="paperOptionsGrid" class="paper-options-grid"></div>
+
+                    <div class="paper-game-controls">
+                        <button id="paperPrevQuestionBtn" class="arcade-btn secondary">◀ Previous</button>
+                        <button id="paperRevealBtn" class="arcade-btn primary">Reveal</button>
+                        <button id="paperNextQuestionBtn" class="arcade-btn start">Next ▶</button>
+                    </div>
+                </section>
+
+                <aside class="paper-live-panel">
+                    <div class="paper-live-head">
+                        <h3>Scanned Answers</h3>
+                        <span id="paperScanCount">0 / 0</span>
+                    </div>
+                    <div id="paperLiveAnswers" class="paper-live-answers"></div>
+                </aside>
+            </div>
+
+            <div id="paperScannerPanel" class="paper-scanner-panel hidden">
+                <div class="paper-scanner-card">
+                    <div class="paper-scanner-head">
+                        <h3>Board Camera Scanner</h3>
+                        <button id="closePaperScannerBtn" class="small-btn">Close ✕</button>
+                    </div>
+                    <video id="paperScannerVideo" muted playsinline></video>
+                    <canvas id="paperScannerCanvas" class="hidden"></canvas>
+                    <div id="paperScannerStatus" class="paper-scanner-status">Camera ready.</div>
+                    <div class="paper-manual-scan">
+                        <input id="paperManualCardId" type="text" placeholder="Card ID, e.g. P01">
+                        <div>
+                            <button class="paper-manual-answer" data-paper-manual-answer="A">A</button>
+                            <button class="paper-manual-answer" data-paper-manual-answer="B">B</button>
+                            <button class="paper-manual-answer" data-paper-manual-answer="C">C</button>
+                            <button class="paper-manual-answer" data-paper-manual-answer="D">D</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section id="modeScreen" class="screen">
             <div class="ribbon">
@@ -206,8 +361,8 @@
                 <div class="tug-team-name tug-left-name" id="tugLeftName">Team 1</div>
                 <div class="tug-team-name tug-right-name" id="tugRightName">Team 2</div>
 
-                <img id="tugPenguinLeft" class="tug-penguin tug-penguin-left" src="assets/img/penguin-blue-regular.png" alt="Blue penguin">
-                <img id="tugPenguinRight" class="tug-penguin tug-penguin-right" src="assets/img/penguin-pink-regular.png" alt="Pink penguin">
+                <img id="tugPenguinLeft" class="tug-penguin tug-penguin-left" alt="Blue penguin" data-missing-note="Place penguin-blue-regular.png in assets/img for Tug-of-War.">
+                <img id="tugPenguinRight" class="tug-penguin tug-penguin-right" alt="Pink penguin" data-missing-note="Place penguin-pink-regular.png in assets/img for Tug-of-War.">
 
                 <div class="tug-rope-track">
                     <div id="tugRopeLine" class="tug-rope-line"></div>
@@ -270,6 +425,10 @@
         </div>
     </main>
 
+    <!-- Paper Mode Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+
     <!-- Database / Main -->
     <script src="js/app.js"></script>
 
@@ -277,7 +436,9 @@
     <script src="js/scenes/scene-manager.js"></script>
     <script src="js/scenes/scene-title.js"></script>
     <script src="js/scenes/scene-pool-select.js"></script>
+    <script src="js/scenes/scene-base-mode.js"></script>
     <script src="js/scenes/scene-mode-select.js"></script>
+    <script src="js/scenes/scene-paper-mode.js"></script>
     <script src="js/scenes/scene-team-select.js"></script>
     <script src="js/scenes/scene-quiz.js"></script>
     <script src="js/scenes/scene-tug-of-war.js"></script>
