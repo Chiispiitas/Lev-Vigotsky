@@ -5223,3 +5223,59 @@ h2, .ribbon h2, .question-card h2 {
   font-size: 12px !important;
   letter-spacing: -.2px !important;
 }
+
+
+/* -------------------------------------------------------------
+# V50 Larger A4 Q-card Print Preview
+--------------------------------------------------------------*/
+@media print {
+  .qcard-printable {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+  }
+
+  .paper-qcard-code {
+    left: 50% !important;
+    top: 50% !important;
+    width: 168mm !important;
+    height: 168mm !important;
+    transform: translate(-50%, -50%) !important;
+    background: transparent !important;
+  }
+
+  .paper-qcode-svg,
+  .paper-qcard-marker.paper-qcode-svg {
+    width: 168mm !important;
+    height: 168mm !important;
+    display: block !important;
+  }
+
+  .paper-qcard-letter {
+    font: 900 31pt Arial, sans-serif !important;
+    line-height: 1 !important;
+    color: #111 !important;
+  }
+
+  .paper-qcard-letter.a { left: 50% !important; top: 49mm !important; transform: translateX(-50%) !important; }
+  .paper-qcard-letter.b { right: 8mm !important; top: 50% !important; transform: translateY(-50%) !important; }
+  .paper-qcard-letter.c { left: 50% !important; bottom: 49mm !important; transform: translateX(-50%) !important; }
+  .paper-qcard-letter.d { left: 8mm !important; top: 50% !important; transform: translateY(-50%) !important; }
+
+  .paper-qcard-corner {
+    font: 900 20pt Arial, sans-serif !important;
+  }
+
+  .top-left { left: 8mm !important; top: 20mm !important; writing-mode: vertical-rl !important; transform: rotate(180deg) !important; }
+  .top-right { right: 14mm !important; top: 20mm !important; }
+  .bottom-left { left: 8mm !important; bottom: 20mm !important; transform: rotate(180deg) !important; }
+  .bottom-right { right: 14mm !important; bottom: 20mm !important; writing-mode: vertical-rl !important; }
+
+  .paper-qcard-collection { top: 7mm !important; }
+  .paper-qcard-name { top: 18mm !important; max-width: 108mm !important; }
+  .top-brand { top: 33mm !important; }
+  .left-brand { left: 12mm !important; }
+  .right-brand { right: 12mm !important; }
+  .top-cut { top: 42mm !important; }
+  .bottom-cut { bottom: 42mm !important; }
+}
