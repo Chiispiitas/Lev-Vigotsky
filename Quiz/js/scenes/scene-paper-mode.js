@@ -1246,7 +1246,7 @@ async function paperDownloadCardsHtml() {
 function paperBuildCardsDocumentHtml(autoPrint) {
      const area = document.getElementById("paperPrintArea");
      const paper = paperState();
-     const printScript = autoPrint ? `<script>window.addEventListener("load",async function(){try{if(document.fonts&&document.fonts.ready){await document.fonts.ready;}}catch(e){}setTimeout(function(){window.focus();window.print();},950);});<\/script>` : "";
+     const printScript = autoPrint ? `<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},550);});<\/script>` : "";
 
      return `<!doctype html>
 <html>
