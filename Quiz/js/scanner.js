@@ -8,25 +8,6 @@ const sessionId = params.get("session") || "";
 const PAPER_API_BASE = "https://chiispiitas.wixsite.com/mr-david-collection/_functions";
 const apiBase = PAPER_API_BASE;
 const localPrefix = "wgc-paper-";
-
-const PAPER_MAX_CARDS = 60;
-const PAPER_ANSWERS = ["A", "B", "C", "D"];
-const PAPER_QCODE_FIXED_BITS = {
-     "0,0": 1, "0,1": 1, "1,0": 1, "1,1": 0,
-     "0,5": 0, "1,5": 1, "5,0": 0, "5,1": 1,
-     "5,5": 1, "4,5": 0
-};
-const PAPER_QCODE_DATA_POSITIONS = (function() {
-     const positions = [];
-     for (let row = 0; row < 6; row += 1) {
-          for (let col = 0; col < 6; col += 1) {
-               if (PAPER_QCODE_FIXED_BITS[`${row},${col}`] === undefined) {
-                    positions.push([row, col]);
-               }
-          }
-     }
-     return positions;
-})();
 var scannerStream = null;
 var scannerFrame = null;
 var scannerBusy = false;
@@ -144,20 +125,6 @@ function startLoop() {
 async function scanCurrentFrame() {
      if (!elVideo || !elCanvas || elVideo.readyState < 2) { return; }
 
-     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
-     const targetWidth = Math.min(720, elVideo.videoWidth || 720);
-     const scale = targetWidth / Math.max(1, elVideo.videoWidth || targetWidth);
-     elCanvas.width = targetWidth;
-     elCanvas.height = Math.max(1, Math.round((elVideo.videoHeight || 405) * scale));
-     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
-     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
-
-     const qcodes = detectQCodesFromImageData(imageData, elCanvas.width, elCanvas.height);
-     if (qcodes.length) {
-          await handleDetectedCodes(qcodes, "phone-qcode");
-          return;
-     }
-
      if (barcodeDetector) {
           const barcodes = await barcodeDetector.detect(elVideo);
           if (barcodes && barcodes.length) {
@@ -169,6 +136,11 @@ async function scanCurrentFrame() {
      }
 
      if (!window.jsQR) { return; }
+     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
+     elCanvas.width = elVideo.videoWidth;
+     elCanvas.height = elVideo.videoHeight;
+     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
      const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
      if (result && result.data) {
           await handleDetectedCodes([{ data: result.data, location: result.location }], "phone-camera");
@@ -192,9 +164,9 @@ function locationFromBarcode(code) {
 async function handleDetectedCodes(codes, source) {
      const accepted = [];
      for (const code of codes) {
-          const payload = code && code.cardId ? code : decodePayload(code.data, code.location);
+          const payload = decodePayload(code.data, code.location);
           if (!payload) { continue; }
-          if (payload.sessionId && payload.sessionId != sessionId) { continue; }
+          if (payload.sessionId != sessionId) { continue; }
           if (!scanShouldSubmit(payload.cardId, payload.answer)) { continue; }
           await submitScan(payload.cardId, payload.answer, source || "phone-camera");
           accepted.push(`${payload.cardId}: ${payload.answer}`);
@@ -221,23 +193,12 @@ function scanShouldSubmit(cardId, answer) {
 function decodePayload(value, location) {
      const parts = String(value || "").trim().split("|");
      if (parts.length == 4 && parts[0] == "WGC") {
-          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: parts[3] };
+          return { sessionId: parts[1], cardId: parts[2], answer: parts[3] };
      }
      if (parts.length == 3 && parts[0] == "WGCQ") {
-          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: answerFromQrLocation(location) };
-     }
-     if (parts.length == 2 && parts[0] == "WGCQ") {
-          return { sessionId: "", cardId: normalizeCardId(parts[1]), answer: answerFromQrLocation(location) };
+          return { sessionId: parts[1], cardId: parts[2], answer: answerFromQrLocation(location) };
      }
      return null;
-}
-
-/* ---------------------------------------------- 
-     Normalize Card ID 
-----------------------------------------------  */
-function normalizeCardId(cardId) {
-     const number = Math.max(1, Math.min(PAPER_MAX_CARDS, Number(String(cardId || "").replace(/\D/g, "")) || 1));
-     return `P${String(number).padStart(2, "0")}`;
 }
 
 /* ---------------------------------------------- 
@@ -252,154 +213,9 @@ function answerFromQrLocation(location) {
      if (angle > 180) { angle -= 360; }
 
      if (angle > -45 && angle <= 45) { return "A"; }
+     if (angle > 45 && angle <= 135) { return "D"; }
      if (angle <= -45 && angle > -135) { return "B"; }
-     if (angle > 135 || angle <= -135) { return "C"; }
-     return "D";
-}
-
-/* ---------------------------------------------- 
-     Q-Code Checksum 
-----------------------------------------------  */
-function qCodeChecksum(value) {
-     return ((value * 37) + 23) & 63;
-}
-
-/* ---------------------------------------------- 
-     Rotate Matrix Clockwise 
-----------------------------------------------  */
-function rotateMatrixClockwise(matrix) {
-     const result = Array.from({ length: 6 }, function() { return Array(6).fill(0); });
-     for (let row = 0; row < 6; row += 1) {
-          for (let col = 0; col < 6; col += 1) {
-               result[col][5 - row] = matrix[row][col];
-          }
-     }
-     return result;
-}
-
-/* ---------------------------------------------- 
-     Fixed Bits Match 
-----------------------------------------------  */
-function qCodeFixedBitsMatch(matrix) {
-     return Object.keys(PAPER_QCODE_FIXED_BITS).every(function(key) {
-          const parts = key.split(",").map(Number);
-          return Number(matrix[parts[0]][parts[1]]) == PAPER_QCODE_FIXED_BITS[key];
-     });
-}
-
-/* ---------------------------------------------- 
-     Decode Q-Code Matrix 
-----------------------------------------------  */
-function decodeQCodeMatrix(observed) {
-     let matrix = observed;
-     for (let rotation = 0; rotation < 4; rotation += 1) {
-          if (qCodeFixedBitsMatch(matrix)) {
-               const bits = PAPER_QCODE_DATA_POSITIONS.slice(0, 12).map(function(position) {
-                    return matrix[position[0]][position[1]] ? 1 : 0;
-               });
-               let value = 0;
-               let checksum = 0;
-               bits.slice(0, 6).forEach(function(bit) { value = (value << 1) | bit; });
-               bits.slice(6, 12).forEach(function(bit) { checksum = (checksum << 1) | bit; });
-               if (value >= 0 && value < PAPER_MAX_CARDS && checksum == qCodeChecksum(value)) {
-                    return { cardId: `P${String(value + 1).padStart(2, "0")}`, answer: PAPER_ANSWERS[rotation] };
-               }
-          }
-          matrix = rotateMatrixClockwise(matrix);
-     }
-     return null;
-}
-
-/* ---------------------------------------------- 
-     Detect Q-Codes From Image Data 
-----------------------------------------------  */
-function detectQCodesFromImageData(imageData, width, height) {
-     const data = imageData.data;
-     const visited = new Uint8Array(width * height);
-     const results = [];
-
-     function isDark(index) {
-          const offset = index * 4;
-          return data[offset] + data[offset + 1] + data[offset + 2] < 250;
-     }
-
-     for (let y = 0; y < height; y += 1) {
-          for (let x = 0; x < width; x += 1) {
-               const start = y * width + x;
-               if (visited[start] || !isDark(start)) { continue; }
-               const stack = [start];
-               visited[start] = 1;
-               let minX = x, maxX = x, minY = y, maxY = y, count = 0;
-               while (stack.length) {
-                    const current = stack.pop();
-                    const cx = current % width;
-                    const cy = Math.floor(current / width);
-                    count += 1;
-                    if (cx < minX) { minX = cx; }
-                    if (cx > maxX) { maxX = cx; }
-                    if (cy < minY) { minY = cy; }
-                    if (cy > maxY) { maxY = cy; }
-                    const neighbors = [current - 1, current + 1, current - width, current + width];
-                    for (const next of neighbors) {
-                         if (next < 0 || next >= visited.length || visited[next]) { continue; }
-                         const nx = next % width;
-                         if ((next == current - 1 && nx > cx) || (next == current + 1 && nx < cx)) { continue; }
-                         if (!isDark(next)) { continue; }
-                         visited[next] = 1;
-                         stack.push(next);
-                    }
-               }
-               const boxW = maxX - minX + 1;
-               const boxH = maxY - minY + 1;
-               const ratio = boxW / Math.max(1, boxH);
-               const fill = count / Math.max(1, boxW * boxH);
-               if (boxW < 34 || boxH < 34 || boxW > width * 0.55 || boxH > height * 0.75) { continue; }
-               if (ratio < 0.72 || ratio > 1.38) { continue; }
-               if (fill < 0.035 || fill > 0.78) { continue; }
-               const decoded = decodeQCodeFromBox(data, width, height, { minX, minY, maxX, maxY });
-               if (decoded && !results.some(function(item) { return item.cardId == decoded.cardId; })) {
-                    results.push(decoded);
-               }
-          }
-     }
-     return results;
-}
-
-/* ---------------------------------------------- 
-     Decode Q-Code From Box 
-----------------------------------------------  */
-function decodeQCodeFromBox(data, width, height, box) {
-     const boxW = box.maxX - box.minX + 1;
-     const boxH = box.maxY - box.minY + 1;
-     const matrix = [];
-     for (let row = 0; row < 6; row += 1) {
-          const rowBits = [];
-          for (let col = 0; col < 6; col += 1) {
-               const sampleX = Math.round(box.minX + ((1.5 + col) / 8) * boxW);
-               const sampleY = Math.round(box.minY + ((1.5 + row) / 8) * boxH);
-               rowBits.push(sampleIsDark(data, width, height, sampleX, sampleY) ? 1 : 0);
-          }
-          matrix.push(rowBits);
-     }
-     return decodeQCodeMatrix(matrix);
-}
-
-/* ---------------------------------------------- 
-     Sample Is Dark 
-----------------------------------------------  */
-function sampleIsDark(data, width, height, x, y) {
-     let total = 0;
-     let samples = 0;
-     for (let dy = -2; dy <= 2; dy += 1) {
-          for (let dx = -2; dx <= 2; dx += 1) {
-               const sx = Math.max(0, Math.min(width - 1, x + dx));
-               const sy = Math.max(0, Math.min(height - 1, y + dy));
-               const offset = (sy * width + sx) * 4;
-               total += data[offset] + data[offset + 1] + data[offset + 2];
-               samples += 1;
-          }
-     }
-     return (total / samples) < 380;
+     return "C";
 }
 
 /* ---------------------------------------------- 
@@ -470,4 +286,349 @@ function escapeHtml(value) {
      return String(value || "").replace(/[&<>\"]/g, function(match) {
           return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;" }[match];
      });
+}
+
+
+/* ---------------------------------------------- 
+     V47 Universal 6x6 Q-Card Scanner Overrides
+----------------------------------------------  */
+
+const SCANNER_MAX_CARDS = 60;
+
+/* ---------------------------------------------- 
+     Normalize Card ID 
+----------------------------------------------  */
+function normalizeCardId(cardId) {
+     const digits = String(cardId || "").replace(/\D/g, "");
+     const number = Math.max(1, Math.min(SCANNER_MAX_CARDS, Number(digits) || 1));
+     return `P${String(number).padStart(2, "0")}`;
+}
+
+/* ---------------------------------------------- 
+     Q-Card Data Positions 
+----------------------------------------------  */
+function qCardDataPositions() {
+     const positions = [];
+     for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+               const inTop = row < 2;
+               const inBottom = row > 3;
+               const inLeft = col < 2;
+               const inRight = col > 3;
+               if ((inTop || inBottom) && (inLeft || inRight)) { continue; }
+               positions.push([row, col]);
+          }
+     }
+     return positions;
+}
+
+/* ---------------------------------------------- 
+     Rotate Grid Clockwise 
+----------------------------------------------  */
+function rotateGrid(grid, times) {
+     let result = grid.map(function(row) { return row.slice(); });
+     const rotations = ((times % 4) + 4) % 4;
+     for (let k = 0; k < rotations; k += 1) {
+          result = result[0].map(function(_, col) {
+               return result.map(function(row) { return row[col]; }).reverse();
+          });
+     }
+     return result;
+}
+
+/* ---------------------------------------------- 
+     Anchor Score 
+----------------------------------------------  */
+function anchorScore(grid) {
+     let score = 0;
+     if (grid[0][0]) { score += 1; }
+     if (grid[0][1]) { score += 1; }
+     if (grid[1][0]) { score += 1; }
+     if (!grid[1][1]) { score += 1; }
+     return score;
+}
+
+/* ---------------------------------------------- 
+     Corner Noise Score 
+----------------------------------------------  */
+function cornerNoiseScore(grid) {
+     const cells = [
+          [0,4],[0,5],[1,4],[1,5],
+          [4,0],[4,1],[5,0],[5,1],
+          [4,4],[4,5],[5,4],[5,5]
+     ];
+     return cells.reduce(function(total, item) {
+          return total + (grid[item[0]][item[1]] ? 1 : 0);
+     }, 0);
+}
+
+/* ---------------------------------------------- 
+     Decode 6x6 Q-Card Grid 
+----------------------------------------------  */
+function decodeQCardGrid(rawGrid) {
+     const answers = ["A", "B", "C", "D"];
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = rotateGrid(rawGrid, rotation);
+          if (anchorScore(grid) < 3) { continue; }
+          if (cornerNoiseScore(grid) > 2) { continue; }
+
+          const positions = qCardDataPositions();
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+
+          if (value < 0 || value >= SCANNER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          return {
+               cardId: `P${String(value + 1).padStart(2, "0")}`,
+               answer: answers[rotation],
+               confidence: anchorScore(grid) + 10 - cornerNoiseScore(grid)
+          };
+     }
+
+     return null;
+}
+
+/* ---------------------------------------------- 
+     Read Grid From Candidate 
+----------------------------------------------  */
+function readGridFromCandidate(imageData, width, height, box) {
+     const data = imageData.data;
+     const pad = 0.08;
+     const gap = 0.04;
+     const cell = (1 - (pad * 2) - (gap * 5)) / 6;
+     const grid = [];
+
+     for (let row = 0; row < 6; row += 1) {
+          const line = [];
+          for (let col = 0; col < 6; col += 1) {
+               const rx = pad + (cell / 2) + col * (cell + gap);
+               const ry = pad + (cell / 2) + row * (cell + gap);
+               const cx = Math.round(box.x + rx * box.w);
+               const cy = Math.round(box.y + ry * box.h);
+               let total = 0;
+               let samples = 0;
+
+               for (let yy = -2; yy <= 2; yy += 1) {
+                    for (let xx = -2; xx <= 2; xx += 1) {
+                         const sx = Math.max(0, Math.min(width - 1, cx + xx));
+                         const sy = Math.max(0, Math.min(height - 1, cy + yy));
+                         const index = (sy * width + sx) * 4;
+                         total += (data[index] + data[index + 1] + data[index + 2]) / 3;
+                         samples += 1;
+                    }
+               }
+
+               line.push(total / samples > 145);
+          }
+          grid.push(line);
+     }
+
+     return grid;
+}
+
+/* ---------------------------------------------- 
+     Find 6x6 Q-Card Candidates 
+----------------------------------------------  */
+function findQCardCandidates(imageData, width, height) {
+     const data = imageData.data;
+     const total = width * height;
+     const dark = new Uint8Array(total);
+     const seen = new Uint8Array(total);
+     const candidates = [];
+
+     for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
+          const lum = (data[i] * 0.299) + (data[i + 1] * 0.587) + (data[i + 2] * 0.114);
+          dark[pixel] = lum < 82 ? 1 : 0;
+     }
+
+     const queue = [];
+     for (let y = 1; y < height - 1; y += 1) {
+          for (let x = 1; x < width - 1; x += 1) {
+               const start = y * width + x;
+               if (!dark[start] || seen[start]) { continue; }
+
+               let minX = x;
+               let maxX = x;
+               let minY = y;
+               let maxY = y;
+               let area = 0;
+               seen[start] = 1;
+               queue.length = 0;
+               queue.push(start);
+
+               for (let q = 0; q < queue.length; q += 1) {
+                    const current = queue[q];
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    area += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+
+                    const neighbors = [current - 1, current + 1, current - width, current + width];
+                    for (const next of neighbors) {
+                         if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
+                         seen[next] = 1;
+                         queue.push(next);
+                    }
+               }
+
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const ratio = boxW / Math.max(1, boxH);
+               const fill = area / Math.max(1, boxW * boxH);
+
+               if (boxW < 44 || boxH < 44) { continue; }
+               if (boxW > width * 0.72 || boxH > height * 0.72) { continue; }
+               if (ratio < 0.72 || ratio > 1.38) { continue; }
+               if (fill < 0.42 || fill > 0.94) { continue; }
+
+               candidates.push({ x: minX, y: minY, w: boxW, h: boxH, area: area });
+          }
+     }
+
+     return candidates.sort(function(a, b) { return b.area - a.area; }).slice(0, 16);
+}
+
+/* ---------------------------------------------- 
+     Detect 6x6 Q-Cards From Canvas 
+----------------------------------------------  */
+function detectQCardsFromCanvas(canvas) {
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+     const candidates = findQCardCandidates(imageData, canvas.width, canvas.height);
+     const detections = [];
+     const used = {};
+
+     candidates.forEach(function(box) {
+          const grid = readGridFromCandidate(imageData, canvas.width, canvas.height, box);
+          const decoded = decodeQCardGrid(grid);
+          if (!decoded || used[decoded.cardId]) { return; }
+          used[decoded.cardId] = true;
+          detections.push(decoded);
+     });
+
+     return detections;
+}
+
+/* ---------------------------------------------- 
+     Start Camera 
+----------------------------------------------  */
+async function startCamera() {
+     if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
+          return;
+     }
+     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+
+     try {
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await prepareBarcodeDetector();
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+               },
+               audio: false
+          });
+          elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
+          await elVideo.play();
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
+          setStatus("Scanning continuously. Show one or more reusable 6×6 Q-cards and rotate each card so the chosen answer is above the code.", false);
+          startLoop();
+     }
+     catch (error) {
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame 
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || !elCanvas || elVideo.readyState < 2) { return; }
+
+     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
+     const sourceW = elVideo.videoWidth || 1280;
+     const sourceH = elVideo.videoHeight || 720;
+     const maxW = 960;
+     elCanvas.width = Math.min(maxW, sourceW);
+     elCanvas.height = Math.round(sourceH * (elCanvas.width / sourceW));
+     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+
+     const customDetections = detectQCardsFromCanvas(elCanvas);
+     if (customDetections.length) {
+          await handleDetectedCodes(customDetections, "phone-camera-6x6");
+          return;
+     }
+
+     if (barcodeDetector) {
+          const barcodes = await barcodeDetector.detect(elVideo);
+          if (barcodes && barcodes.length) {
+               await handleDetectedCodes(barcodes.map(function(code) {
+                    return { data: code.rawValue, location: locationFromBarcode(code) };
+               }), "phone-camera-qr-fallback");
+               return;
+          }
+     }
+
+     if (!window.jsQR) { return; }
+     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+     const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
+     if (result && result.data) {
+          await handleDetectedCodes([{ data: result.data, location: result.location }], "phone-camera-qr-fallback");
+     }
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes 
+----------------------------------------------  */
+async function handleDetectedCodes(codes, source) {
+     const accepted = [];
+     for (const code of codes) {
+          const payload = code.cardId ? code : decodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && payload.sessionId != sessionId) { continue; }
+          const cardId = normalizeCardId(payload.cardId);
+          if (!scanShouldSubmit(cardId, payload.answer)) { continue; }
+          await submitScan(cardId, payload.answer, source || "phone-camera");
+          accepted.push(`${cardId}: ${payload.answer}`);
+     }
+     if (accepted.length) {
+          setStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}
+
+/* ---------------------------------------------- 
+     Decode Payload 
+----------------------------------------------  */
+function decodePayload(value, location) {
+     const parts = String(value || "").trim().split("|");
+     if (parts.length == 4 && parts[0] == "WGC") {
+          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: parts[3] };
+     }
+     if (parts.length == 3 && parts[0] == "WGCQ") {
+          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: answerFromQrLocation(location) };
+     }
+     if (parts.length == 2 && parts[0] == "WGCQ") {
+          return { sessionId: "", cardId: normalizeCardId(parts[1]), answer: answerFromQrLocation(location) };
+     }
+     return null;
 }

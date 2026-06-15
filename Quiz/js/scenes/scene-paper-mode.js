@@ -22,26 +22,6 @@ var paperScannerBusy = false;
 var paperScanMemory = {};
 
 /* ---------------------------------------------- 
-     Paper Q-Code Constants 
-----------------------------------------------  */
-const PAPER_QCODE_FIXED_BITS = {
-     "0,0": 1, "0,1": 1, "1,0": 1, "1,1": 0,
-     "0,5": 0, "1,5": 1, "5,0": 0, "5,1": 1,
-     "5,5": 1, "4,5": 0
-};
-const PAPER_QCODE_DATA_POSITIONS = (function() {
-     const positions = [];
-     for (let row = 0; row < 6; row += 1) {
-          for (let col = 0; col < 6; col += 1) {
-               if (PAPER_QCODE_FIXED_BITS[`${row},${col}`] === undefined) {
-                    positions.push([row, col]);
-               }
-          }
-     }
-     return positions;
-})();
-
-/* ---------------------------------------------- 
      Bind Paper Lobby Scene 
 ----------------------------------------------  */
 function bindPaperLobbyScene() {
@@ -473,19 +453,27 @@ async function paperQrImageHtml(payload, size, alt) {
 ----------------------------------------------  */
 async function paperGeneratePrintableCards() {
      const paper = paperReadSettings();
+     if (!paper.sessionId) {
+          const result = await paperApiCreateSession({ title: paper.sessionTitle, cards: paper.cards, questions: getPaperQuestions() });
+          paper.sessionId = result.sessionId;
+          paper.scannerUrl = paperBuildScannerUrl();
+          paperSaveLocalSession();
+          await paperRenderSessionQr();
+     }
+
      const area = document.getElementById("paperPrintArea");
      if (!area) { return; }
 
-     area.innerHTML = `<div class="paper-print-sheet-title">Mr. David's Whiteboard Game Collection — Universal Paper Q-cards</div>`;
+     area.innerHTML = `<div class="paper-print-sheet-title">${esc(paper.sessionTitle)} — ${esc(paper.sessionId)}</div>`;
      for (const card of paper.cards) {
           const cardElement = document.createElement("article");
           cardElement.className = "printable-paper-card qcard-printable";
           cardElement.innerHTML = paperBuildQCardHtml(card);
           area.appendChild(cardElement);
           const code = cardElement.querySelector(".paper-qcard-code");
-          await paperFillQrImage(code, paperEncodePayload("", card.cardId), 210);
+          await paperFillQrImage(code, paperEncodePayload(paper.sessionId, card.cardId), 210);
      }
-     paperSetLobbyStatus("Universal Q-cards generated. These cards can be reused for every Paper Mode game.", false);
+     paperSetLobbyStatus("Q-cards generated. Print them, then students rotate each card to answer A, B, C or D.", false);
 }
 
 /* ---------------------------------------------- 
@@ -501,9 +489,9 @@ function paperBuildQCardHtml(card) {
           <div class="paper-qcard-corner bottom-left">P ${number}</div>
           <div class="paper-qcard-corner bottom-right">P ${number}</div>
           <div class="paper-qcard-name">${esc(card.name)}</div>
-          <div class="paper-qcard-brand top-brand">MR. DAVID'S COLLECTION</div>
-          <div class="paper-qcard-brand left-brand">WHITEBOARD GAME COLLECTION</div>
-          <div class="paper-qcard-brand right-brand">PAPER MODE</div>
+          <div class="paper-qcard-brand top-brand">Paper Mode</div>
+          <div class="paper-qcard-brand left-brand">Paper Mode</div>
+          <div class="paper-qcard-brand right-brand">Paper Mode</div>
           <div class="paper-qcard-letter a">A</div>
           <div class="paper-qcard-letter b">B</div>
           <div class="paper-qcard-letter c">C</div>
@@ -520,76 +508,18 @@ function paperDisplayCardNumber(cardId) {
 }
 
 /* ---------------------------------------------- 
-     Fill Q-Code 
+     Fill QR Image 
 ----------------------------------------------  */
 async function paperFillQrImage(container, payload, size) {
      if (!container) { return; }
-     const parts = String(payload || "").split("|");
-     const cardId = parts.length >= 2 ? parts[parts.length - 1] : payload;
-     container.innerHTML = paperBuildQCodeSvg(cardId);
+     container.innerHTML = await paperQrImageHtml(payload, size || 210, payload);
 }
 
 /* ---------------------------------------------- 
      Encode Payload 
 ----------------------------------------------  */
 function paperEncodePayload(sessionId, cardId) {
-     return `WGCQ|${paperNormalizeCardId(cardId)}`;
-}
-
-/* ---------------------------------------------- 
-     Normalize Card ID 
-----------------------------------------------  */
-function paperNormalizeCardId(cardId) {
-     const number = Math.max(1, Math.min(PAPER_MAX_CARDS, Number(String(cardId || "").replace(/\D/g, "")) || 1));
-     return `P${String(number).padStart(2, "0")}`;
-}
-
-/* ---------------------------------------------- 
-     Q-Code Checksum 
-----------------------------------------------  */
-function paperQCodeChecksum(value) {
-     return ((value * 37) + 23) & 63;
-}
-
-/* ---------------------------------------------- 
-     Build Q-Code Matrix 
-----------------------------------------------  */
-function paperBuildQCodeMatrix(cardId) {
-     const number = Math.max(1, Math.min(PAPER_MAX_CARDS, Number(String(cardId || "").replace(/\D/g, "")) || 1));
-     const value = number - 1;
-     const checksum = paperQCodeChecksum(value);
-     const bits = [];
-
-     for (let bit = 5; bit >= 0; bit -= 1) { bits.push((value >> bit) & 1); }
-     for (let bit = 5; bit >= 0; bit -= 1) { bits.push((checksum >> bit) & 1); }
-
-     const matrix = Array.from({ length: 6 }, function() { return Array(6).fill(0); });
-     Object.keys(PAPER_QCODE_FIXED_BITS).forEach(function(key) {
-          const parts = key.split(",").map(Number);
-          matrix[parts[0]][parts[1]] = PAPER_QCODE_FIXED_BITS[key];
-     });
-
-     PAPER_QCODE_DATA_POSITIONS.forEach(function(position, index) {
-          if (index < bits.length) { matrix[position[0]][position[1]] = bits[index]; }
-     });
-
-     return matrix;
-}
-
-/* ---------------------------------------------- 
-     Build Q-Code SVG 
-----------------------------------------------  */
-function paperBuildQCodeSvg(cardId) {
-     const matrix = paperBuildQCodeMatrix(cardId);
-     const cells = [];
-     for (let row = 0; row < 6; row += 1) {
-          for (let col = 0; col < 6; col += 1) {
-               const fill = matrix[row][col] ? "#000" : "#fff";
-               cells.push(`<rect x="${1 + col}" y="${1 + row}" width="1" height="1" fill="${fill}"/>`);
-          }
-     }
-
-     return `<svg class="paper-qcode-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" role="img" aria-label="Q-code ${esc(cardId)}"><rect width="8" height="8" fill="#fff"/><rect x="0.22" y="0.22" width="7.56" height="7.56" fill="none" stroke="#000" stroke-width="0.44"/>${cells.join("")}<rect x="0.08" y="0.08" width="7.84" height="7.84" fill="none" stroke="#000" stroke-width="0.16"/></svg>`;
+     return `WGCQ|${sessionId}|${cardId}`;
 }
 
 /* ---------------------------------------------- 
@@ -598,13 +528,10 @@ function paperBuildQCodeSvg(cardId) {
 function paperDecodePayload(value, location) {
      const parts = String(value || "").trim().split("|");
      if (parts.length == 4 && parts[0] == "WGC") {
-          return { sessionId: parts[1], cardId: paperNormalizeCardId(parts[2]), answer: parts[3] };
+          return { sessionId: parts[1], cardId: parts[2], answer: parts[3] };
      }
      if (parts.length == 3 && parts[0] == "WGCQ") {
-          return { sessionId: parts[1], cardId: paperNormalizeCardId(parts[2]), answer: paperAnswerFromQrLocation(location) };
-     }
-     if (parts.length == 2 && parts[0] == "WGCQ") {
-          return { sessionId: "", cardId: paperNormalizeCardId(parts[1]), answer: paperAnswerFromQrLocation(location) };
+          return { sessionId: parts[1], cardId: parts[2], answer: paperAnswerFromQrLocation(location) };
      }
      return null;
 }
@@ -616,60 +543,12 @@ function paperAnswerFromQrLocation(location) {
      if (!location || !location.topLeftCorner || !location.topRightCorner) { return "A"; }
      const dx = location.topRightCorner.x - location.topLeftCorner.x;
      const dy = location.topRightCorner.y - location.topLeftCorner.y;
-     let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-     if (angle <= -180) { angle += 360; }
-     if (angle > 180) { angle -= 360; }
+     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
      if (angle > -45 && angle <= 45) { return "A"; }
+     if (angle > 45 && angle <= 135) { return "D"; }
      if (angle <= -45 && angle > -135) { return "B"; }
-     if (angle > 135 || angle <= -135) { return "C"; }
-     return "D";
-}
-
-/* ---------------------------------------------- 
-     Rotate Q-Code Matrix Clockwise 
-----------------------------------------------  */
-function paperRotateMatrixClockwise(matrix) {
-     const result = Array.from({ length: 6 }, function() { return Array(6).fill(0); });
-     for (let row = 0; row < 6; row += 1) {
-          for (let col = 0; col < 6; col += 1) {
-               result[col][5 - row] = matrix[row][col];
-          }
-     }
-     return result;
-}
-
-/* ---------------------------------------------- 
-     Decode Q-Code Matrix 
-----------------------------------------------  */
-function paperDecodeQCodeMatrix(observed) {
-     let matrix = observed;
-     for (let rotation = 0; rotation < 4; rotation += 1) {
-          if (paperQCodeFixedBitsMatch(matrix)) {
-               const bits = PAPER_QCODE_DATA_POSITIONS.slice(0, 12).map(function(position) {
-                    return matrix[position[0]][position[1]] ? 1 : 0;
-               });
-               let value = 0;
-               let checksum = 0;
-               bits.slice(0, 6).forEach(function(bit) { value = (value << 1) | bit; });
-               bits.slice(6, 12).forEach(function(bit) { checksum = (checksum << 1) | bit; });
-               if (value >= 0 && value < PAPER_MAX_CARDS && checksum == paperQCodeChecksum(value)) {
-                    return { cardId: `P${String(value + 1).padStart(2, "0")}`, answer: PAPER_ANSWERS[rotation] };
-               }
-          }
-          matrix = paperRotateMatrixClockwise(matrix);
-     }
-     return null;
-}
-
-/* ---------------------------------------------- 
-     Q-Code Fixed Bits Match 
-----------------------------------------------  */
-function paperQCodeFixedBitsMatch(matrix) {
-     return Object.keys(PAPER_QCODE_FIXED_BITS).every(function(key) {
-          const parts = key.split(",").map(Number);
-          return Number(matrix[parts[0]][parts[1]]) == PAPER_QCODE_FIXED_BITS[key];
-     });
+     return "C";
 }
 
 /* ---------------------------------------------- 
@@ -711,23 +590,21 @@ async function paperPrintCardsDocument() {
 function paperBuildCardsDocumentHtml(autoPrint) {
      const area = document.getElementById("paperPrintArea");
      const paper = paperState();
-     const printScript = autoPrint ? `<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},550);});<\/script>` : "";
+     const printScript = autoPrint ? `<script>window.addEventListener("load",async function(){try{if(document.fonts&&document.fonts.ready){await document.fonts.ready;}}catch(e){}setTimeout(function(){window.focus();window.print();},950);});<\/script>` : "";
 
      return `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mr. David's Collection Q-cards</title>
+<title>${esc(paper.sessionTitle)} Q-cards</title>
 <style>${paperPrintCss()}</style>
 </head>
 <body>
 <section class="paper-instructions">
-<div class="brand-pill">MR. DAVID'S COLLECTION</div>
-<h1>Universal Paper Mode Q-cards</h1>
-<p>These cards are <b>not tied to a session</b>. Reuse the same printed set for every Paper Mode game.</p>
-<p>Give one card to each student. Students answer by rotating the card so the selected answer letter is above the 6×6 Q-code.</p>
-<p>Configured set: <b>${paper.cards.length}</b> cards</p>
+<h1>Paper Mode Q-cards</h1>
+<p>Give one card to each student. Students answer by rotating the card so the selected answer letter is above the code.</p>
+<p>Session: <b>${esc(paper.sessionId || "No session")}</b></p>
 </section>
 ${area ? area.innerHTML : ""}
 ${printScript}
@@ -739,7 +616,7 @@ ${printScript}
      Print CSS 
 ----------------------------------------------  */
 function paperPrintCss() {
-     return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#123865;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:22mm 22mm;break-after:page;page-break-after:always;background:linear-gradient(135deg,#e8f7ff 0%,#fff6a8 52%,#ffd39b 100%)}.brand-pill{display:inline-block;padding:4mm 7mm;border:1.4mm solid #fff;border-radius:99mm;background:linear-gradient(#fff171,#ff9d2f);font:900 18pt Arial,sans-serif;color:#16407d;box-shadow:0 3mm 0 rgba(22,64,125,.18)}.paper-instructions h1{margin:12mm 0 8mm;font-size:28pt;line-height:1;color:#16407d}.paper-instructions p{max-width:150mm;font-size:15pt;line-height:1.5;color:#243d5c}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-code{position:absolute;left:50%;top:50%;width:72mm;height:72mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#fff;border:.7mm solid #111}.paper-qcode-svg{width:64mm;height:64mm;display:block;image-rendering:pixelated}.paper-qcard-letter{position:absolute;font:900 13pt Arial,sans-serif;color:#333}.paper-qcard-letter.a{left:50%;top:74mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:44mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:74mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:44mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 15pt Arial,sans-serif;color:#222}.top-left{left:9mm;top:15mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:16mm;top:15mm}.bottom-left{left:9mm;bottom:15mm;transform:rotate(180deg)}.bottom-right{right:16mm;bottom:15mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:900 8pt Arial,sans-serif;color:#bfc5cf;letter-spacing:.4mm}.top-brand{left:50%;top:30mm;transform:translateX(-50%)}.left-brand{left:22mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:22mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:18mm;transform:translateX(-50%);font:900 12pt Arial,sans-serif;color:#222;max-width:95mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:42mm}.bottom-cut{bottom:42mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}}`;
+     return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:24mm 22mm;break-after:page;page-break-after:always}.paper-instructions h1{margin:0 0 10mm;font-size:24pt}.paper-instructions p{font-size:14pt;line-height:1.45}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-code{position:absolute;left:50%;top:50%;width:92mm;height:64mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#000}.paper-qcard-code img{width:56mm;height:56mm;display:block;filter:invert(1)}.paper-qcard-letter{position:absolute;font:700 10pt Arial,sans-serif;color:#555}.paper-qcard-letter.a{left:50%;top:84mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:84mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 15pt Arial,sans-serif;color:#222}.top-left{left:10mm;top:18mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:18mm;top:18mm}.bottom-left{left:10mm;bottom:18mm;transform:rotate(180deg)}.bottom-right{right:18mm;bottom:18mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:700 8pt Arial,sans-serif;color:#cfd2d6}.top-brand{left:50%;top:34mm;transform:translateX(-50%)}.left-brand{left:28mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:28mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:18mm;transform:translateX(-50%);font:900 12pt Arial,sans-serif;color:#222;max-width:95mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:42mm}.bottom-cut{bottom:42mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}}`;
 }
 
 /* ---------------------------------------------- 
@@ -1038,104 +915,6 @@ async function paperPrepareBarcodeDetector() {
      }
 }
 
-
-/* ---------------------------------------------- 
-     Detect Q-Codes From Image Data 
-----------------------------------------------  */
-function paperDetectQCodesFromImageData(imageData, width, height) {
-     const data = imageData.data;
-     const visited = new Uint8Array(width * height);
-     const results = [];
-
-     function isDark(index) {
-          const offset = index * 4;
-          return data[offset] + data[offset + 1] + data[offset + 2] < 250;
-     }
-
-     for (let y = 0; y < height; y += 1) {
-          for (let x = 0; x < width; x += 1) {
-               const start = y * width + x;
-               if (visited[start] || !isDark(start)) { continue; }
-
-               const stack = [start];
-               visited[start] = 1;
-               let minX = x, maxX = x, minY = y, maxY = y, count = 0;
-
-               while (stack.length) {
-                    const current = stack.pop();
-                    const cx = current % width;
-                    const cy = Math.floor(current / width);
-                    count += 1;
-                    if (cx < minX) { minX = cx; }
-                    if (cx > maxX) { maxX = cx; }
-                    if (cy < minY) { minY = cy; }
-                    if (cy > maxY) { maxY = cy; }
-
-                    const neighbors = [current - 1, current + 1, current - width, current + width];
-                    for (const next of neighbors) {
-                         if (next < 0 || next >= visited.length || visited[next]) { continue; }
-                         const nx = next % width;
-                         if ((next == current - 1 && nx > cx) || (next == current + 1 && nx < cx)) { continue; }
-                         if (!isDark(next)) { continue; }
-                         visited[next] = 1;
-                         stack.push(next);
-                    }
-               }
-
-               const boxW = maxX - minX + 1;
-               const boxH = maxY - minY + 1;
-               const ratio = boxW / Math.max(1, boxH);
-               const fill = count / Math.max(1, boxW * boxH);
-               if (boxW < 34 || boxH < 34 || boxW > width * 0.55 || boxH > height * 0.75) { continue; }
-               if (ratio < 0.72 || ratio > 1.38) { continue; }
-               if (fill < 0.035 || fill > 0.78) { continue; }
-
-               const decoded = paperDecodeQCodeFromBox(data, width, height, { minX, minY, maxX, maxY });
-               if (decoded && !results.some(function(item) { return item.cardId == decoded.cardId; })) {
-                    results.push(decoded);
-               }
-          }
-     }
-     return results;
-}
-
-/* ---------------------------------------------- 
-     Decode Q-Code From Box 
-----------------------------------------------  */
-function paperDecodeQCodeFromBox(data, width, height, box) {
-     const boxW = box.maxX - box.minX + 1;
-     const boxH = box.maxY - box.minY + 1;
-     const matrix = [];
-     for (let row = 0; row < 6; row += 1) {
-          const rowBits = [];
-          for (let col = 0; col < 6; col += 1) {
-               const sampleX = Math.round(box.minX + ((1.5 + col) / 8) * boxW);
-               const sampleY = Math.round(box.minY + ((1.5 + row) / 8) * boxH);
-               rowBits.push(paperSampleIsDark(data, width, height, sampleX, sampleY) ? 1 : 0);
-          }
-          matrix.push(rowBits);
-     }
-     return paperDecodeQCodeMatrix(matrix);
-}
-
-/* ---------------------------------------------- 
-     Sample Is Dark 
-----------------------------------------------  */
-function paperSampleIsDark(data, width, height, x, y) {
-     let total = 0;
-     let samples = 0;
-     for (let dy = -2; dy <= 2; dy += 1) {
-          for (let dx = -2; dx <= 2; dx += 1) {
-               const sx = Math.max(0, Math.min(width - 1, x + dx));
-               const sy = Math.max(0, Math.min(height - 1, y + dy));
-               const offset = (sy * width + sx) * 4;
-               total += data[offset] + data[offset + 1] + data[offset + 2];
-               samples += 1;
-          }
-     }
-     return (total / samples) < 380;
-}
-
 /* ---------------------------------------------- 
      Scan Board Frame 
 ----------------------------------------------  */
@@ -1144,31 +923,25 @@ async function paperScanBoardFrame() {
      const canvas = document.getElementById("paperScannerCanvas");
      if (!video || !canvas || video.readyState < 2) { return; }
 
-     const ctx = canvas.getContext("2d", { willReadFrequently: true });
-     const targetWidth = Math.min(720, video.videoWidth || 720);
-     const scale = targetWidth / Math.max(1, video.videoWidth || targetWidth);
-     canvas.width = targetWidth;
-     canvas.height = Math.max(1, Math.round((video.videoHeight || 405) * scale));
-     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-     const qcodes = paperDetectQCodesFromImageData(imageData, canvas.width, canvas.height);
-     if (qcodes.length) {
-          await paperHandleDetectedCodes(qcodes, "board-qcode");
-          return;
-     }
-
      if (paperBarcodeDetector) {
           const barcodes = await paperBarcodeDetector.detect(video);
           if (barcodes && barcodes.length) {
                await paperHandleDetectedCodes(barcodes.map(function(code) {
-                    return { data: code.rawValue, location: paperLocationFromBarcode(code) };
+                    return {
+                         data: code.rawValue,
+                         location: paperLocationFromBarcode(code)
+                    };
                }), "board-camera");
                return;
           }
      }
 
      if (!window.jsQR) { return; }
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     canvas.width = video.videoWidth;
+     canvas.height = video.videoHeight;
+     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
      const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
      if (result && result.data) {
           await paperHandleDetectedCodes([{ data: result.data, location: result.location }], "board-camera");
@@ -1194,9 +967,8 @@ async function paperHandleDetectedCodes(codes, source) {
      const accepted = [];
 
      for (const code of codes) {
-          const payload = code && code.cardId ? code : paperDecodePayload(code.data, code.location);
-          if (!payload) { continue; }
-          if (payload.sessionId && payload.sessionId != paper.sessionId) { continue; }
+          const payload = paperDecodePayload(code.data, code.location);
+          if (!payload || payload.sessionId != paper.sessionId) { continue; }
           const card = paper.cards.find(function(item) { return item.cardId == payload.cardId; });
           if (!card) { continue; }
           if (!paperScanShouldSubmit(payload.cardId, payload.answer)) { continue; }
@@ -1284,3 +1056,533 @@ window.WhiteboardGameScenes.paperGame = function(api) {
           onExit: function() { stopPaperPolling(); paperCloseBoardScanner(); }
      };
 };
+
+
+/* ---------------------------------------------- 
+     V47 Universal 6x6 Q-Card Overrides
+----------------------------------------------  */
+
+/* ---------------------------------------------- 
+     Q-Card Data Positions 
+----------------------------------------------  */
+function paperQCardDataPositions() {
+     const positions = [];
+     for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+               const inTop = row < 2;
+               const inBottom = row > 3;
+               const inLeft = col < 2;
+               const inRight = col > 3;
+               if ((inTop || inBottom) && (inLeft || inRight)) { continue; }
+               positions.push([row, col]);
+          }
+     }
+     return positions;
+}
+
+/* ---------------------------------------------- 
+     Normalize Paper Card ID 
+----------------------------------------------  */
+function paperNormalizeCardId(cardId) {
+     const digits = String(cardId || "").replace(/\D/g, "");
+     const number = Math.max(1, Math.min(PAPER_MAX_CARDS, Number(digits) || 1));
+     return `P${String(number).padStart(2, "0")}`;
+}
+
+/* ---------------------------------------------- 
+     Card Number From ID 
+----------------------------------------------  */
+function paperCardNumberFromId(cardId) {
+     return Math.max(1, Math.min(PAPER_MAX_CARDS, Number(String(cardId || "").replace(/\D/g, "")) || 1));
+}
+
+/* ---------------------------------------------- 
+     Make 6x6 Q-Card Grid 
+----------------------------------------------  */
+function paperMakeQCardGrid(cardId) {
+     const number = paperCardNumberFromId(cardId);
+     const value = number - 1;
+     const checksum = (value * 7 + 11) & 15;
+     const bits = [];
+
+     for (let i = 0; i < 6; i += 1) { bits.push((value >> i) & 1); }
+     for (let i = 0; i < 4; i += 1) { bits.push((checksum >> i) & 1); }
+
+     const grid = Array.from({ length: 6 }, function() {
+          return Array.from({ length: 6 }, function() { return false; });
+     });
+
+     /* Orientation anchor in canonical top-left: three white cells and one black cell. */
+     grid[0][0] = true;
+     grid[0][1] = true;
+     grid[1][0] = true;
+     grid[1][1] = false;
+
+     const positions = paperQCardDataPositions();
+     positions.forEach(function(position, index) {
+          const row = position[0];
+          const col = position[1];
+          if (index < bits.length) {
+               grid[row][col] = !!bits[index];
+          }
+          else {
+               grid[row][col] = ((row * 3 + col + value) % 4) === 0;
+          }
+     });
+
+     return grid;
+}
+
+/* ---------------------------------------------- 
+     Build Q-Code HTML 
+----------------------------------------------  */
+function paperBuildQCodeHtml(cardId) {
+     const grid = paperMakeQCardGrid(cardId);
+     const size = 600;
+     const padding = 52;
+     const gap = 24;
+     const cell = (size - (padding * 2) - (gap * 5)) / 6;
+     const whiteSquares = [];
+
+     grid.forEach(function(row, rowIndex) {
+          row.forEach(function(isOn, colIndex) {
+               if (!isOn) { return; }
+               const x = padding + (colIndex * (cell + gap));
+               const y = padding + (rowIndex * (cell + gap));
+               whiteSquares.push(`<rect x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${cell.toFixed(2)}" height="${cell.toFixed(2)}" rx="6" ry="6" fill="#ffffff"/>`);
+          });
+     });
+
+     return `<svg class="paper-qcard-marker paper-qcode-svg" data-qcard-id="${esc(paperNormalizeCardId(cardId))}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" role="img" aria-label="Reusable 6 by 6 Q-card code" shape-rendering="crispEdges"><rect x="0" y="0" width="${size}" height="${size}" fill="#000000"/>${whiteSquares.join("")}<rect x="5" y="5" width="${size - 10}" height="${size - 10}" fill="none" stroke="#ffffff" stroke-width="6" opacity="0.24"/></svg>`;
+}
+
+/* ---------------------------------------------- 
+     Generate Printable Cards 
+----------------------------------------------  */
+async function paperGeneratePrintableCards() {
+     const paper = paperReadSettings();
+     const area = document.getElementById("paperPrintArea");
+     if (!area) { return; }
+
+     if (!paper.cards || !paper.cards.length) { paperApplyCardCount(); }
+
+     area.innerHTML = `<div class="paper-print-sheet-title">Mr. David's Collection — Reusable Paper Mode Q-cards</div>`;
+     for (const card of paper.cards) {
+          card.cardId = paperNormalizeCardId(card.cardId);
+          const cardElement = document.createElement("article");
+          cardElement.className = "printable-paper-card qcard-printable";
+          cardElement.innerHTML = paperBuildQCardHtml(card);
+          area.appendChild(cardElement);
+     }
+     paperSetLobbyStatus("Reusable 6×6 Q-cards generated. These cards are universal and can be reused in any session.", false);
+}
+
+/* ---------------------------------------------- 
+     Build Q Card HTML 
+----------------------------------------------  */
+function paperBuildQCardHtml(card) {
+     const number = paperDisplayCardNumber(card.cardId);
+     return `
+          <div class="paper-qcard-collection">MR. DAVID'S COLLECTION</div>
+          <div class="paper-qcard-cut top-cut">✂ scissors</div>
+          <div class="paper-qcard-cut bottom-cut">✂ scissors</div>
+          <div class="paper-qcard-corner top-left">P ${number}</div>
+          <div class="paper-qcard-corner top-right">P ${number}</div>
+          <div class="paper-qcard-corner bottom-left">P ${number}</div>
+          <div class="paper-qcard-corner bottom-right">P ${number}</div>
+          <div class="paper-qcard-name">${esc(card.name)}</div>
+          <div class="paper-qcard-brand top-brand">Whiteboard Game Collection</div>
+          <div class="paper-qcard-brand left-brand">Paper Mode</div>
+          <div class="paper-qcard-brand right-brand">Reusable Q-card</div>
+          <div class="paper-qcard-letter a">A</div>
+          <div class="paper-qcard-letter b">B</div>
+          <div class="paper-qcard-letter c">C</div>
+          <div class="paper-qcard-letter d">D</div>
+          <div class="paper-qcard-code">${paperBuildQCodeHtml(card.cardId)}</div>
+     `;
+}
+
+/* ---------------------------------------------- 
+     Encode Payload 
+----------------------------------------------  */
+function paperEncodePayload(sessionId, cardId) {
+     return `WGCQ|${paperNormalizeCardId(cardId)}`;
+}
+
+/* ---------------------------------------------- 
+     Decode Payload 
+----------------------------------------------  */
+function paperDecodePayload(value, location) {
+     const parts = String(value || "").trim().split("|");
+     if (parts.length == 4 && parts[0] == "WGC") {
+          return { sessionId: parts[1], cardId: paperNormalizeCardId(parts[2]), answer: parts[3] };
+     }
+     if (parts.length == 3 && parts[0] == "WGCQ") {
+          return { sessionId: parts[1], cardId: paperNormalizeCardId(parts[2]), answer: paperAnswerFromQrLocation(location) };
+     }
+     if (parts.length == 2 && parts[0] == "WGCQ") {
+          return { sessionId: "", cardId: paperNormalizeCardId(parts[1]), answer: paperAnswerFromQrLocation(location) };
+     }
+     return null;
+}
+
+/* ---------------------------------------------- 
+     Download Cards HTML 
+----------------------------------------------  */
+async function paperDownloadCardsHtml() {
+     await paperGeneratePrintableCards();
+     const html = paperBuildCardsDocumentHtml(false);
+     const blob = new Blob([html], { type: "text/html" });
+     const link = document.createElement("a");
+     link.href = URL.createObjectURL(blob);
+     link.download = "mr-david-reusable-q-cards.html";
+     link.click();
+     setTimeout(function() { URL.revokeObjectURL(link.href); }, 1000);
+}
+
+/* ---------------------------------------------- 
+     Build Cards Document HTML 
+----------------------------------------------  */
+function paperBuildCardsDocumentHtml(autoPrint) {
+     const area = document.getElementById("paperPrintArea");
+     const paper = paperState();
+     const printScript = autoPrint ? `<script>window.addEventListener("load",async function(){try{if(document.fonts&&document.fonts.ready){await document.fonts.ready;}}catch(e){}setTimeout(function(){window.focus();window.print();},950);});<\/script>` : "";
+
+     return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mr. David's Collection Reusable Q-cards</title>
+<style>${paperPrintCss()}</style>
+</head>
+<body>
+<section class="paper-instructions">
+<div class="brand-pill">MR. DAVID'S COLLECTION</div>
+<h1>Whiteboard Game Collection</h1>
+<h2>Reusable Paper Mode Q-cards</h2>
+<p>Give one reusable card to each student. The code is universal, so it is not tied to one quiz session.</p>
+<p>Students answer by rotating the card so the selected answer letter is above the black 6×6 code.</p>
+<p>Session names can change in the lobby, but the printed code for P01, P02, P03, etc. stays the same for every game.</p>
+</section>
+${area ? area.innerHTML : ""}
+${printScript}
+</body>
+</html>`;
+}
+
+/* ---------------------------------------------- 
+     Print CSS 
+----------------------------------------------  */
+function paperPrintCss() {
+     return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:21mm 22mm;break-after:page;page-break-after:always;border:7mm solid #16407d;color:#16407d}.brand-pill{display:inline-block;padding:4mm 7mm;border:1.2mm solid #16407d;border-radius:999px;font-size:18pt;font-weight:900}.paper-instructions h1{margin:12mm 0 2mm;font-size:34pt;line-height:.95}.paper-instructions h2{margin:0 0 12mm;font-size:21pt}.paper-instructions p{font-size:14pt;line-height:1.45;max-width:160mm}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-collection{position:absolute;left:50%;top:8mm;transform:translateX(-50%);font:900 9pt Arial,sans-serif;color:#16407d;letter-spacing:.4mm}.paper-qcard-code{position:absolute;left:50%;top:50%;width:76mm;height:76mm;transform:translate(-50%,-50%);display:grid;place-items:center;padding:0;background:transparent}.paper-qcode-svg,.paper-qcard-marker{width:76mm;height:76mm;display:block;overflow:visible}.paper-qcard-marker rect{vector-effect:non-scaling-stroke}.paper-qcard-letter{position:absolute;font:900 22pt Arial,sans-serif;color:#111}.paper-qcard-letter.a{left:50%;top:80mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:49mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:80mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:49mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 18pt Arial,sans-serif;color:#222}.top-left{left:11mm;top:20mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:20mm;top:20mm}.bottom-left{left:11mm;bottom:20mm;transform:rotate(180deg)}.bottom-right{right:20mm;bottom:20mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:800 9pt Arial,sans-serif;color:#7f8794}.top-brand{left:50%;top:35mm;transform:translateX(-50%)}.left-brand{left:25mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:25mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:19mm;transform:translateX(-50%);font:900 13pt Arial,sans-serif;color:#222;max-width:96mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#777;border-top:1px dashed #777}.top-cut{top:44mm}.bottom-cut{bottom:44mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}.paper-qcode-svg,.paper-qcard-marker{forced-color-adjust:none}}`;
+}
+
+/* ---------------------------------------------- 
+     Rotate Grid Clockwise 
+----------------------------------------------  */
+function paperRotateGrid(grid, times) {
+     let result = grid.map(function(row) { return row.slice(); });
+     const rotations = ((times % 4) + 4) % 4;
+     for (let k = 0; k < rotations; k += 1) {
+          result = result[0].map(function(_, col) {
+               return result.map(function(row) { return row[col]; }).reverse();
+          });
+     }
+     return result;
+}
+
+/* ---------------------------------------------- 
+     Anchor Score 
+----------------------------------------------  */
+function paperAnchorScore(grid) {
+     let score = 0;
+     if (grid[0][0]) { score += 1; }
+     if (grid[0][1]) { score += 1; }
+     if (grid[1][0]) { score += 1; }
+     if (!grid[1][1]) { score += 1; }
+     return score;
+}
+
+/* ---------------------------------------------- 
+     Opposite Corner Noise Score 
+----------------------------------------------  */
+function paperCornerNoiseScore(grid) {
+     const cells = [
+          [0,4],[0,5],[1,4],[1,5],
+          [4,0],[4,1],[5,0],[5,1],
+          [4,4],[4,5],[5,4],[5,5]
+     ];
+     return cells.reduce(function(total, item) {
+          return total + (grid[item[0]][item[1]] ? 1 : 0);
+     }, 0);
+}
+
+/* ---------------------------------------------- 
+     Decode 6x6 Q-Card Grid 
+----------------------------------------------  */
+function paperDecodeQCardGrid(rawGrid) {
+     const answers = ["A", "B", "C", "D"];
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = paperRotateGrid(rawGrid, rotation);
+          if (paperAnchorScore(grid) < 3) { continue; }
+          if (paperCornerNoiseScore(grid) > 2) { continue; }
+
+          const positions = paperQCardDataPositions();
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+
+          if (value < 0 || value >= PAPER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          return {
+               cardId: `P${String(value + 1).padStart(2, "0")}`,
+               answer: answers[rotation],
+               confidence: paperAnchorScore(grid) + 10 - paperCornerNoiseScore(grid)
+          };
+     }
+
+     return null;
+}
+
+/* ---------------------------------------------- 
+     Read Grid From Candidate 
+----------------------------------------------  */
+function paperReadGridFromCandidate(imageData, width, height, box) {
+     const data = imageData.data;
+     const pad = 0.08;
+     const gap = 0.04;
+     const cell = (1 - (pad * 2) - (gap * 5)) / 6;
+     const grid = [];
+
+     for (let row = 0; row < 6; row += 1) {
+          const line = [];
+          for (let col = 0; col < 6; col += 1) {
+               const rx = pad + (cell / 2) + col * (cell + gap);
+               const ry = pad + (cell / 2) + row * (cell + gap);
+               const cx = Math.round(box.x + rx * box.w);
+               const cy = Math.round(box.y + ry * box.h);
+               let total = 0;
+               let samples = 0;
+
+               for (let yy = -2; yy <= 2; yy += 1) {
+                    for (let xx = -2; xx <= 2; xx += 1) {
+                         const sx = Math.max(0, Math.min(width - 1, cx + xx));
+                         const sy = Math.max(0, Math.min(height - 1, cy + yy));
+                         const index = (sy * width + sx) * 4;
+                         total += (data[index] + data[index + 1] + data[index + 2]) / 3;
+                         samples += 1;
+                    }
+               }
+
+               line.push(total / samples > 145);
+          }
+          grid.push(line);
+     }
+
+     return grid;
+}
+
+/* ---------------------------------------------- 
+     Find 6x6 Q-Card Candidates 
+----------------------------------------------  */
+function paperFindQCardCandidates(imageData, width, height) {
+     const data = imageData.data;
+     const total = width * height;
+     const dark = new Uint8Array(total);
+     const seen = new Uint8Array(total);
+     const candidates = [];
+
+     for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
+          const lum = (data[i] * 0.299) + (data[i + 1] * 0.587) + (data[i + 2] * 0.114);
+          dark[pixel] = lum < 82 ? 1 : 0;
+     }
+
+     const queue = [];
+     for (let y = 1; y < height - 1; y += 1) {
+          for (let x = 1; x < width - 1; x += 1) {
+               const start = y * width + x;
+               if (!dark[start] || seen[start]) { continue; }
+
+               let minX = x;
+               let maxX = x;
+               let minY = y;
+               let maxY = y;
+               let area = 0;
+               seen[start] = 1;
+               queue.length = 0;
+               queue.push(start);
+
+               for (let q = 0; q < queue.length; q += 1) {
+                    const current = queue[q];
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    area += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+
+                    const neighbors = [current - 1, current + 1, current - width, current + width];
+                    for (const next of neighbors) {
+                         if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
+                         seen[next] = 1;
+                         queue.push(next);
+                    }
+               }
+
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const ratio = boxW / Math.max(1, boxH);
+               const fill = area / Math.max(1, boxW * boxH);
+
+               if (boxW < 44 || boxH < 44) { continue; }
+               if (boxW > width * 0.72 || boxH > height * 0.72) { continue; }
+               if (ratio < 0.72 || ratio > 1.38) { continue; }
+               if (fill < 0.42 || fill > 0.94) { continue; }
+
+               candidates.push({ x: minX, y: minY, w: boxW, h: boxH, area: area });
+          }
+     }
+
+     return candidates.sort(function(a, b) { return b.area - a.area; }).slice(0, 16);
+}
+
+/* ---------------------------------------------- 
+     Detect 6x6 Q-Cards From Canvas 
+----------------------------------------------  */
+function paperDetectQCardsFromCanvas(canvas, sourceWidth, sourceHeight) {
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+     const candidates = paperFindQCardCandidates(imageData, canvas.width, canvas.height);
+     const detections = [];
+     const used = {};
+
+     candidates.forEach(function(box) {
+          const grid = paperReadGridFromCandidate(imageData, canvas.width, canvas.height, box);
+          const decoded = paperDecodeQCardGrid(grid);
+          if (!decoded || used[decoded.cardId]) { return; }
+          used[decoded.cardId] = true;
+          detections.push(decoded);
+     });
+
+     return detections;
+}
+
+/* ---------------------------------------------- 
+     Scan Board Frame 
+----------------------------------------------  */
+async function paperScanBoardFrame() {
+     const video = document.getElementById("paperScannerVideo");
+     const canvas = document.getElementById("paperScannerCanvas");
+     if (!video || !canvas || video.readyState < 2) { return; }
+
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     const sourceW = video.videoWidth || 1280;
+     const sourceH = video.videoHeight || 720;
+     const maxW = 960;
+     canvas.width = Math.min(maxW, sourceW);
+     canvas.height = Math.round(sourceH * (canvas.width / sourceW));
+     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+     const customDetections = paperDetectQCardsFromCanvas(canvas, sourceW, sourceH);
+     if (customDetections.length) {
+          await paperHandleDetectedCodes(customDetections, "board-camera-6x6");
+          return;
+     }
+
+     if (paperBarcodeDetector) {
+          const barcodes = await paperBarcodeDetector.detect(video);
+          if (barcodes && barcodes.length) {
+               await paperHandleDetectedCodes(barcodes.map(function(code) {
+                    return {
+                         data: code.rawValue,
+                         location: paperLocationFromBarcode(code)
+                    };
+               }), "board-camera-qr-fallback");
+               return;
+          }
+     }
+
+     if (!window.jsQR) { return; }
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+     const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+     if (result && result.data) {
+          await paperHandleDetectedCodes([{ data: result.data, location: result.location }], "board-camera-qr-fallback");
+     }
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes 
+----------------------------------------------  */
+async function paperHandleDetectedCodes(codes, source) {
+     const paper = paperState();
+     const accepted = [];
+
+     for (const code of codes) {
+          const payload = code.cardId ? code : paperDecodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && paper.sessionId && payload.sessionId != paper.sessionId) { continue; }
+
+          const cardId = paperNormalizeCardId(payload.cardId);
+          const card = paper.cards.find(function(item) { return paperNormalizeCardId(item.cardId) == cardId; });
+          if (!card) { continue; }
+          if (!paperScanShouldSubmit(cardId, payload.answer)) { continue; }
+
+          await paperSubmitScan(cardId, payload.answer, source || "board-camera");
+          accepted.push(`${card.name}: ${payload.answer}`);
+     }
+
+     if (accepted.length) {
+          paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}
+
+/* ---------------------------------------------- 
+     Open Board Scanner 
+----------------------------------------------  */
+async function paperOpenBoardScanner() {
+     const panel = document.getElementById("paperScannerPanel");
+     const stage = document.getElementById("stage");
+     const video = document.getElementById("paperScannerVideo");
+
+     if (panel && stage && panel.parentElement !== stage) { stage.appendChild(panel); }
+     if (panel) { panel.classList.remove("hidden"); }
+
+     if (!window.isSecureContext && location.protocol !== "file:") {
+          paperSetScannerStatus("Camera needs HTTPS or localhost. Use manual entry if blocked.", true);
+     }
+
+     if (!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          paperSetScannerStatus("Camera unavailable. Use manual entry.", true);
+          return;
+     }
+
+     try {
+          if (paperScannerStream) { paperCloseBoardScanner(); if (panel) { panel.classList.remove("hidden"); } }
+          paperScannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+               },
+               audio: false
+          });
+          video.srcObject = paperScannerStream;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          await video.play();
+          paperSetScannerStatus("6×6 realtime scanner active. It can detect multiple reusable Q-cards at the same time.", false);
+          paperStartQrLoop();
+     }
+     catch (error) {
+          paperSetScannerStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual entry.`, true);
+     }
+}
