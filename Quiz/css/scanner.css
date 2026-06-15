@@ -22,3 +22,19 @@ button { border: 4px solid #fff; border-radius: 18px; background: linear-gradien
 #scanLog { display: grid; gap: 8px; }
 .log-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: #fff; font-weight: 800; }
 .log-row span:last-child { display: grid; place-items: center; width: 42px; height: 34px; border-radius: 12px; background: #ffe173; font-size: 20px; }
+
+/* -------------------------------------------------------------
+# V53 Scanner State Feedback
+--------------------------------------------------------------*/
+.pending-card { padding: 16px; border: 5px solid #fff; border-radius: 24px; background: rgba(255,255,255,.82); box-shadow: 0 8px 0 rgba(22,64,125,.12); }
+.pending-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.pending-head h2 { margin: 0; font-size: 22px; }
+#pendingCount { display: inline-grid; place-items: center; min-width: 86px; padding: 8px 12px; border-radius: 999px; background: #ffe173; font-weight: 900; }
+.pending-list { display: flex; flex-wrap: wrap; gap: 8px; font-weight: 850; }
+.pending-chip { padding: 8px 11px; border-radius: 999px; background: #fff; border: 3px solid rgba(18,56,101,.18); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pending-chip.done { background: #d9ffd8; border-color: #36b75e; }
+.pending-chip.missing { background: #fff8d5; border-color: #ffd34d; }
+#scannerOverlay { pointer-events: auto !important; touch-action: manipulation; cursor: pointer; }
+#scannerStatus.good { background: #d9ffd8; color: #0d6f31; }
+#scanLog .log-row.new span:last-child { background: #ffe173; }
+#scanLog .log-row.ok span:last-child { background: #96ee9a; }

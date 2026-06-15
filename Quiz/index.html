@@ -114,7 +114,7 @@
                     <div class="base-mode-icon">📄</div>
                     <div class="base-mode-tag">PAPER-BASED</div>
                     <h2>Paper Mode</h2>
-                    <p>Print QR answer cards, project the question, and scan student cards with a camera or phone.</p>
+                    <p>Print Q-cards, project the question, and scan student cards with the external phone scanner.</p>
                     <button class="arcade-btn start">Choose Paper ▶</button>
                 </article>
             </div>
@@ -142,9 +142,8 @@
                         <input id="paperSessionTitle" type="text" maxlength="42" value="Whiteboard Paper Quiz">
                     </label>
 
-                    <div class="paper-camera-choice">
-                        <button id="paperUseBoardCameraBtn" class="paper-choice active" data-paper-camera="board">📷 Use this device camera</button>
-                        <button id="paperUsePhoneCameraBtn" class="paper-choice" data-paper-camera="phone">📱 Use external phone</button>
+                    <div class="paper-phone-only-note" style="padding:18px;border-radius:24px;background:rgba(126,209,255,.24);border:4px solid rgba(255,255,255,.9);font-weight:900;color:#123865;line-height:1.25;">
+                        📱 Paper Mode uses the external phone scanner only. Create a session, scan the QR with your phone, then start the game.
                     </div>
 
                     <div class="paper-lobby-status" id="paperLobbyStatus">Ready to configure printable cards.</div>
@@ -188,7 +187,6 @@
                     <button id="paperCreateSessionBtn" class="arcade-btn start">Create / Sync Session</button>
                     <div id="paperSessionQr" class="paper-session-qr">QR will appear here</div>
                     <div id="paperSessionLink" class="paper-session-link"></div>
-                    <button id="paperOpenBoardScannerBtn" class="arcade-btn secondary">Open Camera Panel</button>
                 </section>
             </div>
 
@@ -227,26 +225,6 @@
                 </aside>
             </div>
 
-            <div id="paperScannerPanel" class="paper-scanner-panel hidden">
-                <div class="paper-scanner-card">
-                    <div class="paper-scanner-head">
-                        <h3>Board Camera Scanner</h3>
-                        <button id="closePaperScannerBtn" class="small-btn">Close ✕</button>
-                    </div>
-                    <video id="paperScannerVideo" muted autoplay playsinline webkit-playsinline></video>
-                    <canvas id="paperScannerCanvas" class="hidden"></canvas>
-                    <div id="paperScannerStatus" class="paper-scanner-status">Camera ready.</div>
-                    <div class="paper-manual-scan">
-                        <input id="paperManualCardId" type="text" placeholder="Card ID, e.g. P01">
-                        <div>
-                            <button class="paper-manual-answer" data-paper-manual-answer="A">A</button>
-                            <button class="paper-manual-answer" data-paper-manual-answer="B">B</button>
-                            <button class="paper-manual-answer" data-paper-manual-answer="C">C</button>
-                            <button class="paper-manual-answer" data-paper-manual-answer="D">D</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <section id="modeScreen" class="screen">

@@ -2159,3 +2159,77 @@ function paperHandleDetectedCodes(codes, source) {
           paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
      }
 }
+
+/* ---------------------------------------------- 
+     V53 External Phone Scanner Only Overrides
+----------------------------------------------  */
+
+/* ---------------------------------------------- 
+     Hide Board Camera Paper Controls
+----------------------------------------------  */
+function paperHideBoardCameraControls() {
+     const boardButton = document.getElementById("paperUseBoardCameraBtn");
+     const phoneButton = document.getElementById("paperUsePhoneCameraBtn");
+     const openScannerButton = document.getElementById("paperOpenBoardScannerBtn");
+     const scannerPanel = document.getElementById("paperScannerPanel");
+     const cameraChoice = document.querySelector(".paper-camera-choice");
+     const paper = paperState();
+
+     paper.cameraMode = "phone";
+
+     if (boardButton) { boardButton.remove(); }
+     if (openScannerButton) { openScannerButton.remove(); }
+     if (scannerPanel) { scannerPanel.remove(); }
+     if (phoneButton) {
+          phoneButton.classList.add("active");
+          phoneButton.textContent = "📱 External phone scanner";
+          phoneButton.dataset.paperCamera = "phone";
+     }
+     if (cameraChoice && !cameraChoice.querySelector(".paper-phone-only-note")) {
+          cameraChoice.innerHTML = `<div class="paper-phone-only-note">📱 Paper Mode uses the external phone scanner only. Scan the session QR with your phone.</div>`;
+     }
+}
+
+/* ---------------------------------------------- 
+     Prepare Paper Lobby
+----------------------------------------------  */
+function preparePaperLobby() {
+     const paper = paperState();
+     const title = document.getElementById("paperSessionTitle");
+     const count = document.getElementById("paperCardCount");
+
+     paper.questions = getPaperQuestions();
+     paper.cameraMode = "phone";
+     if (title && !title.value.trim()) { title.value = paper.sessionTitle; }
+     paper.apiBase = PAPER_API_BASE;
+     if (count && !paper.cards.length) { count.value = Math.min(24, PAPER_MAX_CARDS); }
+
+     paperHideBoardCameraControls();
+     if (!paper.cards.length) { paperApplyCardCount(); }
+     else { paperRenderRoster(); }
+
+     paperSetLobbyStatus(`${paper.questions.length} multiple-choice questions ready. Use the external phone scanner QR for Paper Mode.`, false);
+}
+
+/* ---------------------------------------------- 
+     Start Paper Game
+----------------------------------------------  */
+async function startPaperGame() {
+     const paper = paperReadSettings();
+     paper.questions = getPaperQuestions();
+     paper.responses = {};
+     paper.current = 0;
+     paper.revealed = false;
+     paper.cameraMode = "phone";
+     if (!paper.questions.length) {
+          paperSetLobbyStatus("Paper Mode needs multiple-choice questions.", true);
+          return;
+     }
+     if (!paper.sessionId) { await paperCreateSession(); }
+     stopBgm("title");
+     stopBgm("podium");
+     startBgm("round");
+     showScreen("paperGame");
+     renderPaperQuestion();
+     startPaperPolling();
+}

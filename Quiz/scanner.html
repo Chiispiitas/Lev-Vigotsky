@@ -26,7 +26,15 @@
         <section class="camera-card">
             <video id="scannerVideo" muted autoplay playsinline webkit-playsinline></video>
             <canvas id="scannerCanvas" hidden></canvas>
-            <div id="scannerStatus">Press Start Camera. The scanner reads Q-cards continuously and detects the answer from card rotation.</div>
+            <div id="scannerStatus">Press Start Camera. The scanner reads Q-cards continuously and detects the answer from card rotation. Tap a detected card in the preview to update an already recorded answer.</div>
+        </section>
+
+        <section class="pending-card">
+            <div class="pending-head">
+                <h2>Still Needed</h2>
+                <span id="pendingCount">0 / 0</span>
+            </div>
+            <div id="pendingStudentList" class="pending-list">Create / sync a session first.</div>
         </section>
 
         <section class="manual-card">

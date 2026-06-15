@@ -1026,3 +1026,429 @@ function handleDetectedCodes(codes, source) {
           setStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
      }
 }
+
+/* ---------------------------------------------- 
+     V53 Controlled Answer Scanner + Feedback States
+----------------------------------------------  */
+
+var scannerResponsesCache = {};
+var scannerResponsesLoadedAt = 0;
+var scannerPendingAck = {};
+var scannerTapDetections = [];
+var scannerDataTimer = null;
+var scannerAutoSubmitMemory = {};
+var scannerTapReady = false;
+
+/* ---------------------------------------------- 
+     Current Scanner Question Index
+----------------------------------------------  */
+function scannerCurrentQuestionIndex() {
+     const source = scannerSessionCache || {};
+     return Number(source.currentQuestionIndex || source.item && source.item.currentQuestionIndex || 0);
+}
+
+/* ---------------------------------------------- 
+     Response Key
+----------------------------------------------  */
+function scannerResponseKey(questionIndex, cardId) {
+     return `${Number(questionIndex) || 0}-${normalizeCardId(cardId)}`;
+}
+
+/* ---------------------------------------------- 
+     Refresh Scanner Responses
+----------------------------------------------  */
+async function refreshScannerResponses(force) {
+     const now = Date.now();
+     if (!force && now - scannerResponsesLoadedAt < 320) { return scannerResponsesCache; }
+     if (!apiBase || !sessionId) { return scannerResponsesCache; }
+
+     const questionIndex = scannerCurrentQuestionIndex();
+     try {
+          const response = await fetch(`${apiBase}/quizResponses?sessionId=${encodeURIComponent(sessionId)}&questionIndex=${encodeURIComponent(questionIndex)}`, { cache: "no-store" });
+          if (!response.ok) { return scannerResponsesCache; }
+          const data = await response.json();
+          const mapped = {};
+          (data.items || []).forEach(function(item) {
+               mapped[normalizeCardId(item.cardId)] = item;
+          });
+          scannerResponsesCache = mapped;
+          scannerResponsesLoadedAt = now;
+
+          Object.keys(scannerPendingAck).forEach(function(key) {
+               const pending = scannerPendingAck[key];
+               const parts = key.split("-");
+               const pendingQuestion = Number(parts[0]) || 0;
+               const pendingCard = parts.slice(1).join("-");
+               const recorded = scannerResponsesCache[pendingCard];
+               if (pendingQuestion == questionIndex && recorded && recorded.answer == pending.answer && Date.now() > pending.keepYellowUntil) {
+                    delete scannerPendingAck[key];
+               }
+          });
+
+          renderPendingStudents();
+     }
+     catch (error) {}
+     return scannerResponsesCache;
+}
+
+/* ---------------------------------------------- 
+     Start Scanner Data Polling
+----------------------------------------------  */
+function startScannerDataPolling() {
+     clearInterval(scannerDataTimer);
+     Promise.resolve(refreshScannerSessionCache(true)).then(function() { return refreshScannerResponses(true); });
+     scannerDataTimer = setInterval(function() {
+          refreshScannerSessionCache(false).then(function() { return refreshScannerResponses(false); });
+     }, 360);
+}
+
+/* ---------------------------------------------- 
+     Get Scanner Cards
+----------------------------------------------  */
+function getScannerCards() {
+     const cards = scannerSessionCache && scannerSessionCache.cards ? scannerSessionCache.cards : [];
+     return cards.map(function(card, index) {
+          return {
+               cardId: normalizeCardId(card.cardId || `P${index + 1}`),
+               name: card.name || normalizeCardId(card.cardId || `P${index + 1}`)
+          };
+     });
+}
+
+/* ---------------------------------------------- 
+     Render Pending Students
+----------------------------------------------  */
+function renderPendingStudents() {
+     const count = document.getElementById("pendingCount");
+     const list = document.getElementById("pendingStudentList");
+     if (!count || !list) { return; }
+
+     const cards = getScannerCards();
+     const answered = Object.keys(scannerResponsesCache || {}).length;
+     const missing = cards.filter(function(card) { return !scannerResponsesCache[card.cardId]; });
+
+     count.textContent = `${missing.length} left`;
+     if (!cards.length) {
+          list.textContent = "Waiting for session roster...";
+          return;
+     }
+     if (!missing.length) {
+          list.innerHTML = `<span class="pending-chip done">All students scanned for this question ✅</span>`;
+          return;
+     }
+
+     list.innerHTML = missing.map(function(card) {
+          return `<span class="pending-chip missing">${escapeHtml(card.name)}</span>`;
+     }).join("");
+}
+
+/* ---------------------------------------------- 
+     Setup Scanner Overlay
+----------------------------------------------  */
+function setupScannerOverlay() {
+     if (!elVideo || !elCanvas) { return; }
+     const parent = elVideo.parentElement;
+     if (parent) { parent.style.position = "relative"; }
+     elCanvas.hidden = false;
+     elCanvas.removeAttribute("hidden");
+     elCanvas.id = "scannerOverlay";
+     elCanvas.style.position = "absolute";
+     elCanvas.style.pointerEvents = "auto";
+     elCanvas.style.zIndex = "5";
+     elCanvas.style.borderRadius = "18px";
+     setupScannerTapToUpdate();
+}
+
+/* ---------------------------------------------- 
+     Setup Scanner Tap To Update
+----------------------------------------------  */
+function setupScannerTapToUpdate() {
+     if (!elCanvas || scannerTapReady) { return; }
+     scannerTapReady = true;
+
+     const handleTap = function(event) {
+          if (!scannerTapDetections.length) { return; }
+          const rect = elCanvas.getBoundingClientRect();
+          const point = event.touches && event.touches[0] ? event.touches[0] : event;
+          const x = (point.clientX - rect.left) * (elCanvas.width / Math.max(1, rect.width));
+          const y = (point.clientY - rect.top) * (elCanvas.height / Math.max(1, rect.height));
+          const hit = scannerTapDetections.slice().reverse().find(function(item) {
+               const box = item.box;
+               return box && x >= box.x && x <= box.x + box.w && y >= box.y && y <= box.y + box.h;
+          });
+          if (!hit) { return; }
+          event.preventDefault();
+          const cardId = normalizeCardId(hit.cardId);
+          const name = getScannerCardName(cardId);
+          submitScan(cardId, hit.answer, "phone-camera-tap-update", true).then(function(result) {
+               if (result && result.status == "existing-same") {
+                    setStatus(`${name} is already recorded as ${hit.answer}.`, false);
+               }
+               else {
+                    setStatus(`Updating ${name} to ${hit.answer}. Waiting for game confirmation...`, false);
+               }
+          });
+     };
+
+     elCanvas.addEventListener("click", handleTap);
+     elCanvas.addEventListener("touchend", handleTap, { passive: false });
+}
+
+/* ---------------------------------------------- 
+     Detection State
+----------------------------------------------  */
+function scannerDetectionState(cardId, answer) {
+     const questionIndex = scannerCurrentQuestionIndex();
+     const normalized = normalizeCardId(cardId);
+     const key = scannerResponseKey(questionIndex, normalized);
+     const pending = scannerPendingAck[key];
+     const recorded = scannerResponsesCache[normalized];
+
+     if (pending) {
+          return { state: "new", label: "NEW!", answer: pending.answer || answer, color: "#ffe04a", fill: "rgba(255, 224, 74, .96)", text: "#123865" };
+     }
+     if (recorded) {
+          return { state: "ok", label: "OK", answer: recorded.answer || answer, color: "#45d66b", fill: "rgba(69, 214, 107, .96)", text: "#123865" };
+     }
+     return { state: "ready", label: "READY", answer: answer, color: "#62c8ff", fill: "rgba(18, 56, 101, .94)", text: "#ffffff" };
+}
+
+/* ---------------------------------------------- 
+     Draw Scanner Overlay
+----------------------------------------------  */
+function drawScannerOverlay(detections) {
+     if (!elCanvas) { return; }
+     const ctx = elCanvas.getContext("2d");
+     ctx.clearRect(0, 0, elCanvas.width, elCanvas.height);
+     scannerTapDetections = detections || [];
+     if (!detections || !detections.length) { return; }
+
+     detections.forEach(function(item) {
+          if (!item.box) { return; }
+          const box = item.box;
+          const cardId = normalizeCardId(item.cardId);
+          const name = getScannerCardName(cardId);
+          const state = scannerDetectionState(cardId, item.answer);
+          const label = `${name} • ${state.answer} • ${state.label}`;
+          const x = Math.max(0, box.x);
+          const y = Math.max(0, box.y);
+          const w = Math.max(1, box.w);
+          const h = Math.max(1, box.h);
+          const fontSize = Math.max(22, Math.min(44, Math.round(w * 0.115)));
+
+          ctx.save();
+          ctx.lineWidth = Math.max(8, Math.round(w * 0.032));
+          ctx.strokeStyle = state.color;
+          ctx.shadowColor = "rgba(0,0,0,.55)";
+          ctx.shadowBlur = 12;
+          ctx.strokeRect(x, y, w, h);
+          ctx.shadowBlur = 0;
+
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          const metrics = ctx.measureText(label);
+          const padX = Math.round(fontSize * 0.48);
+          const padY = Math.round(fontSize * 0.30);
+          const badgeW = Math.min(elCanvas.width - 8, metrics.width + padX * 2);
+          const badgeH = fontSize + padY * 2;
+          const badgeX = Math.max(4, Math.min(elCanvas.width - badgeW - 4, x + w / 2 - badgeW / 2));
+          const badgeY = Math.max(4, y - badgeH - 8);
+
+          ctx.fillStyle = state.fill;
+          ctx.beginPath();
+          if (ctx.roundRect) { ctx.roundRect(badgeX, badgeY, badgeW, badgeH, Math.round(badgeH * 0.34)); }
+          else { ctx.rect(badgeX, badgeY, badgeW, badgeH); }
+          ctx.fill();
+          ctx.fillStyle = state.text;
+          ctx.textBaseline = "middle";
+          ctx.fillText(label, badgeX + padX, badgeY + badgeH / 2);
+          ctx.restore();
+     });
+}
+
+/* ---------------------------------------------- 
+     Start Camera
+----------------------------------------------  */
+async function startCamera() {
+     if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
+          return;
+     }
+     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+
+     try {
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await refreshScannerSessionCache(true);
+          await refreshScannerResponses(true);
+          startScannerDataPolling();
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 60, min: 24 }
+               },
+               audio: false
+          });
+          elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
+          await elVideo.play();
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
+          setStatus("Scanning active. Yellow NEW! means recorded locally; green OK means the answer is already registered for this question. Tap a detected card to update it.", false);
+          startLoop();
+     }
+     catch (error) {
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || elVideo.readyState < 2) { return; }
+
+     const work = scannerWorkCanvas;
+     const ctx = work.getContext("2d", { willReadFrequently: true });
+     const sourceW = elVideo.videoWidth || 1280;
+     const sourceH = elVideo.videoHeight || 720;
+     const maxW = 860;
+     work.width = Math.min(maxW, sourceW);
+     work.height = Math.round(sourceH * (work.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(elVideo, 0, 0, work.width, work.height);
+     syncScannerOverlaySize(work.width, work.height);
+
+     const detections = detectQCardsFromCanvas(work);
+     drawScannerOverlay(detections);
+     if (detections.length) {
+          handleDetectedCodes(detections, "phone-camera-6x6-controlled");
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Confirmed Fast
+----------------------------------------------  */
+function scanConfirmedFast(cardId, answer, confidence) {
+     const key = normalizeCardId(cardId);
+     const now = Date.now();
+     const previous = scanConfirmMemory[key];
+     scanConfirmMemory[key] = { answer: answer, confidence: confidence || 0, time: now };
+
+     if ((confidence || 0) >= 38) { return true; }
+     if (previous && previous.answer == answer && now - previous.time < 300) { return true; }
+     return false;
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes
+----------------------------------------------  */
+function handleDetectedCodes(codes, source) {
+     const accepted = [];
+     const questionIndex = scannerCurrentQuestionIndex();
+
+     for (const code of codes) {
+          const payload = code.cardId ? code : decodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && payload.sessionId != sessionId) { continue; }
+          const cardId = normalizeCardId(payload.cardId);
+          const responseKey = scannerResponseKey(questionIndex, cardId);
+          if (scannerResponsesCache[cardId] || scannerPendingAck[responseKey]) { continue; }
+          if (!scanConfirmedFast(cardId, payload.answer, payload.confidence)) { continue; }
+          if (!scanShouldSubmit(cardId, payload.answer)) { continue; }
+          submitScan(cardId, payload.answer, source || "phone-camera").catch(function(error) { console.warn(error); });
+          accepted.push(`${getScannerCardName(cardId)}: ${payload.answer}`);
+     }
+
+     if (accepted.length) {
+          setStatus(`NEW! ${accepted.join(" | ")} · waiting for game confirmation`, false);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Should Submit
+----------------------------------------------  */
+function scanShouldSubmit(cardId, answer) {
+     const key = `${scannerCurrentQuestionIndex()}-${normalizeCardId(cardId)}`;
+     const previous = scannerAutoSubmitMemory[key];
+     const now = Date.now();
+     if (previous && previous.answer == answer && now - previous.time < 1400) { return false; }
+     scannerAutoSubmitMemory[key] = { answer: answer, time: now };
+     return true;
+}
+
+/* ---------------------------------------------- 
+     Get Current Question Index
+----------------------------------------------  */
+async function getCurrentQuestionIndex() {
+     return scannerCurrentQuestionIndex();
+}
+
+/* ---------------------------------------------- 
+     Submit Scan
+----------------------------------------------  */
+async function submitScan(cardId, answer, source, forceUpdate) {
+     if (!sessionId) { setStatus("Missing session ID.", true); return { status: "missing-session" }; }
+     await refreshScannerSessionCache(false);
+     await refreshScannerResponses(false);
+
+     const questionIndex = scannerCurrentQuestionIndex();
+     const normalized = normalizeCardId(cardId);
+     const name = getScannerCardName(normalized);
+     const existing = scannerResponsesCache[normalized];
+     const key = scannerResponseKey(questionIndex, normalized);
+
+     if (existing && !forceUpdate) {
+          addLog(normalized, existing.answer || answer, "ok", "OK");
+          setStatus(`${name} already has ${existing.answer || answer}. Tap the card preview to update.`, false);
+          return { status: "existing" };
+     }
+     if (existing && forceUpdate && existing.answer == answer) {
+          addLog(normalized, answer, "ok", "OK");
+          return { status: "existing-same" };
+     }
+
+     const scan = { sessionId, questionIndex, cardId: normalized, answer, source, timestamp: new Date().toISOString() };
+     scannerPendingAck[key] = { answer: answer, time: Date.now(), keepYellowUntil: Date.now() + 700 };
+     renderPendingStudents();
+     addLog(normalized, answer, "new", "NEW!");
+
+     try {
+          await fetch(`${apiBase}/quizScan`, {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify(scan)
+          });
+          setTimeout(function() { refreshScannerResponses(true); }, 220);
+          return { status: "new" };
+     }
+     catch (error) {
+          const localKey = `${localPrefix}${sessionId}-phone-scans`;
+          const existingLocal = JSON.parse(localStorage.getItem(localKey) || "[]");
+          existingLocal.push(scan);
+          localStorage.setItem(localKey, JSON.stringify(existingLocal));
+          setStatus(`Saved locally because Wix did not respond: ${error.message}`, true);
+          return { status: "local" };
+     }
+}
+
+/* ---------------------------------------------- 
+     Add Log
+----------------------------------------------  */
+function addLog(cardId, answer, mode, badge) {
+     if (!elLog) { return; }
+     const row = document.createElement("div");
+     row.className = `log-row ${mode || ""}`;
+     row.innerHTML = `<span>${escapeHtml(getScannerCardName(cardId))}</span><span>${escapeHtml(badge || answer)}</span>`;
+     elLog.prepend(row);
+}
+
+/* ---------------------------------------------- 
+     Initial Session Roster Load
+----------------------------------------------  */
+refreshScannerSessionCache(true).then(function() { return refreshScannerResponses(true); });
