@@ -1452,3 +1452,124 @@ function addLog(cardId, answer, mode, badge) {
      Initial Session Roster Load
 ----------------------------------------------  */
 refreshScannerSessionCache(true).then(function() { return refreshScannerResponses(true); });
+
+/* ---------------------------------------------- 
+     V54 Scanner Overlay Ghost Time
+----------------------------------------------  */
+var scannerOverlayGhosts = scannerOverlayGhosts || {};
+const SCANNER_OVERLAY_GHOST_MS = 3000;
+
+/* ---------------------------------------------- 
+     Remember Scanner Overlay Detections
+----------------------------------------------  */
+function rememberScannerOverlayDetections(detections) {
+     const now = Date.now();
+     (detections || []).forEach(function(item) {
+          if (!item || !item.box || !item.cardId) { return; }
+          const cardId = normalizeCardId(item.cardId);
+          scannerOverlayGhosts[cardId] = {
+               cardId: cardId,
+               answer: item.answer,
+               box: {
+                    x: item.box.x,
+                    y: item.box.y,
+                    w: item.box.w,
+                    h: item.box.h
+               },
+               confidence: item.confidence || 0,
+               lastSeen: now,
+               expiresAt: now + SCANNER_OVERLAY_GHOST_MS
+          };
+     });
+}
+
+/* ---------------------------------------------- 
+     Get Scanner Overlay Ghosts
+----------------------------------------------  */
+function getScannerOverlayGhosts() {
+     const now = Date.now();
+     return Object.keys(scannerOverlayGhosts).map(function(key) {
+          const item = scannerOverlayGhosts[key];
+          if (!item || item.expiresAt < now) {
+               delete scannerOverlayGhosts[key];
+               return null;
+          }
+          item.ghostAge = now - item.lastSeen;
+          item.isGhost = item.ghostAge > 80;
+          return item;
+     }).filter(Boolean);
+}
+
+/* ---------------------------------------------- 
+     Draw Rounded Scanner Badge
+----------------------------------------------  */
+function drawRoundedScannerBadge(ctx, x, y, w, h, radius) {
+     ctx.beginPath();
+     if (ctx.roundRect) { ctx.roundRect(x, y, w, h, radius); }
+     else { ctx.rect(x, y, w, h); }
+     ctx.fill();
+}
+
+/* ---------------------------------------------- 
+     Draw Scanner Overlay
+----------------------------------------------  */
+function drawScannerOverlay(detections) {
+     if (!elCanvas) { return; }
+     rememberScannerOverlayDetections(detections);
+
+     const ctx = elCanvas.getContext("2d");
+     ctx.clearRect(0, 0, elCanvas.width, elCanvas.height);
+
+     const visibleItems = getScannerOverlayGhosts();
+     scannerTapDetections = visibleItems;
+     if (!visibleItems.length) { return; }
+
+     visibleItems.forEach(function(item) {
+          if (!item.box) { return; }
+          const box = item.box;
+          const cardId = normalizeCardId(item.cardId);
+          const name = getScannerCardName(cardId);
+          const state = scannerDetectionState(cardId, item.answer);
+          const label = `${name} • ${state.answer} • ${state.label}`;
+          const x = Math.max(0, box.x);
+          const y = Math.max(0, box.y);
+          const w = Math.max(1, box.w);
+          const h = Math.max(1, box.h);
+          const fontSize = Math.max(22, Math.min(44, Math.round(w * 0.115)));
+          const ghostFade = item.isGhost ? Math.max(.48, 1 - (item.ghostAge / SCANNER_OVERLAY_GHOST_MS) * .52) : 1;
+
+          ctx.save();
+          ctx.globalAlpha = ghostFade;
+          ctx.lineWidth = Math.max(8, Math.round(w * 0.032));
+          ctx.strokeStyle = state.color;
+          ctx.shadowColor = "rgba(0,0,0,.55)";
+          ctx.shadowBlur = item.isGhost ? 8 : 12;
+          ctx.strokeRect(x, y, w, h);
+          ctx.shadowBlur = 0;
+
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          const metrics = ctx.measureText(label);
+          const padX = Math.round(fontSize * 0.48);
+          const padY = Math.round(fontSize * 0.30);
+          const badgeW = Math.min(elCanvas.width - 8, metrics.width + padX * 2);
+          const badgeH = fontSize + padY * 2;
+          const badgeX = Math.max(4, Math.min(elCanvas.width - badgeW - 4, x + w / 2 - badgeW / 2));
+          const badgeY = Math.max(4, y - badgeH - 8);
+
+          ctx.fillStyle = state.fill;
+          drawRoundedScannerBadge(ctx, badgeX, badgeY, badgeW, badgeH, Math.round(badgeH * 0.34));
+          ctx.fillStyle = state.text;
+          ctx.textBaseline = "middle";
+          ctx.fillText(label, badgeX + padX, badgeY + badgeH / 2);
+
+          if (item.isGhost) {
+               ctx.globalAlpha = Math.min(.92, ghostFade + .1);
+               ctx.font = `900 ${Math.max(14, Math.round(fontSize * .46))}px Arial, sans-serif`;
+               ctx.fillStyle = "rgba(255,255,255,.92)";
+               ctx.textBaseline = "top";
+               ctx.fillText("last seen", badgeX + padX, badgeY + badgeH + 4);
+          }
+
+          ctx.restore();
+     });
+}
