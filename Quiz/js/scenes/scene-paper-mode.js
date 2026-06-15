@@ -66,8 +66,7 @@ function bindPaperLobbyScene() {
      if (printButton) {
           printButton.addEventListener("click", async function() {
                playSound("enter");
-               await paperGeneratePrintableCards();
-               window.print();
+               await paperPrintCardsDocument();
           });
      }
 
@@ -409,18 +408,44 @@ async function paperRenderSessionQr() {
      const linkBox = document.getElementById("paperSessionLink");
      if (!qrBox) { return; }
 
-     qrBox.innerHTML = "";
-     if (window.QRCode && QRCode.toDataURL) {
-          const dataUrl = await QRCode.toDataURL(paper.scannerUrl, { width: 280, margin: 1 });
-          qrBox.innerHTML = `<img src="${dataUrl}" alt="Scanner QR">`;
-     }
-     else {
-          qrBox.textContent = paper.sessionId;
-     }
+     paper.scannerUrl = paper.scannerUrl || paperBuildScannerUrl();
+     const qrSrc = await paperGetQrImageSource(paper.scannerUrl, 280);
+     qrBox.innerHTML = `<img src="${qrSrc}" alt="Scanner QR"><small>Scan this with your phone</small>`;
 
      if (linkBox) {
-          linkBox.innerHTML = `<b>${esc(paper.sessionId)}</b><span>${esc(paper.scannerUrl)}</span>`;
+          linkBox.innerHTML = `<b>${esc(paper.sessionId)}</b><a href="${esc(paper.scannerUrl)}" target="_blank" rel="noopener">Open phone scanner</a><span>${esc(paper.scannerUrl)}</span>`;
      }
+}
+
+/* ---------------------------------------------- 
+     Get QR Image Source 
+----------------------------------------------  */
+async function paperGetQrImageSource(payload, size) {
+     const safeSize = Math.max(80, Math.min(720, Number(size) || 240));
+
+     try {
+          if (window.QRCode && QRCode.toDataURL) {
+               return await QRCode.toDataURL(payload, {
+                    width: safeSize,
+                    margin: 1,
+                    errorCorrectionLevel: "M",
+                    color: { dark: "#000000", light: "#ffffff" }
+               });
+          }
+     }
+     catch (error) {
+          console.warn("Local QR generator failed. Using online QR fallback.", error);
+     }
+
+     return `https://api.qrserver.com/v1/create-qr-code/?size=${safeSize}x${safeSize}&margin=8&data=${encodeURIComponent(payload)}`;
+}
+
+/* ---------------------------------------------- 
+     QR Image HTML 
+----------------------------------------------  */
+async function paperQrImageHtml(payload, size, alt) {
+     const src = await paperGetQrImageSource(payload, size || 210);
+     return `<img src="${src}" alt="${esc(alt || payload)}">`;
 }
 
 /* ---------------------------------------------- 
@@ -487,10 +512,7 @@ function paperDisplayCardNumber(cardId) {
 ----------------------------------------------  */
 async function paperFillQrImage(container, payload, size) {
      if (!container) { return; }
-     if (window.QRCode && QRCode.toDataURL) {
-          const dataUrl = await QRCode.toDataURL(payload, { width: size || 210, margin: 1, color: { dark: "#000000", light: "#ffffff" } });
-          container.innerHTML = `<img src="${dataUrl}" alt="${esc(payload)}">`;
-     }
+     container.innerHTML = await paperQrImageHtml(payload, size || 210, payload);
 }
 
 /* ---------------------------------------------- 
@@ -534,21 +556,67 @@ function paperAnswerFromQrLocation(location) {
 ----------------------------------------------  */
 async function paperDownloadCardsHtml() {
      await paperGeneratePrintableCards();
-     const area = document.getElementById("paperPrintArea");
-     const html = `<!doctype html><html><head><meta charset="utf-8"><title>Paper Cards</title><style>${paperPrintCss()}</style></head><body>${area.innerHTML}</body></html>`;
+     const html = paperBuildCardsDocumentHtml(false);
      const blob = new Blob([html], { type: "text/html" });
      const link = document.createElement("a");
      link.href = URL.createObjectURL(blob);
-     link.download = `${paperState().sessionId || "paper"}-cards.html`;
+     link.download = `${paperState().sessionId || "paper"}-q-cards.html`;
      link.click();
-     URL.revokeObjectURL(link.href);
+     setTimeout(function() { URL.revokeObjectURL(link.href); }, 1000);
+}
+
+/* ---------------------------------------------- 
+     Print Cards Document 
+----------------------------------------------  */
+async function paperPrintCardsDocument() {
+     await paperGeneratePrintableCards();
+     const html = paperBuildCardsDocumentHtml(true);
+     const printWindow = window.open("", "_blank");
+
+     if (!printWindow) {
+          paperSetLobbyStatus("Popup blocked. Use Download Cards HTML, then print from that file.", true);
+          return;
+     }
+
+     printWindow.document.open();
+     printWindow.document.write(html);
+     printWindow.document.close();
+     paperSetLobbyStatus("Print window opened. Save as PDF from the browser print dialog.", false);
+}
+
+/* ---------------------------------------------- 
+     Build Cards Document HTML 
+----------------------------------------------  */
+function paperBuildCardsDocumentHtml(autoPrint) {
+     const area = document.getElementById("paperPrintArea");
+     const paper = paperState();
+     const printScript = autoPrint ? `<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},550);});<\/script>` : "";
+
+     return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${esc(paper.sessionTitle)} Q-cards</title>
+<style>${paperPrintCss()}</style>
+</head>
+<body>
+<section class="paper-instructions">
+<h1>Paper Mode Q-cards</h1>
+<p>Give one card to each student. Students answer by rotating the card so the selected answer letter is above the code.</p>
+<p>Session: <b>${esc(paper.sessionId || "No session")}</b></p>
+</section>
+${area ? area.innerHTML : ""}
+${printScript}
+</body>
+</html>`;
 }
 
 /* ---------------------------------------------- 
      Print CSS 
 ----------------------------------------------  */
 function paperPrintCss() {
-     return `body{font-family:Arial,sans-serif;color:#111}.paper-print-sheet-title{font-weight:800;margin:8px}.qcard-printable{position:relative;display:inline-block;vertical-align:top;width:178mm;height:178mm;margin:4mm;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}.paper-qcard-code{position:absolute;left:50%;top:50%;width:86mm;height:54mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#000}.paper-qcard-code img{width:49mm;height:49mm;filter:invert(1)}.paper-qcard-letter{position:absolute;font:700 9pt Arial,sans-serif;color:#555}.paper-qcard-letter.a{left:50%;top:42mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:46mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:42mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:46mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:700 11pt Arial,sans-serif}.top-left{left:7mm;top:8mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:8mm;top:8mm}.bottom-left{left:7mm;bottom:8mm;transform:rotate(180deg)}.bottom-right{right:8mm;bottom:8mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:700 8pt Arial,sans-serif;color:#cfd2d6}.top-brand{left:50%;top:26mm;transform:translateX(-50%)}.left-brand{left:18mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:18mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:13mm;transform:translateX(-50%);font:800 11pt Arial,sans-serif;color:#222;max-width:75mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:23mm}.bottom-cut{bottom:23mm}`;
+     return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:24mm 22mm;break-after:page;page-break-after:always}.paper-instructions h1{margin:0 0 10mm;font-size:24pt}.paper-instructions p{font-size:14pt;line-height:1.45}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-code{position:absolute;left:50%;top:50%;width:92mm;height:64mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#000}.paper-qcard-code img{width:56mm;height:56mm;display:block;filter:invert(1)}.paper-qcard-letter{position:absolute;font:700 10pt Arial,sans-serif;color:#555}.paper-qcard-letter.a{left:50%;top:84mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:84mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 15pt Arial,sans-serif;color:#222}.top-left{left:10mm;top:18mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:18mm;top:18mm}.bottom-left{left:10mm;bottom:18mm;transform:rotate(180deg)}.bottom-right{right:18mm;bottom:18mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:700 8pt Arial,sans-serif;color:#cfd2d6}.top-brand{left:50%;top:34mm;transform:translateX(-50%)}.left-brand{left:28mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:28mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:18mm;transform:translateX(-50%);font:900 12pt Arial,sans-serif;color:#222;max-width:95mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:42mm}.bottom-cut{bottom:42mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}}`;
 }
 
 /* ---------------------------------------------- 
