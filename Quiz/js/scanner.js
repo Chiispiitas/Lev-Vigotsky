@@ -1579,8 +1579,8 @@ function drawScannerOverlay(detections) {
 ----------------------------------------------  */
 
 var scannerStrictSeenMemory = scannerStrictSeenMemory || {};
-const SCANNER_STRICT_CONFIRM_MS = 650;
-const SCANNER_STRICT_GHOST_MIN_CONFIDENCE = 56;
+const SCANNER_STRICT_CONFIRM_MS = 360;
+const SCANNER_STRICT_GHOST_MIN_CONFIDENCE = 49;
 
 /* ---------------------------------------------- 
      Get Scanner Valid Card IDs
@@ -1603,10 +1603,10 @@ function scannerCandidateIsReasonable(box, width, height) {
      const ratio = box.w / Math.max(1, box.h);
      const frameMin = Math.min(width, height);
 
-     if (side < Math.max(48, frameMin * 0.055)) { return false; }
+     if (side < Math.max(42, frameMin * 0.045)) { return false; }
      if (box.w > width * 0.94 || box.h > height * 0.94) { return false; }
-     if (ratio < 0.78 || ratio > 1.28) { return false; }
-     if (typeof box.fill == "number" && (box.fill < 0.36 || box.fill > 0.92)) { return false; }
+     if (ratio < 0.70 || ratio > 1.42) { return false; }
+     if (typeof box.fill == "number" && (box.fill < 0.28 || box.fill > 0.97)) { return false; }
      return true;
 }
 
@@ -1660,7 +1660,7 @@ function readGridFromCandidateDetailed(imageData, width, height, box) {
      const lowAvg = scannerAverageNumbers(sorted.slice(0, 12));
      const highAvg = scannerAverageNumbers(sorted.slice(-12));
      const contrast = highAvg - lowAvg;
-     const threshold = contrast >= 26 ? (lowAvg + highAvg) / 2 : Math.max(138, lowAvg + 22);
+     const threshold = contrast >= 20 ? (lowAvg + highAvg) / 2 : Math.max(130, lowAvg + 16);
      const boolGrid = gridValues.map(function(row) {
           return row.map(function(value) { return value > threshold; });
      });
@@ -1702,8 +1702,8 @@ function decodeQCardDetailedStrict(detail) {
           const anchor = anchorScore(grid);
           const cornerNoise = cornerNoiseScore(grid);
 
-          if (anchor < 4) { continue; }
-          if (cornerNoise > 1) { continue; }
+          if (anchor < 3) { continue; }
+          if (cornerNoise > 2) { continue; }
 
           const bits = positions.slice(0, 10).map(function(position) {
                return grid[position[0]][position[1]] ? 1 : 0;
@@ -1729,18 +1729,18 @@ function decodeQCardDetailedStrict(detail) {
                const col = position[1];
                const expectedWhite = !!bits[index];
                const distance = Math.abs(values[row][col] - detail.threshold);
-               if (expectedWhite && values[row][col] < detail.threshold + 7) { cellConfidenceMin = -999; }
-               if (!expectedWhite && values[row][col] > detail.threshold - 7) { cellConfidenceMin = -999; }
+               if (expectedWhite && values[row][col] < detail.threshold + 2) { cellConfidenceMin = Math.min(cellConfidenceMin, distance - 5); }
+               if (!expectedWhite && values[row][col] > detail.threshold - 2) { cellConfidenceMin = Math.min(cellConfidenceMin, distance - 5); }
                cellConfidenceTotal += distance;
                if (distance < cellConfidenceMin) { cellConfidenceMin = distance; }
                tested += 1;
           });
 
           const avgCellConfidence = tested ? cellConfidenceTotal / tested : 0;
-          if (detail.contrast < 28) { continue; }
-          if (avgCellConfidence < 13) { continue; }
-          if (cellConfidenceMin < 4) { continue; }
-          if (detail.borderDarkness > detail.threshold - 7) { continue; }
+          if (detail.contrast < 20) { continue; }
+          if (avgCellConfidence < 8) { continue; }
+          if (cellConfidenceMin < -3) { continue; }
+          if (detail.borderDarkness > detail.threshold + 12) { continue; }
 
           const orientationConfidence = qCardOrientationScore(grid);
           const confidence = orientationConfidence + (anchor * 5) + Math.max(0, 16 - (cornerNoise * 3)) + Math.round(detail.contrast / 4) + Math.round(avgCellConfidence / 2);
@@ -1916,7 +1916,7 @@ async function scanCurrentFrame() {
      const ctx = work.getContext("2d", { willReadFrequently: true });
      const sourceW = elVideo.videoWidth || 1280;
      const sourceH = elVideo.videoHeight || 720;
-     const maxW = 900;
+     const maxW = 960;
      work.width = Math.min(maxW, sourceW);
      work.height = Math.round(sourceH * (work.width / sourceW));
      ctx.imageSmoothingEnabled = false;
@@ -1927,7 +1927,7 @@ async function scanCurrentFrame() {
      const detections = strictStableDetections(rawDetections);
      drawScannerOverlay(detections);
      if (detections.length) {
-          handleDetectedCodes(detections, "phone-camera-6x6-strict");
+          handleDetectedCodes(detections, "phone-camera-6x6-balanced");
      }
 }
 
@@ -1935,5 +1935,5 @@ async function scanCurrentFrame() {
      Scanner Warning Text
 ----------------------------------------------  */
 function scannerSetStrictReadyMessage() {
-     setStatus("Strict scanner active. Random background shapes are ignored; hold a Q-card steady for a split second before NEW!/OK appears.", false);
+     setStatus("Balanced scanner active. Hold a Q-card steady for a moment; background shapes are still filtered.", false);
 }
