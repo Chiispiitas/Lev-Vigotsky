@@ -709,3 +709,320 @@ function decodePayload(value, location) {
      }
      return null;
 }
+
+/* ---------------------------------------------- 
+     V52 Faster 6x6 Scan + Stable Orientation + Overlay Labels
+----------------------------------------------  */
+
+var scannerWorkCanvas = document.createElement("canvas");
+var scannerLastOverlay = [];
+var scannerSessionCache = null;
+var scannerSessionLoadedAt = 0;
+var scanConfirmMemory = {};
+
+/* ---------------------------------------------- 
+     Setup Scanner Overlay
+----------------------------------------------  */
+function setupScannerOverlay() {
+     if (!elVideo || !elCanvas) { return; }
+     const parent = elVideo.parentElement;
+     if (parent) { parent.style.position = "relative"; }
+     elCanvas.hidden = false;
+     elCanvas.removeAttribute("hidden");
+     elCanvas.id = "scannerOverlay";
+     elCanvas.style.position = "absolute";
+     elCanvas.style.pointerEvents = "none";
+     elCanvas.style.zIndex = "5";
+     elCanvas.style.borderRadius = "18px";
+}
+
+/* ---------------------------------------------- 
+     Sync Scanner Overlay Size
+----------------------------------------------  */
+function syncScannerOverlaySize(workWidth, workHeight) {
+     if (!elVideo || !elCanvas) { return; }
+     const parent = elVideo.parentElement;
+     if (!parent) { return; }
+     elCanvas.width = workWidth || 960;
+     elCanvas.height = workHeight || 540;
+     elCanvas.style.left = `${elVideo.offsetLeft}px`;
+     elCanvas.style.top = `${elVideo.offsetTop}px`;
+     elCanvas.style.width = `${elVideo.offsetWidth}px`;
+     elCanvas.style.height = `${elVideo.offsetHeight}px`;
+}
+
+/* ---------------------------------------------- 
+     Refresh Scanner Session Cache
+----------------------------------------------  */
+async function refreshScannerSessionCache(force) {
+     const now = Date.now();
+     if (!force && scannerSessionCache && now - scannerSessionLoadedAt < 900) { return scannerSessionCache; }
+     if (!apiBase || !sessionId) { return scannerSessionCache; }
+     try {
+          const response = await fetch(`${apiBase}/quizSession?sessionId=${encodeURIComponent(sessionId)}`, { cache: "no-store" });
+          if (!response.ok) { return scannerSessionCache; }
+          const data = await response.json();
+          scannerSessionCache = data.item || data || scannerSessionCache;
+          scannerSessionLoadedAt = now;
+     }
+     catch (error) {}
+     return scannerSessionCache;
+}
+
+/* ---------------------------------------------- 
+     Get Scanner Card Name
+----------------------------------------------  */
+function getScannerCardName(cardId) {
+     const normalized = normalizeCardId(cardId);
+     const cards = scannerSessionCache && scannerSessionCache.cards ? scannerSessionCache.cards : [];
+     const card = cards.find(function(item) { return normalizeCardId(item.cardId) == normalized; });
+     return card && card.name ? card.name : normalized;
+}
+
+/* ---------------------------------------------- 
+     Q-Card Orientation Score
+----------------------------------------------  */
+function qCardOrientationScore(grid) {
+     let score = 0;
+     if (grid[0][0]) { score += 3; }
+     if (grid[0][1]) { score += 3; }
+     if (grid[1][0]) { score += 3; }
+     if (!grid[1][1]) { score += 3; }
+
+     const quietCorners = [
+          [0,4],[0,5],[1,4],[1,5],
+          [4,0],[4,1],[5,0],[5,1],
+          [4,4],[4,5],[5,4],[5,5]
+     ];
+     quietCorners.forEach(function(item) {
+          score += grid[item[0]][item[1]] ? -2 : 1;
+     });
+     return score;
+}
+
+/* ---------------------------------------------- 
+     Decode 6x6 Q-Card Grid
+----------------------------------------------  */
+function decodeQCardGrid(rawGrid) {
+     const answersByRotation = ["A", "B", "C", "D"];
+     let best = null;
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = rotateGrid(rawGrid, rotation);
+          const anchor = anchorScore(grid);
+          const cornerNoise = cornerNoiseScore(grid);
+          if (anchor < 3) { continue; }
+          if (cornerNoise > 3) { continue; }
+
+          const positions = qCardDataPositions();
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+
+          if (value < 0 || value >= SCANNER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          const orientationConfidence = qCardOrientationScore(grid);
+          const confidence = orientationConfidence + (anchor * 3) + Math.max(0, 12 - cornerNoise);
+          const decoded = {
+               cardId: `P${String(value + 1).padStart(2, "0")}`,
+               answer: answersByRotation[rotation],
+               confidence: confidence,
+               rotation: rotation
+          };
+
+          if (!best || decoded.confidence > best.confidence) { best = decoded; }
+     }
+
+     return best;
+}
+
+/* ---------------------------------------------- 
+     Scan Confirmed Fast
+----------------------------------------------  */
+function scanConfirmedFast(cardId, answer, confidence) {
+     const key = normalizeCardId(cardId);
+     const now = Date.now();
+     const previous = scanConfirmMemory[key];
+     scanConfirmMemory[key] = { answer: answer, confidence: confidence || 0, time: now };
+
+     if ((confidence || 0) >= 30) { return true; }
+     if (previous && previous.answer == answer && now - previous.time < 420) { return true; }
+     return false;
+}
+
+/* ---------------------------------------------- 
+     Draw Scanner Overlay
+----------------------------------------------  */
+function drawScannerOverlay(detections) {
+     if (!elCanvas) { return; }
+     const ctx = elCanvas.getContext("2d");
+     ctx.clearRect(0, 0, elCanvas.width, elCanvas.height);
+     if (!detections || !detections.length) { return; }
+
+     detections.forEach(function(item) {
+          if (!item.box) { return; }
+          const box = item.box;
+          const name = getScannerCardName(item.cardId);
+          const label = `${name} • ${item.answer}`;
+          const x = Math.max(0, box.x);
+          const y = Math.max(0, box.y);
+          const w = Math.max(1, box.w);
+          const h = Math.max(1, box.h);
+          const fontSize = Math.max(24, Math.min(46, Math.round(w * 0.12)));
+
+          ctx.save();
+          ctx.lineWidth = Math.max(6, Math.round(w * 0.025));
+          ctx.strokeStyle = "#ffe04a";
+          ctx.shadowColor = "rgba(0,0,0,.45)";
+          ctx.shadowBlur = 10;
+          ctx.strokeRect(x, y, w, h);
+          ctx.shadowBlur = 0;
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          const metrics = ctx.measureText(label);
+          const padX = Math.round(fontSize * 0.45);
+          const padY = Math.round(fontSize * 0.28);
+          const badgeW = Math.min(elCanvas.width - 8, metrics.width + padX * 2);
+          const badgeH = fontSize + padY * 2;
+          const badgeX = Math.max(4, Math.min(elCanvas.width - badgeW - 4, x + w / 2 - badgeW / 2));
+          const badgeY = Math.max(4, y - badgeH - 8);
+
+          ctx.fillStyle = "rgba(18,56,101,.94)";
+          ctx.beginPath();
+          if (ctx.roundRect) { ctx.roundRect(badgeX, badgeY, badgeW, badgeH, Math.round(badgeH * 0.34)); }
+          else { ctx.rect(badgeX, badgeY, badgeW, badgeH); }
+          ctx.fill();
+          ctx.fillStyle = "#ffffff";
+          ctx.textBaseline = "middle";
+          ctx.fillText(label, badgeX + padX, badgeY + badgeH / 2);
+          ctx.restore();
+     });
+}
+
+/* ---------------------------------------------- 
+     Start Loop
+----------------------------------------------  */
+function startLoop() {
+     cancelAnimationFrame(scannerFrame);
+     scannerBusy = false;
+     setupScannerOverlay();
+     refreshScannerSessionCache(true);
+
+     const scanFrame = function() {
+          if (!scannerStream) { return; }
+          if (!scannerBusy) {
+               scannerBusy = true;
+               Promise.resolve(scanCurrentFrame())
+                    .catch(function(error) { console.warn(error); })
+                    .finally(function() {
+                         scannerBusy = false;
+                         scannerFrame = requestAnimationFrame(scanFrame);
+                    });
+               return;
+          }
+          scannerFrame = requestAnimationFrame(scanFrame);
+     };
+
+     scannerFrame = requestAnimationFrame(scanFrame);
+}
+
+/* ---------------------------------------------- 
+     Start Camera
+----------------------------------------------  */
+async function startCamera() {
+     if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
+          return;
+     }
+     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+
+     try {
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await refreshScannerSessionCache(true);
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 60, min: 24 }
+               },
+               audio: false
+          });
+          elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
+          await elVideo.play();
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
+          setStatus("Fast scanning is active. Hold cards steady for a moment; names and options appear over each detected code.", false);
+          startLoop();
+     }
+     catch (error) {
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || elVideo.readyState < 2) { return; }
+
+     const work = scannerWorkCanvas;
+     const ctx = work.getContext("2d", { willReadFrequently: true });
+     const sourceW = elVideo.videoWidth || 1280;
+     const sourceH = elVideo.videoHeight || 720;
+     const maxW = 980;
+     work.width = Math.min(maxW, sourceW);
+     work.height = Math.round(sourceH * (work.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(elVideo, 0, 0, work.width, work.height);
+     syncScannerOverlaySize(work.width, work.height);
+
+     if (!scannerSessionCache || Date.now() - scannerSessionLoadedAt > 900) {
+          refreshScannerSessionCache(false);
+     }
+
+     const detections = detectQCardsFromCanvas(work);
+     drawScannerOverlay(detections);
+     if (detections.length) {
+          handleDetectedCodes(detections, "phone-camera-6x6-fast");
+     }
+}
+
+/* ---------------------------------------------- 
+     Get Current Question Index
+----------------------------------------------  */
+async function getCurrentQuestionIndex() {
+     const cached = await refreshScannerSessionCache(false);
+     return Number(cached && cached.currentQuestionIndex || cached && cached.item && cached.item.currentQuestionIndex || 0);
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes
+----------------------------------------------  */
+function handleDetectedCodes(codes, source) {
+     const accepted = [];
+     for (const code of codes) {
+          const payload = code.cardId ? code : decodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && payload.sessionId != sessionId) { continue; }
+          const cardId = normalizeCardId(payload.cardId);
+          if (!scanConfirmedFast(cardId, payload.answer, payload.confidence)) { continue; }
+          if (!scanShouldSubmit(cardId, payload.answer)) { continue; }
+          submitScan(cardId, payload.answer, source || "phone-camera").catch(function(error) { console.warn(error); });
+          accepted.push(`${getScannerCardName(cardId)}: ${payload.answer}`);
+     }
+     if (accepted.length) {
+          setStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}

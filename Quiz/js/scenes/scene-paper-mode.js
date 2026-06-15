@@ -1868,3 +1868,294 @@ function paperHandleDetectedCodes(codes, source) {
           paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
      }
 }
+
+/* ---------------------------------------------- 
+     V52 Faster Board Scan + Stable Orientation + Overlay Labels
+----------------------------------------------  */
+
+var paperScannerWorkCanvas = document.createElement("canvas");
+var paperScanConfirmMemory = {};
+
+/* ---------------------------------------------- 
+     Paper Q-Card Orientation Score
+----------------------------------------------  */
+function paperQCardOrientationScore(grid) {
+     let score = 0;
+     if (grid[0][0]) { score += 3; }
+     if (grid[0][1]) { score += 3; }
+     if (grid[1][0]) { score += 3; }
+     if (!grid[1][1]) { score += 3; }
+     const quietCorners = [
+          [0,4],[0,5],[1,4],[1,5],
+          [4,0],[4,1],[5,0],[5,1],
+          [4,4],[4,5],[5,4],[5,5]
+     ];
+     quietCorners.forEach(function(item) { score += grid[item[0]][item[1]] ? -2 : 1; });
+     return score;
+}
+
+/* ---------------------------------------------- 
+     Decode 6x6 Q-Card Grid
+----------------------------------------------  */
+function paperDecodeQCardGrid(rawGrid) {
+     const answersByRotation = ["A", "B", "C", "D"];
+     let best = null;
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = paperRotateGrid(rawGrid, rotation);
+          const anchor = paperAnchorScore(grid);
+          const cornerNoise = paperCornerNoiseScore(grid);
+          if (anchor < 3) { continue; }
+          if (cornerNoise > 3) { continue; }
+
+          const positions = paperQCardDataPositions();
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+          if (value < 0 || value >= PAPER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          const confidence = paperQCardOrientationScore(grid) + (anchor * 3) + Math.max(0, 12 - cornerNoise);
+          const decoded = {
+               cardId: `P${String(value + 1).padStart(2, "0")}`,
+               answer: answersByRotation[rotation],
+               confidence: confidence,
+               rotation: rotation
+          };
+          if (!best || decoded.confidence > best.confidence) { best = decoded; }
+     }
+
+     return best;
+}
+
+/* ---------------------------------------------- 
+     Paper Scan Confirmed Fast
+----------------------------------------------  */
+function paperScanConfirmedFast(cardId, answer, confidence) {
+     const key = paperNormalizeCardId(cardId);
+     const now = Date.now();
+     const previous = paperScanConfirmMemory[key];
+     paperScanConfirmMemory[key] = { answer: answer, confidence: confidence || 0, time: now };
+
+     if ((confidence || 0) >= 30) { return true; }
+     if (previous && previous.answer == answer && now - previous.time < 420) { return true; }
+     return false;
+}
+
+/* ---------------------------------------------- 
+     Setup Paper Scanner Overlay
+----------------------------------------------  */
+function setupPaperScannerOverlay() {
+     const video = document.getElementById("paperScannerVideo");
+     const canvas = document.getElementById("paperScannerCanvas");
+     if (!video || !canvas) { return; }
+     const parent = video.parentElement;
+     if (parent) { parent.style.position = "relative"; }
+     canvas.classList.remove("hidden");
+     canvas.hidden = false;
+     canvas.removeAttribute("hidden");
+     canvas.style.position = "absolute";
+     canvas.style.pointerEvents = "none";
+     canvas.style.zIndex = "20";
+     canvas.style.borderRadius = "18px";
+}
+
+/* ---------------------------------------------- 
+     Sync Paper Overlay Size
+----------------------------------------------  */
+function syncPaperOverlaySize(canvas, video, workWidth, workHeight) {
+     if (!canvas || !video) { return; }
+     canvas.width = workWidth || 960;
+     canvas.height = workHeight || 540;
+     canvas.style.left = `${video.offsetLeft}px`;
+     canvas.style.top = `${video.offsetTop}px`;
+     canvas.style.width = `${video.offsetWidth}px`;
+     canvas.style.height = `${video.offsetHeight}px`;
+}
+
+/* ---------------------------------------------- 
+     Draw Paper Scanner Overlay
+----------------------------------------------  */
+function drawPaperScannerOverlay(detections) {
+     const canvas = document.getElementById("paperScannerCanvas");
+     if (!canvas) { return; }
+     const ctx = canvas.getContext("2d");
+     ctx.clearRect(0, 0, canvas.width, canvas.height);
+     if (!detections || !detections.length) { return; }
+     const paper = paperState();
+
+     detections.forEach(function(item) {
+          if (!item.box) { return; }
+          const cardId = paperNormalizeCardId(item.cardId);
+          const card = paper.cards.find(function(cardItem) { return paperNormalizeCardId(cardItem.cardId) == cardId; });
+          const label = `${card && card.name ? card.name : cardId} • ${item.answer}`;
+          const box = item.box;
+          const x = Math.max(0, box.x);
+          const y = Math.max(0, box.y);
+          const w = Math.max(1, box.w);
+          const h = Math.max(1, box.h);
+          const fontSize = Math.max(24, Math.min(46, Math.round(w * 0.12)));
+
+          ctx.save();
+          ctx.lineWidth = Math.max(6, Math.round(w * 0.025));
+          ctx.strokeStyle = "#ffe04a";
+          ctx.shadowColor = "rgba(0,0,0,.45)";
+          ctx.shadowBlur = 10;
+          ctx.strokeRect(x, y, w, h);
+          ctx.shadowBlur = 0;
+          ctx.font = `900 ${fontSize}px Arial, sans-serif`;
+          const metrics = ctx.measureText(label);
+          const padX = Math.round(fontSize * 0.45);
+          const padY = Math.round(fontSize * 0.28);
+          const badgeW = Math.min(canvas.width - 8, metrics.width + padX * 2);
+          const badgeH = fontSize + padY * 2;
+          const badgeX = Math.max(4, Math.min(canvas.width - badgeW - 4, x + w / 2 - badgeW / 2));
+          const badgeY = Math.max(4, y - badgeH - 8);
+          ctx.fillStyle = "rgba(18,56,101,.94)";
+          ctx.beginPath();
+          if (ctx.roundRect) { ctx.roundRect(badgeX, badgeY, badgeW, badgeH, Math.round(badgeH * 0.34)); }
+          else { ctx.rect(badgeX, badgeY, badgeW, badgeH); }
+          ctx.fill();
+          ctx.fillStyle = "#ffffff";
+          ctx.textBaseline = "middle";
+          ctx.fillText(label, badgeX + padX, badgeY + badgeH / 2);
+          ctx.restore();
+     });
+}
+
+/* ---------------------------------------------- 
+     Start Paper Polling
+----------------------------------------------  */
+function startPaperPolling() {
+     stopPaperPolling();
+     paperPollTimer = setInterval(paperPollResponses, 450);
+}
+
+/* ---------------------------------------------- 
+     Open Board Scanner
+----------------------------------------------  */
+async function paperOpenBoardScanner() {
+     const panel = document.getElementById("paperScannerPanel");
+     const stage = document.getElementById("stage");
+     const video = document.getElementById("paperScannerVideo");
+
+     if (panel && stage && panel.parentElement !== stage) { stage.appendChild(panel); }
+     if (panel) { panel.classList.remove("hidden"); }
+
+     if (!window.isSecureContext && location.protocol !== "file:") {
+          paperSetScannerStatus("Camera needs HTTPS or localhost. Use manual entry if blocked.", true);
+     }
+
+     if (!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          paperSetScannerStatus("Camera unavailable. Use manual entry.", true);
+          return;
+     }
+
+     try {
+          if (paperScannerStream) { paperCloseBoardScanner(); if (panel) { panel.classList.remove("hidden"); } }
+          paperScannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 60, min: 24 }
+               },
+               audio: false
+          });
+          video.srcObject = paperScannerStream;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          await video.play();
+          setupPaperScannerOverlay();
+          paperSetScannerStatus("Fast 6×6 scanner active. Names and options appear over detected cards.", false);
+          paperStartQrLoop();
+     }
+     catch (error) {
+          paperSetScannerStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual entry.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Start QR Loop
+----------------------------------------------  */
+function paperStartQrLoop() {
+     cancelAnimationFrame(paperScannerTimer);
+     paperScannerBusy = false;
+     paperScanMemory = {};
+     paperScanConfirmMemory = {};
+     setupPaperScannerOverlay();
+
+     const scanFrame = function() {
+          if (!paperScannerStream) { return; }
+          if (!paperScannerBusy) {
+               paperScannerBusy = true;
+               Promise.resolve(paperScanBoardFrame())
+                    .catch(function(error) { console.warn(error); })
+                    .finally(function() {
+                         paperScannerBusy = false;
+                         paperScannerTimer = requestAnimationFrame(scanFrame);
+                    });
+               return;
+          }
+          paperScannerTimer = requestAnimationFrame(scanFrame);
+     };
+
+     paperScannerTimer = requestAnimationFrame(scanFrame);
+}
+
+/* ---------------------------------------------- 
+     Scan Board Frame
+----------------------------------------------  */
+async function paperScanBoardFrame() {
+     const video = document.getElementById("paperScannerVideo");
+     const overlay = document.getElementById("paperScannerCanvas");
+     if (!video || !overlay || video.readyState < 2) { return; }
+
+     const work = paperScannerWorkCanvas;
+     const ctx = work.getContext("2d", { willReadFrequently: true });
+     const sourceW = video.videoWidth || 1280;
+     const sourceH = video.videoHeight || 720;
+     const maxW = 980;
+     work.width = Math.min(maxW, sourceW);
+     work.height = Math.round(sourceH * (work.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(video, 0, 0, work.width, work.height);
+     syncPaperOverlaySize(overlay, video, work.width, work.height);
+
+     const detections = paperDetectQCardsFromCanvas(work);
+     drawPaperScannerOverlay(detections);
+     if (detections.length) {
+          paperHandleDetectedCodes(detections, "board-camera-6x6-fast");
+     }
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes
+----------------------------------------------  */
+function paperHandleDetectedCodes(codes, source) {
+     const paper = paperState();
+     const accepted = [];
+
+     for (const code of codes) {
+          const payload = code.cardId ? code : paperDecodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && paper.sessionId && payload.sessionId != paper.sessionId) { continue; }
+          const cardId = paperNormalizeCardId(payload.cardId);
+          const card = paper.cards.find(function(item) { return paperNormalizeCardId(item.cardId) == cardId; });
+          if (!card) { continue; }
+          if (!paperScanConfirmedFast(cardId, payload.answer, payload.confidence)) { continue; }
+          if (!paperScanShouldSubmit(cardId, payload.answer)) { continue; }
+
+          paperSubmitScan(cardId, payload.answer, source || "board-camera").catch(function(error) { console.warn(error); });
+          accepted.push(`${card.name}: ${payload.answer}`);
+     }
+
+     if (accepted.length) {
+          paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}

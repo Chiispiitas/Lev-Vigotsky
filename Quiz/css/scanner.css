@@ -10,7 +10,9 @@ button { border: 4px solid #fff; border-radius: 18px; background: linear-gradien
 .session-card p { font-size: 14px; font-weight: 800; text-transform: uppercase; opacity: .75; }
 .session-card b { font-size: 23px; }
 .session-card small { font-weight: 800; }
+.camera-card { position: relative; }
 #scannerVideo { width: 100%; height: min(58vh, 520px); object-fit: cover; border-radius: 18px; background: #0e1a2a; border: 4px solid #123865; }
+#scannerCanvas, #scannerOverlay { position: absolute; pointer-events: none; z-index: 4; border-radius: 18px; }
 #scannerStatus { margin-top: 10px; padding: 12px; border-radius: 16px; background: #e8f5ff; font-weight: 900; }
 #scannerStatus.bad { background: #ffd1d9; color: #a40f25; }
 .manual-card h2, .log-card h2 { margin: 0 0 10px; }
