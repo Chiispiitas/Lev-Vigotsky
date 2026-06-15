@@ -4694,3 +4694,38 @@ h2, .ribbon h2, .question-card h2 {
 #paperScannerVideo {
   height: 450px !important;
 }
+
+/* -------------------------------------------------------------
+# V46 Universal 6x6 Q-Cards
+--------------------------------------------------------------*/
+.paper-qcard-code {
+  background: #fff !important;
+  border: 4px solid #111 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+.paper-qcode-svg {
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  image-rendering: pixelated;
+}
+
+.paper-qcard-brand.top-brand {
+  color: #16407d !important;
+  font-weight: 900 !important;
+}
+
+@media print {
+  .paper-qcard-code {
+    background: #fff !important;
+    border: .7mm solid #111 !important;
+  }
+
+  .paper-qcode-svg {
+    width: 64mm !important;
+    height: 64mm !important;
+    image-rendering: pixelated !important;
+  }
+}

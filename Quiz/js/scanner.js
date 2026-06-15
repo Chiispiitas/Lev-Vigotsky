@@ -8,6 +8,25 @@ const sessionId = params.get("session") || "";
 const PAPER_API_BASE = "https://chiispiitas.wixsite.com/mr-david-collection/_functions";
 const apiBase = PAPER_API_BASE;
 const localPrefix = "wgc-paper-";
+
+const PAPER_MAX_CARDS = 60;
+const PAPER_ANSWERS = ["A", "B", "C", "D"];
+const PAPER_QCODE_FIXED_BITS = {
+     "0,0": 1, "0,1": 1, "1,0": 1, "1,1": 0,
+     "0,5": 0, "1,5": 1, "5,0": 0, "5,1": 1,
+     "5,5": 1, "4,5": 0
+};
+const PAPER_QCODE_DATA_POSITIONS = (function() {
+     const positions = [];
+     for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+               if (PAPER_QCODE_FIXED_BITS[`${row},${col}`] === undefined) {
+                    positions.push([row, col]);
+               }
+          }
+     }
+     return positions;
+})();
 var scannerStream = null;
 var scannerFrame = null;
 var scannerBusy = false;
@@ -125,6 +144,20 @@ function startLoop() {
 async function scanCurrentFrame() {
      if (!elVideo || !elCanvas || elVideo.readyState < 2) { return; }
 
+     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
+     const targetWidth = Math.min(720, elVideo.videoWidth || 720);
+     const scale = targetWidth / Math.max(1, elVideo.videoWidth || targetWidth);
+     elCanvas.width = targetWidth;
+     elCanvas.height = Math.max(1, Math.round((elVideo.videoHeight || 405) * scale));
+     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+
+     const qcodes = detectQCodesFromImageData(imageData, elCanvas.width, elCanvas.height);
+     if (qcodes.length) {
+          await handleDetectedCodes(qcodes, "phone-qcode");
+          return;
+     }
+
      if (barcodeDetector) {
           const barcodes = await barcodeDetector.detect(elVideo);
           if (barcodes && barcodes.length) {
@@ -136,11 +169,6 @@ async function scanCurrentFrame() {
      }
 
      if (!window.jsQR) { return; }
-     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
-     elCanvas.width = elVideo.videoWidth;
-     elCanvas.height = elVideo.videoHeight;
-     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
-     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
      const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
      if (result && result.data) {
           await handleDetectedCodes([{ data: result.data, location: result.location }], "phone-camera");
@@ -164,9 +192,9 @@ function locationFromBarcode(code) {
 async function handleDetectedCodes(codes, source) {
      const accepted = [];
      for (const code of codes) {
-          const payload = decodePayload(code.data, code.location);
+          const payload = code && code.cardId ? code : decodePayload(code.data, code.location);
           if (!payload) { continue; }
-          if (payload.sessionId != sessionId) { continue; }
+          if (payload.sessionId && payload.sessionId != sessionId) { continue; }
           if (!scanShouldSubmit(payload.cardId, payload.answer)) { continue; }
           await submitScan(payload.cardId, payload.answer, source || "phone-camera");
           accepted.push(`${payload.cardId}: ${payload.answer}`);
@@ -193,12 +221,23 @@ function scanShouldSubmit(cardId, answer) {
 function decodePayload(value, location) {
      const parts = String(value || "").trim().split("|");
      if (parts.length == 4 && parts[0] == "WGC") {
-          return { sessionId: parts[1], cardId: parts[2], answer: parts[3] };
+          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: parts[3] };
      }
      if (parts.length == 3 && parts[0] == "WGCQ") {
-          return { sessionId: parts[1], cardId: parts[2], answer: answerFromQrLocation(location) };
+          return { sessionId: parts[1], cardId: normalizeCardId(parts[2]), answer: answerFromQrLocation(location) };
+     }
+     if (parts.length == 2 && parts[0] == "WGCQ") {
+          return { sessionId: "", cardId: normalizeCardId(parts[1]), answer: answerFromQrLocation(location) };
      }
      return null;
+}
+
+/* ---------------------------------------------- 
+     Normalize Card ID 
+----------------------------------------------  */
+function normalizeCardId(cardId) {
+     const number = Math.max(1, Math.min(PAPER_MAX_CARDS, Number(String(cardId || "").replace(/\D/g, "")) || 1));
+     return `P${String(number).padStart(2, "0")}`;
 }
 
 /* ---------------------------------------------- 
@@ -213,9 +252,154 @@ function answerFromQrLocation(location) {
      if (angle > 180) { angle -= 360; }
 
      if (angle > -45 && angle <= 45) { return "A"; }
-     if (angle > 45 && angle <= 135) { return "D"; }
      if (angle <= -45 && angle > -135) { return "B"; }
-     return "C";
+     if (angle > 135 || angle <= -135) { return "C"; }
+     return "D";
+}
+
+/* ---------------------------------------------- 
+     Q-Code Checksum 
+----------------------------------------------  */
+function qCodeChecksum(value) {
+     return ((value * 37) + 23) & 63;
+}
+
+/* ---------------------------------------------- 
+     Rotate Matrix Clockwise 
+----------------------------------------------  */
+function rotateMatrixClockwise(matrix) {
+     const result = Array.from({ length: 6 }, function() { return Array(6).fill(0); });
+     for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+               result[col][5 - row] = matrix[row][col];
+          }
+     }
+     return result;
+}
+
+/* ---------------------------------------------- 
+     Fixed Bits Match 
+----------------------------------------------  */
+function qCodeFixedBitsMatch(matrix) {
+     return Object.keys(PAPER_QCODE_FIXED_BITS).every(function(key) {
+          const parts = key.split(",").map(Number);
+          return Number(matrix[parts[0]][parts[1]]) == PAPER_QCODE_FIXED_BITS[key];
+     });
+}
+
+/* ---------------------------------------------- 
+     Decode Q-Code Matrix 
+----------------------------------------------  */
+function decodeQCodeMatrix(observed) {
+     let matrix = observed;
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          if (qCodeFixedBitsMatch(matrix)) {
+               const bits = PAPER_QCODE_DATA_POSITIONS.slice(0, 12).map(function(position) {
+                    return matrix[position[0]][position[1]] ? 1 : 0;
+               });
+               let value = 0;
+               let checksum = 0;
+               bits.slice(0, 6).forEach(function(bit) { value = (value << 1) | bit; });
+               bits.slice(6, 12).forEach(function(bit) { checksum = (checksum << 1) | bit; });
+               if (value >= 0 && value < PAPER_MAX_CARDS && checksum == qCodeChecksum(value)) {
+                    return { cardId: `P${String(value + 1).padStart(2, "0")}`, answer: PAPER_ANSWERS[rotation] };
+               }
+          }
+          matrix = rotateMatrixClockwise(matrix);
+     }
+     return null;
+}
+
+/* ---------------------------------------------- 
+     Detect Q-Codes From Image Data 
+----------------------------------------------  */
+function detectQCodesFromImageData(imageData, width, height) {
+     const data = imageData.data;
+     const visited = new Uint8Array(width * height);
+     const results = [];
+
+     function isDark(index) {
+          const offset = index * 4;
+          return data[offset] + data[offset + 1] + data[offset + 2] < 250;
+     }
+
+     for (let y = 0; y < height; y += 1) {
+          for (let x = 0; x < width; x += 1) {
+               const start = y * width + x;
+               if (visited[start] || !isDark(start)) { continue; }
+               const stack = [start];
+               visited[start] = 1;
+               let minX = x, maxX = x, minY = y, maxY = y, count = 0;
+               while (stack.length) {
+                    const current = stack.pop();
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    count += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+                    const neighbors = [current - 1, current + 1, current - width, current + width];
+                    for (const next of neighbors) {
+                         if (next < 0 || next >= visited.length || visited[next]) { continue; }
+                         const nx = next % width;
+                         if ((next == current - 1 && nx > cx) || (next == current + 1 && nx < cx)) { continue; }
+                         if (!isDark(next)) { continue; }
+                         visited[next] = 1;
+                         stack.push(next);
+                    }
+               }
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const ratio = boxW / Math.max(1, boxH);
+               const fill = count / Math.max(1, boxW * boxH);
+               if (boxW < 34 || boxH < 34 || boxW > width * 0.55 || boxH > height * 0.75) { continue; }
+               if (ratio < 0.72 || ratio > 1.38) { continue; }
+               if (fill < 0.035 || fill > 0.78) { continue; }
+               const decoded = decodeQCodeFromBox(data, width, height, { minX, minY, maxX, maxY });
+               if (decoded && !results.some(function(item) { return item.cardId == decoded.cardId; })) {
+                    results.push(decoded);
+               }
+          }
+     }
+     return results;
+}
+
+/* ---------------------------------------------- 
+     Decode Q-Code From Box 
+----------------------------------------------  */
+function decodeQCodeFromBox(data, width, height, box) {
+     const boxW = box.maxX - box.minX + 1;
+     const boxH = box.maxY - box.minY + 1;
+     const matrix = [];
+     for (let row = 0; row < 6; row += 1) {
+          const rowBits = [];
+          for (let col = 0; col < 6; col += 1) {
+               const sampleX = Math.round(box.minX + ((1.5 + col) / 8) * boxW);
+               const sampleY = Math.round(box.minY + ((1.5 + row) / 8) * boxH);
+               rowBits.push(sampleIsDark(data, width, height, sampleX, sampleY) ? 1 : 0);
+          }
+          matrix.push(rowBits);
+     }
+     return decodeQCodeMatrix(matrix);
+}
+
+/* ---------------------------------------------- 
+     Sample Is Dark 
+----------------------------------------------  */
+function sampleIsDark(data, width, height, x, y) {
+     let total = 0;
+     let samples = 0;
+     for (let dy = -2; dy <= 2; dy += 1) {
+          for (let dx = -2; dx <= 2; dx += 1) {
+               const sx = Math.max(0, Math.min(width - 1, x + dx));
+               const sy = Math.max(0, Math.min(height - 1, y + dy));
+               const offset = (sy * width + sx) * 4;
+               total += data[offset] + data[offset + 1] + data[offset + 2];
+               samples += 1;
+          }
+     }
+     return (total / samples) < 380;
 }
 
 /* ---------------------------------------------- 
