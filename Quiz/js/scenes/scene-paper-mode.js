@@ -1594,3 +1594,277 @@ async function paperOpenBoardScanner() {
 function paperPrintCss() {
      return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:21mm 22mm;break-after:page;page-break-after:always;border:7mm solid #16407d;color:#16407d}.brand-pill{display:inline-block;padding:4mm 7mm;border:1.2mm solid #16407d;border-radius:999px;font-size:18pt;font-weight:900}.paper-instructions h1{margin:12mm 0 2mm;font-size:34pt;line-height:.95}.paper-instructions h2{margin:0 0 12mm;font-size:21pt}.paper-instructions p{font-size:14pt;line-height:1.45;max-width:160mm}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-collection{position:absolute;left:50%;top:7mm;transform:translateX(-50%);font:900 9pt Arial,sans-serif;color:#16407d;letter-spacing:.35mm;white-space:nowrap}.paper-qcard-code{position:absolute;left:50%;top:50%;width:168mm;height:168mm;transform:translate(-50%,-50%);display:grid;place-items:center;padding:0;background:transparent}.paper-qcode-svg,.paper-qcard-marker{width:168mm;height:168mm;display:block;overflow:visible}.paper-qcard-marker rect{vector-effect:non-scaling-stroke}.paper-qcard-letter{position:absolute;font:900 31pt Arial,sans-serif;color:#111;line-height:1}.paper-qcard-letter.a{left:50%;top:49mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:8mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:49mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:8mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 20pt Arial,sans-serif;color:#222;line-height:1}.top-left{left:8mm;top:20mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:14mm;top:20mm}.bottom-left{left:8mm;bottom:20mm;transform:rotate(180deg)}.bottom-right{right:14mm;bottom:20mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:800 8pt Arial,sans-serif;color:#7f8794}.top-brand{left:50%;top:33mm;transform:translateX(-50%)}.left-brand{left:12mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:12mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:18mm;transform:translateX(-50%);font:900 13pt Arial,sans-serif;color:#222;max-width:108mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#777;border-top:1px dashed #777}.top-cut{top:42mm}.bottom-cut{bottom:42mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}.paper-qcode-svg,.paper-qcard-marker{forced-color-adjust:none}}`;
 }
+
+/* ---------------------------------------------- 
+     V51 Reinforced Gray Print Q-Card Scanner
+----------------------------------------------  */
+
+/* ---------------------------------------------- 
+     Paper Luminance
+----------------------------------------------  */
+function paperLuminance(data, index) {
+     return (data[index] * 0.299) + (data[index + 1] * 0.587) + (data[index + 2] * 0.114);
+}
+
+/* ---------------------------------------------- 
+     Paper Histogram Percentile
+----------------------------------------------  */
+function paperHistogramPercentile(histogram, total, percentile) {
+     const target = Math.max(0, Math.min(total - 1, Math.floor(total * percentile)));
+     let sum = 0;
+     for (let i = 0; i < histogram.length; i += 1) {
+          sum += histogram[i];
+          if (sum >= target) { return i; }
+     }
+     return 128;
+}
+
+/* ---------------------------------------------- 
+     Paper Adaptive Dark Threshold
+----------------------------------------------  */
+function paperAdaptiveDarkThreshold(imageData) {
+     const data = imageData.data;
+     const histogram = new Uint32Array(256);
+     let total = 0;
+
+     for (let i = 0; i < data.length; i += 16) {
+          const lum = Math.max(0, Math.min(255, Math.round(paperLuminance(data, i))));
+          histogram[lum] += 1;
+          total += 1;
+     }
+
+     const p08 = paperHistogramPercentile(histogram, total, 0.08);
+     const p58 = paperHistogramPercentile(histogram, total, 0.58);
+     const p82 = paperHistogramPercentile(histogram, total, 0.82);
+     const spread = Math.max(20, p82 - p08);
+     const threshold = Math.round(p08 + spread * 0.43);
+
+     return Math.max(105, Math.min(188, Math.max(threshold, Math.round((p08 + p58) / 2))));
+}
+
+/* ---------------------------------------------- 
+     Paper Sample Average Luminance
+----------------------------------------------  */
+function paperSampleAverageLuminance(imageData, width, height, cx, cy, radius) {
+     const data = imageData.data;
+     let total = 0;
+     let samples = 0;
+
+     for (let yy = -radius; yy <= radius; yy += 1) {
+          for (let xx = -radius; xx <= radius; xx += 1) {
+               const sx = Math.max(0, Math.min(width - 1, Math.round(cx + xx)));
+               const sy = Math.max(0, Math.min(height - 1, Math.round(cy + yy)));
+               const index = (sy * width + sx) * 4;
+               total += paperLuminance(data, index);
+               samples += 1;
+          }
+     }
+
+     return samples ? total / samples : 0;
+}
+
+/* ---------------------------------------------- 
+     Paper Average Numbers
+----------------------------------------------  */
+function paperAverageNumbers(values) {
+     if (!values.length) { return 0; }
+     return values.reduce(function(total, value) { return total + value; }, 0) / values.length;
+}
+
+/* ---------------------------------------------- 
+     Read Grid From Candidate
+----------------------------------------------  */
+function paperReadGridFromCandidate(imageData, width, height, box) {
+     const pad = 0.086;
+     const gap = 0.04;
+     const cell = (1 - (pad * 2) - (gap * 5)) / 6;
+     const values = [];
+     const grid = [];
+     const sampleRadius = Math.max(2, Math.min(9, Math.round(Math.min(box.w, box.h) * cell * 0.16)));
+
+     for (let row = 0; row < 6; row += 1) {
+          const line = [];
+          for (let col = 0; col < 6; col += 1) {
+               const rx = pad + (cell / 2) + col * (cell + gap);
+               const ry = pad + (cell / 2) + row * (cell + gap);
+               const cx = box.x + rx * box.w;
+               const cy = box.y + ry * box.h;
+               const value = paperSampleAverageLuminance(imageData, width, height, cx, cy, sampleRadius);
+               values.push(value);
+               line.push(value);
+          }
+          grid.push(line);
+     }
+
+     const sorted = values.slice().sort(function(a, b) { return a - b; });
+     const lowAvg = paperAverageNumbers(sorted.slice(0, 12));
+     const highAvg = paperAverageNumbers(sorted.slice(-12));
+     const contrast = highAvg - lowAvg;
+     const threshold = contrast >= 22 ? (lowAvg + highAvg) / 2 : Math.max(132, lowAvg + 18);
+
+     return grid.map(function(row) {
+          return row.map(function(value) { return value > threshold; });
+     });
+}
+
+/* ---------------------------------------------- 
+     Find 6x6 Q-Card Candidates
+----------------------------------------------  */
+function paperFindQCardCandidates(imageData, width, height) {
+     const data = imageData.data;
+     const total = width * height;
+     const dark = new Uint8Array(total);
+     const seen = new Uint8Array(total);
+     const candidates = [];
+     const darkThreshold = paperAdaptiveDarkThreshold(imageData);
+
+     for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
+          const lum = paperLuminance(data, i);
+          dark[pixel] = lum < darkThreshold ? 1 : 0;
+     }
+
+     const queue = [];
+     const neighborOffsets = [-1, 1, -width, width, -width - 1, -width + 1, width - 1, width + 1];
+
+     for (let y = 1; y < height - 1; y += 1) {
+          for (let x = 1; x < width - 1; x += 1) {
+               const start = y * width + x;
+               if (!dark[start] || seen[start]) { continue; }
+
+               let minX = x;
+               let maxX = x;
+               let minY = y;
+               let maxY = y;
+               let area = 0;
+               seen[start] = 1;
+               queue.length = 0;
+               queue.push(start);
+
+               for (let q = 0; q < queue.length; q += 1) {
+                    const current = queue[q];
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    area += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+
+                    for (const offset of neighborOffsets) {
+                         const next = current + offset;
+                         if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
+                         seen[next] = 1;
+                         queue.push(next);
+                    }
+               }
+
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const ratio = boxW / Math.max(1, boxH);
+               const fill = area / Math.max(1, boxW * boxH);
+
+               if (boxW < 34 || boxH < 34) { continue; }
+               if (boxW > width * 0.92 || boxH > height * 0.92) { continue; }
+               if (ratio < 0.62 || ratio > 1.62) { continue; }
+               if (fill < 0.24 || fill > 0.98) { continue; }
+
+               const grow = Math.max(2, Math.round(Math.min(boxW, boxH) * 0.012));
+               candidates.push({
+                    x: Math.max(0, minX - grow),
+                    y: Math.max(0, minY - grow),
+                    w: Math.min(width - minX, boxW + grow * 2),
+                    h: Math.min(height - minY, boxH + grow * 2),
+                    area: area,
+                    threshold: darkThreshold
+               });
+          }
+     }
+
+     return candidates.sort(function(a, b) { return b.area - a.area; }).slice(0, 40);
+}
+
+/* ---------------------------------------------- 
+     Detect 6x6 Q-Cards From Canvas
+----------------------------------------------  */
+function paperDetectQCardsFromCanvas(canvas) {
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+     const candidates = paperFindQCardCandidates(imageData, canvas.width, canvas.height);
+     const detections = [];
+     const bestByCard = {};
+
+     candidates.forEach(function(box) {
+          const grid = paperReadGridFromCandidate(imageData, canvas.width, canvas.height, box);
+          const decoded = paperDecodeQCardGrid(grid);
+          if (!decoded) { return; }
+          decoded.box = box;
+          if (!bestByCard[decoded.cardId] || decoded.confidence > bestByCard[decoded.cardId].confidence) {
+               bestByCard[decoded.cardId] = decoded;
+          }
+     });
+
+     Object.keys(bestByCard).forEach(function(cardId) { detections.push(bestByCard[cardId]); });
+     return detections.sort(function(a, b) { return b.confidence - a.confidence; });
+}
+
+/* ---------------------------------------------- 
+     Scan Should Submit
+----------------------------------------------  */
+function paperScanShouldSubmit(cardId, answer) {
+     const paper = paperState();
+     const key = `${paper.current || 0}-${cardId}`;
+     const previous = paperScanMemory[key];
+     const now = Date.now();
+     if (previous && previous.answer == answer && now - previous.time < 1200) { return false; }
+     paperScanMemory[key] = { answer: answer, time: now };
+     return true;
+}
+
+/* ---------------------------------------------- 
+     Scan Board Frame
+----------------------------------------------  */
+async function paperScanBoardFrame() {
+     const video = document.getElementById("paperScannerVideo");
+     const canvas = document.getElementById("paperScannerCanvas");
+     if (!video || !canvas || video.readyState < 2) { return; }
+
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     const sourceW = video.videoWidth || 1280;
+     const sourceH = video.videoHeight || 720;
+     const maxW = 1280;
+     canvas.width = Math.min(maxW, sourceW);
+     canvas.height = Math.round(sourceH * (canvas.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+     const detections = paperDetectQCardsFromCanvas(canvas);
+     if (detections.length) {
+          paperHandleDetectedCodes(detections, "board-camera-6x6-fast");
+     }
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes
+----------------------------------------------  */
+function paperHandleDetectedCodes(codes, source) {
+     const paper = paperState();
+     const accepted = [];
+
+     for (const code of codes) {
+          const payload = code.cardId ? code : paperDecodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId && paper.sessionId && payload.sessionId != paper.sessionId) { continue; }
+
+          const cardId = paperNormalizeCardId(payload.cardId);
+          const card = paper.cards.find(function(item) { return paperNormalizeCardId(item.cardId) == cardId; });
+          if (!card) { continue; }
+          if (!paperScanShouldSubmit(cardId, payload.answer)) { continue; }
+
+          paperSubmitScan(cardId, payload.answer, source || "board-camera").catch(function(error) { console.warn(error); });
+          accepted.push(`${card.name}: ${payload.answer}`);
+     }
+
+     if (accepted.length) {
+          paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}

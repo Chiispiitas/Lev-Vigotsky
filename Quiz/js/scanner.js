@@ -288,15 +288,14 @@ function escapeHtml(value) {
      });
 }
 
-
 /* ---------------------------------------------- 
-     V47 Universal 6x6 Q-Card Scanner Overrides
+     V51 Reinforced Gray Print 6x6 Q-Card Scanner
 ----------------------------------------------  */
 
 const SCANNER_MAX_CARDS = 60;
 
 /* ---------------------------------------------- 
-     Normalize Card ID 
+     Normalize Card ID
 ----------------------------------------------  */
 function normalizeCardId(cardId) {
      const digits = String(cardId || "").replace(/\D/g, "");
@@ -305,7 +304,50 @@ function normalizeCardId(cardId) {
 }
 
 /* ---------------------------------------------- 
-     Q-Card Data Positions 
+     Scanner Luminance
+----------------------------------------------  */
+function scannerLuminance(data, index) {
+     return (data[index] * 0.299) + (data[index + 1] * 0.587) + (data[index + 2] * 0.114);
+}
+
+/* ---------------------------------------------- 
+     Scanner Histogram Percentile
+----------------------------------------------  */
+function scannerHistogramPercentile(histogram, total, percentile) {
+     const target = Math.max(0, Math.min(total - 1, Math.floor(total * percentile)));
+     let sum = 0;
+     for (let i = 0; i < histogram.length; i += 1) {
+          sum += histogram[i];
+          if (sum >= target) { return i; }
+     }
+     return 128;
+}
+
+/* ---------------------------------------------- 
+     Scanner Adaptive Dark Threshold
+----------------------------------------------  */
+function scannerAdaptiveDarkThreshold(imageData) {
+     const data = imageData.data;
+     const histogram = new Uint32Array(256);
+     let total = 0;
+
+     for (let i = 0; i < data.length; i += 16) {
+          const lum = Math.max(0, Math.min(255, Math.round(scannerLuminance(data, i))));
+          histogram[lum] += 1;
+          total += 1;
+     }
+
+     const p08 = scannerHistogramPercentile(histogram, total, 0.08);
+     const p58 = scannerHistogramPercentile(histogram, total, 0.58);
+     const p82 = scannerHistogramPercentile(histogram, total, 0.82);
+     const spread = Math.max(20, p82 - p08);
+     const threshold = Math.round(p08 + spread * 0.43);
+
+     return Math.max(105, Math.min(188, Math.max(threshold, Math.round((p08 + p58) / 2))));
+}
+
+/* ---------------------------------------------- 
+     Scanner Q-Card Data Positions
 ----------------------------------------------  */
 function qCardDataPositions() {
      const positions = [];
@@ -323,7 +365,7 @@ function qCardDataPositions() {
 }
 
 /* ---------------------------------------------- 
-     Rotate Grid Clockwise 
+     Rotate Grid Clockwise
 ----------------------------------------------  */
 function rotateGrid(grid, times) {
      let result = grid.map(function(row) { return row.slice(); });
@@ -337,7 +379,7 @@ function rotateGrid(grid, times) {
 }
 
 /* ---------------------------------------------- 
-     Anchor Score 
+     Anchor Score
 ----------------------------------------------  */
 function anchorScore(grid) {
      let score = 0;
@@ -349,7 +391,7 @@ function anchorScore(grid) {
 }
 
 /* ---------------------------------------------- 
-     Corner Noise Score 
+     Corner Noise Score
 ----------------------------------------------  */
 function cornerNoiseScore(grid) {
      const cells = [
@@ -363,7 +405,7 @@ function cornerNoiseScore(grid) {
 }
 
 /* ---------------------------------------------- 
-     Decode 6x6 Q-Card Grid 
+     Decode 6x6 Q-Card Grid
 ----------------------------------------------  */
 function decodeQCardGrid(rawGrid) {
      const answers = ["A", "B", "C", "D"];
@@ -397,45 +439,72 @@ function decodeQCardGrid(rawGrid) {
 }
 
 /* ---------------------------------------------- 
-     Read Grid From Candidate 
+     Scanner Sample Average Luminance
+----------------------------------------------  */
+function scannerSampleAverageLuminance(imageData, width, height, cx, cy, radius) {
+     const data = imageData.data;
+     let total = 0;
+     let samples = 0;
+
+     for (let yy = -radius; yy <= radius; yy += 1) {
+          for (let xx = -radius; xx <= radius; xx += 1) {
+               const sx = Math.max(0, Math.min(width - 1, Math.round(cx + xx)));
+               const sy = Math.max(0, Math.min(height - 1, Math.round(cy + yy)));
+               const index = (sy * width + sx) * 4;
+               total += scannerLuminance(data, index);
+               samples += 1;
+          }
+     }
+
+     return samples ? total / samples : 0;
+}
+
+/* ---------------------------------------------- 
+     Scanner Average Numbers
+----------------------------------------------  */
+function scannerAverageNumbers(values) {
+     if (!values.length) { return 0; }
+     return values.reduce(function(total, value) { return total + value; }, 0) / values.length;
+}
+
+/* ---------------------------------------------- 
+     Read Grid From Candidate
 ----------------------------------------------  */
 function readGridFromCandidate(imageData, width, height, box) {
-     const data = imageData.data;
-     const pad = 0.08;
+     const pad = 0.086;
      const gap = 0.04;
      const cell = (1 - (pad * 2) - (gap * 5)) / 6;
+     const values = [];
      const grid = [];
+     const sampleRadius = Math.max(2, Math.min(9, Math.round(Math.min(box.w, box.h) * cell * 0.16)));
 
      for (let row = 0; row < 6; row += 1) {
           const line = [];
           for (let col = 0; col < 6; col += 1) {
                const rx = pad + (cell / 2) + col * (cell + gap);
                const ry = pad + (cell / 2) + row * (cell + gap);
-               const cx = Math.round(box.x + rx * box.w);
-               const cy = Math.round(box.y + ry * box.h);
-               let total = 0;
-               let samples = 0;
-
-               for (let yy = -2; yy <= 2; yy += 1) {
-                    for (let xx = -2; xx <= 2; xx += 1) {
-                         const sx = Math.max(0, Math.min(width - 1, cx + xx));
-                         const sy = Math.max(0, Math.min(height - 1, cy + yy));
-                         const index = (sy * width + sx) * 4;
-                         total += (data[index] + data[index + 1] + data[index + 2]) / 3;
-                         samples += 1;
-                    }
-               }
-
-               line.push(total / samples > 145);
+               const cx = box.x + rx * box.w;
+               const cy = box.y + ry * box.h;
+               const value = scannerSampleAverageLuminance(imageData, width, height, cx, cy, sampleRadius);
+               values.push(value);
+               line.push(value);
           }
           grid.push(line);
      }
 
-     return grid;
+     const sorted = values.slice().sort(function(a, b) { return a - b; });
+     const lowAvg = scannerAverageNumbers(sorted.slice(0, 12));
+     const highAvg = scannerAverageNumbers(sorted.slice(-12));
+     const contrast = highAvg - lowAvg;
+     const threshold = contrast >= 22 ? (lowAvg + highAvg) / 2 : Math.max(132, lowAvg + 18);
+
+     return grid.map(function(row) {
+          return row.map(function(value) { return value > threshold; });
+     });
 }
 
 /* ---------------------------------------------- 
-     Find 6x6 Q-Card Candidates 
+     Find 6x6 Q-Card Candidates
 ----------------------------------------------  */
 function findQCardCandidates(imageData, width, height) {
      const data = imageData.data;
@@ -443,13 +512,16 @@ function findQCardCandidates(imageData, width, height) {
      const dark = new Uint8Array(total);
      const seen = new Uint8Array(total);
      const candidates = [];
+     const darkThreshold = scannerAdaptiveDarkThreshold(imageData);
 
      for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
-          const lum = (data[i] * 0.299) + (data[i + 1] * 0.587) + (data[i + 2] * 0.114);
-          dark[pixel] = lum < 82 ? 1 : 0;
+          const lum = scannerLuminance(data, i);
+          dark[pixel] = lum < darkThreshold ? 1 : 0;
      }
 
      const queue = [];
+     const neighborOffsets = [-1, 1, -width, width, -width - 1, -width + 1, width - 1, width + 1];
+
      for (let y = 1; y < height - 1; y += 1) {
           for (let x = 1; x < width - 1; x += 1) {
                const start = y * width + x;
@@ -474,8 +546,8 @@ function findQCardCandidates(imageData, width, height) {
                     if (cy < minY) { minY = cy; }
                     if (cy > maxY) { maxY = cy; }
 
-                    const neighbors = [current - 1, current + 1, current - width, current + width];
-                    for (const next of neighbors) {
+                    for (const offset of neighborOffsets) {
+                         const next = current + offset;
                          if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
                          seen[next] = 1;
                          queue.push(next);
@@ -487,41 +559,64 @@ function findQCardCandidates(imageData, width, height) {
                const ratio = boxW / Math.max(1, boxH);
                const fill = area / Math.max(1, boxW * boxH);
 
-               if (boxW < 44 || boxH < 44) { continue; }
-               if (boxW > width * 0.72 || boxH > height * 0.72) { continue; }
-               if (ratio < 0.72 || ratio > 1.38) { continue; }
-               if (fill < 0.42 || fill > 0.94) { continue; }
+               if (boxW < 34 || boxH < 34) { continue; }
+               if (boxW > width * 0.92 || boxH > height * 0.92) { continue; }
+               if (ratio < 0.62 || ratio > 1.62) { continue; }
+               if (fill < 0.24 || fill > 0.98) { continue; }
 
-               candidates.push({ x: minX, y: minY, w: boxW, h: boxH, area: area });
+               const grow = Math.max(2, Math.round(Math.min(boxW, boxH) * 0.012));
+               candidates.push({
+                    x: Math.max(0, minX - grow),
+                    y: Math.max(0, minY - grow),
+                    w: Math.min(width - minX, boxW + grow * 2),
+                    h: Math.min(height - minY, boxH + grow * 2),
+                    area: area,
+                    threshold: darkThreshold
+               });
           }
      }
 
-     return candidates.sort(function(a, b) { return b.area - a.area; }).slice(0, 16);
+     return candidates.sort(function(a, b) { return b.area - a.area; }).slice(0, 40);
 }
 
 /* ---------------------------------------------- 
-     Detect 6x6 Q-Cards From Canvas 
+     Detect 6x6 Q-Cards From Canvas
 ----------------------------------------------  */
 function detectQCardsFromCanvas(canvas) {
      const ctx = canvas.getContext("2d", { willReadFrequently: true });
      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
      const candidates = findQCardCandidates(imageData, canvas.width, canvas.height);
      const detections = [];
-     const used = {};
+     const bestByCard = {};
 
      candidates.forEach(function(box) {
           const grid = readGridFromCandidate(imageData, canvas.width, canvas.height, box);
           const decoded = decodeQCardGrid(grid);
-          if (!decoded || used[decoded.cardId]) { return; }
-          used[decoded.cardId] = true;
-          detections.push(decoded);
+          if (!decoded) { return; }
+          decoded.box = box;
+          if (!bestByCard[decoded.cardId] || decoded.confidence > bestByCard[decoded.cardId].confidence) {
+               bestByCard[decoded.cardId] = decoded;
+          }
      });
 
-     return detections;
+     Object.keys(bestByCard).forEach(function(cardId) { detections.push(bestByCard[cardId]); });
+     return detections.sort(function(a, b) { return b.confidence - a.confidence; });
 }
 
 /* ---------------------------------------------- 
-     Start Camera 
+     Scan Should Submit
+----------------------------------------------  */
+function scanShouldSubmit(cardId, answer) {
+     const key = `${cardId}-${answer}`;
+     const previous = scanMemory[key];
+     const now = Date.now();
+     if (previous && now - previous.time < 1200) { return false; }
+     scanMemory[key] = { answer: answer, time: now };
+     return true;
+}
+
+/* ---------------------------------------------- 
+     Start Camera
 ----------------------------------------------  */
 async function startCamera() {
      if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
@@ -536,12 +631,11 @@ async function startCamera() {
 
      try {
           if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
-          await prepareBarcodeDetector();
           scannerStream = await navigator.mediaDevices.getUserMedia({
                video: {
                     facingMode: { ideal: "environment" },
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
                },
                audio: false
           });
@@ -550,7 +644,7 @@ async function startCamera() {
           elVideo.setAttribute("webkit-playsinline", "");
           await elVideo.play();
           if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
-          setStatus("Scanning continuously. Show one or more reusable 6×6 Q-cards and rotate each card so the chosen answer is above the code.", false);
+          setStatus("Fast scanning is active. Gray printed cards are supported. Rotate each card so the chosen answer is above the code.", false);
           startLoop();
      }
      catch (error) {
@@ -560,7 +654,7 @@ async function startCamera() {
 }
 
 /* ---------------------------------------------- 
-     Scan Current Frame 
+     Scan Current Frame
 ----------------------------------------------  */
 async function scanCurrentFrame() {
      if (!elVideo || !elCanvas || elVideo.readyState < 2) { return; }
@@ -568,39 +662,22 @@ async function scanCurrentFrame() {
      const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
      const sourceW = elVideo.videoWidth || 1280;
      const sourceH = elVideo.videoHeight || 720;
-     const maxW = 960;
+     const maxW = 1280;
      elCanvas.width = Math.min(maxW, sourceW);
      elCanvas.height = Math.round(sourceH * (elCanvas.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
      ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
 
-     const customDetections = detectQCardsFromCanvas(elCanvas);
-     if (customDetections.length) {
-          await handleDetectedCodes(customDetections, "phone-camera-6x6");
-          return;
-     }
-
-     if (barcodeDetector) {
-          const barcodes = await barcodeDetector.detect(elVideo);
-          if (barcodes && barcodes.length) {
-               await handleDetectedCodes(barcodes.map(function(code) {
-                    return { data: code.rawValue, location: locationFromBarcode(code) };
-               }), "phone-camera-qr-fallback");
-               return;
-          }
-     }
-
-     if (!window.jsQR) { return; }
-     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
-     const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
-     if (result && result.data) {
-          await handleDetectedCodes([{ data: result.data, location: result.location }], "phone-camera-qr-fallback");
+     const detections = detectQCardsFromCanvas(elCanvas);
+     if (detections.length) {
+          handleDetectedCodes(detections, "phone-camera-6x6-fast");
      }
 }
 
 /* ---------------------------------------------- 
-     Handle Detected Codes 
+     Handle Detected Codes
 ----------------------------------------------  */
-async function handleDetectedCodes(codes, source) {
+function handleDetectedCodes(codes, source) {
      const accepted = [];
      for (const code of codes) {
           const payload = code.cardId ? code : decodePayload(code.data, code.location);
@@ -608,7 +685,7 @@ async function handleDetectedCodes(codes, source) {
           if (payload.sessionId && payload.sessionId != sessionId) { continue; }
           const cardId = normalizeCardId(payload.cardId);
           if (!scanShouldSubmit(cardId, payload.answer)) { continue; }
-          await submitScan(cardId, payload.answer, source || "phone-camera");
+          submitScan(cardId, payload.answer, source || "phone-camera").catch(function(error) { console.warn(error); });
           accepted.push(`${cardId}: ${payload.answer}`);
      }
      if (accepted.length) {
@@ -617,7 +694,7 @@ async function handleDetectedCodes(codes, source) {
 }
 
 /* ---------------------------------------------- 
-     Decode Payload 
+     Decode Payload
 ----------------------------------------------  */
 function decodePayload(value, location) {
      const parts = String(value || "").trim().split("|");
