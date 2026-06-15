@@ -14,7 +14,7 @@
                 <span>MR. DAVID'S</span>
                 <h1>Paper Scanner</h1>
             </div>
-            <button id="btnStartCamera">Start Camera</button>
+            <button id="btnStartCamera" type="button">Start Camera</button>
         </header>
 
         <section class="session-card">
@@ -24,9 +24,9 @@
         </section>
 
         <section class="camera-card">
-            <video id="scannerVideo" muted playsinline></video>
+            <video id="scannerVideo" muted autoplay playsinline webkit-playsinline></video>
             <canvas id="scannerCanvas" hidden></canvas>
-            <div id="scannerStatus">Scan a printed Q-card. Rotate the chosen answer above the code.</div>
+            <div id="scannerStatus">Press Start Camera. The scanner reads Q-cards continuously and detects the answer from card rotation.</div>
         </section>
 
         <section class="manual-card">

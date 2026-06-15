@@ -13,9 +13,13 @@ const PAPER_ANSWERS = ["A", "B", "C", "D"];
 const PAPER_LOCAL_PREFIX = "wgc-paper-";
 const PAPER_WIX_SITE_BASE = "https://chiispiitas.wixsite.com/mr-david-collection";
 const PAPER_API_BASE = `${PAPER_WIX_SITE_BASE}/_functions`;
+const PAPER_PHONE_SCANNER_BASE = "https://chiispiitas.github.io/Lev-Vigotsky/Quiz";
 var paperPollTimer = null;
 var paperScannerTimer = null;
 var paperScannerStream = null;
+var paperBarcodeDetector = null;
+var paperScannerBusy = false;
+var paperScanMemory = {};
 
 /* ---------------------------------------------- 
      Bind Paper Lobby Scene 
@@ -62,7 +66,8 @@ function bindPaperLobbyScene() {
      if (printButton) {
           printButton.addEventListener("click", async function() {
                playSound("enter");
-               await paperPrintCardsDocument();
+               await paperGeneratePrintableCards();
+               window.print();
           });
      }
 
@@ -390,7 +395,7 @@ function paperSaveLocalSession() {
 ----------------------------------------------  */
 function paperBuildScannerUrl() {
      const paper = paperState();
-     const scannerUrl = new URL("scanner.html", `${PAPER_WIX_SITE_BASE}/`);
+     const scannerUrl = new URL("scanner.html", `${PAPER_PHONE_SCANNER_BASE}/`);
      scannerUrl.searchParams.set("session", paper.sessionId);
      return scannerUrl.toString();
 }
@@ -404,44 +409,18 @@ async function paperRenderSessionQr() {
      const linkBox = document.getElementById("paperSessionLink");
      if (!qrBox) { return; }
 
-     paper.scannerUrl = paper.scannerUrl || paperBuildScannerUrl();
-     const qrSrc = await paperGetQrImageSource(paper.scannerUrl, 280);
-     qrBox.innerHTML = `<img src="${qrSrc}" alt="Scanner QR"><small>Scan this with your phone</small>`;
+     qrBox.innerHTML = "";
+     if (window.QRCode && QRCode.toDataURL) {
+          const dataUrl = await QRCode.toDataURL(paper.scannerUrl, { width: 280, margin: 1 });
+          qrBox.innerHTML = `<img src="${dataUrl}" alt="Scanner QR">`;
+     }
+     else {
+          qrBox.textContent = paper.sessionId;
+     }
 
      if (linkBox) {
-          linkBox.innerHTML = `<b>${esc(paper.sessionId)}</b><a href="${esc(paper.scannerUrl)}" target="_blank" rel="noopener">Open phone scanner</a><span>${esc(paper.scannerUrl)}</span>`;
+          linkBox.innerHTML = `<b>${esc(paper.sessionId)}</b><span>${esc(paper.scannerUrl)}</span>`;
      }
-}
-
-/* ---------------------------------------------- 
-     Get QR Image Source 
-----------------------------------------------  */
-async function paperGetQrImageSource(payload, size) {
-     const safeSize = Math.max(80, Math.min(720, Number(size) || 240));
-
-     try {
-          if (window.QRCode && QRCode.toDataURL) {
-               return await QRCode.toDataURL(payload, {
-                    width: safeSize,
-                    margin: 1,
-                    errorCorrectionLevel: "M",
-                    color: { dark: "#000000", light: "#ffffff" }
-               });
-          }
-     }
-     catch (error) {
-          console.warn("Local QR generator failed. Using online QR fallback.", error);
-     }
-
-     return `https://api.qrserver.com/v1/create-qr-code/?size=${safeSize}x${safeSize}&margin=8&data=${encodeURIComponent(payload)}`;
-}
-
-/* ---------------------------------------------- 
-     QR Image HTML 
-----------------------------------------------  */
-async function paperQrImageHtml(payload, size, alt) {
-     const src = await paperGetQrImageSource(payload, size || 210);
-     return `<img src="${src}" alt="${esc(alt || payload)}">`;
 }
 
 /* ---------------------------------------------- 
@@ -460,7 +439,7 @@ async function paperGeneratePrintableCards() {
      const area = document.getElementById("paperPrintArea");
      if (!area) { return; }
 
-     area.innerHTML = "";
+     area.innerHTML = `<div class="paper-print-sheet-title">${esc(paper.sessionTitle)} — ${esc(paper.sessionId)}</div>`;
      for (const card of paper.cards) {
           const cardElement = document.createElement("article");
           cardElement.className = "printable-paper-card qcard-printable";
@@ -469,7 +448,7 @@ async function paperGeneratePrintableCards() {
           const code = cardElement.querySelector(".paper-qcard-code");
           await paperFillQrImage(code, paperEncodePayload(paper.sessionId, card.cardId), 210);
      }
-     paperSetLobbyStatus("Q-cards generated. Students rotate each card so the chosen answer is above the code.", false);
+     paperSetLobbyStatus("Q-cards generated. Print them, then students rotate each card to answer A, B, C or D.", false);
 }
 
 /* ---------------------------------------------- 
@@ -508,7 +487,10 @@ function paperDisplayCardNumber(cardId) {
 ----------------------------------------------  */
 async function paperFillQrImage(container, payload, size) {
      if (!container) { return; }
-     container.innerHTML = await paperQrImageHtml(payload, size || 210, payload);
+     if (window.QRCode && QRCode.toDataURL) {
+          const dataUrl = await QRCode.toDataURL(payload, { width: size || 210, margin: 1, color: { dark: "#000000", light: "#ffffff" } });
+          container.innerHTML = `<img src="${dataUrl}" alt="${esc(payload)}">`;
+     }
 }
 
 /* ---------------------------------------------- 
@@ -552,67 +534,21 @@ function paperAnswerFromQrLocation(location) {
 ----------------------------------------------  */
 async function paperDownloadCardsHtml() {
      await paperGeneratePrintableCards();
-     const html = paperBuildCardsDocumentHtml(false);
+     const area = document.getElementById("paperPrintArea");
+     const html = `<!doctype html><html><head><meta charset="utf-8"><title>Paper Cards</title><style>${paperPrintCss()}</style></head><body>${area.innerHTML}</body></html>`;
      const blob = new Blob([html], { type: "text/html" });
      const link = document.createElement("a");
      link.href = URL.createObjectURL(blob);
-     link.download = `${paperState().sessionId || "paper"}-q-cards.html`;
+     link.download = `${paperState().sessionId || "paper"}-cards.html`;
      link.click();
-     setTimeout(function() { URL.revokeObjectURL(link.href); }, 1000);
-}
-
-/* ---------------------------------------------- 
-     Print Cards Document 
-----------------------------------------------  */
-async function paperPrintCardsDocument() {
-     await paperGeneratePrintableCards();
-     const html = paperBuildCardsDocumentHtml(true);
-     const printWindow = window.open("", "_blank");
-
-     if (!printWindow) {
-          paperSetLobbyStatus("Popup blocked. Use Download Cards HTML, then print from that file.", true);
-          return;
-     }
-
-     printWindow.document.open();
-     printWindow.document.write(html);
-     printWindow.document.close();
-     paperSetLobbyStatus("Print window opened. Save as PDF from the browser print dialog.", false);
-}
-
-/* ---------------------------------------------- 
-     Build Cards Document HTML 
-----------------------------------------------  */
-function paperBuildCardsDocumentHtml(autoPrint) {
-     const area = document.getElementById("paperPrintArea");
-     const paper = paperState();
-     const printScript = autoPrint ? `<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},550);});<\/script>` : "";
-
-     return `<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${esc(paper.sessionTitle)} Q-cards</title>
-<style>${paperPrintCss()}</style>
-</head>
-<body>
-<section class="paper-instructions">
-<h1>Paper Mode Q-cards</h1>
-<p>Give one card to each student. Students answer by rotating the card so the selected answer letter is above the code.</p>
-<p>Session: <b>${esc(paper.sessionId || "No session")}</b></p>
-</section>
-${area ? area.innerHTML : ""}
-${printScript}
-</body>
-</html>`;
+     URL.revokeObjectURL(link.href);
 }
 
 /* ---------------------------------------------- 
      Print CSS 
 ----------------------------------------------  */
 function paperPrintCss() {
-     return `@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0;background:#fff;color:#111;font-family:Arial,sans-serif}.paper-instructions{width:210mm;height:297mm;padding:24mm 22mm;break-after:page;page-break-after:always}.paper-instructions h1{margin:0 0 10mm;font-size:24pt}.paper-instructions p{font-size:14pt;line-height:1.45}.paper-print-sheet-title{display:none}.qcard-printable{position:relative;display:block;width:210mm;height:297mm;margin:0;background:#fff;break-after:page;page-break-after:always;overflow:hidden}.qcard-printable:last-child{break-after:auto;page-break-after:auto}.paper-qcard-code{position:absolute;left:50%;top:50%;width:92mm;height:64mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#000}.paper-qcard-code img{width:56mm;height:56mm;display:block;filter:invert(1)}.paper-qcard-letter{position:absolute;font:700 10pt Arial,sans-serif;color:#555}.paper-qcard-letter.a{left:50%;top:84mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:84mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:52mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:900 15pt Arial,sans-serif;color:#222}.top-left{left:10mm;top:18mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:18mm;top:18mm}.bottom-left{left:10mm;bottom:18mm;transform:rotate(180deg)}.bottom-right{right:18mm;bottom:18mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:700 8pt Arial,sans-serif;color:#cfd2d6}.top-brand{left:50%;top:34mm;transform:translateX(-50%)}.left-brand{left:28mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:28mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:18mm;transform:translateX(-50%);font:900 12pt Arial,sans-serif;color:#222;max-width:95mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:42mm}.bottom-cut{bottom:42mm}@media screen{body{background:#e9edf5}.paper-instructions,.qcard-printable{margin:12px auto;box-shadow:0 6px 20px rgba(0,0,0,.18)}}@media print{.paper-instructions{display:block}.qcard-printable{box-shadow:none}}`;
+     return `body{font-family:Arial,sans-serif;color:#111}.paper-print-sheet-title{font-weight:800;margin:8px}.qcard-printable{position:relative;display:inline-block;vertical-align:top;width:178mm;height:178mm;margin:4mm;background:#fff;break-inside:avoid;page-break-inside:avoid;overflow:hidden}.paper-qcard-code{position:absolute;left:50%;top:50%;width:86mm;height:54mm;transform:translate(-50%,-50%);display:grid;place-items:center;background:#000}.paper-qcard-code img{width:49mm;height:49mm;filter:invert(1)}.paper-qcard-letter{position:absolute;font:700 9pt Arial,sans-serif;color:#555}.paper-qcard-letter.a{left:50%;top:42mm;transform:translateX(-50%)}.paper-qcard-letter.b{right:46mm;top:50%;transform:translateY(-50%)}.paper-qcard-letter.c{left:50%;bottom:42mm;transform:translateX(-50%)}.paper-qcard-letter.d{left:46mm;top:50%;transform:translateY(-50%)}.paper-qcard-corner{position:absolute;font:700 11pt Arial,sans-serif}.top-left{left:7mm;top:8mm;writing-mode:vertical-rl;transform:rotate(180deg)}.top-right{right:8mm;top:8mm}.bottom-left{left:7mm;bottom:8mm;transform:rotate(180deg)}.bottom-right{right:8mm;bottom:8mm;writing-mode:vertical-rl}.paper-qcard-brand{position:absolute;font:700 8pt Arial,sans-serif;color:#cfd2d6}.top-brand{left:50%;top:26mm;transform:translateX(-50%)}.left-brand{left:18mm;top:50%;transform:translateY(-50%) rotate(-90deg)}.right-brand{right:18mm;top:50%;transform:translateY(-50%) rotate(90deg)}.paper-qcard-name{position:absolute;left:50%;top:13mm;transform:translateX(-50%);font:800 11pt Arial,sans-serif;color:#222;max-width:75mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.paper-qcard-cut{position:absolute;left:0;right:0;text-align:center;font:700 8pt Arial,sans-serif;color:#999;border-top:1px dashed #aaa}.top-cut{top:23mm}.bottom-cut{bottom:23mm}`;
 }
 
 /* ---------------------------------------------- 
@@ -835,37 +771,39 @@ async function paperPollResponses() {
 ----------------------------------------------  */
 async function paperOpenBoardScanner() {
      const panel = document.getElementById("paperScannerPanel");
+     const stage = document.getElementById("stage");
      const video = document.getElementById("paperScannerVideo");
+
+     if (panel && stage && panel.parentElement !== stage) { stage.appendChild(panel); }
      if (panel) { panel.classList.remove("hidden"); }
 
-     if (!video) {
-          paperSetScannerStatus("Camera panel markup was not found.", true);
-          return;
+     if (!window.isSecureContext && location.protocol !== "file:") {
+          paperSetScannerStatus("Camera needs HTTPS or localhost. Use manual entry if blocked.", true);
      }
 
-     if (location.protocol == "file:") {
-          paperSetScannerStatus("Camera cannot open from file://. Run a local server or publish to HTTPS. Manual entry still works.", true);
+     if (!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          paperSetScannerStatus("Camera unavailable. Use manual entry.", true);
           return;
-     }
-
-     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          paperSetScannerStatus("Camera unavailable in this browser. Use manual entry.", true);
-          return;
-     }
-
-     if (!window.jsQR) {
-          paperSetScannerStatus("Scanner library did not load. Check internet connection or use manual entry.", true);
      }
 
      try {
-          paperScannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+          paperScannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+               },
+               audio: false
+          });
           video.srcObject = paperScannerStream;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
           await video.play();
-          paperSetScannerStatus("Scanning. Aim at one Q-card. Rotate it so the chosen answer is above the code.", false);
+          paperSetScannerStatus("Realtime scanner active. Show one or more Q-cards. The answer is detected from card rotation.", false);
           paperStartQrLoop();
      }
      catch (error) {
-          paperSetScannerStatus(`Camera permission was not granted: ${error.message}. Use manual entry.`, true);
+          paperSetScannerStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual entry.`, true);
      }
 }
 
@@ -873,24 +811,118 @@ async function paperOpenBoardScanner() {
      Start QR Loop 
 ----------------------------------------------  */
 function paperStartQrLoop() {
-     clearInterval(paperScannerTimer);
-     paperScannerTimer = setInterval(function() {
-          const video = document.getElementById("paperScannerVideo");
-          const canvas = document.getElementById("paperScannerCanvas");
-          if (!video || !canvas || !window.jsQR || video.readyState < 2) { return; }
-          const ctx = canvas.getContext("2d", { willReadFrequently: true });
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
-          if (result && result.data) {
-               const payload = paperDecodePayload(result.data, result.location);
-               if (payload && payload.sessionId == paperState().sessionId) {
-                    paperSubmitScan(payload.cardId, payload.answer, "board-camera");
-               }
+     cancelAnimationFrame(paperScannerTimer);
+     paperScannerBusy = false;
+     paperScanMemory = {};
+     paperPrepareBarcodeDetector();
+
+     const scanFrame = async function() {
+          if (!paperScannerStream) { return; }
+          if (!paperScannerBusy) {
+               paperScannerBusy = true;
+               try { await paperScanBoardFrame(); }
+               catch (error) { console.warn(error); }
+               paperScannerBusy = false;
           }
-     }, 500);
+          paperScannerTimer = requestAnimationFrame(scanFrame);
+     };
+
+     paperScannerTimer = requestAnimationFrame(scanFrame);
+}
+
+/* ---------------------------------------------- 
+     Prepare Barcode Detector 
+----------------------------------------------  */
+async function paperPrepareBarcodeDetector() {
+     if (!("BarcodeDetector" in window)) { return; }
+     try {
+          if (BarcodeDetector.getSupportedFormats) {
+               const formats = await BarcodeDetector.getSupportedFormats();
+               if (!formats.includes("qr_code")) { return; }
+          }
+          paperBarcodeDetector = new BarcodeDetector({ formats: ["qr_code"] });
+     }
+     catch (error) {
+          paperBarcodeDetector = null;
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Board Frame 
+----------------------------------------------  */
+async function paperScanBoardFrame() {
+     const video = document.getElementById("paperScannerVideo");
+     const canvas = document.getElementById("paperScannerCanvas");
+     if (!video || !canvas || video.readyState < 2) { return; }
+
+     if (paperBarcodeDetector) {
+          const barcodes = await paperBarcodeDetector.detect(video);
+          if (barcodes && barcodes.length) {
+               await paperHandleDetectedCodes(barcodes.map(function(code) {
+                    return {
+                         data: code.rawValue,
+                         location: paperLocationFromBarcode(code)
+                    };
+               }), "board-camera");
+               return;
+          }
+     }
+
+     if (!window.jsQR) { return; }
+     const ctx = canvas.getContext("2d", { willReadFrequently: true });
+     canvas.width = video.videoWidth;
+     canvas.height = video.videoHeight;
+     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+     const result = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+     if (result && result.data) {
+          await paperHandleDetectedCodes([{ data: result.data, location: result.location }], "board-camera");
+     }
+}
+
+/* ---------------------------------------------- 
+     Paper Location From Barcode 
+----------------------------------------------  */
+function paperLocationFromBarcode(code) {
+     if (!code || !code.cornerPoints || code.cornerPoints.length < 2) { return null; }
+     return {
+          topLeftCorner: code.cornerPoints[0],
+          topRightCorner: code.cornerPoints[1]
+     };
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes 
+----------------------------------------------  */
+async function paperHandleDetectedCodes(codes, source) {
+     const paper = paperState();
+     const accepted = [];
+
+     for (const code of codes) {
+          const payload = paperDecodePayload(code.data, code.location);
+          if (!payload || payload.sessionId != paper.sessionId) { continue; }
+          const card = paper.cards.find(function(item) { return item.cardId == payload.cardId; });
+          if (!card) { continue; }
+          if (!paperScanShouldSubmit(payload.cardId, payload.answer)) { continue; }
+          await paperSubmitScan(payload.cardId, payload.answer, source || "board-camera");
+          accepted.push(`${card.name}: ${payload.answer}`);
+     }
+
+     if (accepted.length) {
+          paperSetScannerStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}
+
+/* ---------------------------------------------- 
+     Paper Scan Should Submit 
+----------------------------------------------  */
+function paperScanShouldSubmit(cardId, answer) {
+     const paper = paperState();
+     const key = `${paper.current}-${cardId}`;
+     const previous = paperScanMemory[key];
+     if (previous && previous.answer == answer) { return false; }
+     paperScanMemory[key] = { answer: answer, time: Date.now() };
+     return true;
 }
 
 /* ---------------------------------------------- 
@@ -899,7 +931,7 @@ function paperStartQrLoop() {
 function paperCloseBoardScanner() {
      const panel = document.getElementById("paperScannerPanel");
      if (panel) { panel.classList.add("hidden"); }
-     clearInterval(paperScannerTimer);
+     cancelAnimationFrame(paperScannerTimer);
      paperScannerTimer = null;
      if (paperScannerStream) {
           paperScannerStream.getTracks().forEach(function(track) { track.stop(); });

@@ -226,15 +226,14 @@
                     <div id="paperLiveAnswers" class="paper-live-answers"></div>
                 </aside>
             </div>
-        </section>
 
-        <div id="paperScannerPanel" class="paper-scanner-panel hidden">
+            <div id="paperScannerPanel" class="paper-scanner-panel hidden">
                 <div class="paper-scanner-card">
                     <div class="paper-scanner-head">
                         <h3>Board Camera Scanner</h3>
                         <button id="closePaperScannerBtn" class="small-btn">Close ✕</button>
                     </div>
-                    <video id="paperScannerVideo" muted playsinline></video>
+                    <video id="paperScannerVideo" muted autoplay playsinline webkit-playsinline></video>
                     <canvas id="paperScannerCanvas" class="hidden"></canvas>
                     <div id="paperScannerStatus" class="paper-scanner-status">Camera ready.</div>
                     <div class="paper-manual-scan">
@@ -248,6 +247,7 @@
                     </div>
                 </div>
             </div>
+        </section>
 
         <section id="modeScreen" class="screen">
             <div class="ribbon">

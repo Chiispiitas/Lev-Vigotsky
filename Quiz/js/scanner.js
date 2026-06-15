@@ -9,7 +9,10 @@ const PAPER_API_BASE = "https://chiispiitas.wixsite.com/mr-david-collection/_fun
 const apiBase = PAPER_API_BASE;
 const localPrefix = "wgc-paper-";
 var scannerStream = null;
-var scannerTimer = null;
+var scannerFrame = null;
+var scannerBusy = false;
+var barcodeDetector = null;
+var scanMemory = {};
 
 const elSession = document.getElementById("scannerSessionId");
 const elApi = document.getElementById("scannerApiStatus");
@@ -18,14 +21,22 @@ const elVideo = document.getElementById("scannerVideo");
 const elCanvas = document.getElementById("scannerCanvas");
 const elLog = document.getElementById("scanLog");
 const elManual = document.getElementById("manualCardId");
+const btnStartCamera = document.getElementById("btnStartCamera");
 
-elSession.textContent = sessionId || "Missing session";
-elApi.textContent = "Connected to hardcoded Wix Velo API";
+if (elSession) { elSession.textContent = sessionId || "Missing session"; }
+if (elApi) { elApi.textContent = "Scanner URL: GitHub Pages · Responses: Wix Velo API"; }
 
-document.getElementById("btnStartCamera").addEventListener("click", startCamera);
+if (btnStartCamera) {
+     btnStartCamera.addEventListener("click", startCamera);
+     btnStartCamera.addEventListener("touchend", function(event) {
+          event.preventDefault();
+          startCamera();
+     }, { passive: false });
+}
+
 document.querySelectorAll("[data-answer]").forEach(function(button) {
      button.addEventListener("click", function() {
-          const cardId = (elManual.value || "").trim().toUpperCase();
+          const cardId = (elManual && elManual.value || "").trim().toUpperCase();
           if (!cardId) { setStatus("Type the card ID first.", true); return; }
           submitScan(cardId, button.dataset.answer, "phone-manual");
      });
@@ -36,27 +47,54 @@ document.querySelectorAll("[data-answer]").forEach(function(button) {
 ----------------------------------------------  */
 async function startCamera() {
      if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
-     if (location.protocol == "file:") {
-          setStatus("Camera cannot open from file://. Open this scanner from the QR on the Wix/HTTPS site or run a local server.", true);
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
           return;
      }
      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           setStatus("Camera API is unavailable on this browser.", true);
           return;
      }
-     if (!window.jsQR) {
-          setStatus("Scanner library did not load. Check internet connection or use manual backup.", true);
-          return;
-     }
+
      try {
-          scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await prepareBarcodeDetector();
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+               },
+               audio: false
+          });
           elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
           await elVideo.play();
-          setStatus("Scanning. Aim at one Q-card. Rotate the card so the chosen answer is above the code.", false);
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning"; }
+          setStatus("Scanning continuously. Show one or more Q-cards and rotate each card so the chosen answer is above the code.", false);
           startLoop();
      }
      catch (error) {
-          setStatus("Camera permission was blocked. Use manual backup.", true);
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Prepare Barcode Detector 
+----------------------------------------------  */
+async function prepareBarcodeDetector() {
+     if (!("BarcodeDetector" in window)) { return; }
+     try {
+          if (BarcodeDetector.getSupportedFormats) {
+               const formats = await BarcodeDetector.getSupportedFormats();
+               if (!formats.includes("qr_code")) { return; }
+          }
+          barcodeDetector = new BarcodeDetector({ formats: ["qr_code"] });
+     }
+     catch (error) {
+          barcodeDetector = null;
      }
 }
 
@@ -64,21 +102,89 @@ async function startCamera() {
      Start Loop 
 ----------------------------------------------  */
 function startLoop() {
-     clearInterval(scannerTimer);
-     scannerTimer = setInterval(function() {
-          if (!window.jsQR || elVideo.readyState < 2) { return; }
-          const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
-          elCanvas.width = elVideo.videoWidth;
-          elCanvas.height = elVideo.videoHeight;
-          ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
-          const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
-          const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
-          if (!result || !result.data) { return; }
-          const payload = decodePayload(result.data, result.location);
-          if (!payload) { setStatus("QR found, but it is not a paper answer card.", true); return; }
-          if (payload.sessionId != sessionId) { setStatus("This card belongs to another session.", true); return; }
-          submitScan(payload.cardId, payload.answer, "phone-camera");
-     }, 600);
+     cancelAnimationFrame(scannerFrame);
+     scannerBusy = false;
+
+     const scanFrame = async function() {
+          if (!scannerStream) { return; }
+          if (!scannerBusy) {
+               scannerBusy = true;
+               try { await scanCurrentFrame(); }
+               catch (error) { console.warn(error); }
+               scannerBusy = false;
+          }
+          scannerFrame = requestAnimationFrame(scanFrame);
+     };
+
+     scannerFrame = requestAnimationFrame(scanFrame);
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame 
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || !elCanvas || elVideo.readyState < 2) { return; }
+
+     if (barcodeDetector) {
+          const barcodes = await barcodeDetector.detect(elVideo);
+          if (barcodes && barcodes.length) {
+               await handleDetectedCodes(barcodes.map(function(code) {
+                    return { data: code.rawValue, location: locationFromBarcode(code) };
+               }), "phone-camera");
+               return;
+          }
+     }
+
+     if (!window.jsQR) { return; }
+     const ctx = elCanvas.getContext("2d", { willReadFrequently: true });
+     elCanvas.width = elVideo.videoWidth;
+     elCanvas.height = elVideo.videoHeight;
+     ctx.drawImage(elVideo, 0, 0, elCanvas.width, elCanvas.height);
+     const imageData = ctx.getImageData(0, 0, elCanvas.width, elCanvas.height);
+     const result = jsQR(imageData.data, elCanvas.width, elCanvas.height, { inversionAttempts: "attemptBoth" });
+     if (result && result.data) {
+          await handleDetectedCodes([{ data: result.data, location: result.location }], "phone-camera");
+     }
+}
+
+/* ---------------------------------------------- 
+     Location From Barcode 
+----------------------------------------------  */
+function locationFromBarcode(code) {
+     if (!code || !code.cornerPoints || code.cornerPoints.length < 2) { return null; }
+     return {
+          topLeftCorner: code.cornerPoints[0],
+          topRightCorner: code.cornerPoints[1]
+     };
+}
+
+/* ---------------------------------------------- 
+     Handle Detected Codes 
+----------------------------------------------  */
+async function handleDetectedCodes(codes, source) {
+     const accepted = [];
+     for (const code of codes) {
+          const payload = decodePayload(code.data, code.location);
+          if (!payload) { continue; }
+          if (payload.sessionId != sessionId) { continue; }
+          if (!scanShouldSubmit(payload.cardId, payload.answer)) { continue; }
+          await submitScan(payload.cardId, payload.answer, source || "phone-camera");
+          accepted.push(`${payload.cardId}: ${payload.answer}`);
+     }
+     if (accepted.length) {
+          setStatus(`Scanned ${accepted.length}: ${accepted.join(" | ")}`, false);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Should Submit 
+----------------------------------------------  */
+function scanShouldSubmit(cardId, answer) {
+     const key = `${cardId}`;
+     const previous = scanMemory[key];
+     if (previous && previous.answer == answer) { return false; }
+     scanMemory[key] = { answer: answer, time: Date.now() };
+     return true;
 }
 
 /* ---------------------------------------------- 
@@ -102,14 +208,15 @@ function answerFromQrLocation(location) {
      if (!location || !location.topLeftCorner || !location.topRightCorner) { return "A"; }
      const dx = location.topRightCorner.x - location.topLeftCorner.x;
      const dy = location.topRightCorner.y - location.topLeftCorner.y;
-     const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+     let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+     if (angle <= -180) { angle += 360; }
+     if (angle > 180) { angle -= 360; }
 
      if (angle > -45 && angle <= 45) { return "A"; }
      if (angle > 45 && angle <= 135) { return "D"; }
      if (angle <= -45 && angle > -135) { return "B"; }
      return "C";
 }
-
 
 /* ---------------------------------------------- 
      Get Current Question Index 
@@ -135,24 +242,20 @@ async function submitScan(cardId, answer, source) {
      const questionIndex = await getCurrentQuestionIndex();
      const scan = { sessionId, questionIndex, cardId, answer, source, timestamp: new Date().toISOString() };
      try {
-          if (apiBase) {
-               await fetch(`${apiBase}/quizScan`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(scan)
-               });
-          }
-          else {
-               const key = `${localPrefix}${sessionId}-phone-scans`;
-               const existing = JSON.parse(localStorage.getItem(key) || "[]");
-               existing.push(scan);
-               localStorage.setItem(key, JSON.stringify(existing));
-          }
+          await fetch(`${apiBase}/quizScan`, {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify(scan)
+          });
           addLog(cardId, answer);
-          setStatus(`${cardId}: ${answer} sent.`, false);
      }
      catch (error) {
-          setStatus(`Could not send scan. ${error.message}`, true);
+          const key = `${localPrefix}${sessionId}-phone-scans`;
+          const existing = JSON.parse(localStorage.getItem(key) || "[]");
+          existing.push(scan);
+          localStorage.setItem(key, JSON.stringify(existing));
+          addLog(cardId, answer);
+          setStatus(`Saved locally because Wix did not respond: ${error.message}`, true);
      }
 }
 
@@ -160,6 +263,7 @@ async function submitScan(cardId, answer, source) {
      Add Log 
 ----------------------------------------------  */
 function addLog(cardId, answer) {
+     if (!elLog) { return; }
      const row = document.createElement("div");
      row.className = "log-row";
      row.innerHTML = `<span>${escapeHtml(cardId)}</span><span>${escapeHtml(answer)}</span>`;
@@ -170,6 +274,7 @@ function addLog(cardId, answer) {
      Set Status 
 ----------------------------------------------  */
 function setStatus(message, bad) {
+     if (!elStatus) { return; }
      elStatus.textContent = message;
      elStatus.classList.toggle("bad", !!bad);
 }
@@ -178,7 +283,7 @@ function setStatus(message, bad) {
      Escape HTML 
 ----------------------------------------------  */
 function escapeHtml(value) {
-     return String(value || "").replace(/[&<>"]/g, function(match) {
-          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[match];
+     return String(value || "").replace(/[&<>\"]/g, function(match) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '\"': "&quot;" }[match];
      });
 }
