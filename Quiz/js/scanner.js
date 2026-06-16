@@ -2336,3 +2336,383 @@ async function scanCurrentFrame() {
           }
      }
 }
+
+/* ---------------------------------------------- 
+     V58 Real Q-Card Validation Against Full Pattern
+----------------------------------------------  */
+
+var scannerV58SeenMemory = scannerV58SeenMemory || {};
+const SCANNER_V58_CONFIRM_MS = 720;
+const SCANNER_V58_FAST_CONFIDENCE = 66;
+const SCANNER_V58_SECOND_FRAME_CONFIDENCE = 44;
+const SCANNER_V58_MAX_WORK_WIDTH = 1180;
+
+/* ---------------------------------------------- 
+     V58 Expected 6x6 Pattern
+----------------------------------------------  */
+function scannerV58ExpectedGridFromValue(value) {
+     const checksum = (value * 7 + 11) & 15;
+     const bits = [];
+
+     for (let i = 0; i < 6; i += 1) { bits.push((value >> i) & 1); }
+     for (let i = 0; i < 4; i += 1) { bits.push((checksum >> i) & 1); }
+
+     const grid = Array.from({ length: 6 }, function() {
+          return Array.from({ length: 6 }, function() { return false; });
+     });
+
+     grid[0][0] = true;
+     grid[0][1] = true;
+     grid[1][0] = true;
+     grid[1][1] = false;
+
+     qCardDataPositions().forEach(function(position, index) {
+          const row = position[0];
+          const col = position[1];
+          if (index < bits.length) {
+               grid[row][col] = !!bits[index];
+          }
+          else {
+               grid[row][col] = ((row * 3 + col + value) % 4) === 0;
+          }
+     });
+
+     return grid;
+}
+
+/* ---------------------------------------------- 
+     V58 Grid Pattern Match
+----------------------------------------------  */
+function scannerV58PatternMatchScore(grid, values, threshold, expected) {
+     let mismatch = 0;
+     let weak = 0;
+     let totalDistance = 0;
+
+     for (let row = 0; row < 6; row += 1) {
+          for (let col = 0; col < 6; col += 1) {
+               const expectedWhite = !!expected[row][col];
+               const actualWhite = !!grid[row][col];
+               const distance = Math.abs(values[row][col] - threshold);
+               totalDistance += distance;
+               if (expectedWhite !== actualWhite) { mismatch += 1; }
+               if (distance < 5) { weak += 1; }
+          }
+     }
+
+     return {
+          mismatch: mismatch,
+          weak: weak,
+          averageDistance: totalDistance / 36
+     };
+}
+
+/* ---------------------------------------------- 
+     V58 Candidate Is Reasonable
+----------------------------------------------  */
+function scannerCandidateIsReasonable(box, width, height) {
+     if (!box) { return false; }
+     const side = Math.min(box.w, box.h);
+     const ratio = box.w / Math.max(1, box.h);
+     const frameMin = Math.min(width, height);
+     const frameMax = Math.max(width, height);
+
+     if (side < Math.max(50, frameMin * 0.062)) { return false; }
+     if (box.w > frameMax * 0.88 || box.h > frameMax * 0.88) { return false; }
+     if (ratio < 0.66 || ratio > 1.52) { return false; }
+     if (typeof box.fill == "number" && box.fill > 0 && (box.fill < 0.30 || box.fill > 0.93)) { return false; }
+     return true;
+}
+
+/* ---------------------------------------------- 
+     V58 Add Candidate
+----------------------------------------------  */
+function scannerV58AddCandidate(list, box, width, height) {
+     const candidate = scannerV57ClampBox ? scannerV57ClampBox(box, width, height) : box;
+     if (!scannerCandidateIsReasonable(candidate, width, height)) { return; }
+
+     for (let i = 0; i < list.length; i += 1) {
+          if (scannerV57BoxesOverlap && scannerV57BoxesOverlap(list[i], candidate)) {
+               if ((candidate.area || 0) > (list[i].area || 0)) { list[i] = candidate; }
+               return;
+          }
+     }
+
+     list.push(candidate);
+}
+
+/* ---------------------------------------------- 
+     V58 Connected Candidates At Threshold
+----------------------------------------------  */
+function scannerV58FindCandidatesAtThreshold(imageData, width, height, threshold) {
+     const data = imageData.data;
+     const total = width * height;
+     const dark = new Uint8Array(total);
+     const seen = new Uint8Array(total);
+     const candidates = [];
+
+     for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
+          dark[pixel] = scannerLuminance(data, i) < threshold ? 1 : 0;
+     }
+
+     const queue = [];
+     const neighborOffsets = [-1, 1, -width, width];
+
+     for (let y = 1; y < height - 1; y += 1) {
+          for (let x = 1; x < width - 1; x += 1) {
+               const start = y * width + x;
+               if (!dark[start] || seen[start]) { continue; }
+
+               let minX = x;
+               let maxX = x;
+               let minY = y;
+               let maxY = y;
+               let area = 0;
+               seen[start] = 1;
+               queue.length = 0;
+               queue.push(start);
+
+               for (let q = 0; q < queue.length; q += 1) {
+                    const current = queue[q];
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    area += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+
+                    for (const offset of neighborOffsets) {
+                         const next = current + offset;
+                         if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
+                         seen[next] = 1;
+                         queue.push(next);
+                    }
+               }
+
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const fill = area / Math.max(1, boxW * boxH);
+               const grow = Math.max(3, Math.round(Math.min(boxW, boxH) * 0.018));
+
+               scannerV58AddCandidate(candidates, {
+                    x: minX - grow,
+                    y: minY - grow,
+                    w: boxW + grow * 2,
+                    h: boxH + grow * 2,
+                    area: area,
+                    fill: fill
+               }, width, height);
+          }
+     }
+
+     return candidates;
+}
+
+/* ---------------------------------------------- 
+     Find 6x6 Q-Card Candidates
+----------------------------------------------  */
+function findQCardCandidates(imageData, width, height) {
+     const baseThreshold = scannerAdaptiveDarkThreshold(imageData);
+     const thresholds = [baseThreshold + 24, baseThreshold + 10, baseThreshold, baseThreshold - 14]
+          .map(function(value) { return Math.max(74, Math.min(214, Math.round(value))); });
+     const candidates = [];
+
+     thresholds.forEach(function(threshold) {
+          scannerV58FindCandidatesAtThreshold(imageData, width, height, threshold).forEach(function(box) {
+               scannerV58AddCandidate(candidates, box, width, height);
+          });
+     });
+
+     return candidates.sort(function(a, b) { return (b.area || 0) - (a.area || 0); }).slice(0, 28);
+}
+
+/* ---------------------------------------------- 
+     Decode Q-Card With Full Pattern Check
+----------------------------------------------  */
+function decodeQCardDetailedStrict(detail) {
+     if (!detail || !detail.grid) { return null; }
+     const answersByRotation = ["A", "B", "C", "D"];
+     const positions = qCardDataPositions();
+     const validIds = getScannerValidCardIds();
+     const hasRoster = Object.keys(validIds).length > 0;
+     let best = null;
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = rotateGrid(detail.grid, rotation);
+          const values = rotateGrid(detail.values, rotation);
+          const anchor = anchorScore(grid);
+          const cornerNoise = cornerNoiseScore(grid);
+
+          if (anchor < 3) { continue; }
+          if (cornerNoise > 3) { continue; }
+
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+
+          if (value < 0 || value >= SCANNER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          const cardId = `P${String(value + 1).padStart(2, "0")}`;
+          if (hasRoster && !validIds[cardId]) { continue; }
+
+          const expected = scannerV58ExpectedGridFromValue(value);
+          const pattern = scannerV58PatternMatchScore(grid, values, detail.threshold, expected);
+          const maxMismatch = detail.contrast >= 22 ? 4 : 3;
+
+          if (pattern.mismatch > maxMismatch) { continue; }
+          if (pattern.weak > 13) { continue; }
+          if (detail.contrast < 12) { continue; }
+          if (detail.borderDarkness > detail.threshold + 6) { continue; }
+
+          const orientationConfidence = qCardOrientationScore(grid);
+          const confidence = 90 - (pattern.mismatch * 13) - (pattern.weak * 2) + orientationConfidence + Math.round(detail.contrast / 3) + Math.round(pattern.averageDistance / 2);
+          const decoded = {
+               cardId: cardId,
+               answer: answersByRotation[rotation],
+               confidence: confidence,
+               rotation: rotation,
+               box: detail.box,
+               mismatch: pattern.mismatch,
+               strict: true
+          };
+
+          if (!best || decoded.confidence > best.confidence) { best = decoded; }
+     }
+
+     return best;
+}
+
+/* ---------------------------------------------- 
+     V58 Stable Detections
+----------------------------------------------  */
+function strictStableDetections(detections) {
+     const now = Date.now();
+     const stable = [];
+
+     Object.keys(scannerV58SeenMemory).forEach(function(key) {
+          if (now - scannerV58SeenMemory[key].lastSeen > SCANNER_V58_CONFIRM_MS) {
+               delete scannerV58SeenMemory[key];
+          }
+     });
+
+     (detections || []).forEach(function(item) {
+          const cardId = normalizeCardId(item.cardId);
+          const key = `${cardId}-${item.answer}`;
+          const previous = scannerV58SeenMemory[key];
+          const count = previous && now - previous.lastSeen < SCANNER_V58_CONFIRM_MS ? previous.count + 1 : 1;
+          const strongest = previous ? Math.max(previous.confidence || 0, item.confidence || 0) : (item.confidence || 0);
+          const box = item.box || previous && previous.box;
+
+          scannerV58SeenMemory[key] = {
+               count: count,
+               confidence: strongest,
+               firstSeen: previous ? previous.firstSeen : now,
+               lastSeen: now,
+               box: box
+          };
+
+          if (strongest >= SCANNER_V58_FAST_CONFIDENCE || (count >= 2 && strongest >= SCANNER_V58_SECOND_FRAME_CONFIDENCE)) {
+               item.confidence = strongest;
+               item.box = box;
+               stable.push(item);
+          }
+     });
+
+     return stable;
+}
+
+/* ---------------------------------------------- 
+     Scan Confirmed Fast
+----------------------------------------------  */
+function scanConfirmedFast(cardId, answer, confidence) {
+     const key = normalizeCardId(cardId);
+     const now = Date.now();
+     const previous = scanConfirmMemory[key];
+     scanConfirmMemory[key] = { answer: answer, confidence: confidence || 0, time: now };
+
+     if ((confidence || 0) >= SCANNER_V58_FAST_CONFIDENCE) { return true; }
+     if (previous && previous.answer == answer && now - previous.time < SCANNER_V58_CONFIRM_MS) { return true; }
+     return false;
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || elVideo.readyState < 2) { return; }
+
+     const work = scannerWorkCanvas;
+     const ctx = work.getContext("2d", { willReadFrequently: true });
+     const sourceW = elVideo.videoWidth || 1280;
+     const sourceH = elVideo.videoHeight || 720;
+     work.width = Math.min(SCANNER_V58_MAX_WORK_WIDTH, sourceW);
+     work.height = Math.round(sourceH * (work.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(elVideo, 0, 0, work.width, work.height);
+     syncScannerOverlaySize(work.width, work.height);
+
+     const rawDetections = detectQCardsFromCanvas(work);
+     const stableDetections = strictStableDetections(rawDetections);
+     drawScannerOverlay(stableDetections);
+
+     if (stableDetections.length) {
+          handleDetectedCodes(stableDetections, "phone-camera-6x6-v58");
+          return;
+     }
+
+     if (!rawDetections.length) {
+          const qrFallback = await scannerV57QrFallbackDetections(work);
+          if (qrFallback.length) {
+               handleDetectedCodes(qrFallback, "phone-camera-qr-v58");
+          }
+     }
+}
+
+/* ---------------------------------------------- 
+     Start Camera
+----------------------------------------------  */
+async function startCamera() {
+     if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
+          return;
+     }
+     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+
+     try {
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await prepareBarcodeDetector();
+          await refreshScannerSessionCache(true);
+          await refreshScannerResponses(true);
+          startScannerDataPolling();
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 60, min: 24 }
+               },
+               audio: false
+          });
+          elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
+          await elVideo.play();
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
+          setStatus("Scanner active. It now validates the full Q-card pattern before showing or recording, so wall drawings and background shapes are ignored.", false);
+          startLoop();
+     }
+     catch (error) {
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
