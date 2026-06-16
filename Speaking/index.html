@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#1875ff" />
   <title>Speaking Report Maker</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="speaking-fixes.css" />
 </head>
 <body>
   <div class="background-art" aria-hidden="true">
@@ -31,7 +32,7 @@
           <div>
             <p class="eyebrow dark">Step 1</p>
             <h2 id="classTitle">Select a class</h2>
-            <p class="hero-copy">Choose the course first. Then select the student, mark the rubric, add quick notes, and send the report to WhatsApp.</p>
+            <p class="hero-copy">Choose the course first. Then select the student, adjust the rubric only where needed, add quick notes, and send the report to WhatsApp.</p>
           </div>
           <div class="phone-chip">Mobile ready</div>
         </div>
@@ -74,28 +75,13 @@
           </div>
         </section>
 
-        <section class="panel bulk-panel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow dark">Class export</p>
-              <h3>All grades in one file</h3>
-            </div>
-          </div>
-          <p class="bulk-copy">These buttons collect the current class in one table. Assessed students appear with their scores; missing students remain marked as pending.</p>
-          <div class="bulk-actions">
-            <button class="ghost-button" id="exportClassCsv" type="button">Export class CSV</button>
-            <button class="ghost-button" id="exportClassPdf" type="button">Create class PDF</button>
-            <button class="ghost-button" id="copyClassSummary" type="button">Copy class summary</button>
-          </div>
-        </section>
-
         <section class="score-card" aria-live="polite">
           <div>
             <p class="eyebrow light">Current score</p>
-            <strong id="scoreValue">0 / 10</strong>
-            <span id="scoreStatus">No criteria marked yet</span>
+            <strong id="scoreValue">10 / 10</strong>
+            <span id="scoreStatus">All criteria marked</span>
           </div>
-          <div class="score-ring" id="scoreRing">0%</div>
+          <div class="score-ring" id="scoreRing">100%</div>
         </section>
 
         <section class="panel">
@@ -123,16 +109,25 @@
           <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
         </section>
 
-        <section class="panel preview-panel">
+        <section class="panel bulk-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow dark">Step 5</p>
-              <h3>Report preview</h3>
+              <p class="eyebrow dark">Class export</p>
+              <h3>All grades in one file</h3>
             </div>
-            <button class="ghost-button" id="refreshPreview" type="button">Refresh</button>
           </div>
-          <pre id="reportPreview" class="report-preview"></pre>
+          <p class="bulk-copy">These buttons collect the current class in one table. Assessed students appear with their scores; missing students remain marked as pending.</p>
+          <div class="bulk-actions">
+            <button class="ghost-button" id="exportClassCsv" type="button">Export class CSV</button>
+            <button class="ghost-button" id="exportClassPdf" type="button">Create class PDF</button>
+            <button class="ghost-button" id="copyClassSummary" type="button">Copy class summary</button>
+          </div>
         </section>
+
+        <div class="compat-hooks" aria-hidden="true" hidden>
+          <button class="ghost-button" id="refreshPreview" type="button" tabindex="-1">Refresh</button>
+          <pre id="reportPreview" class="report-preview"></pre>
+        </div>
       </section>
     </main>
   </div>
@@ -164,5 +159,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="script.js"></script>
+  <script src="speaking-fixes.js"></script>
 </body>
 </html>

@@ -1,0 +1,9 @@
+/* Small overrides for the Speaking assessment workflow. */
+.compat-hooks,
+.compat-hooks[hidden] {
+  display: none !important;
+}
+
+.bulk-panel {
+  margin-bottom: 16px;
+}
