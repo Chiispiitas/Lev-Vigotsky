@@ -1937,3 +1937,402 @@ async function scanCurrentFrame() {
 function scannerSetStrictReadyMessage() {
      setStatus("Balanced scanner active. Hold a Q-card steady for a moment; background shapes are still filtered.", false);
 }
+
+/* ---------------------------------------------- 
+     V57 Forgiving Q-Card Detection Recovery
+----------------------------------------------  */
+
+var scannerV57SeenMemory = scannerV57SeenMemory || {};
+const SCANNER_V57_CONFIRM_MS = 850;
+const SCANNER_V57_FAST_CONFIDENCE = 34;
+const SCANNER_V57_SECOND_FRAME_CONFIDENCE = 24;
+const SCANNER_V57_MAX_WORK_WIDTH = 1280;
+
+/* ---------------------------------------------- 
+     V57 Clamp Box
+----------------------------------------------  */
+function scannerV57ClampBox(box, width, height) {
+     const x = Math.max(0, Math.min(width - 2, Math.round(box.x)));
+     const y = Math.max(0, Math.min(height - 2, Math.round(box.y)));
+     const w = Math.max(2, Math.min(width - x, Math.round(box.w)));
+     const h = Math.max(2, Math.min(height - y, Math.round(box.h)));
+     return { x: x, y: y, w: w, h: h, area: box.area || (w * h), fill: box.fill || 0, ratio: w / Math.max(1, h) };
+}
+
+/* ---------------------------------------------- 
+     V57 Boxes Overlap
+----------------------------------------------  */
+function scannerV57BoxesOverlap(a, b) {
+     const left = Math.max(a.x, b.x);
+     const top = Math.max(a.y, b.y);
+     const right = Math.min(a.x + a.w, b.x + b.w);
+     const bottom = Math.min(a.y + a.h, b.y + b.h);
+     const overlap = Math.max(0, right - left) * Math.max(0, bottom - top);
+     const smaller = Math.max(1, Math.min(a.w * a.h, b.w * b.h));
+     return overlap / smaller > 0.54;
+}
+
+/* ---------------------------------------------- 
+     V57 Add Candidate
+----------------------------------------------  */
+function scannerV57AddCandidate(list, box, width, height) {
+     const candidate = scannerV57ClampBox(box, width, height);
+     if (!scannerCandidateIsReasonable(candidate, width, height)) { return; }
+     for (let i = 0; i < list.length; i += 1) {
+          if (scannerV57BoxesOverlap(list[i], candidate)) {
+               if ((candidate.area || 0) > (list[i].area || 0)) { list[i] = candidate; }
+               return;
+          }
+     }
+     list.push(candidate);
+}
+
+/* ---------------------------------------------- 
+     Scanner Candidate Is Reasonable
+----------------------------------------------  */
+function scannerCandidateIsReasonable(box, width, height) {
+     if (!box) { return false; }
+     const side = Math.min(box.w, box.h);
+     const ratio = box.w / Math.max(1, box.h);
+     const frameMin = Math.min(width, height);
+
+     if (side < Math.max(30, frameMin * 0.032)) { return false; }
+     if (box.w > width * 0.985 || box.h > height * 0.985) { return false; }
+     if (ratio < 0.54 || ratio > 1.86) { return false; }
+     if (typeof box.fill == "number" && box.fill > 0 && (box.fill < 0.16 || box.fill > 0.992)) { return false; }
+     return true;
+}
+
+/* ---------------------------------------------- 
+     V57 Find Connected Candidates At Threshold
+----------------------------------------------  */
+function scannerV57FindCandidatesAtThreshold(imageData, width, height, threshold) {
+     const data = imageData.data;
+     const total = width * height;
+     const dark = new Uint8Array(total);
+     const seen = new Uint8Array(total);
+     const candidates = [];
+
+     for (let i = 0, pixel = 0; i < data.length; i += 4, pixel += 1) {
+          dark[pixel] = scannerLuminance(data, i) < threshold ? 1 : 0;
+     }
+
+     const queue = [];
+     const neighborOffsets = [-1, 1, -width, width, -width - 1, -width + 1, width - 1, width + 1];
+
+     for (let y = 1; y < height - 1; y += 1) {
+          for (let x = 1; x < width - 1; x += 1) {
+               const start = y * width + x;
+               if (!dark[start] || seen[start]) { continue; }
+
+               let minX = x;
+               let maxX = x;
+               let minY = y;
+               let maxY = y;
+               let area = 0;
+               seen[start] = 1;
+               queue.length = 0;
+               queue.push(start);
+
+               for (let q = 0; q < queue.length; q += 1) {
+                    const current = queue[q];
+                    const cx = current % width;
+                    const cy = Math.floor(current / width);
+                    area += 1;
+                    if (cx < minX) { minX = cx; }
+                    if (cx > maxX) { maxX = cx; }
+                    if (cy < minY) { minY = cy; }
+                    if (cy > maxY) { maxY = cy; }
+
+                    for (const offset of neighborOffsets) {
+                         const next = current + offset;
+                         if (next <= 0 || next >= total || seen[next] || !dark[next]) { continue; }
+                         seen[next] = 1;
+                         queue.push(next);
+                    }
+               }
+
+               const boxW = maxX - minX + 1;
+               const boxH = maxY - minY + 1;
+               const fill = area / Math.max(1, boxW * boxH);
+               const grow = Math.max(3, Math.round(Math.min(boxW, boxH) * 0.018));
+               scannerV57AddCandidate(candidates, {
+                    x: minX - grow,
+                    y: minY - grow,
+                    w: boxW + grow * 2,
+                    h: boxH + grow * 2,
+                    area: area,
+                    fill: fill
+               }, width, height);
+          }
+     }
+
+     return candidates;
+}
+
+/* ---------------------------------------------- 
+     V57 Add Center Fallback Candidates
+----------------------------------------------  */
+function scannerV57AddCenterFallbackCandidates(candidates, width, height) {
+     const sideBase = Math.min(width, height);
+     const ratios = [0.88, 0.74, 0.60, 0.46, 0.34];
+     ratios.forEach(function(ratio) {
+          const side = Math.round(sideBase * ratio);
+          scannerV57AddCandidate(candidates, {
+               x: Math.round((width - side) / 2),
+               y: Math.round((height - side) / 2),
+               w: side,
+               h: side,
+               area: side * side,
+               fill: .5
+          }, width, height);
+     });
+}
+
+/* ---------------------------------------------- 
+     Find 6x6 Q-Card Candidates
+----------------------------------------------  */
+function findQCardCandidates(imageData, width, height) {
+     const baseThreshold = scannerAdaptiveDarkThreshold(imageData);
+     const thresholds = [baseThreshold + 34, baseThreshold + 18, baseThreshold, baseThreshold - 18, baseThreshold - 34]
+          .map(function(value) { return Math.max(70, Math.min(224, Math.round(value))); });
+     const candidates = [];
+
+     thresholds.forEach(function(threshold) {
+          scannerV57FindCandidatesAtThreshold(imageData, width, height, threshold).forEach(function(box) {
+               scannerV57AddCandidate(candidates, box, width, height);
+          });
+     });
+
+     scannerV57AddCenterFallbackCandidates(candidates, width, height);
+     return candidates.sort(function(a, b) { return (b.area || 0) - (a.area || 0); }).slice(0, 42);
+}
+
+/* ---------------------------------------------- 
+     Decode Q-Card Detailed Strict
+----------------------------------------------  */
+function decodeQCardDetailedStrict(detail) {
+     if (!detail || !detail.grid) { return null; }
+     const answersByRotation = ["A", "B", "C", "D"];
+     const positions = qCardDataPositions();
+     let best = null;
+
+     for (let rotation = 0; rotation < 4; rotation += 1) {
+          const grid = rotateGrid(detail.grid, rotation);
+          const values = rotateGrid(detail.values, rotation);
+          const anchor = anchorScore(grid);
+          const cornerNoise = cornerNoiseScore(grid);
+
+          if (anchor < 3) { continue; }
+          if (cornerNoise > 4) { continue; }
+
+          const bits = positions.slice(0, 10).map(function(position) {
+               return grid[position[0]][position[1]] ? 1 : 0;
+          });
+
+          let value = 0;
+          for (let i = 0; i < 6; i += 1) { value |= bits[i] << i; }
+          let checksum = 0;
+          for (let i = 0; i < 4; i += 1) { checksum |= bits[6 + i] << i; }
+
+          if (value < 0 || value >= SCANNER_MAX_CARDS) { continue; }
+          if (checksum !== ((value * 7 + 11) & 15)) { continue; }
+
+          const cardId = `P${String(value + 1).padStart(2, "0")}`;
+          const validIds = getScannerValidCardIds();
+          if (Object.keys(validIds).length && !validIds[cardId]) { continue; }
+
+          let cellConfidenceTotal = 0;
+          let cellConfidenceMin = 999;
+          let tested = 0;
+          positions.slice(0, 10).forEach(function(position, index) {
+               const row = position[0];
+               const col = position[1];
+               const expectedWhite = !!bits[index];
+               const distance = Math.abs(values[row][col] - detail.threshold);
+               if (expectedWhite && values[row][col] < detail.threshold - 2) { cellConfidenceMin = Math.min(cellConfidenceMin, distance - 6); }
+               else if (!expectedWhite && values[row][col] > detail.threshold + 2) { cellConfidenceMin = Math.min(cellConfidenceMin, distance - 6); }
+               else if (distance < cellConfidenceMin) { cellConfidenceMin = distance; }
+               cellConfidenceTotal += distance;
+               tested += 1;
+          });
+
+          const avgCellConfidence = tested ? cellConfidenceTotal / tested : 0;
+          if (detail.contrast < 10) { continue; }
+          if (avgCellConfidence < 4) { continue; }
+          if (cellConfidenceMin < -8) { continue; }
+
+          const orientationConfidence = qCardOrientationScore(grid);
+          const confidence = orientationConfidence + (anchor * 5) + Math.max(0, 18 - (cornerNoise * 3)) + Math.round(detail.contrast / 5) + Math.round(avgCellConfidence / 2);
+          const decoded = {
+               cardId: cardId,
+               answer: answersByRotation[rotation],
+               confidence: confidence,
+               rotation: rotation,
+               box: detail.box,
+               strict: false
+          };
+
+          if (!best || decoded.confidence > best.confidence) { best = decoded; }
+     }
+
+     return best;
+}
+
+/* ---------------------------------------------- 
+     V57 Stable Detections
+----------------------------------------------  */
+function strictStableDetections(detections) {
+     const now = Date.now();
+     const stable = [];
+
+     Object.keys(scannerV57SeenMemory).forEach(function(key) {
+          if (now - scannerV57SeenMemory[key].lastSeen > SCANNER_V57_CONFIRM_MS) {
+               delete scannerV57SeenMemory[key];
+          }
+     });
+
+     (detections || []).forEach(function(item) {
+          const cardId = normalizeCardId(item.cardId);
+          const key = `${cardId}-${item.answer}`;
+          const previous = scannerV57SeenMemory[key];
+          const count = previous && now - previous.lastSeen < SCANNER_V57_CONFIRM_MS ? previous.count + 1 : 1;
+          const strongest = previous ? Math.max(previous.confidence || 0, item.confidence || 0) : (item.confidence || 0);
+          scannerV57SeenMemory[key] = {
+               count: count,
+               confidence: strongest,
+               firstSeen: previous ? previous.firstSeen : now,
+               lastSeen: now
+          };
+
+          if (strongest >= SCANNER_V57_FAST_CONFIDENCE || (count >= 2 && strongest >= SCANNER_V57_SECOND_FRAME_CONFIDENCE)) {
+               item.confidence = strongest;
+               stable.push(item);
+          }
+     });
+
+     return stable;
+}
+
+/* ---------------------------------------------- 
+     Scan Confirmed Fast
+----------------------------------------------  */
+function scanConfirmedFast(cardId, answer, confidence) {
+     const key = normalizeCardId(cardId);
+     const now = Date.now();
+     const previous = scanConfirmMemory[key];
+     scanConfirmMemory[key] = { answer: answer, confidence: confidence || 0, time: now };
+
+     if ((confidence || 0) >= SCANNER_V57_FAST_CONFIDENCE) { return true; }
+     if (previous && previous.answer == answer && now - previous.time < SCANNER_V57_CONFIRM_MS) { return true; }
+     return false;
+}
+
+/* ---------------------------------------------- 
+     V57 QR Fallback Detections
+----------------------------------------------  */
+async function scannerV57QrFallbackDetections(work) {
+     const detections = [];
+
+     if (barcodeDetector && elVideo) {
+          try {
+               const barcodes = await barcodeDetector.detect(elVideo);
+               (barcodes || []).forEach(function(code) {
+                    const payload = decodePayload(code.rawValue, locationFromBarcode(code));
+                    if (payload) { detections.push(payload); }
+               });
+          }
+          catch (error) {}
+     }
+
+     if (!detections.length && window.jsQR && work) {
+          try {
+               const ctx = work.getContext("2d", { willReadFrequently: true });
+               const imageData = ctx.getImageData(0, 0, work.width, work.height);
+               const result = jsQR(imageData.data, work.width, work.height, { inversionAttempts: "attemptBoth" });
+               if (result && result.data) {
+                    const payload = decodePayload(result.data, result.location);
+                    if (payload) { detections.push(payload); }
+               }
+          }
+          catch (error) {}
+     }
+
+     return detections;
+}
+
+/* ---------------------------------------------- 
+     Start Camera
+----------------------------------------------  */
+async function startCamera() {
+     if (!sessionId) { setStatus("The scanner URL has no session ID.", true); return; }
+     if (!window.isSecureContext) {
+          setStatus("Camera needs HTTPS. Open the scanner from the GitHub Pages URL.", true);
+          return;
+     }
+     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          setStatus("Camera API is unavailable on this browser.", true);
+          return;
+     }
+
+     try {
+          if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          await prepareBarcodeDetector();
+          await refreshScannerSessionCache(true);
+          await refreshScannerResponses(true);
+          startScannerDataPolling();
+          scannerStream = await navigator.mediaDevices.getUserMedia({
+               video: {
+                    facingMode: { ideal: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 60, min: 24 }
+               },
+               audio: false
+          });
+          elVideo.srcObject = scannerStream;
+          elVideo.setAttribute("playsinline", "");
+          elVideo.setAttribute("webkit-playsinline", "");
+          await elVideo.play();
+          if (btnStartCamera) { btnStartCamera.textContent = "Scanning 6×6"; }
+          setStatus("Recovery scanner active. It accepts gray printed Q-cards more easily and still checks the card checksum before recording.", false);
+          startLoop();
+     }
+     catch (error) {
+          if (btnStartCamera) { btnStartCamera.disabled = false; btnStartCamera.textContent = "Start Camera"; }
+          setStatus(`Camera could not start: ${error.message || "permission blocked"}. Use manual backup.`, true);
+     }
+}
+
+/* ---------------------------------------------- 
+     Scan Current Frame
+----------------------------------------------  */
+async function scanCurrentFrame() {
+     if (!elVideo || elVideo.readyState < 2) { return; }
+
+     const work = scannerWorkCanvas;
+     const ctx = work.getContext("2d", { willReadFrequently: true });
+     const sourceW = elVideo.videoWidth || 1280;
+     const sourceH = elVideo.videoHeight || 720;
+     work.width = Math.min(SCANNER_V57_MAX_WORK_WIDTH, sourceW);
+     work.height = Math.round(sourceH * (work.width / sourceW));
+     ctx.imageSmoothingEnabled = false;
+     ctx.drawImage(elVideo, 0, 0, work.width, work.height);
+     syncScannerOverlaySize(work.width, work.height);
+
+     const rawDetections = detectQCardsFromCanvas(work);
+     const stableDetections = strictStableDetections(rawDetections);
+     drawScannerOverlay(rawDetections.length ? rawDetections : stableDetections);
+
+     if (stableDetections.length) {
+          handleDetectedCodes(stableDetections, "phone-camera-6x6-recovery");
+          return;
+     }
+
+     if (!rawDetections.length) {
+          const qrFallback = await scannerV57QrFallbackDetections(work);
+          if (qrFallback.length) {
+               handleDetectedCodes(qrFallback, "phone-camera-qr-recovery");
+          }
+     }
+}
