@@ -13,12 +13,12 @@ const apiBase = PAPER_API_BASE;
 const SCANNER_MAX_CARDS = 60;
 const SCANNER_ANSWERS = ["A", "B", "C", "D"];
 const SCAN_PROCESS_WIDTH = 960;
-const SCAN_INTERVAL_MS = 85;
+const SCAN_INTERVAL_MS = 70;
 const SESSION_POLL_MS = 480;
 const GHOST_MS = 1000;
-const MIN_REGISTER_VISIBLE_MS = 2000;
-const MIN_OVERLAY_VISIBLE_MS = 650;
-const CONTINUOUS_RESET_MS = 620;
+const MIN_REGISTER_VISIBLE_MS = 1000;
+const MIN_OVERLAY_VISIBLE_MS = 450;
+const CONTINUOUS_RESET_MS = 760;
 const STRICTNESS_STORAGE_KEY = "wgc-scanner-strictness";
 const DEFAULT_SCANNER_STRICTNESS = 70;
 const FIXED_SCANNER_STRICTNESS = 40;
@@ -116,6 +116,7 @@ function strictnessProfile() {
           matchesMin: Math.max(27, Math.min(35, Math.round(31 - lo * 4 + hi * 3))),
           marginMin: Math.max(0.55, 1.25 - lo * 0.55 + hi * 0.45),
           boxScales: lo > 0.4 ? [0.90, 0.96, 1.00, 1.05, 1.10, 1.16] : [0.96, 1.00, 1.05, 1.10],
+          angleOffsets: lo > 0.32 ? [-13, -8, -4, 0, 4, 8, 13] : [-9, -5, 0, 5, 9],
           confirmHits: Math.max(1, Math.min(5, Math.round(3 - lo * 1.4 + hi * 1.4))),
           immediateQuality: 43 - lo * 9 + hi * 10,
           stableWindowMs: 520 + lo * 260 - hi * 80,
@@ -186,6 +187,8 @@ async function startCamera() {
 
      try {
           if (btnStartCamera) { btnStartCamera.disabled = true; btnStartCamera.textContent = "Starting..."; }
+          setStatus("Loading session roster...", false);
+          await loadSessionState(true);
           scannerStream = await navigator.mediaDevices.getUserMedia({
                video: {
                     facingMode: { ideal: "environment" },
@@ -201,7 +204,7 @@ async function startCamera() {
           await elVideo.play();
           prepareOverlay();
           if (btnStartCamera) { btnStartCamera.textContent = "Scanning"; }
-          setStatus("6×6 scanner active. Hold each Q-card in view for about 2 seconds to record it.", false);
+          setStatus("6×6 scanner active. Hold each Q-card in view for about 1 second to record it.", false);
           startLoop();
      }
      catch (error) {
@@ -475,34 +478,38 @@ function decodeCandidate(imageData, width, height, box) {
      let best = null;
 
      variants.forEach(function(variant) {
-          const read = readGridFromCandidate(imageData, width, height, variant);
-          if (!read) { return; }
-          const paper = paperBorderScore(imageData, width, height, variant);
-          const edgeDark = markerEdgeDarkScore(imageData, width, height, variant, read.threshold);
-          const background = markerBackgroundDarkScore(imageData, width, height, variant, read.threshold);
-          if (read.contrast < profile.contrastMin) { return; }
-          if (background < profile.backgroundMin) { return; }
-          if (edgeDark < profile.edgeDarkMin) { return; }
-          if (paper.score < profile.paperScoreMin) { return; }
-          if (paper.goodBands < profile.paperGoodBandsMin) { return; }
+          profile.angleOffsets.forEach(function(angleOffset) {
+               const read = readGridFromCandidate(imageData, width, height, variant, angleOffset);
+               if (!read) { return; }
+               const paper = paperBorderScore(imageData, width, height, variant);
+               const edgeDark = markerEdgeDarkScore(imageData, width, height, variant, read.threshold);
+               const background = markerBackgroundDarkScore(imageData, width, height, variant, read.threshold);
+               if (read.contrast < profile.contrastMin) { return; }
+               if (background < profile.backgroundMin) { return; }
+               if (edgeDark < profile.edgeDarkMin) { return; }
+               if (paper.score < profile.paperScoreMin) { return; }
+               if (paper.goodBands < profile.paperGoodBandsMin) { return; }
 
-          const match = matchReadGrid(read);
-          if (!match) { return; }
+               const match = matchReadGrid(read);
+               if (!match) { return; }
 
-          const quality = match.score + read.contrast / 18 + edgeDark * 3 + paper.score * 3;
-          const decoded = {
-               cardId: match.cardId,
-               answer: match.answer,
-               box: variant,
-               score: match.score,
-               margin: match.margin,
-               matches: match.matches,
-               contrast: read.contrast,
-               paperScore: paper.score,
-               edgeDark: edgeDark,
-               quality: quality
-          };
-          if (!best || decoded.quality > best.quality) { best = decoded; }
+               const anglePenalty = Math.abs(angleOffset) / 42;
+               const quality = match.score + read.contrast / 18 + edgeDark * 3 + paper.score * 3 - anglePenalty;
+               const decoded = {
+                    cardId: match.cardId,
+                    answer: match.answer,
+                    box: variant,
+                    angleOffset: angleOffset,
+                    score: match.score,
+                    margin: match.margin,
+                    matches: match.matches,
+                    contrast: read.contrast,
+                    paperScore: paper.score,
+                    edgeDark: edgeDark,
+                    quality: quality
+               };
+               if (!best || decoded.quality > best.quality) { best = decoded; }
+          });
      });
 
      if (!best) { return null; }
@@ -538,7 +545,7 @@ function candidateBoxVariants(box, width, height, profile) {
 /* ---------------------------------------------- 
      Read Grid From Candidate 
 ----------------------------------------------  */
-function readGridFromCandidate(imageData, width, height, box) {
+function readGridFromCandidate(imageData, width, height, box, angleDeg) {
      const profile = strictnessProfile();
      const data = imageData.data;
      const pad = 52 / 600;
@@ -548,20 +555,34 @@ function readGridFromCandidate(imageData, width, height, box) {
      const lums = [];
      const sampleRadius = Math.max(1, Math.min(6, Math.round(Math.min(box.w, box.h) * cell * 0.12)));
      const jitter = Math.max(1, Math.round(Math.min(box.w, box.h) * cell * 0.22));
+     const angle = (Number(angleDeg) || 0) * Math.PI / 180;
+     const cos = Math.cos(angle);
+     const sin = Math.sin(angle);
+     const angleBoxFactor = Math.max(1, Math.abs(cos) + Math.abs(sin));
+     const sampleW = box.w / angleBoxFactor;
+     const sampleH = box.h / angleBoxFactor;
+     const centerX = box.x + box.w / 2;
+     const centerY = box.y + box.h / 2;
 
      for (let row = 0; row < 6; row += 1) {
           const line = [];
           for (let col = 0; col < 6; col += 1) {
                const rx = pad + (cell / 2) + col * (cell + gap);
                const ry = pad + (cell / 2) + row * (cell + gap);
-               const cx = box.x + rx * box.w;
-               const cy = box.y + ry * box.h;
+               const localX = (rx - 0.5) * sampleW;
+               const localY = (ry - 0.5) * sampleH;
+               const cx = centerX + localX * cos - localY * sin;
+               const cy = centerY + localX * sin + localY * cos;
+               const jx = jitter * cos;
+               const jy = jitter * sin;
+               const kx = -jitter * sin;
+               const ky = jitter * cos;
                const samples = [
                     patchLum(data, width, height, cx, cy, sampleRadius),
-                    patchLum(data, width, height, cx - jitter, cy, sampleRadius),
-                    patchLum(data, width, height, cx + jitter, cy, sampleRadius),
-                    patchLum(data, width, height, cx, cy - jitter, sampleRadius),
-                    patchLum(data, width, height, cx, cy + jitter, sampleRadius)
+                    patchLum(data, width, height, cx - jx, cy - jy, sampleRadius),
+                    patchLum(data, width, height, cx + jx, cy + jy, sampleRadius),
+                    patchLum(data, width, height, cx - kx, cy - ky, sampleRadius),
+                    patchLum(data, width, height, cx + kx, cy + ky, sampleRadius)
                ].sort(function(a, b) { return a - b; });
                const lum = samples[2];
                line.push(lum);
@@ -578,7 +599,7 @@ function readGridFromCandidate(imageData, width, height, box) {
 
      if (contrast < profile.readContrastMin) { return null; }
 
-     return { cells: cells, low: low, high: high, contrast: contrast, threshold: threshold };
+     return { cells: cells, low: low, high: high, contrast: contrast, threshold: threshold, angleOffset: angleDeg || 0 };
 }
 
 /* ---------------------------------------------- 
@@ -807,7 +828,7 @@ async function submitScan(cardId, answer, source, forceUpdate) {
      };
      const pendingKey = `${questionIndex}:${cardId}`;
      scannerPendingAck[pendingKey] = { answer: answer, createdAt: Date.now(), keepYellowUntil: Date.now() + 900 };
-     setStatus(`NEW! ${cardId}: ${answer} • waiting briefly for game confirmation`, false);
+     setStatus(`NEW! ${displayName(cardId)}: ${answer} • waiting briefly for game confirmation`, false);
      addLog(cardId, answer, "new");
 
      fetch(`${apiBase}/quizScan`, {
@@ -836,7 +857,7 @@ function confirmPendingFallback(pendingKey, answer) {
           scannerResponses[cardId] = { cardId: cardId, answer: answer, pendingFallback: true };
           delete scannerPendingAck[pendingKey];
           renderPendingStudents();
-          setStatus(`OK ${cardId}: ${answer}`, false, "good");
+          setStatus(`OK ${displayName(cardId)}: ${answer}`, false, "good");
      }
 }
 
@@ -849,42 +870,100 @@ function startSessionPolling() {
 }
 
 /* ---------------------------------------------- 
+     Parse Maybe JSON 
+----------------------------------------------  */
+function parseMaybeJson(value, fallback) {
+     if (Array.isArray(value) || (value && typeof value == "object")) { return value; }
+     if (typeof value != "string") { return fallback; }
+     try { return JSON.parse(value); }
+     catch (error) { return fallback; }
+}
+
+/* ---------------------------------------------- 
+     Unpack Session Data 
+----------------------------------------------  */
+function unpackSessionData(data) {
+     let item = data && (data.item || data.session || data.data || data);
+     item = parseMaybeJson(item, item) || {};
+     if (item.item || item.session || item.data) { item = unpackSessionData(item); }
+     if (item.payload) {
+          const payload = parseMaybeJson(item.payload, null);
+          if (payload && typeof payload == "object") { item = Object.assign({}, item, payload); }
+     }
+     if (item.value) {
+          const value = parseMaybeJson(item.value, null);
+          if (value && typeof value == "object") { item = Object.assign({}, item, value); }
+     }
+     return item || {};
+}
+
+/* ---------------------------------------------- 
+     Normalize Session Cards 
+----------------------------------------------  */
+function normalizeSessionCards(rawCards) {
+     const parsed = parseMaybeJson(rawCards, []);
+     if (!Array.isArray(parsed)) { return []; }
+     return parsed.map(function(card, index) {
+          const source = card && typeof card == "object" ? card : { cardId: card };
+          const cardId = normalizeCardId(source.cardId || source.id || source.number || index + 1);
+          if (!cardId) { return null; }
+          return {
+               cardId: cardId,
+               name: source.name || source.studentName || source.fullName || source.label || `Student ${index + 1}`
+          };
+     }).filter(Boolean);
+}
+
+/* ---------------------------------------------- 
+     Normalize Response Items 
+----------------------------------------------  */
+function normalizeResponseItems(data) {
+     const raw = data && (data.items || data.responses || data.data || data.item || []);
+     const parsed = parseMaybeJson(raw, []);
+     if (Array.isArray(parsed)) { return parsed; }
+     if (parsed && typeof parsed == "object") { return Object.values(parsed); }
+     return [];
+}
+
+/* ---------------------------------------------- 
      Load Session State 
 ----------------------------------------------  */
 async function loadSessionState(force) {
-     if (scannerSessionBusy || !sessionId) { return; }
+     if (scannerSessionBusy || !sessionId) { renderPendingStudents(); return; }
      if (!force && Date.now() - scannerSessionLoadedAt < SESSION_POLL_MS - 40) { return; }
      scannerSessionBusy = true;
      try {
-          const sessionResponse = await fetch(`${apiBase}/quizSession?sessionId=${encodeURIComponent(sessionId)}`, { cache: "no-store" });
+          const sessionResponse = await fetch(`${apiBase}/quizSession?sessionId=${encodeURIComponent(sessionId)}&t=${Date.now()}`, { cache: "no-store" });
           if (sessionResponse.ok) {
                const data = await sessionResponse.json();
-               scannerSessionCache = data.item || data;
+               scannerSessionCache = unpackSessionData(data);
                scannerSessionLoadedAt = Date.now();
-               scannerQuestionIndex = Number(scannerSessionCache.currentQuestionIndex || 0);
-               scannerRoster = Array.isArray(scannerSessionCache.cards) ? scannerSessionCache.cards : [];
+               scannerQuestionIndex = Number(scannerSessionCache.currentQuestionIndex || scannerSessionCache.current || scannerSessionCache.questionIndex || 0);
+               scannerRoster = normalizeSessionCards(scannerSessionCache.cards || scannerSessionCache.roster || scannerSessionCache.students || []);
                scannerRosterById = {};
                scannerRoster.forEach(function(card) { scannerRosterById[normalizeCardId(card.cardId)] = card; });
           }
 
-          const responsesResponse = await fetch(`${apiBase}/quizResponses?sessionId=${encodeURIComponent(sessionId)}&questionIndex=${scannerQuestionIndex}`, { cache: "no-store" });
-          if (responsesResponse.ok) {
-               const responsesData = await responsesResponse.json();
-               scannerResponses = {};
-               (responsesData.items || []).forEach(function(item) {
-                    const cardId = normalizeCardId(item.cardId);
-                    if (cardId) { scannerResponses[cardId] = item; }
-               });
+          if (scannerSessionCache) {
+               const responsesResponse = await fetch(`${apiBase}/quizResponses?sessionId=${encodeURIComponent(sessionId)}&questionIndex=${scannerQuestionIndex}&t=${Date.now()}`, { cache: "no-store" });
+               if (responsesResponse.ok) {
+                    const responsesData = await responsesResponse.json();
+                    scannerResponses = {};
+                    normalizeResponseItems(responsesData).forEach(function(item) {
+                         const cardId = normalizeCardId(item.cardId || item.id || item.studentCardId);
+                         if (cardId) { scannerResponses[cardId] = Object.assign({}, item, { cardId: cardId }); }
+                    });
+               }
           }
           resolvePendingAcks();
           renderPendingStudents();
      }
      catch (error) {
           console.warn(error);
+          renderPendingStudents();
      }
      scannerSessionBusy = false;
 }
-
 /* ---------------------------------------------- 
      Resolve Pending Acks 
 ----------------------------------------------  */
@@ -897,7 +976,7 @@ function resolvePendingAcks() {
           const recorded = scannerResponses[cardId];
           if (questionIndex === scannerQuestionIndex && recorded && (!pending.answer || recorded.answer === pending.answer)) {
                delete scannerPendingAck[key];
-               setStatus(`OK ${cardId}: ${recorded.answer}`, false, "good");
+               setStatus(`OK ${displayName(cardId)}: ${recorded.answer}`, false, "good");
           }
           else if (questionIndex !== scannerQuestionIndex) {
                delete scannerPendingAck[key];
@@ -921,8 +1000,8 @@ function renderPendingStudents() {
      const list = document.getElementById("pendingStudentList");
      if (!list || !count) { return; }
      if (!scannerRoster.length) {
-          count.textContent = "0 / 0";
-          list.textContent = "Create / sync a session first.";
+          count.textContent = scannerSessionCache ? "0 found" : "Loading";
+          list.textContent = sessionId ? "Loading session roster..." : "Missing session ID.";
           return;
      }
      const missing = scannerRoster.filter(function(card) { return !scannerResponses[normalizeCardId(card.cardId)]; });
@@ -1056,8 +1135,7 @@ function overlayLabel(ghost, state) {
           return `${name} • ${ghost.answer} • OK ${state.recorded.answer} saved`;
      }
      if (!state.recorded && state.label === "READY" && ghost.visibleMs < MIN_REGISTER_VISIBLE_MS) {
-          const left = Math.max(1, Math.ceil((MIN_REGISTER_VISIBLE_MS - ghost.visibleMs) / 1000));
-          return `${name} • ${ghost.answer} • HOLD ${left}s`;
+          return `${name} • ${ghost.answer} • HOLD`;
      }
      return `${name} • ${ghost.answer} • ${state.label}`;
 }
