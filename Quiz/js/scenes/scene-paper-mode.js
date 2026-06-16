@@ -2520,3 +2520,68 @@ async function startPaperGame() {
      renderPaperQuestion();
      startPaperPolling();
 }
+
+/* ---------------------------------------------- 
+     V72 Paper Podium Results Fix
+----------------------------------------------  */
+
+/* ---------------------------------------------- 
+     Paper Podium Emoji
+----------------------------------------------  */
+function paperPodiumEmoji(index, score) {
+     if (index === 0) { return "🏆"; }
+     if (index === 1) { return "🥈"; }
+     if (index === 2) { return "🥉"; }
+     if (score > 0) { return "⭐"; }
+     return "📄";
+}
+
+/* ---------------------------------------------- 
+     Paper Build Podium Teams
+----------------------------------------------  */
+function paperBuildPodiumTeams() {
+     const paper = paperState();
+     const cards = paper.cards || [];
+
+     return cards.map(function(card, index) {
+          return {
+               id: card.cardId || `paper-${index + 1}`,
+               name: card.name || card.cardId || `Student ${index + 1}`,
+               score: paperScoreForCard(card.cardId),
+               emoji: "📄",
+               paperCardId: card.cardId || ""
+          };
+     }).sort(function(a, b) {
+          if (b.score !== a.score) { return b.score - a.score; }
+          return String(a.name).localeCompare(String(b.name));
+     }).map(function(team, index) {
+          team.emoji = paperPodiumEmoji(index, team.score);
+          return team;
+     });
+}
+
+/* ---------------------------------------------- 
+     Show Paper Podium
+----------------------------------------------  */
+function showPaperPodium() {
+     const paperTeams = paperBuildPodiumTeams();
+     state.paperPodiumTeams = paperTeams;
+     state.teams = paperTeams;
+     stopPaperPolling();
+     if (typeof paperCloseBoardScanner == "function") { paperCloseBoardScanner(); }
+     showPodium();
+}
+
+/* ---------------------------------------------- 
+     Paper Next Question
+----------------------------------------------  */
+function paperNextQuestion() {
+     const paper = paperState();
+     if (paper.current >= paper.questions.length - 1) {
+          showPaperPodium();
+          return;
+     }
+     paper.current += 1;
+     renderPaperQuestion();
+     paperSaveLocalSession();
+}
