@@ -2233,3 +2233,290 @@ async function startPaperGame() {
      renderPaperQuestion();
      startPaperPolling();
 }
+
+/* ---------------------------------------------- 
+     V71 Hidden Paper Answers And Correct-Only Scores
+----------------------------------------------  */
+
+/* ---------------------------------------------- 
+     Paper Normalize Answer Letter
+----------------------------------------------  */
+function paperNormalizeAnswerLetter(answer) {
+     const value = String(answer || "").trim().toUpperCase();
+     return PAPER_ANSWERS.includes(value) ? value : "";
+}
+
+/* ---------------------------------------------- 
+     Paper Get Current Responses
+----------------------------------------------  */
+function paperGetResponsesForQuestion(questionIndex) {
+     const paper = paperState();
+     if (!paper.responses) { paper.responses = {}; }
+     if (!paper.responses[questionIndex]) { paper.responses[questionIndex] = {}; }
+     return paper.responses[questionIndex];
+}
+
+/* ---------------------------------------------- 
+     Paper Normalize Card ID Safe
+----------------------------------------------  */
+function paperNormalizeCardIdSafe(cardId) {
+     if (typeof paperNormalizeCardId == "function") { return paperNormalizeCardId(cardId); }
+     return String(cardId || "").trim().toUpperCase();
+}
+
+/* ---------------------------------------------- 
+     Paper Get Response By Card
+----------------------------------------------  */
+function paperGetResponseByCard(questionIndex, cardId) {
+     const responses = paperGetResponsesForQuestion(questionIndex);
+     if (responses[cardId]) { return responses[cardId]; }
+     const normalized = paperNormalizeCardIdSafe(cardId);
+     return Object.values(responses).find(function(item) {
+          return paperNormalizeCardIdSafe(item && item.cardId) == normalized;
+     }) || null;
+}
+
+/* ---------------------------------------------- 
+     Paper Is Question Revealed
+----------------------------------------------  */
+function paperIsQuestionRevealed(questionIndex) {
+     const paper = paperState();
+     if (!paper.revealedQuestions) { paper.revealedQuestions = {}; }
+     return !!paper.revealedQuestions[questionIndex];
+}
+
+/* ---------------------------------------------- 
+     Paper Is Response Correct
+----------------------------------------------  */
+function paperIsResponseCorrect(question, response) {
+     if (!question || !response) { return false; }
+     const answer = paperNormalizeAnswerLetter(response.answer);
+     return !!answer && paperLetterIsCorrect(question, answer);
+}
+
+/* ---------------------------------------------- 
+     Paper Score For Card
+----------------------------------------------  */
+function paperScoreForCard(cardId) {
+     const paper = paperState();
+     let score = 0;
+     (paper.questions || []).forEach(function(question, questionIndex) {
+          if (!paperIsQuestionRevealed(questionIndex)) { return; }
+          const response = paperGetResponseByCard(questionIndex, cardId);
+          if (paperIsResponseCorrect(question, response)) { score += 1; }
+     });
+     return score;
+}
+
+/* ---------------------------------------------- 
+     Render Paper Question
+----------------------------------------------  */
+function renderPaperQuestion() {
+     const paper = paperState();
+     const question = paper.questions[paper.current];
+     const chip = document.getElementById("paperRoundChip");
+     const sessionChip = document.getElementById("paperSessionChip");
+     const questionText = document.getElementById("paperQuestionText");
+     const options = document.getElementById("paperOptionsGrid");
+     paper.revealedQuestions = paper.revealedQuestions || {};
+     paper.revealed = paperIsQuestionRevealed(paper.current);
+
+     if (chip) { chip.textContent = `Paper Question ${paper.current + 1} / ${paper.questions.length}`; }
+     if (sessionChip) { sessionChip.textContent = paper.sessionId || "No session"; }
+     if (questionText) { questionText.textContent = question ? question.question : "No question"; }
+     if (options) {
+          options.innerHTML = PAPER_ANSWERS.map(function(letter, index) {
+               const answer = question && question.answers[index] ? question.answers[index] : "—";
+               const revealedClass = paper.revealed && paperLetterIsCorrect(question, letter) ? " correct" : "";
+               return `<div class="paper-option${revealedClass}" data-paper-option="${letter}"><b>${letter}</b><span>${esc(answer)}</span></div>`;
+          }).join("");
+     }
+     renderPaperAnswers();
+     paperSaveLocalSession();
+     paperApiSyncSession();
+}
+
+/* ---------------------------------------------- 
+     Render Paper Answers
+----------------------------------------------  */
+function renderPaperAnswers() {
+     const paper = paperState();
+     const live = document.getElementById("paperLiveAnswers");
+     const count = document.getElementById("paperScanCount");
+     if (!live) { return; }
+
+     paper.revealed = paperIsQuestionRevealed(paper.current);
+     const currentResponses = paperGetResponsesForQuestion(paper.current);
+     const question = paper.questions[paper.current];
+
+     const rows = paper.cards.map(function(card) {
+          const response = paperGetResponseByCard(paper.current, card.cardId);
+          const answer = paperNormalizeAnswerLetter(response && response.answer);
+          const isAnswered = !!response;
+          const isCorrect = paperIsResponseCorrect(question, response);
+          const statusClass = isAnswered ? "answered" : "waiting";
+          const visibilityClass = paper.revealed ? "revealed" : "hidden-answer";
+          const correctness = isAnswered && paper.revealed ? (isCorrect ? "correct" : "wrong") : "";
+          const display = isAnswered ? (paper.revealed ? answer : "READY") : "—";
+          const score = paperScoreForCard(card.cardId);
+
+          return `
+               <div class="paper-answer-row ${statusClass} ${visibilityClass} ${correctness}">
+                    <b class="paper-answer-name-wrap">
+                         <strong class="paper-answer-name">${esc(card.name)}</strong>
+                         <em class="paper-score-pill">${score} pt${score == 1 ? "" : "s"}</em>
+                    </b>
+                    <span class="paper-response-badge">${esc(display)}</span>
+               </div>
+          `;
+     });
+
+     live.innerHTML = rows.join("");
+     if (count) { count.textContent = `${Object.keys(currentResponses).length} / ${paper.cards.length}`; }
+}
+
+/* ---------------------------------------------- 
+     Paper Submit Scan
+----------------------------------------------  */
+async function paperSubmitScan(cardId, answer, source) {
+     const paper = paperState();
+     const question = paper.questions[paper.current];
+     const normalizedCardId = paperNormalizeCardIdSafe(cardId);
+     const card = paper.cards.find(function(item) { return paperNormalizeCardIdSafe(item.cardId) == normalizedCardId; });
+     const answerLetter = paperNormalizeAnswerLetter(answer);
+     if (!question || !card || !answerLetter) {
+          paperSetScannerStatus("Card or answer not found in this session.", true);
+          return;
+     }
+
+     const response = {
+          sessionId: paper.sessionId,
+          questionIndex: paper.current,
+          cardId: card.cardId,
+          studentName: card.name,
+          answer: answerLetter,
+          correct: paperLetterIsCorrect(question, answerLetter),
+          source: source || "board",
+          timestamp: new Date().toISOString()
+     };
+
+     const responses = paperGetResponsesForQuestion(paper.current);
+     responses[card.cardId] = response;
+     renderPaperAnswers();
+     paperSaveLocalSession();
+     await paperApiSubmitScan(response);
+     paperSetScannerStatus(`${card.name}: READY`, false);
+     playSound("select");
+}
+
+/* ---------------------------------------------- 
+     Poll Responses
+----------------------------------------------  */
+async function paperPollResponses() {
+     const paper = paperState();
+     if (!paper.sessionId) { return; }
+     if (!paper.apiBase) {
+          const raw = localStorage.getItem(`${PAPER_LOCAL_PREFIX}${paper.sessionId}`);
+          if (!raw) { return; }
+          try {
+               const data = JSON.parse(raw);
+               paper.responses = data.responses || paper.responses;
+               paper.revealedQuestions = data.revealedQuestions || paper.revealedQuestions || {};
+               renderPaperAnswers();
+          }
+          catch (error) {}
+          return;
+     }
+
+     try {
+          const url = `${paper.apiBase}/quizResponses?sessionId=${encodeURIComponent(paper.sessionId)}&questionIndex=${paper.current}`;
+          const response = await fetch(url);
+          if (!response.ok) { return; }
+          const data = await response.json();
+          const question = paper.questions[paper.current];
+          const mapped = {};
+          (data.items || []).forEach(function(item) {
+               const cardId = paperNormalizeCardIdSafe(item.cardId);
+               const card = paper.cards.find(function(candidate) { return paperNormalizeCardIdSafe(candidate.cardId) == cardId; });
+               if (!card) { return; }
+               const answer = paperNormalizeAnswerLetter(item.answer);
+               if (!answer) { return; }
+               mapped[card.cardId] = Object.assign({}, item, {
+                    cardId: card.cardId,
+                    studentName: card.name,
+                    answer: answer,
+                    correct: paperLetterIsCorrect(question, answer)
+               });
+          });
+          paper.responses[paper.current] = mapped;
+          renderPaperAnswers();
+     }
+     catch (error) {}
+}
+
+/* ---------------------------------------------- 
+     Paper Reveal Current Answer
+----------------------------------------------  */
+function paperRevealCurrentAnswer() {
+     const paper = paperState();
+     const question = paper.questions[paper.current];
+     paper.revealedQuestions = paper.revealedQuestions || {};
+     paper.revealedQuestions[paper.current] = true;
+     paper.revealed = true;
+
+     const responses = paperGetResponsesForQuestion(paper.current);
+     Object.keys(responses).forEach(function(cardId) {
+          const response = responses[cardId];
+          response.answer = paperNormalizeAnswerLetter(response.answer);
+          response.correct = paperIsResponseCorrect(question, response);
+     });
+
+     document.querySelectorAll(".paper-option").forEach(function(option) {
+          const letter = option.dataset.paperOption;
+          option.classList.toggle("correct", paperLetterIsCorrect(question, letter));
+     });
+     renderPaperAnswers();
+     paperSaveLocalSession();
+}
+
+/* ---------------------------------------------- 
+     Save Local Session
+----------------------------------------------  */
+function paperSaveLocalSession() {
+     const paper = paperState();
+     if (!paper.sessionId) { return; }
+     const data = {
+          sessionId: paper.sessionId,
+          title: paper.sessionTitle,
+          cards: paper.cards,
+          questions: paper.questions,
+          responses: paper.responses || {},
+          revealedQuestions: paper.revealedQuestions || {},
+          current: paper.current || 0
+     };
+     localStorage.setItem(`${PAPER_LOCAL_PREFIX}${paper.sessionId}`, JSON.stringify(data));
+}
+
+/* ---------------------------------------------- 
+     Start Paper Game
+----------------------------------------------  */
+async function startPaperGame() {
+     const paper = paperReadSettings();
+     paper.questions = getPaperQuestions();
+     paper.responses = {};
+     paper.revealedQuestions = {};
+     paper.current = 0;
+     paper.revealed = false;
+     paper.cameraMode = "phone";
+     if (!paper.questions.length) {
+          paperSetLobbyStatus("Paper Mode needs multiple-choice questions.", true);
+          return;
+     }
+     if (!paper.sessionId) { await paperCreateSession(); }
+     stopBgm("title");
+     stopBgm("podium");
+     startBgm("round");
+     showScreen("paperGame");
+     renderPaperQuestion();
+     startPaperPolling();
+}
