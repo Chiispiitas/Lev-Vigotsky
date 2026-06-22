@@ -128,7 +128,13 @@ function averageByStudent() {
       average: item.scores.length ? item.scores.reduce((sum, score) => sum + score, 0) / item.scores.length : 0,
       entries: item.scores.length
     }))
-    .sort((a, b) => a.studentNumber - b.studentNumber);
+    .sort((a, b) => {
+      const scoreDiff = Number(b.average || 0) - Number(a.average || 0);
+      if (scoreDiff) return scoreDiff;
+      const entryDiff = Number(b.entries || 0) - Number(a.entries || 0);
+      if (entryDiff) return entryDiff;
+      return Number(a.studentNumber || 0) - Number(b.studentNumber || 0);
+    });
 }
 
 function renderProjection() {
@@ -167,9 +173,13 @@ function renderEntries() {
   const query = normalize(els.entrySearch.value);
   const filtered = query ? entries.filter((entry) => normalize(`${entry.studentNumber} ${entry.studentName} ${entry.evaluationDate} ${judgeForEntry(entry)}`).includes(query)) : entries;
   const sorted = [...filtered].sort((a, b) => {
+    const scoreDiff = Number(b.scoreTotal || 0) - Number(a.scoreTotal || 0);
+    if (scoreDiff) return scoreDiff;
     const dateA = String(a.submittedAt || a.savedAt || a.evaluationDate || "");
     const dateB = String(b.submittedAt || b.savedAt || b.evaluationDate || "");
-    return dateB.localeCompare(dateA);
+    const dateDiff = dateB.localeCompare(dateA);
+    if (dateDiff) return dateDiff;
+    return Number(a.studentNumber || 0) - Number(b.studentNumber || 0);
   });
 
   if (!sorted.length) {

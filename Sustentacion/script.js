@@ -397,6 +397,18 @@ function getExportRows(onlySaved = false) {
     .filter((row) => onlySaved ? row.record.evaluated : true);
 }
 
+
+function sortRowsByScore(rows) {
+  return [...rows].sort((a, b) => {
+    const aEvaluated = a.record?.evaluated ? 1 : 0;
+    const bEvaluated = b.record?.evaluated ? 1 : 0;
+    if (bEvaluated !== aEvaluated) return bEvaluated - aEvaluated;
+    const scoreDiff = Number(b.total || 0) - Number(a.total || 0);
+    if (scoreDiff) return scoreDiff;
+    return Number(a.student?.n || 0) - Number(b.student?.n || 0);
+  });
+}
+
 function criterionPayload(record) {
   return RUBRIC.map((criterion) => {
     const value = Number(record.criteria[criterion.id]);
@@ -547,6 +559,7 @@ function setServerStatus(message, isError) {
 }
 
 function buildPrintableHtml(rows, title = "Reporte general de sustentación") {
+  rows = sortRowsByScore(rows);
   const assessed = rows.filter((row) => row.record.evaluated);
   const average = assessed.length ? assessed.reduce((sum, row) => sum + row.total, 0) / assessed.length : 0;
   const juez = currentJuez() || "—";
@@ -659,7 +672,7 @@ function openHistory() {
 }
 
 function renderHistory() {
-  const rows = getExportRows(true).sort((a, b) => Number(a.student.n) - Number(b.student.n));
+  const rows = sortRowsByScore(getExportRows(true));
   els.historyList.innerHTML = "";
   if (!rows.length) {
     els.historyList.innerHTML = `<div class="empty-state">No hay evaluaciones guardadas todavía.</div>`;
