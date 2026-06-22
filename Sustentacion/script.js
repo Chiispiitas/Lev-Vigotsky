@@ -409,6 +409,21 @@ function sortRowsByScore(rows) {
   });
 }
 
+function addScoreRanksToRows(rows) {
+  let evaluatedIndex = 0;
+  let lastScore = null;
+  let lastRank = 0;
+  return rows.map((row) => {
+    if (!row.record?.evaluated) return { ...row, rank: "—" };
+    evaluatedIndex += 1;
+    const score = Math.round(Number(row.total || 0) * 100) / 100;
+    const rank = evaluatedIndex === 1 || score !== lastScore ? evaluatedIndex : lastRank;
+    lastScore = score;
+    lastRank = rank;
+    return { ...row, rank };
+  });
+}
+
 function criterionPayload(record) {
   return RUBRIC.map((criterion) => {
     const value = Number(record.criteria[criterion.id]);
@@ -559,22 +574,22 @@ function setServerStatus(message, isError) {
 }
 
 function buildPrintableHtml(rows, title = "Reporte general de sustentación") {
-  rows = sortRowsByScore(rows);
+  rows = addScoreRanksToRows(sortRowsByScore(rows));
   const assessed = rows.filter((row) => row.record.evaluated);
   const average = assessed.length ? assessed.reduce((sum, row) => sum + row.total, 0) / assessed.length : 0;
   const juez = currentJuez() || "—";
-  const generalRows = rows.map(({ student, record, total, status }) => `
+  const generalRows = rows.map(({ student, record, total, status, rank }) => `
     <tr class="${status === "Pendiente" ? "pending" : ""}">
-      <td>${student.n}</td>
+      <td>${rank}</td>
       <td><strong>${escapeHtml(student.name)}</strong></td>
       <td>${escapeHtml(status)}</td>
       <td>${escapeHtml(formatDate(record.date))}</td>
       <td class="score">${status === "Evaluado" ? escapeHtml(formatScore(total)) : "—"}</td>
     </tr>`).join("");
 
-  const detailRows = assessed.map(({ student, record, total }) => `
+  const detailRows = assessed.map(({ student, record, total, rank }) => `
     <section class="student-detail">
-      <h3>${student.n}. ${escapeHtml(student.name)} <span>${escapeHtml(formatScore(total))} / 10</span></h3>
+      <h3>${rank}. ${escapeHtml(student.name)} <span>${escapeHtml(formatScore(total))} / 10</span></h3>
       <table>
         <thead><tr><th>Criterio</th><th>Descriptor asignado</th><th>Puntaje</th></tr></thead>
         <tbody>

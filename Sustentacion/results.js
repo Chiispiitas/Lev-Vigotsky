@@ -73,6 +73,18 @@ function normalize(text) {
   return String(text || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 }
 
+function addScoreRanks(items, scoreGetter) {
+  let lastScore = null;
+  let lastRank = 0;
+  return items.map((item, index) => {
+    const score = Math.round(Number(scoreGetter(item) || 0) * 100) / 100;
+    const rank = index === 0 || score !== lastScore ? index + 1 : lastRank;
+    lastScore = score;
+    lastRank = rank;
+    return { ...item, rank };
+  });
+}
+
 function setStatus(message, type = "") {
   els.statusBox.textContent = message;
   els.statusBox.className = `status ${type}`.trim();
@@ -138,7 +150,7 @@ function averageByStudent() {
 }
 
 function renderProjection() {
-  const averages = averageByStudent();
+  const averages = addScoreRanks(averageByStudent(), (item) => item.average);
   const allScores = averages.flatMap((item) => item.scores);
   const classAverage = allScores.length ? allScores.reduce((sum, score) => sum + score, 0) / allScores.length : 0;
   els.classAverage.textContent = allScores.length ? `${formatScore(classAverage)} / 10` : "—";
@@ -154,7 +166,7 @@ function renderProjection() {
 
   els.studentAverageGrid.innerHTML = averages.map((item) => `
     <article class="student-card">
-      <div class="student-number">${item.studentNumber}</div>
+      <div class="student-number">${item.rank}</div>
       <div class="student-name">
         <strong>${escapeHtml(item.studentName)}</strong>
         <span>${item.entries} entrada${item.entries === 1 ? "" : "s"} · último registro: ${escapeHtml(formatDate(item.lastDate))}</span>
@@ -187,9 +199,10 @@ function renderEntries() {
     return;
   }
 
-  els.entryTableBody.innerHTML = sorted.map((entry) => `
+  const ranked = addScoreRanks(sorted, (entry) => entry.scoreTotal);
+  els.entryTableBody.innerHTML = ranked.map((entry) => `
     <tr>
-      <td>${escapeHtml(entry.studentNumber || "")}</td>
+      <td>${escapeHtml(entry.rank || "")}</td>
       <td><strong>${escapeHtml(entry.studentName || "")}</strong></td>
       <td>${escapeHtml(formatDate(entry.evaluationDate))}</td>
       <td class="score">${escapeHtml(formatScore(entry.scoreTotal))} / 10</td>
