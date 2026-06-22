@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14213d" />
+  <title>Rúbrica de Sustentación de Práctica Preprofesional</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="paper-bg" aria-hidden="true"><div class="seal seal-one"></div><div class="seal seal-two"></div></div>
+  <div class="app-shell">
+    <header class="topbar">
+      <img class="brand-logo" src="logo-ueplv.svg" alt="Logo UEPLV" style="width:78px;height:60px;object-fit:contain;border-radius:16px;background:#fff;border:1px solid rgba(20,33,61,.12);box-shadow:0 12px 22px rgba(20,33,61,.16);padding:4px" />
+      <div class="brand-copy">
+        <p class="eyebrow light">Unidad Educativa Particular Lev Vigotsky</p>
+        <h1>Rúbrica de Sustentación de Práctica Preprofesional</h1>
+        <p class="top-meta">3ro Técnico · Bachillerato Técnico Contable · Período lectivo 2026-2027</p>
+      </div>
+      <button class="icon-button" id="openHistory" type="button" aria-label="Abrir registros guardados">☰</button>
+    </header>
+    <main>
+      <section class="hero-card" aria-labelledby="mainTitle">
+        <div><p class="eyebrow dark">Evaluación FCT</p><h2 id="mainTitle">Sustentación de prácticas preprofesionales</h2><p class="hero-copy">Selecciona al estudiante, marca la escala de cada criterio, añade observaciones breves y genera reportes individuales o un consolidado general.</p></div>
+        <div class="hero-badge">36 estudiantes</div>
+      </section>
+      <section class="panel student-panel">
+        <div class="panel-head"><div><p class="eyebrow dark">Estudiante</p><h3>Datos de evaluación</h3></div><span class="status-pill" id="studentStatus">Pendiente</span></div>
+        <label class="field-label" for="activityInput">Actividad</label>
+        <input class="text-input" id="activityInput" type="text" value="Sustentación de Prácticas Preprofesionales (FCT)" autocomplete="off" />
+        <div class="two-col"><div><label class="field-label" for="dateInput">Fecha</label><input class="text-input" id="dateInput" type="date" /></div><div><label class="field-label" for="studentSearch">Buscar</label><input class="text-input" id="studentSearch" type="search" placeholder="Nombre o número de lista…" autocomplete="off" /></div></div>
+        <label class="field-label" for="studentSelect">Estudiante</label><select class="text-input" id="studentSelect"></select>
+        <div class="student-actions"><button class="ghost-button" id="previousStudent" type="button">← Anterior</button><button class="ghost-button" id="nextStudent" type="button">Siguiente →</button><button class="ghost-button danger" id="resetCurrent" type="button">Restablecer</button></div>
+      </section>
+      <section class="score-card" aria-live="polite"><div><p class="eyebrow light">Puntaje actual</p><strong id="scoreValue">10 / 10</strong><span id="scoreStatus">Rúbrica completa</span></div><div class="score-ring" id="scoreRing">100%</div></section>
+      <section class="panel progress-panel"><div class="panel-head compact-head"><div><p class="eyebrow dark">Avance del curso</p><h3>Consolidado local</h3></div><button class="ghost-button" id="markExcellent" type="button">Marcar máximo</button></div><div class="stats-grid"><div class="stat-card"><span>Evaluados</span><strong id="statAssessed">0</strong></div><div class="stat-card"><span>Pendientes</span><strong id="statPending">36</strong></div><div class="stat-card"><span>Promedio</span><strong id="statAverage">—</strong></div></div></section>
+      <section class="panel"><div class="panel-head sticky-mini"><div><p class="eyebrow dark">Criterios</p><h3>Rúbrica de evaluación</h3></div></div><div class="rubric-list" id="rubricList"></div></section>
+      <section class="panel"><div class="panel-head"><div><p class="eyebrow dark">Observaciones</p><h3>Comentario del evaluador</h3></div><button class="ghost-button" id="clearNotes" type="button">Limpiar</button></div><div class="quick-notes" id="quickNotes"></div><label class="field-label" for="teacherComment">Comentario adicional</label><textarea class="comment-box" id="teacherComment" rows="5" placeholder="Escribe una observación breve sobre la sustentación…"></textarea></section>
+      <section class="panel bulk-panel"><div class="panel-head"><div><p class="eyebrow dark">Exportación</p><h3>Reporte general del curso</h3></div></div><p class="bulk-copy">El consolidado incluye a todos los estudiantes. Los estudiantes sin guardar aparecen como pendientes para evitar confusiones.</p><div class="bulk-actions"><button class="ghost-button" id="exportClassCsv" type="button">Exportar CSV</button><button class="ghost-button" id="exportClassPdf" type="button">Crear PDF / Imprimir</button><button class="ghost-button" id="copyClassSummary" type="button">Copiar resumen</button></div></section>
+    </main>
+  </div>
+  <nav class="action-bar" id="actionBar" aria-label="Acciones de reporte"><button id="saveReport" type="button" class="secondary-action">Guardar</button><button id="copyReport" type="button" class="secondary-action">Copiar</button><button id="exportClassCsvBar" type="button" class="secondary-action">CSV</button><button id="exportClassPdfBar" type="button" class="secondary-action">PDF</button><button id="shareWhatsapp" type="button" class="primary-action">WhatsApp</button></nav>
+  <dialog class="history-dialog" id="historyDialog"><div class="dialog-head"><div><p class="eyebrow dark">Registros locales</p><h2>Evaluaciones guardadas</h2></div><button class="icon-button dark-icon" id="closeHistory" type="button" aria-label="Cerrar historial">×</button></div><div class="history-actions"><button class="ghost-button" id="exportSavedCsv" type="button">CSV guardados</button><button class="ghost-button" id="exportSavedPdf" type="button">PDF guardados</button><button class="ghost-button danger" id="clearHistory" type="button">Borrar todo</button></div><div id="historyList" class="history-list"></div></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="script.js"></script>
+</body>
+</html>
