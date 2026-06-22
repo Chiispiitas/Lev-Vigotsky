@@ -1,0 +1,994 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generador de Certificados - UEPLV</title>
+  <meta name="color-scheme" content="light" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --line: #e5e7eb;
+      --line-2: #d1d5db;
+      --text: #111827;
+      --muted: #6b7280;
+      --accent: #f59e0b;
+      --accent-soft: #fff7ed;
+      --blue: #2563eb;
+      --blue-soft: #eff6ff;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --radius-xl: 20px;
+      --radius-lg: 16px;
+      --pill: 999px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    * { scrollbar-width: thin; scrollbar-color: #d1d5db transparent; }
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+    *::-webkit-scrollbar-track { background: transparent; }
+
+    .app { display: grid; grid-template-rows: auto 1fr; height: 100%; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 14px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      z-index: 20;
+    }
+    .brand { min-width: 0; }
+    .brand-title { display: flex; align-items: center; gap: .65rem; font-weight: 800; letter-spacing: .02em; font-size: 1rem; }
+    .brand-subtitle { color: var(--muted); font-size: .8rem; margin-top: 3px; }
+    .badge { display: inline-flex; align-items: center; border-radius: var(--pill); padding: .22rem .62rem; background: var(--accent); color: white; font-size: .72rem; font-weight: 800; }
+    .toolbar { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: var(--pill);
+      padding: .68rem 1rem;
+      font-size: .88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+    }
+    .btn:hover { border-color: var(--line-2); background: #fafafa; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-primary { color: #fff; border-color: transparent; background: var(--accent); }
+    .btn-primary:hover { background: #ea8f05; }
+    .btn-soft { background: #fff7ed; }
+    .btn-danger { background: #fff; color: var(--danger); border-color: rgba(220,38,38,.18); }
+    .btn-small { padding: .46rem .75rem; font-size: .78rem; }
+
+    .main { display: grid; grid-template-columns: 400px minmax(0,1fr); min-height: 0; }
+    .sidebar { padding: 16px; border-right: 1px solid var(--line); overflow: auto; background: var(--bg); }
+    .content { min-width: 0; overflow: auto; padding: 16px; }
+
+    .panel { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius-xl); padding: 16px; margin-bottom: 14px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 12px; }
+    .panel-title { font-size: .96rem; font-weight: 800; letter-spacing: .01em; }
+    .panel-subtitle { color: var(--muted); font-size: .78rem; margin-top: 2px; }
+    .tag { display: inline-flex; align-items: center; gap: .4rem; border-radius: var(--pill); padding: .34rem .7rem; font-size: .73rem; font-weight: 700; white-space: nowrap; }
+    .tag-amber { background: #fff7ed; color: #92400e; }
+    .tag-blue { background: var(--blue-soft); color: #1d4ed8; }
+    .tag-green { background: var(--success-soft); color: #166534; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+    .stat { background: #ffffff; border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+    .stat-label { font-size: .72rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .stat-value { font-size: 1.1rem; font-weight: 800; margin-top: 6px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .field label { font-size: .77rem; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+    input[type="text"], input[type="number"], select, textarea, input[type="file"] {
+      width: 100%;
+      border: 1px solid var(--line-2);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+      padding: .72rem .82rem;
+      font: inherit;
+      outline: none;
+      transition: .18s ease;
+    }
+    textarea { min-height: 170px; resize: vertical; line-height: 1.38; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(245,158,11,.72); background: #fff; }
+    select option { background: #fff; color: var(--text); }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .color-row { display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center; }
+    input[type="color"] { width: 56px; height: 46px; border: 1px solid var(--line-2); border-radius: 14px; padding: 0; background: transparent; cursor: pointer; overflow: hidden; }
+    input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+    input[type="color"]::-webkit-color-swatch { border: none; }
+
+    .helper { color: var(--muted); font-size: .74rem; line-height: 1.35; margin-top: -4px; }
+    .elements-list { display: flex; flex-direction: column; gap: 10px; }
+    .element-item { border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: #fff; cursor: pointer; transition: .18s ease; }
+    .element-item.selected { border-color: rgba(37,99,235,.42); background: #fff; }
+    .element-top { display: flex; justify-content: space-between; align-items: center; gap: .8rem; padding: .72rem .82rem; background: #fff; }
+    .element-main { display: flex; align-items: center; gap: .72rem; min-width: 0; }
+    .element-icon { width: 34px; height: 34px; border-radius: 12px; display: grid; place-items: center; font-size: .86rem; font-weight: 800; flex: 0 0 auto; }
+    .element-icon.name { background: var(--blue-soft); color: var(--blue); }
+    .element-icon.static { background: var(--accent-soft); color: #92400e; }
+    .element-meta { min-width: 0; }
+    .element-name { font-size: .87rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .element-desc { font-size: .74rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+
+    .preview-panel { background: var(--card); border: 1px solid var(--line); border-radius: 24px; overflow: hidden; }
+    .preview-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 14px 16px; border-bottom: 1px solid var(--line); background: #ffffff; }
+    .preview-title { font-size: .95rem; font-weight: 800; }
+    .preview-subtitle { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+    .preview-wrap { position: relative; background: #ffffff; min-height: 620px; }
+    .canvas-holder { position: relative; display: flex; align-items: center; justify-content: center; padding: 18px; min-height: 620px; }
+    #pdfCanvas { width: 100%; height: auto; background: #fff; }
+    #textCanvas { position: absolute; left: 18px; top: 18px; pointer-events: none; }
+    #boxLayer { position: absolute; left: 18px; top: 18px; pointer-events: none; }
+    .box { position: absolute; border-radius: 16px; border: 1px dashed rgba(245,158,11,.9); background: rgba(245,158,11,.10); cursor: grab; pointer-events: auto; user-select: none; }
+    .box.selected { border-color: rgba(37,99,235,.95); background: rgba(37,99,235,.10); }
+    .handle { position: absolute; width: 15px; height: 15px; right: -7px; bottom: -7px; border-radius: 999px; background: var(--blue); border: 2px solid #fff; cursor: nwse-resize; pointer-events: auto; }
+    .empty-state { border: 1px dashed var(--line-2); border-radius: 16px; padding: 14px; text-align: center; color: var(--muted); background: #fff; font-size: .86rem; line-height: 1.35; }
+    .toast { background: #111827; color: #fff; border-radius: 14px; padding: .7rem .9rem; font-size: .86rem; opacity: 0; transform: translateY(8px); transition: .18s ease; max-width: 330px; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast .toast-dot { display: inline-block; width: 7px; height: 7px; border-radius: 999px; background: var(--accent); margin-right: 8px; }
+
+    @media (max-width: 1080px) {
+      body { overflow: auto; }
+      .app { min-height: 100%; height: auto; }
+      .main { grid-template-columns: 1fr; }
+      .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .toolbar { width: 100%; }
+      .btn { flex: 1 1 auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-title">Generador de Certificados <span class="badge">UEPLV</span></div>
+        <div class="brand-subtitle">Carga un PDF, coloca los campos y exporta certificados con fuentes internas o personalizadas.</div>
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-soft" id="btnReset">Reiniciar</button>
+        <button class="btn btn-soft" id="btnAddName">Agregar nombre</button>
+        <button class="btn btn-soft" id="btnAddStatic">Agregar texto</button>
+        <button class="btn btn-primary" id="btnExport" disabled>Exportar PDF</button>
+      </div>
+    </header>
+
+    <div class="main">
+      <aside class="sidebar">
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Proyecto</div>
+              <div class="panel-subtitle">Carga y datos</div>
+            </div>
+            <span class="tag tag-amber" id="badgeState">Sin PDF</span>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="stat-label">Nombres</div><div class="stat-value" id="statNames">0</div></div>
+            <div class="stat"><div class="stat-label">Elementos</div><div class="stat-value" id="statElements">0</div></div>
+            <div class="stat"><div class="stat-label">Páginas</div><div class="stat-value" id="statPages">0</div></div>
+          </div>
+          <div class="field">
+            <label for="pdfFile">PDF de fondo</label>
+            <input id="pdfFile" type="file" accept="application/pdf" />
+          </div>
+          <div class="field">
+            <label for="namesInput">Lista de nombres</label>
+            <textarea id="namesInput" placeholder="Agrega nombres separados por línea"></textarea>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Estilo para nombres</div>
+              <div class="panel-subtitle">Se aplica a todos los campos de nombre</div>
+            </div>
+            <span class="tag tag-blue" id="fontBadge">Fuente interna</span>
+          </div>
+
+          <div class="field">
+            <label for="fontSelect">Fuente</label>
+            <select id="fontSelect"></select>
+          </div>
+
+          <div class="field">
+            <label for="fontUpload">Cargar fuente personalizada (.ttf / .otf)</label>
+            <input id="fontUpload" type="file" accept=".ttf,.otf,font/ttf,font/otf,application/x-font-ttf,application/x-font-otf" />
+            <div class="helper">La fuente cargada se agrega al selector inmediatamente y se usa en la vista previa y en el PDF exportado.</div>
+          </div>
+
+          <div class="row-3">
+            <div class="field">
+              <label for="fontSizeDefault">Tamaño</label>
+              <input id="fontSizeDefault" type="number" min="6" max="180" value="34" />
+            </div>
+            <div class="field">
+              <label for="alignDefault">Alineación</label>
+              <select id="alignDefault">
+                <option value="left">Izquierda</option>
+                <option value="center" selected>Centro</option>
+                <option value="right">Derecha</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="colorDefault">Color</label>
+              <div class="color-row"><input id="colorDefault" type="color" value="#111111" /></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="colorHex">Color HEX</label>
+            <input id="colorHex" type="text" value="#111111" />
+          </div>
+
+          <div class="row-2">
+            <div class="field">
+              <label for="boldDefault">Negrita</label>
+              <select id="boldDefault"><option value="0" selected>No</option><option value="1">Sí</option></select>
+            </div>
+            <div class="field">
+              <label for="italicDefault">Cursiva</label>
+              <select id="italicDefault"><option value="0" selected>No</option><option value="1">Sí</option></select>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Elementos</div>
+              <div class="panel-subtitle">Selecciona uno para editarlo</div>
+            </div>
+            <span class="tag tag-green" id="elementCountBadge">0</span>
+          </div>
+          <div class="elements-list" id="elementList"></div>
+        </section>
+
+        <section class="panel" id="inspectorPanel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Inspector</div>
+              <div class="panel-subtitle" id="inspectorSubtitle">Nada seleccionado</div>
+            </div>
+          </div>
+          <div id="inspectorBody"><div class="empty-state">Selecciona un elemento para editarlo.</div></div>
+        </section>
+      </aside>
+
+      <main class="content">
+        <section class="preview-panel">
+          <div class="preview-header">
+            <div>
+              <div class="preview-title">Vista previa</div>
+              <div class="preview-subtitle" id="pageInfo">Sin documento</div>
+            </div>
+            <div><span class="tag tag-amber" id="mobilePagesTag">Páginas 0</span></div>
+          </div>
+          <div class="preview-wrap">
+            <div class="canvas-holder" id="canvasHolder">
+              <canvas id="pdfCanvas"></canvas>
+              <canvas id="textCanvas"></canvas>
+              <div id="boxLayer"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="toastContainer" style="position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:60"></div>
+
+  <script>
+    (function(){
+      "use strict";
+
+      const DEFAULT_FONTS = [
+        { key:"helvetica", label:"Helvetica", cssFamily:"Helvetica, Arial, sans-serif" },
+        { key:"arial", label:"Arial", cssFamily:"Arial, Helvetica, sans-serif" },
+        { key:"times", label:"Times New Roman", cssFamily:"Times New Roman, Times, serif" },
+        { key:"georgia", label:"Georgia", cssFamily:"Georgia, serif" },
+        { key:"courier", label:"Courier New", cssFamily:"Courier New, Courier, monospace" },
+        { key:"verdana", label:"Verdana", cssFamily:"Verdana, Geneva, sans-serif" },
+        { key:"trebuchet", label:"Trebuchet MS", cssFamily:"Trebuchet MS, Arial, sans-serif" },
+        { key:"garamond", label:"Garamond", cssFamily:"Garamond, Baskerville, Times New Roman, serif" },
+        { key:"arialblack", label:"Arial Black", cssFamily:"Arial Black, Arial, sans-serif" }
+      ];
+
+      const state = {
+        pdfDoc: null,
+        pdfPage: null,
+        viewportAtScale1: null,
+        previewScale: 1,
+        selectedId: null,
+        fonts: new Map(),
+        currentFontKey: "helvetica",
+        elements: []
+      };
+
+      const $ = (id) => document.getElementById(id);
+      const pdfFile = $("pdfFile");
+      const namesInput = $("namesInput");
+      const pdfCanvas = $("pdfCanvas");
+      const pdfCtx = pdfCanvas.getContext("2d");
+      const textCanvas = $("textCanvas");
+      const textCtx = textCanvas.getContext("2d");
+      const boxLayer = $("boxLayer");
+      const canvasHolder = $("canvasHolder");
+      const btnAddName = $("btnAddName");
+      const btnAddStatic = $("btnAddStatic");
+      const btnExport = $("btnExport");
+      const btnReset = $("btnReset");
+      const badgeState = $("badgeState");
+      const pageInfo = $("pageInfo");
+      const mobilePagesTag = $("mobilePagesTag");
+      const statNames = $("statNames");
+      const statElements = $("statElements");
+      const statPages = $("statPages");
+      const elementCountBadge = $("elementCountBadge");
+      const fontSelect = $("fontSelect");
+      const fontUpload = $("fontUpload");
+      const fontSizeDefault = $("fontSizeDefault");
+      const colorDefault = $("colorDefault");
+      const colorHex = $("colorHex");
+      const alignDefault = $("alignDefault");
+      const boldDefault = $("boldDefault");
+      const italicDefault = $("italicDefault");
+      const fontBadge = $("fontBadge");
+      const elementList = $("elementList");
+      const inspectorBody = $("inspectorBody");
+      const inspectorSubtitle = $("inspectorSubtitle");
+
+      const uid = () => Math.random().toString(36).slice(2, 10);
+      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+      function toast(msg){
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.innerHTML = `<span class="toast-dot"></span>${escapeHtml(msg)}`;
+        $("toastContainer").appendChild(el);
+        requestAnimationFrame(() => el.classList.add("show"));
+        setTimeout(() => {
+          el.classList.remove("show");
+          setTimeout(() => el.remove(), 220);
+        }, 2100);
+      }
+
+      function escapeHtml(s){
+        return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+      }
+
+      function parseNames(){
+        return namesInput.value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+      }
+
+      function normalizeHex(v){
+        const s = String(v || "").trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(s)) return s;
+        if (/^#[0-9a-fA-F]{3}$/.test(s)) return "#" + s.slice(1).split("").map(c => c + c).join("");
+        return "#111111";
+      }
+
+      function setColor(v){
+        const hex = normalizeHex(v);
+        colorDefault.value = hex;
+        colorHex.value = hex;
+        drawTextLayer();
+      }
+
+      function registerBuiltinFonts(){
+        state.fonts.clear();
+        DEFAULT_FONTS.forEach(f => state.fonts.set(f.key, { ...f, type:"builtin" }));
+        if (!state.fonts.has(state.currentFontKey)) state.currentFontKey = "helvetica";
+        refreshFontSelect();
+      }
+
+      function refreshFontSelect(){
+        fontSelect.innerHTML = "";
+        for (const [key, font] of state.fonts.entries()){
+          const opt = document.createElement("option");
+          opt.value = key;
+          opt.textContent = font.type === "custom" ? `${font.label} (personalizada)` : font.label;
+          opt.selected = key === state.currentFontKey;
+          fontSelect.appendChild(opt);
+        }
+        const current = currentFont();
+        fontBadge.textContent = current && current.type === "custom" ? "Fuente personalizada" : "Fuente interna";
+      }
+
+      function currentFont(){
+        return state.fonts.get(state.currentFontKey) || state.fonts.get("helvetica");
+      }
+
+      function getNameFont(){
+        return {
+          key: state.currentFontKey,
+          size: clamp(parseFloat(fontSizeDefault.value || 34), 6, 180),
+          color: normalizeHex(colorDefault.value || "#111111"),
+          align: alignDefault.value,
+          bold: boldDefault.value === "1",
+          italic: italicDefault.value === "1"
+        };
+      }
+
+      function getCanvasFont(cfg){
+        const font = state.fonts.get(cfg.key) || state.fonts.get("helvetica");
+        const family = font.cssFamily || "Arial, Helvetica, sans-serif";
+        const weight = cfg.bold ? "700" : "400";
+        const style = cfg.italic ? "italic" : "normal";
+        return `${style} ${weight} ${cfg.size}px ${family}`;
+      }
+
+      function selectedElement(){
+        return state.elements.find(e => e.id === state.selectedId) || null;
+      }
+
+      function boxBounds(){
+        const r = boxLayer.getBoundingClientRect();
+        return { w: r.width, h: r.height };
+      }
+
+      function ensureInBounds(el){
+        const b = boxBounds();
+        el.w = clamp(el.w, 60, Math.max(60, b.w));
+        el.h = clamp(el.h, 24, Math.max(24, b.h));
+        el.x = clamp(el.x, 0, Math.max(0, b.w - el.w));
+        el.y = clamp(el.y, 0, Math.max(0, b.h - el.h));
+      }
+
+      function refreshMetrics(){
+        const names = parseNames();
+        const nameFields = state.elements.filter(e => e.type === "name").length;
+        const pages = nameFields > 0 ? Math.ceil(names.length / nameFields) : 0;
+        statNames.textContent = names.length;
+        statElements.textContent = state.elements.length;
+        statPages.textContent = pages;
+        elementCountBadge.textContent = state.elements.length;
+        btnExport.disabled = !(state.pdfDoc && names.length > 0 && nameFields > 0);
+        badgeState.textContent = state.pdfDoc ? (pages ? `Páginas ${pages}` : "Listo") : "Sin PDF";
+        mobilePagesTag.textContent = `Páginas ${pages}`;
+      }
+
+      function renderElementList(){
+        elementList.innerHTML = "";
+        if (!state.elements.length){
+          elementList.innerHTML = `<div class="empty-state">No hay elementos todavía.</div>`;
+          return;
+        }
+        state.elements.forEach((el, index) => {
+          const item = document.createElement("div");
+          item.className = `element-item${state.selectedId === el.id ? " selected" : ""}`;
+          const isStatic = el.type === "static";
+          item.innerHTML = `
+            <div class="element-top">
+              <div class="element-main">
+                <div class="element-icon ${isStatic ? "static" : "name"}">${isStatic ? "T" : "N"}</div>
+                <div class="element-meta">
+                  <div class="element-name">${isStatic ? "Texto fijo" : "Campo de nombre"} ${index + 1}</div>
+                  <div class="element-desc">${isStatic ? escapeHtml(el.text || "Texto") : "Asigna nombres secuencialmente"}</div>
+                </div>
+              </div>
+              <button class="btn btn-danger btn-small" data-delete="${el.id}">Eliminar</button>
+            </div>
+          `;
+          item.addEventListener("click", (ev) => {
+            if (ev.target.closest("[data-delete]")) return;
+            state.selectedId = el.id;
+            renderElementList();
+            renderInspector();
+            renderBoxes();
+          });
+          item.querySelector("[data-delete]").addEventListener("click", (ev) => {
+            ev.stopPropagation();
+            const idx = state.elements.findIndex(x => x.id === el.id);
+            if (idx >= 0) state.elements.splice(idx, 1);
+            if (state.selectedId === el.id) state.selectedId = null;
+            renderElementList();
+            renderInspector();
+            renderBoxes();
+            refreshMetrics();
+          });
+          elementList.appendChild(item);
+        });
+      }
+
+      function renderInspector(){
+        const el = selectedElement();
+        if (!el){
+          inspectorSubtitle.textContent = "Nada seleccionado";
+          inspectorBody.innerHTML = `<div class="empty-state">Selecciona un elemento para editarlo.</div>`;
+          return;
+        }
+        inspectorSubtitle.textContent = el.type === "name" ? "Campo de nombre" : "Texto fijo";
+        if (el.type === "name"){
+          inspectorBody.innerHTML = `<div class="empty-state">Este campo usa la configuración global de “Estilo para nombres”. Puedes moverlo, redimensionarlo o eliminarlo.</div>`;
+          return;
+        }
+        inspectorBody.innerHTML = `
+          <div class="field">
+            <label for="staticTextEdit">Texto</label>
+            <textarea id="staticTextEdit">${escapeHtml(el.text || "")}</textarea>
+          </div>
+          <div class="row-2">
+            <div class="field"><label for="staticSizeEdit">Tamaño</label><input id="staticSizeEdit" type="number" min="6" max="180" value="${el.size || 24}" /></div>
+            <div class="field"><label for="staticAlignEdit">Alineación</label><select id="staticAlignEdit"><option value="left">Izquierda</option><option value="center">Centro</option><option value="right">Derecha</option></select></div>
+          </div>
+          <div class="field"><label for="staticColorEdit">Color</label><input id="staticColorEdit" type="color" value="${normalizeHex(el.color || "#111111")}" /></div>
+        `;
+        $("staticAlignEdit").value = el.align || "center";
+        $("staticTextEdit").addEventListener("input", e => { el.text = e.target.value; renderElementList(); drawTextLayer(); });
+        $("staticSizeEdit").addEventListener("input", e => { el.size = clamp(parseFloat(e.target.value || 24), 6, 180); drawTextLayer(); });
+        $("staticAlignEdit").addEventListener("input", e => { el.align = e.target.value; drawTextLayer(); });
+        $("staticColorEdit").addEventListener("input", e => { el.color = normalizeHex(e.target.value); drawTextLayer(); });
+      }
+
+      function renderBoxes(){
+        boxLayer.innerHTML = "";
+        state.elements.forEach(el => {
+          ensureInBounds(el);
+          const box = document.createElement("div");
+          box.className = `box${state.selectedId === el.id ? " selected" : ""}`;
+          box.dataset.id = el.id;
+          box.style.left = `${el.x}px`;
+          box.style.top = `${el.y}px`;
+          box.style.width = `${el.w}px`;
+          box.style.height = `${el.h}px`;
+          const handle = document.createElement("div");
+          handle.className = "handle";
+          box.appendChild(handle);
+
+          box.addEventListener("pointerdown", ev => {
+            if (ev.target === handle) return;
+            ev.preventDefault();
+            state.selectedId = el.id;
+            renderElementList();
+            renderInspector();
+            startDrag(ev, el);
+          });
+          handle.addEventListener("pointerdown", ev => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            state.selectedId = el.id;
+            renderElementList();
+            renderInspector();
+            startResize(ev, el);
+          });
+          boxLayer.appendChild(box);
+        });
+        drawTextLayer();
+      }
+
+      function startDrag(ev, el){
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const ox = el.x;
+        const oy = el.y;
+        const bounds = boxBounds();
+        const move = e => {
+          el.x = clamp(ox + e.clientX - startX, 0, Math.max(0, bounds.w - el.w));
+          el.y = clamp(oy + e.clientY - startY, 0, Math.max(0, bounds.h - el.h));
+          renderBoxes();
+        };
+        const up = () => {
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", up);
+        };
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", up);
+      }
+
+      function startResize(ev, el){
+        const startX = ev.clientX;
+        const startY = ev.clientY;
+        const ow = el.w;
+        const oh = el.h;
+        const bounds = boxBounds();
+        const move = e => {
+          el.w = clamp(ow + e.clientX - startX, 60, Math.max(60, bounds.w - el.x));
+          el.h = clamp(oh + e.clientY - startY, 24, Math.max(24, bounds.h - el.y));
+          renderBoxes();
+        };
+        const up = () => {
+          window.removeEventListener("pointermove", move);
+          window.removeEventListener("pointerup", up);
+        };
+        window.addEventListener("pointermove", move);
+        window.addEventListener("pointerup", up);
+      }
+
+      function drawWrappedText(ctx, text, x, y, w, h, cfg){
+        const lineHeight = cfg.size * 1.18;
+        const lines = [];
+        String(text || "").split(/\n/).forEach(paragraph => {
+          const words = paragraph.split(/\s+/).filter(Boolean);
+          if (!words.length) { lines.push(""); return; }
+          let line = "";
+          words.forEach(word => {
+            const test = line ? `${line} ${word}` : word;
+            if (ctx.measureText(test).width <= w || !line) line = test;
+            else { lines.push(line); line = word; }
+          });
+          if (line) lines.push(line);
+        });
+        const totalH = Math.min(lines.length * lineHeight, h);
+        let startY = y + (h - totalH) / 2 + cfg.size;
+        lines.forEach(line => {
+          if (startY - cfg.size > y + h) return;
+          let tx = x;
+          if (cfg.align === "center") tx = x + w / 2;
+          if (cfg.align === "right") tx = x + w;
+          ctx.fillText(line, tx, startY);
+          startY += lineHeight;
+        });
+      }
+
+      function drawElementsToContext(ctx, opts){
+        const names = opts.names || [];
+        const coordScale = opts.coordScale || 1;
+        const fontScale = opts.fontScale || 1;
+        let nameIndex = 0;
+        state.elements.forEach(el => {
+          const cfg = el.type === "name"
+            ? getNameFont()
+            : { key: state.currentFontKey, size: el.size || 24, color: normalizeHex(el.color || "#111111"), align: el.align || "center", bold: false, italic: false };
+          const text = el.type === "name" ? (names[nameIndex++] || "") : (el.text || "");
+          if (!text) return;
+          const scaledCfg = { ...cfg, size: cfg.size * fontScale };
+          const x = el.x * coordScale;
+          const y = el.y * coordScale;
+          const w = el.w * coordScale;
+          const h = el.h * coordScale;
+          ctx.save();
+          ctx.fillStyle = scaledCfg.color;
+          ctx.font = getCanvasFont(scaledCfg);
+          ctx.textBaseline = "alphabetic";
+          ctx.textAlign = scaledCfg.align;
+          drawWrappedText(ctx, text, x, y, w, h, scaledCfg);
+          ctx.restore();
+        });
+      }
+
+      function drawTextLayer(){
+        const w = parseFloat(textCanvas.style.width) || 0;
+        const h = parseFloat(textCanvas.style.height) || 0;
+        if (!w || !h) return;
+        const dpr = window.devicePixelRatio || 1;
+        textCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        textCtx.clearRect(0, 0, w, h);
+        drawElementsToContext(textCtx, { names: parseNames(), coordScale: 1, fontScale: state.previewScale });
+      }
+
+      function addNameElement(){
+        const bounds = boxBounds();
+        if (bounds.w <= 0 || bounds.h <= 0){ toast("Primero carga un PDF"); return; }
+        state.elements.push({
+          id: uid(), type: "name",
+          x: Math.max(0, bounds.w * .5 - 150), y: Math.max(0, bounds.h * .50), w: 300, h: 46
+        });
+        state.selectedId = state.elements[state.elements.length - 1].id;
+        renderElementList(); renderInspector(); renderBoxes(); refreshMetrics();
+      }
+
+      function addStaticElement(){
+        const bounds = boxBounds();
+        if (bounds.w <= 0 || bounds.h <= 0){ toast("Primero carga un PDF"); return; }
+        state.elements.push({
+          id: uid(), type: "static", text: "Texto fijo", size: 24, color: "#111111", align: "center",
+          x: Math.max(0, bounds.w * .5 - 140), y: Math.max(0, bounds.h * .28), w: 280, h: 38
+        });
+        state.selectedId = state.elements[state.elements.length - 1].id;
+        renderElementList(); renderInspector(); renderBoxes(); refreshMetrics();
+      }
+
+      function getPdfJs(){
+        return window.pdfjsLib || window["pdfjs-dist/build/pdf"] || null;
+      }
+
+      async function loadPdf(file){
+        const pdfjsLib = getPdfJs();
+        if (!pdfjsLib) throw new Error("PDF.js no está disponible");
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+        const buf = await file.arrayBuffer();
+        const task = pdfjsLib.getDocument({ data: buf });
+        state.pdfDoc = await task.promise;
+        state.pdfPage = await state.pdfDoc.getPage(1);
+        state.viewportAtScale1 = state.pdfPage.getViewport({ scale: 1 });
+        await renderPreview();
+        pageInfo.textContent = `Página 1 de ${state.pdfDoc.numPages}`;
+        refreshMetrics();
+      }
+
+      function computePreviewScale(){
+        if (!state.viewportAtScale1) return 1;
+        const holderRect = canvasHolder.getBoundingClientRect();
+        const maxW = Math.max(260, holderRect.width - 36);
+        return clamp(maxW / state.viewportAtScale1.width, .35, 3);
+      }
+
+      async function renderPreview(){
+        if (!state.pdfPage || !state.viewportAtScale1) return;
+        state.previewScale = computePreviewScale();
+        const vp = state.pdfPage.getViewport({ scale: state.previewScale });
+        const dpr = window.devicePixelRatio || 1;
+
+        pdfCanvas.width = Math.floor(vp.width * dpr);
+        pdfCanvas.height = Math.floor(vp.height * dpr);
+        pdfCanvas.style.width = `${vp.width}px`;
+        pdfCanvas.style.height = `${vp.height}px`;
+        pdfCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        pdfCtx.clearRect(0, 0, vp.width, vp.height);
+
+        textCanvas.width = Math.floor(vp.width * dpr);
+        textCanvas.height = Math.floor(vp.height * dpr);
+        textCanvas.style.width = `${vp.width}px`;
+        textCanvas.style.height = `${vp.height}px`;
+        textCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        boxLayer.style.width = `${vp.width}px`;
+        boxLayer.style.height = `${vp.height}px`;
+
+        await state.pdfPage.render({ canvasContext: pdfCtx, viewport: vp }).promise;
+        renderBoxes();
+      }
+
+      function blobToDataUrl(blob){
+        return new Promise((resolve, reject) => {
+          const r = new FileReader();
+          r.onload = () => resolve(String(r.result));
+          r.onerror = reject;
+          r.readAsDataURL(blob);
+        });
+      }
+
+      function safeFontName(name){
+        return String(name || "CustomFont").replace(/\.[^.]+$/, "").replace(/[^a-zA-Z0-9 _-]/g, "").trim() || "CustomFont";
+      }
+
+      async function loadCustomFont(file){
+        const ext = (file.name.split(".").pop() || "").toLowerCase();
+        if (!["ttf", "otf"].includes(ext)) { toast("Fuente no válida"); return; }
+        if (typeof FontFace === "undefined") { toast("Este navegador no permite cargar fuentes locales"); return; }
+
+        const arrayBuffer = await file.arrayBuffer();
+        const blob = new Blob([arrayBuffer], { type: ext === "otf" ? "font/otf" : "font/ttf" });
+        const dataUrl = await blobToDataUrl(blob);
+        const key = `custom_${uid()}`;
+        const cssFamily = `CustomCertificateFont_${key}`;
+        const label = safeFontName(file.name);
+
+        const fontFace = new FontFace(cssFamily, `url(${dataUrl})`);
+        await fontFace.load();
+        document.fonts.add(fontFace);
+        await document.fonts.ready;
+
+        state.fonts.set(key, { type: "custom", label, cssFamily: `"${cssFamily}", Arial, sans-serif`, dataUrl });
+        state.currentFontKey = key;
+        refreshFontSelect();
+        drawTextLayer();
+        toast(`Fuente cargada: ${label}`);
+      }
+
+      async function getBackgroundImageDataUrl(){
+        const exportScale = 2;
+        const vp = state.pdfPage.getViewport({ scale: exportScale });
+        const tmp = document.createElement("canvas");
+        const tctx = tmp.getContext("2d");
+        tmp.width = Math.floor(vp.width);
+        tmp.height = Math.floor(vp.height);
+        await state.pdfPage.render({ canvasContext: tctx, viewport: vp }).promise;
+        return { dataUrl: tmp.toDataURL("image/jpeg", .92), width: state.viewportAtScale1.width, height: state.viewportAtScale1.height };
+      }
+
+      async function renderTextOverlayDataUrl(pageNames, width, height){
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        const overlay = document.createElement("canvas");
+        const exportDpr = Math.max(2, window.devicePixelRatio || 1);
+        overlay.width = Math.round(width * exportDpr);
+        overlay.height = Math.round(height * exportDpr);
+        const octx = overlay.getContext("2d");
+        octx.setTransform(exportDpr, 0, 0, exportDpr, 0, 0);
+        octx.clearRect(0, 0, width, height);
+        drawElementsToContext(octx, { names: pageNames, coordScale: 1 / state.previewScale, fontScale: 1 });
+        return overlay.toDataURL("image/png");
+      }
+
+      function validateExport(){
+        const names = parseNames();
+        const nameFields = state.elements.filter(e => e.type === "name").length;
+        if (!state.pdfDoc) { toast("Falta el PDF"); return false; }
+        if (!names.length) { toast("Faltan nombres"); return false; }
+        if (!nameFields) { toast("Agrega al menos un campo de nombre"); return false; }
+        if (!window.jspdf || !window.jspdf.jsPDF) { toast("jsPDF no está disponible"); return false; }
+        return true;
+      }
+
+      async function exportPdf(){
+        if (!validateExport()) return;
+        btnExport.disabled = true;
+        btnExport.textContent = "Exportando…";
+        try {
+          const names = parseNames();
+          const nameFields = state.elements.filter(e => e.type === "name");
+          const pagesNeeded = Math.ceil(names.length / nameFields.length);
+          const bg = await getBackgroundImageDataUrl();
+          const orientation = bg.width >= bg.height ? "landscape" : "portrait";
+          const doc = new window.jspdf.jsPDF({ orientation, unit: "pt", format: [bg.width, bg.height] });
+
+          for (let p = 0; p < pagesNeeded; p++){
+            if (p > 0) doc.addPage([bg.width, bg.height], orientation);
+            doc.addImage(bg.dataUrl, "JPEG", 0, 0, bg.width, bg.height, undefined, "FAST");
+            const base = p * nameFields.length;
+            const pageNames = [];
+            for (let i = 0; i < nameFields.length; i++) pageNames.push(names[base + i] || "");
+            const overlayDataUrl = await renderTextOverlayDataUrl(pageNames, bg.width, bg.height);
+            doc.addImage(overlayDataUrl, "PNG", 0, 0, bg.width, bg.height, undefined, "FAST");
+          }
+          doc.save(`certificados_${new Date().toISOString().slice(0,10)}.pdf`);
+          toast("PDF exportado");
+        } catch (err){
+          console.error(err);
+          toast("No se pudo exportar el PDF");
+        } finally {
+          btnExport.textContent = "Exportar PDF";
+          refreshMetrics();
+        }
+      }
+
+      function resetProject(){
+        pdfFile.value = "";
+        namesInput.value = "";
+        state.pdfDoc = null;
+        state.pdfPage = null;
+        state.viewportAtScale1 = null;
+        state.selectedId = null;
+        state.elements.length = 0;
+        pdfCtx.clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
+        textCtx.clearRect(0, 0, textCanvas.width, textCanvas.height);
+        pdfCanvas.removeAttribute("style");
+        textCanvas.removeAttribute("style");
+        boxLayer.removeAttribute("style");
+        boxLayer.innerHTML = "";
+        renderElementList();
+        renderInspector();
+        refreshMetrics();
+        badgeState.textContent = "Sin PDF";
+        pageInfo.textContent = "Sin documento";
+        toast("Proyecto reiniciado");
+      }
+
+      function bindEvents(){
+        pdfFile.addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          try {
+            badgeState.textContent = "Cargando…";
+            await loadPdf(file);
+            toast("PDF cargado");
+          } catch (err){
+            console.error(err);
+            state.pdfDoc = null;
+            state.pdfPage = null;
+            state.viewportAtScale1 = null;
+            badgeState.textContent = "Error";
+            toast("No se pudo leer el PDF");
+          }
+        });
+
+        namesInput.addEventListener("input", () => { refreshMetrics(); drawTextLayer(); });
+        btnAddName.addEventListener("click", addNameElement);
+        btnAddStatic.addEventListener("click", addStaticElement);
+        btnExport.addEventListener("click", exportPdf);
+        btnReset.addEventListener("click", resetProject);
+
+        fontSelect.addEventListener("input", () => {
+          state.currentFontKey = fontSelect.value || "helvetica";
+          refreshFontSelect();
+          drawTextLayer();
+        });
+
+        fontUpload.addEventListener("change", async (e) => {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          try { await loadCustomFont(file); }
+          catch (err) { console.error(err); toast("Error al cargar la fuente"); }
+          finally { fontUpload.value = ""; }
+        });
+
+        [fontSizeDefault, alignDefault, boldDefault, italicDefault].forEach(el => el.addEventListener("input", drawTextLayer));
+        colorDefault.addEventListener("input", () => setColor(colorDefault.value));
+        colorHex.addEventListener("input", () => setColor(colorHex.value));
+        colorHex.addEventListener("blur", () => setColor(colorHex.value));
+
+        document.querySelector(".preview-wrap").addEventListener("pointerdown", (e) => {
+          if (!e.target.closest(".box")){
+            state.selectedId = null;
+            renderElementList();
+            renderInspector();
+            renderBoxes();
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          if (state.pdfDoc && state.pdfPage){
+            clearTimeout(renderPreview._t);
+            renderPreview._t = setTimeout(() => renderPreview(), 120);
+          }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          const tag = e.target && e.target.tagName ? e.target.tagName.toLowerCase() : "";
+          const isTyping = e.target && (e.target.isContentEditable || tag === "input" || tag === "textarea" || tag === "select");
+          if (isTyping || !state.selectedId) return;
+          const el = selectedElement();
+          if (!el) return;
+          const bounds = boxBounds();
+          const step = e.shiftKey ? 10 : 2;
+          if (e.key === "Delete" || e.key === "Backspace"){
+            e.preventDefault();
+            const idx = state.elements.findIndex(x => x.id === el.id);
+            if (idx >= 0) state.elements.splice(idx, 1);
+            state.selectedId = null;
+            renderElementList(); renderInspector(); renderBoxes(); refreshMetrics();
+            return;
+          }
+          let moved = false;
+          if (e.key === "ArrowLeft") { el.x -= step; moved = true; }
+          if (e.key === "ArrowRight") { el.x += step; moved = true; }
+          if (e.key === "ArrowUp") { el.y -= step; moved = true; }
+          if (e.key === "ArrowDown") { el.y += step; moved = true; }
+          if (moved){
+            e.preventDefault();
+            el.x = clamp(el.x, 0, Math.max(0, bounds.w - el.w));
+            el.y = clamp(el.y, 0, Math.max(0, bounds.h - el.h));
+            renderBoxes();
+          }
+        });
+      }
+
+      function init(){
+        registerBuiltinFonts();
+        setColor("#111111");
+        renderElementList();
+        renderInspector();
+        refreshMetrics();
+        bindEvents();
+        pageInfo.textContent = "Sin documento";
+      }
+
+      if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+      else init();
+    })();
+  </script>
+</body>
+</html>
