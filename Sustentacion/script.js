@@ -82,21 +82,9 @@ const RUBRIC = [
   ] }
 ];
 
-const QUICK_NOTES = [
-  "Cumple con el tiempo",
-  "Buen dominio del tema",
-  "Exposición clara",
-  "Mantiene el interés",
-  "Buena vocalización",
-  "Contacto visual adecuado",
-  "Material de apoyo adecuado",
-  "Debe mejorar la seguridad",
-  "Debe controlar mejor el tiempo",
-  "Debe fortalecer el soporte visual"
-];
-
 const STORAGE_KEY = "lv_sustentacion_fct_3ro_tecnico_2026_v2";
 const LEGACY_STORAGE_KEY = "lv_sustentacion_fct_3ro_tecnico_2026_v1";
+const META_STORAGE_KEY = "lv_sustentacion_fct_3ro_tecnico_2026_meta";
 const WIX_SITE_BASE = "https://chiispiitas.wixsite.com/mr-david-collection";
 const PAPER_API_BASE = `${WIX_SITE_BASE}/_functions`;
 const apiBase = PAPER_API_BASE;
@@ -110,6 +98,7 @@ const $ = (selector) => document.querySelector(selector);
 const els = {
   activityInput: $("#activityInput"),
   dateInput: $("#dateInput"),
+  judgeInput: $("#judgeInput"),
   studentSearch: $("#studentSearch"),
   studentSelect: $("#studentSelect"),
   studentStatus: $("#studentStatus"),
@@ -117,8 +106,6 @@ const els = {
   scoreValue: $("#scoreValue"),
   scoreStatus: $("#scoreStatus"),
   scoreRing: $("#scoreRing"),
-  quickNotes: $("#quickNotes"),
-  teacherComment: $("#teacherComment"),
   statAssessed: $("#statAssessed"),
   statPending: $("#statPending"),
   statAverage: $("#statAverage"),
@@ -129,6 +116,7 @@ const els = {
 };
 
 let store = loadStore();
+let meta = loadMeta();
 let currentStudentNumber = STUDENTS[0].n;
 let suppressChange = false;
 let toastTimer = null;
@@ -145,8 +133,22 @@ function loadStore() {
   }
 }
 
+function loadMeta() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(META_STORAGE_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch (error) {
+    console.warn(error);
+    return {};
+  }
+}
+
 function writeStore() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+
+function writeMeta() {
+  localStorage.setItem(META_STORAGE_KEY, JSON.stringify(meta));
 }
 
 function defaultCriteria() {
@@ -157,6 +159,10 @@ function todayISO() {
   const date = new Date();
   date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
   return date.toISOString().slice(0, 10);
+}
+
+function currentJuez() {
+  return (els.judgeInput?.value || meta.juez || "").trim();
 }
 
 function defaultRecord(student) {
@@ -171,7 +177,8 @@ function defaultRecord(student) {
     evaluated: false,
     savedAt: null,
     serverSyncedAt: null,
-    serverItemId: null
+    serverItemId: null,
+    juez: currentJuez()
   };
 }
 
@@ -194,7 +201,8 @@ function setRecord(number, record) {
   store[String(number)] = {
     ...record,
     studentNumber: Number(number),
-    studentName: getStudentByNumber(number).name
+    studentName: getStudentByNumber(number).name,
+    juez: currentJuez() || record.juez || ""
   };
   writeStore();
   refreshStats();
@@ -210,10 +218,6 @@ function readCriteriaFromDom() {
   return values;
 }
 
-function readNotesFromDom() {
-  return Array.from(document.querySelectorAll(".note-chip.active")).map((button) => button.dataset.note);
-}
-
 function saveCurrentDraft(markEvaluated = false) {
   const student = getStudentByNumber(currentStudentNumber);
   const old = getRecord(student.n);
@@ -221,9 +225,10 @@ function saveCurrentDraft(markEvaluated = false) {
     ...old,
     activity: els.activityInput.value.trim() || "Sustentación de Prácticas Preprofesionales (FCT)",
     date: els.dateInput.value || todayISO(),
-    comment: els.teacherComment.value.trim(),
+    juez: currentJuez(),
+    comment: old.comment || "",
     criteria: readCriteriaFromDom(),
-    notes: readNotesFromDom(),
+    notes: Array.isArray(old.notes) ? old.notes : [],
     evaluated: markEvaluated ? true : old.evaluated,
     savedAt: markEvaluated ? new Date().toISOString() : old.savedAt
   };
@@ -293,9 +298,7 @@ function loadStudent(number) {
   suppressChange = true;
   els.activityInput.value = record.activity || "Sustentación de Prácticas Preprofesionales (FCT)";
   els.dateInput.value = record.date || todayISO();
-  els.teacherComment.value = record.comment || "";
   renderRubric(record);
-  renderQuickNotes(record);
   updateScore(record);
   updateStatusPill(record);
   refreshStudentOptions();
@@ -325,27 +328,11 @@ function renderRubric(record = getRecord()) {
       input.addEventListener("change", () => {
         card.querySelectorAll(".option-row").forEach((row) => row.classList.remove("selected"));
         input.closest(".option-row").classList.add("selected");
-        updateScore(saveCurrentDraft(false));
+        updateScore(saveCurrentDraft(true));
+        showToast("Evaluación guardada");
       });
     });
     els.rubricList.appendChild(card);
-  });
-}
-
-function renderQuickNotes(record = getRecord()) {
-  const active = new Set(record.notes || []);
-  els.quickNotes.innerHTML = "";
-  QUICK_NOTES.forEach((note) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `note-chip${active.has(note) ? " active" : ""}`;
-    button.dataset.note = note;
-    button.textContent = note;
-    button.addEventListener("click", () => {
-      button.classList.toggle("active");
-      saveCurrentDraft(false);
-    });
-    els.quickNotes.appendChild(button);
   });
 }
 
@@ -361,7 +348,7 @@ function updateScore(record = getRecord()) {
 function updateStatusPill(record = getRecord()) {
   els.studentStatus.classList.toggle("saved", !!record.evaluated);
   els.studentStatus.classList.toggle("pending", !record.evaluated);
-  els.studentStatus.textContent = record.serverSyncedAt ? "En SERVER" : record.evaluated ? "Guardado" : "Pendiente";
+  els.studentStatus.textContent = record.serverSyncedAt ? "Publicado" : record.evaluated ? "Guardado" : "Pendiente";
 }
 
 function refreshStats() {
@@ -375,15 +362,8 @@ function refreshStats() {
 
 function markMaximum() {
   renderRubric({ ...getRecord(), criteria: defaultCriteria() });
-  updateScore(saveCurrentDraft(false));
-  showToast("Criterios marcados con puntaje máximo");
-}
-
-function clearNotes() {
-  document.querySelectorAll(".note-chip.active").forEach((button) => button.classList.remove("active"));
-  els.teacherComment.value = "";
-  saveCurrentDraft(false);
-  showToast("Observaciones limpiadas");
+  updateScore(saveCurrentDraft(true));
+  showToast("Puntaje máximo guardado");
 }
 
 function resetCurrent() {
@@ -394,20 +374,13 @@ function resetCurrent() {
   suppressChange = true;
   els.activityInput.value = record.activity;
   els.dateInput.value = todayISO();
-  els.teacherComment.value = "";
   renderRubric(record);
-  renderQuickNotes(record);
   updateScore(record);
   updateStatusPill(record);
   refreshStats();
   refreshStudentOptions();
   suppressChange = false;
   showToast("Evaluación restablecida");
-}
-
-function saveCurrentReport() {
-  saveCurrentDraft(true);
-  showToast("Evaluación guardada");
 }
 
 function getExportRows(onlySaved = false) {
@@ -438,7 +411,7 @@ function criterionPayload(record) {
   });
 }
 
-function buildServerRecord(row, batchId) {
+function buildServerRecord(row, batchId, juez) {
   const { student, record, total, status } = row;
   const criteria = criterionPayload(record);
   const savedKey = record.savedAt || `${record.date}-${student.n}`;
@@ -446,6 +419,9 @@ function buildServerRecord(row, batchId) {
     title: `${student.n}. ${student.name} - ${formatScore(total)} / 10`,
     localRecordKey: `${COURSE.id}-${student.n}-${savedKey}`,
     batchId,
+    sessionKey: batchId,
+    juez,
+    judgeName: juez,
     courseId: COURSE.id,
     courseLabel: COURSE.label,
     course: COURSE.course,
@@ -469,12 +445,35 @@ function buildServerRecord(row, batchId) {
   };
 }
 
+function buildSessionPayload(rows, batchId, juez) {
+  const scores = rows.map((row) => Number(row.total || 0));
+  const classAverage = scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
+  const dates = Array.from(new Set(rows.map((row) => row.record.date).filter(Boolean)));
+  return {
+    title: `${COURSE.label} - ${juez} - ${new Date().toLocaleDateString("es-EC")}`,
+    sessionKey: batchId,
+    batchId,
+    juez,
+    judgeName: juez,
+    courseId: COURSE.id,
+    courseLabel: COURSE.label,
+    course: COURSE.course,
+    specialty: COURSE.specialty,
+    period: COURSE.period,
+    institution: COURSE.institution,
+    activity: rows[0]?.record?.activity || "Sustentación de Prácticas Preprofesionales (FCT)",
+    evaluationDate: dates[0] || todayISO(),
+    evaluationDatesJson: JSON.stringify(dates),
+    entryCount: rows.length,
+    studentCount: rows.length,
+    classAverage: Math.round(classAverage * 100) / 100,
+    studentNumbersJson: JSON.stringify(rows.map((row) => row.student.n)),
+    source: "GitHub Pages Sustentacion rubric",
+    submittedAt: new Date().toISOString()
+  };
+}
+
 async function postToSustentacionServer(payload) {
-  /*
-    Same connection style as Quiz: a hardcoded Wix _functions base URL.
-    The body is sent as text/plain to avoid an OPTIONS preflight when previewing locally.
-    The Wix backend helper accepts both JSON and plain-text JSON bodies.
-  */
   return fetch(SUSTENTACION_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=UTF-8" },
@@ -483,58 +482,61 @@ async function postToSustentacionServer(payload) {
 }
 
 async function submitScoresToServer() {
+  const juez = currentJuez();
+  if (!juez) {
+    showToast("Escribe el nombre del juez antes de enviar");
+    els.judgeInput?.focus();
+    return;
+  }
+
   saveCurrentDraft(false);
   const rows = getExportRows(true);
   if (!rows.length) {
-    showToast("Guarda al menos una evaluación antes de enviar al SERVER");
+    showToast("Marca al menos una evaluación antes de publicar");
     return;
   }
 
   const button = $("#submitServer");
-  const barButton = $("#submitServerBar");
   const oldText = button.textContent;
-  const oldBarText = barButton.textContent;
   const batchId = `${COURSE.id}-${new Date().toISOString()}`;
   const payload = {
     collection: "Sustentacion",
+    sessionCollection: "SustentacionSession",
     course: COURSE,
     batchId,
-    records: rows.map((row) => buildServerRecord(row, batchId))
+    juez,
+    judgeName: juez,
+    session: buildSessionPayload(rows, batchId, juez),
+    records: rows.map((row) => buildServerRecord(row, batchId, juez))
   };
 
   try {
     button.disabled = true;
-    barButton.disabled = true;
-    button.textContent = "Enviando…";
-    barButton.textContent = "…";
-    setServerStatus("Enviando datos al CMS…", false);
+    button.textContent = "Publicando…";
+    setServerStatus("Publicando calificaciones…", false);
 
     const response = await postToSustentacionServer(payload);
-
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || data.ok === false) {
-      throw new Error(data.error || `SERVER ${response.status}`);
-    }
+    if (!response.ok || data.ok === false) throw new Error(data.error || `Error ${response.status}`);
 
     const syncedAt = new Date().toISOString();
     rows.forEach(({ student }) => {
       const record = getRecord(student.n);
       record.serverSyncedAt = syncedAt;
+      record.juez = juez;
       setRecord(student.n, record);
     });
     updateStatusPill(getRecord(currentStudentNumber));
-    setServerStatus(`${rows.length} evaluación(es) enviadas al CMS Sustentacion.`, false);
-    showToast("Calificaciones enviadas al SERVER");
+    setServerStatus(`${rows.length} evaluación(es) publicada(s). Juez: ${juez}.`, false);
+    showToast("Calificaciones publicadas");
   } catch (error) {
     console.error(error);
     const localHint = window.location.protocol === "file:" ? " Abre la página desde GitHub Pages o con un servidor local si el navegador bloquea file://." : "";
-    setServerStatus(`No se pudo enviar al SERVER: ${error.message}.${localHint}`, true);
-    showToast("No se pudo enviar al SERVER");
+    setServerStatus(`No se pudo publicar: ${error.message}.${localHint}`, true);
+    showToast("No se pudo publicar");
   } finally {
     button.disabled = false;
-    barButton.disabled = false;
     button.textContent = oldText;
-    barButton.textContent = oldBarText;
   }
 }
 
@@ -547,14 +549,14 @@ function setServerStatus(message, isError) {
 function buildPrintableHtml(rows, title = "Reporte general de sustentación") {
   const assessed = rows.filter((row) => row.record.evaluated);
   const average = assessed.length ? assessed.reduce((sum, row) => sum + row.total, 0) / assessed.length : 0;
+  const juez = currentJuez() || "—";
   const generalRows = rows.map(({ student, record, total, status }) => `
     <tr class="${status === "Pendiente" ? "pending" : ""}">
       <td>${student.n}</td>
       <td><strong>${escapeHtml(student.name)}</strong></td>
       <td>${escapeHtml(status)}</td>
+      <td>${escapeHtml(formatDate(record.date))}</td>
       <td class="score">${status === "Evaluado" ? escapeHtml(formatScore(total)) : "—"}</td>
-      <td>${status === "Evaluado" ? escapeHtml(record.notes.join(" · ")) : ""}</td>
-      <td>${status === "Evaluado" ? escapeHtml(record.comment) : ""}</td>
     </tr>`).join("");
 
   const detailRows = assessed.map(({ student, record, total }) => `
@@ -580,7 +582,7 @@ function buildPrintableHtml(rows, title = "Reporte general de sustentación") {
 <title>${escapeHtml(title)}</title>
 <base href="${PRINT_BASE_URL}">
 <style>
-body{font-family:Arial,sans-serif;margin:0;color:#172033;background:#f4f1e9}.wrap{max-width:1100px;margin:0 auto;padding:26px}.header{background:#14213d;color:#fff;padding:24px;border-radius:18px}.head-row{display:flex;align-items:center;gap:16px}.report-logo{width:118px;height:auto;background:#fff;border-radius:12px;padding:4px;object-fit:contain}.header h1{margin:0;font-size:28px;line-height:1.05}.header p{margin:8px 0 0;color:#f4e6c0;font-weight:700}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.summary div{background:#fff;border:1px solid #ddd6c7;border-radius:14px;padding:14px}.summary span{display:block;font-size:11px;color:#5c6678;text-transform:uppercase;letter-spacing:.08em;font-weight:bold}.summary strong{display:block;margin-top:6px;font-size:22px;color:#14213d}h2{color:#14213d;margin:22px 0 10px}table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;margin-bottom:18px}th,td{border:1px solid #ded7ca;padding:8px;font-size:12px;vertical-align:top}th{background:#f4e6c0;color:#14213d;text-align:left}tr.pending{color:#777;background:#f8f8f8}.score{text-align:center;font-weight:bold;white-space:nowrap}.student-detail{break-inside:avoid;margin-top:16px}.student-detail h3{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #ded7ca;border-radius:12px;padding:12px;color:#14213d}.toolbar{display:flex;gap:8px;margin:16px 0}button{border:0;border-radius:10px;padding:10px 14px;background:#14213d;color:#fff;font-weight:bold;cursor:pointer}@media print{body{background:#fff}.toolbar{display:none}.wrap{padding:0}.header{border-radius:0}.summary{grid-template-columns:repeat(4,1fr)}}
+body{font-family:Arial,sans-serif;margin:0;color:#172033;background:#f4f1e9}.wrap{max-width:1100px;margin:0 auto;padding:26px}.header{background:#14213d;color:#fff;padding:24px;border-radius:18px}.head-row{display:flex;align-items:center;gap:16px}.report-logo{width:118px;height:auto;background:#fff;border-radius:12px;padding:4px;object-fit:contain}.header h1{margin:0;font-size:28px;line-height:1.05}.header p{margin:8px 0 0;color:#f4e6c0;font-weight:700}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:16px 0}.summary div{background:#fff;border:1px solid #ddd6c7;border-radius:14px;padding:14px}.summary span{display:block;font-size:11px;color:#5c6678;text-transform:uppercase;letter-spacing:.08em;font-weight:bold}.summary strong{display:block;margin-top:6px;font-size:22px;color:#14213d}h2{color:#14213d;margin:22px 0 10px}table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;margin-bottom:18px}th,td{border:1px solid #ded7ca;padding:8px;font-size:12px;vertical-align:top}th{background:#f4e6c0;color:#14213d;text-align:left}tr.pending{color:#777;background:#f8f8f8}.score{text-align:center;font-weight:bold;white-space:nowrap}.student-detail{break-inside:avoid;margin-top:16px}.student-detail h3{display:flex;justify-content:space-between;gap:12px;background:#fff;border:1px solid #ded7ca;border-radius:12px;padding:12px;color:#14213d}.toolbar{display:flex;gap:8px;margin:16px 0}button{border:0;border-radius:10px;padding:10px 14px;background:#14213d;color:#fff;font-weight:bold;cursor:pointer}@media print{body{background:#fff}.toolbar{display:none}.wrap{padding:0}.header{border-radius:0}.summary{grid-template-columns:repeat(5,1fr)}}
 </style>
 </head>
 <body>
@@ -588,7 +590,7 @@ body{font-family:Arial,sans-serif;margin:0;color:#172033;background:#f4f1e9}.wra
 <section class="header">
   <div class="head-row"><img class="report-logo" src="logo-ueplv.svg" alt="Logo UEPLV"><h1>${escapeHtml(title)}</h1></div>
   <p>${escapeHtml(COURSE.institution)} · ${escapeHtml(COURSE.label)} · ${escapeHtml(COURSE.specialty)} · Período ${escapeHtml(COURSE.period)}</p>
-  <p>Generado: ${escapeHtml(formatDateTime(new Date()))}</p>
+  <p>Juez: ${escapeHtml(juez)} · Generado: ${escapeHtml(formatDateTime(new Date()))}</p>
 </section>
 <div class="toolbar"><button onclick="window.print()">Imprimir / Guardar como PDF</button></div>
 <section class="summary">
@@ -596,9 +598,10 @@ body{font-family:Arial,sans-serif;margin:0;color:#172033;background:#f4f1e9}.wra
   <div><span>Evaluados</span><strong>${assessed.length}</strong></div>
   <div><span>Pendientes</span><strong>${rows.length - assessed.length}</strong></div>
   <div><span>Promedio</span><strong>${assessed.length ? `${escapeHtml(formatScore(average))} / 10` : "—"}</strong></div>
+  <div><span>Juez</span><strong>${escapeHtml(juez)}</strong></div>
 </section>
 <h2>Consolidado general</h2>
-<table><thead><tr><th>No.</th><th>Estudiante</th><th>Estado</th><th>Puntaje /10</th><th>Observaciones rápidas</th><th>Comentario</th></tr></thead><tbody>${generalRows}</tbody></table>
+<table><thead><tr><th>No.</th><th>Estudiante</th><th>Estado</th><th>Fecha</th><th>Puntaje /10</th></tr></thead><tbody>${generalRows}</tbody></table>
 <h2>Detalle de rúbrica</h2>
 ${detailRows || "<p>No hay evaluaciones guardadas todavía.</p>"}
 </div>
@@ -667,8 +670,8 @@ function renderHistory() {
     item.className = "history-item";
     item.innerHTML = `
       <h3>${student.n}. ${escapeHtml(student.name)}</h3>
-      <p>Puntaje: <strong>${escapeHtml(formatScore(total))} / 10</strong> · Fecha: ${escapeHtml(formatDate(record.date))}${record.serverSyncedAt ? " · SERVER" : ""}</p>
-      <p>${escapeHtml(record.comment || record.notes.join(" · ") || "Sin comentario adicional")}</p>`;
+      <p>Puntaje: <strong>${escapeHtml(formatScore(total))} / 10</strong> · Fecha: ${escapeHtml(formatDate(record.date))}${record.serverSyncedAt ? " · Publicado" : ""}</p>
+      <p>Juez: ${escapeHtml(record.juez || currentJuez() || "—")}</p>`;
     item.addEventListener("click", () => {
       els.historyDialog.close();
       loadStudent(student.n);
@@ -699,7 +702,11 @@ function bindEvents() {
   els.studentSelect.addEventListener("change", () => loadStudent(Number(els.studentSelect.value)));
   els.activityInput.addEventListener("input", () => { if (!suppressChange) saveCurrentDraft(false); });
   els.dateInput.addEventListener("input", () => { if (!suppressChange) saveCurrentDraft(false); });
-  els.teacherComment.addEventListener("input", () => { if (!suppressChange) saveCurrentDraft(false); });
+  els.judgeInput.addEventListener("input", () => {
+    meta.juez = currentJuez();
+    writeMeta();
+    if (!suppressChange) saveCurrentDraft(false);
+  });
 
   $("#previousStudent").addEventListener("click", () => {
     const index = STUDENTS.findIndex((student) => student.n === currentStudentNumber);
@@ -711,12 +718,8 @@ function bindEvents() {
   });
   $("#resetCurrent").addEventListener("click", resetCurrent);
   $("#markExcellent").addEventListener("click", markMaximum);
-  $("#clearNotes").addEventListener("click", clearNotes);
-  $("#saveReport").addEventListener("click", saveCurrentReport);
   $("#submitServer").addEventListener("click", submitScoresToServer);
-  $("#submitServerBar").addEventListener("click", submitScoresToServer);
   $("#exportClassPdf").addEventListener("click", exportClassPdf);
-  $("#exportClassPdfBar").addEventListener("click", exportClassPdf);
   $("#openHistory").addEventListener("click", openHistory);
   $("#closeHistory").addEventListener("click", () => els.historyDialog.close());
   $("#clearHistory").addEventListener("click", clearHistory);
@@ -724,10 +727,10 @@ function bindEvents() {
 
 function init() {
   els.dateInput.value = todayISO();
+  els.judgeInput.value = meta.juez || "";
   bindEvents();
   refreshStudentOptions();
   renderRubric(getRecord());
-  renderQuickNotes(getRecord());
   updateScore(getRecord());
   updateStatusPill(getRecord());
   refreshStats();

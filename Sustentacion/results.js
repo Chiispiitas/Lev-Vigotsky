@@ -42,6 +42,7 @@ const els = {
 };
 
 let entries = [];
+let sessions = [];
 
 function formatScore(value) {
   const rounded = Math.round(Number(value || 0) * 100) / 100;
@@ -78,23 +79,25 @@ function setStatus(message, type = "") {
 }
 
 async function fetchEntries() {
-  setStatus("Cargando datos del CMS…");
+  setStatus("Cargando calificaciones…");
   els.refreshButton.disabled = true;
   try {
     const url = new URL(SUSTENTACION_ENDPOINT);
     url.searchParams.set("courseId", COURSE_ID);
     const response = await fetch(url.toString());
     const data = await response.json();
-    if (!response.ok || data.ok === false) throw new Error(data.error || `SERVER ${response.status}`);
+    if (!response.ok || data.ok === false) throw new Error(data.error || `Error ${response.status}`);
     entries = Array.isArray(data.items) ? data.items : [];
+    sessions = Array.isArray(data.sessions) ? data.sessions : [];
     renderAll();
-    setStatus(`${entries.length} entrada(s) cargadas desde CMS Sustentacion.`, "ok");
+    setStatus(`${entries.length} registro(s) cargado(s).`, "ok");
   } catch (error) {
     console.error(error);
     entries = [];
+    sessions = [];
     renderAll();
     const localHint = window.location.protocol === "file:" ? " Abre esta página desde GitHub Pages o con un servidor local si el navegador bloquea file://." : "";
-    setStatus(`No se pudo leer CMS Sustentacion: ${error.message}.${localHint}`, "error");
+    setStatus(`No se pudo cargar calificaciones: ${error.message}.${localHint}`, "error");
   } finally {
     els.refreshButton.disabled = false;
   }
@@ -133,13 +136,13 @@ function renderProjection() {
   const allScores = averages.flatMap((item) => item.scores);
   const classAverage = allScores.length ? allScores.reduce((sum, score) => sum + score, 0) / allScores.length : 0;
   els.classAverage.textContent = allScores.length ? `${formatScore(classAverage)} / 10` : "—";
-  els.averageCaption.textContent = allScores.length ? "Promedio calculado desde todas las entradas guardadas en el CMS" : "Esperando registros del CMS";
+  els.averageCaption.textContent = allScores.length ? "Promedio calculado con las calificaciones publicadas" : "Esperando calificaciones publicadas";
   els.studentCount.textContent = String(averages.length);
   els.entryCount.textContent = String(entries.length);
   els.lastRefresh.textContent = new Intl.DateTimeFormat("es-EC", { hour: "2-digit", minute: "2-digit" }).format(new Date());
 
   if (!averages.length) {
-    els.studentAverageGrid.innerHTML = `<div class="student-card"><div class="student-name"><strong>No hay datos todavía</strong><span>Usa el botón SERVER en la rúbrica para enviar las evaluaciones.</span></div></div>`;
+    els.studentAverageGrid.innerHTML = `<div class="student-card"><div class="student-name"><strong>No hay datos todavía</strong><span>Usa Publicar calificaciones en la rúbrica para enviar las evaluaciones.</span></div></div>`;
     return;
   }
 
@@ -154,9 +157,15 @@ function renderProjection() {
     </article>`).join("");
 }
 
+function judgeForEntry(entry) {
+  if (entry.juez || entry.judgeName) return entry.juez || entry.judgeName;
+  const session = sessions.find((item) => item.sessionKey && item.sessionKey === entry.sessionKey) || sessions.find((item) => item.batchId && item.batchId === entry.batchId);
+  return session?.juez || session?.judgeName || "—";
+}
+
 function renderEntries() {
   const query = normalize(els.entrySearch.value);
-  const filtered = query ? entries.filter((entry) => normalize(`${entry.studentNumber} ${entry.studentName} ${entry.evaluationDate} ${entry.comment} ${entry.notesText}`).includes(query)) : entries;
+  const filtered = query ? entries.filter((entry) => normalize(`${entry.studentNumber} ${entry.studentName} ${entry.evaluationDate} ${judgeForEntry(entry)}`).includes(query)) : entries;
   const sorted = [...filtered].sort((a, b) => {
     const dateA = String(a.submittedAt || a.savedAt || a.evaluationDate || "");
     const dateB = String(b.submittedAt || b.savedAt || b.evaluationDate || "");
@@ -174,7 +183,7 @@ function renderEntries() {
       <td><strong>${escapeHtml(entry.studentName || "")}</strong></td>
       <td>${escapeHtml(formatDate(entry.evaluationDate))}</td>
       <td class="score">${escapeHtml(formatScore(entry.scoreTotal))} / 10</td>
-      <td>${escapeHtml(entry.comment || entry.notesText || "")}</td>
+      <td>${escapeHtml(judgeForEntry(entry))}</td>
       <td>${escapeHtml(formatDate(entry.submittedAt || entry.savedAt))}</td>
     </tr>`).join("");
 }

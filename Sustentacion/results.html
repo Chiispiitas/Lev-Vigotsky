@@ -21,7 +21,7 @@
 
     <nav class="tabs" aria-label="Vistas de resultados">
       <button class="tab active" type="button" data-tab="projection">Proyección</button>
-      <button class="tab" type="button" data-tab="entries">Entradas CMS</button>
+      <button class="tab" type="button" data-tab="entries">Registros</button>
     </nav>
 
     <main>
@@ -30,11 +30,11 @@
           <div>
             <p class="eyebrow">Promedio general</p>
             <strong id="classAverage">—</strong>
-            <span id="averageCaption">Esperando registros del CMS</span>
+            <span id="averageCaption">Esperando calificaciones publicadas</span>
           </div>
           <div class="hero-stats">
             <article><span>Estudiantes</span><b id="studentCount">0</b></article>
-            <article><span>Entradas</span><b id="entryCount">0</b></article>
+            <article><span>Registros</span><b id="entryCount">0</b></article>
             <article><span>Última actualización</span><b id="lastRefresh">—</b></article>
           </div>
         </section>
@@ -52,10 +52,10 @@
         <section class="projection-card">
           <div class="section-title with-tools">
             <div>
-              <p class="eyebrow">CMS Collection</p>
-              <h2>Entradas de Sustentacion</h2>
+              <p class="eyebrow">Registro de calificaciones</p>
+              <h2>Calificaciones publicadas</h2>
             </div>
-            <input id="entrySearch" type="search" placeholder="Buscar estudiante, fecha o comentario…" />
+            <input id="entrySearch" type="search" placeholder="Buscar estudiante, fecha o juez…" />
           </div>
           <div class="table-wrap">
             <table>
@@ -65,8 +65,8 @@
                   <th>Estudiante</th>
                   <th>Fecha</th>
                   <th>Puntaje</th>
-                  <th>Comentario / notas</th>
-                  <th>SERVER</th>
+                  <th>Juez</th>
+                  <th>Publicado</th>
                 </tr>
               </thead>
               <tbody id="entryTableBody"></tbody>
@@ -76,7 +76,7 @@
       </section>
     </main>
 
-    <div class="status" id="statusBox">Cargando datos del CMS…</div>
+    <div class="status" id="statusBox">Cargando calificaciones…</div>
   </div>
 
   <script src="results.js"></script>

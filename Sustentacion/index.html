@@ -29,7 +29,7 @@
         <div>
           <p class="eyebrow dark">Evaluación FCT</p>
           <h2 id="mainTitle">Sustentación de prácticas preprofesionales</h2>
-          <p class="hero-copy">Selecciona al estudiante, marca la escala de cada criterio, añade observaciones breves y guarda el consolidado. Luego puedes enviar las calificaciones al SERVER o generar el PDF general del curso.</p>
+          <p class="hero-copy">Selecciona al estudiante, marca la escala de cada criterio y publica las calificaciones o genera el PDF general del curso.</p>
         </div>
         <div class="hero-badge">36 estudiantes</div>
       </section>
@@ -52,10 +52,13 @@
             <input class="text-input" id="dateInput" type="date" />
           </div>
           <div>
-            <label class="field-label" for="studentSearch">Buscar</label>
-            <input class="text-input" id="studentSearch" type="search" placeholder="Nombre o número de lista…" autocomplete="off" />
+            <label class="field-label" for="judgeInput">Juez</label>
+            <input class="text-input" id="judgeInput" type="text" placeholder="Nombre del juez" autocomplete="name" />
           </div>
         </div>
+
+        <label class="field-label" for="studentSearch">Buscar estudiante</label>
+        <input class="text-input" id="studentSearch" type="search" placeholder="Nombre o número de lista…" autocomplete="off" />
 
         <label class="field-label" for="studentSelect">Estudiante</label>
         <select class="text-input" id="studentSelect"></select>
@@ -101,40 +104,22 @@
         <div class="rubric-list" id="rubricList"></div>
       </section>
 
-      <section class="panel">
-        <div class="panel-head notes-head">
-          <div>
-            <p class="eyebrow dark">Observaciones</p>
-          </div>
-          <button class="ghost-button" id="clearNotes" type="button">Limpiar</button>
-        </div>
-        <div class="quick-notes" id="quickNotes"></div>
-        <label class="field-label" for="teacherComment">Comentario adicional</label>
-        <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Escribe una observación breve sobre la sustentación…"></textarea>
-      </section>
-
       <section class="panel bulk-panel">
         <div class="panel-head">
           <div>
-            <p class="eyebrow dark">SERVER y PDF</p>
+            <p class="eyebrow dark">Publicación y PDF</p>
             <h3>Consolidado del curso</h3>
           </div>
         </div>
-        <p class="bulk-copy">El botón SERVER envía al CMS solamente las evaluaciones guardadas. El PDF general es la única opción de exportación o uso compartido.</p>
+        <p class="bulk-copy">Publica las evaluaciones marcadas como evaluadas o genera el PDF general del curso.</p>
         <div class="bulk-actions two-actions">
-          <button class="ghost-button server-button" id="submitServer" type="button">Submit scores to SERVER</button>
-          <button class="ghost-button" id="exportClassPdf" type="button">Crear PDF / Imprimir</button>
+          <button class="ghost-button server-button" id="submitServer" type="button">Publicar calificaciones</button>
+          <button class="ghost-button" id="exportClassPdf" type="button">Crear PDF general</button>
         </div>
-        <p class="server-status" id="serverStatus">CMS: colección Sustentacion</p>
+        <p class="server-status" id="serverStatus">Listo para publicar calificaciones.</p>
       </section>
     </main>
   </div>
-
-  <nav class="action-bar" id="actionBar" aria-label="Acciones de reporte">
-    <button id="saveReport" type="button" class="secondary-action">Guardar</button>
-    <button id="submitServerBar" type="button" class="secondary-action server-action">SERVER</button>
-    <button id="exportClassPdfBar" type="button" class="primary-action">PDF general</button>
-  </nav>
 
   <dialog class="history-dialog" id="historyDialog">
     <div class="dialog-head">
