@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drills infinitos: rectas e inecuaciones</title>
+  <style>
+    :root{
+      --bg1:#fff7e8;
+      --bg2:#eaf4ff;
+      --ink:#243044;
+      --muted:#667085;
+      --card:#ffffff;
+      --primary:#5b6cff;
+      --primary-dark:#3344d6;
+      --green:#16a34a;
+      --red:#ef4444;
+      --yellow:#f59e0b;
+      --blue:#0ea5e9;
+      --purple:#9b5cff;
+      --line:#e7eaf3;
+      --shadow:0 18px 45px rgba(36,48,68,.13);
+      --radius:26px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(255,210,102,.55), transparent 28%),
+        radial-gradient(circle at 88% 2%, rgba(91,108,255,.25), transparent 30%),
+        linear-gradient(135deg,var(--bg1),var(--bg2));
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.45;
+      background-image:
+        linear-gradient(45deg, rgba(91,108,255,.08) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(14,165,233,.08) 25%, transparent 25%);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom, #000, transparent 75%);
+    }
+    button,input,select{font:inherit}
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:18px;
+      padding:16px clamp(14px,3vw,34px);
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(231,234,243,.95);
+    }
+    .brand{display:flex;align-items:center;gap:14px;min-width:250px}
+    .logo{
+      width:54px;height:54px;border-radius:20px;
+      display:grid;place-items:center;
+      background:linear-gradient(135deg,#ffcf5d,#ff8ab3);
+      box-shadow:0 12px 28px rgba(245,158,11,.26);
+      font-size:30px;
+      animation:floaty 3.8s ease-in-out infinite;
+    }
+    @keyframes floaty{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-6px) rotate(2deg)}}
+    h1{font-size:clamp(1.2rem,2.4vw,2rem);margin:0;letter-spacing:-.04em}
+    .brand p{margin:3px 0 0;color:var(--muted);font-size:.95rem}
+    .stats{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+    .chip{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 14px;
+      box-shadow:0 8px 18px rgba(36,48,68,.08);
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .shell{max-width:1220px;margin:0 auto;padding:24px clamp(14px,3vw,32px) 50px}
+    .notice{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:14px;
+      align-items:center;
+      background:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:20px;
+      animation:pop .42s cubic-bezier(.2,1.45,.35,1) both;
+    }
+    .notice-icon{font-size:32px;width:54px;height:54px;display:grid;place-items:center;border-radius:18px;background:#eef2ff}
+    .notice h2{margin:0 0 4px;font-size:1.05rem}
+    .notice p{margin:0;color:var(--muted);line-height:1.45}
+    .grid{display:grid;grid-template-columns:minmax(340px, .9fr) minmax(420px, 1.1fr);gap:20px;align-items:start}
+    .card{
+      background:rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+      animation:pop .45s cubic-bezier(.2,1.4,.35,1) both;
+    }
+    .card::after{
+      content:"";
+      position:absolute;
+      top:-90px;right:-90px;width:180px;height:180px;border-radius:50%;
+      background:rgba(91,108,255,.07);
+      pointer-events:none;
+    }
+    .card-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;position:relative;z-index:1}
+    .card-title h2{margin:0;font-size:1.16rem;letter-spacing:-.03em}
+    .card-title p{margin:4px 0 0;color:var(--muted);font-size:.93rem;line-height:1.35}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      border-radius:999px;
+      padding:7px 10px;
+      color:#fff;
+      font-size:.78rem;
+      font-weight:900;
+      letter-spacing:.02em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .pill.eq{background:linear-gradient(135deg,var(--blue),#2563eb)}
+    .pill.ineq{background:linear-gradient(135deg,var(--purple),#db2777)}
+    .exercise-box{
+      position:relative;z-index:1;
+      border-radius:24px;
+      padding:18px;
+      background:linear-gradient(135deg,#1e293b,#374151);
+      color:white;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.12), 0 16px 35px rgba(30,41,59,.2);
+      margin-bottom:14px;
+    }
+    .exercise-label{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#d7deee;font-size:.9rem;margin-bottom:12px}
+    .math-main{
+      font-size:clamp(2rem,5vw,3.6rem);
+      font-weight:950;
+      letter-spacing:-.06em;
+      text-align:center;
+      line-height:1.05;
+      text-shadow:0 8px 20px rgba(0,0,0,.18);
+      user-select:none;
+    }
+    .hint-strip{
+      display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:center;
+    }
+    .mini-tag{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:7px 10px;font-weight:800;font-size:.82rem}
+    .steps{display:grid;gap:14px;position:relative;z-index:1}
+    .step{
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:#fff;
+      padding:15px;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .step.active{border-color:rgba(91,108,255,.55);box-shadow:0 12px 28px rgba(91,108,255,.12)}
+    .step.good{border-color:rgba(22,163,74,.5);background:linear-gradient(135deg,#fff,#f0fdf4)}
+    .step.bad{animation:shake .35s ease;border-color:rgba(239,68,68,.55);background:linear-gradient(135deg,#fff,#fff1f2)}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+    .step-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+    .step-head strong{font-size:.98rem}
+    .step-num{width:32px;height:32px;border-radius:12px;background:#eef2ff;color:var(--primary-dark);display:inline-grid;place-items:center;margin-right:8px;font-weight:950}
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{
+      display:flex;align-items:center;gap:8px;background:#f8fafc;border:1px solid #e5e7eb;border-radius:16px;padding:10px 12px;min-height:52px;
+    }
+    .field label{font-weight:900;color:#475569;white-space:nowrap}
+    .field input{
+      width:100%;min-width:0;
+      border:0;background:transparent;outline:0;
+      font-size:1.1rem;font-weight:900;color:var(--ink);
+      text-align:center;
+    }
+    .table-card{overflow:auto;border-radius:18px;border:1px solid var(--line)}
+    table{border-collapse:collapse;width:100%;background:#fff;min-width:330px}
+    th,td{border-bottom:1px solid var(--line);padding:11px;text-align:center}
+    th{background:#f8fafc;color:#475569;font-size:.88rem;text-transform:uppercase;letter-spacing:.04em}
+    tr:last-child td{border-bottom:0}
+    td.fixed{font-weight:950;background:#fefce8}
+    td input{width:92px;max-width:100%;border:1px solid #dbe2ee;border-radius:12px;padding:8px;text-align:center;font-weight:900;outline:0;background:#fff}
+    td input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(91,108,255,.12)}
+    .buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    button{
+      border:0;border-radius:16px;padding:11px 14px;font-weight:950;cursor:pointer;
+      transition:transform .14s ease, box-shadow .14s ease, filter .14s ease;
+      box-shadow:0 10px 20px rgba(36,48,68,.10);
+    }
+    button:hover{transform:translateY(-2px);filter:brightness(1.02)}
+    button:active{transform:translateY(2px) scale(.98)}
+    button.primary{color:white;background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
+    button.secondary{background:#eef2ff;color:var(--primary-dark)}
+    button.green{background:#dcfce7;color:#166534}
+    button.ghost{background:#fff;color:#334155;border:1px solid var(--line)}
+    button.danger{background:#fee2e2;color:#991b1b}
+    button.choice{background:#f8fafc;border:1px solid #dbe2ee;color:#334155;box-shadow:none}
+    button.choice.selected{background:#eef2ff;border-color:var(--primary);color:var(--primary-dark);transform:translateY(-2px) scale(1.02);box-shadow:0 12px 24px rgba(91,108,255,.16)}
+    .mini-explain{
+      display:none;
+      margin-top:12px;
+      background:#f8fafc;
+      border:1px dashed #cbd5e1;
+      border-radius:18px;
+      padding:12px;
+      color:#475569;
+      line-height:1.55;
+      font-weight:700;
+    }
+    .mini-explain.show{display:block;animation:slide .28s ease both}
+    .mini-explain .line{display:block;background:white;border:1px solid #e2e8f0;border-radius:14px;margin:7px 0;padding:8px 10px;color:#1e293b;font-weight:950}
+    @keyframes slide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+    .graph-area{position:relative;z-index:1;display:grid;gap:14px}
+    .canvas-wrap{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:24px;
+      overflow:hidden;
+      box-shadow:inset 0 0 0 1px rgba(36,48,68,.03);
+      position:relative;
+    }
+    canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+    .graph-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+    .point-list{display:flex;gap:8px;flex-wrap:wrap;color:#475569;font-weight:800;font-size:.9rem}
+    .point-badge{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px}
+    .ineq-controls{display:none;gap:12px;grid-template-columns:1fr 1fr;margin-top:12px}
+    .ineq-controls.show{display:grid}
+    .choice-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .toast{
+      position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);
+      background:#111827;color:#fff;border-radius:999px;padding:13px 18px;font-weight:900;
+      box-shadow:0 18px 35px rgba(0,0,0,.25);z-index:30;opacity:0;transition:.25s ease;
+      max-width:min(92vw,680px);text-align:center;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .feedback{
+      min-height:56px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:14px 16px;
+      color:#475569;
+      font-weight:750;
+      line-height:1.45;
+    }
+    .feedback.good{background:#f0fdf4;color:#166534;border-color:#bbf7d0;animation:bounce .45s cubic-bezier(.2,1.7,.45,1)}
+    .feedback.bad{background:#fff1f2;color:#991b1b;border-color:#fecdd3;animation:shake .35s ease}
+    @keyframes bounce{0%{transform:scale(.96)}55%{transform:scale(1.035)}100%{transform:scale(1)}}
+    .solution-panel{
+      display:none;
+      border-radius:22px;
+      border:1px solid #fde68a;
+      background:#fffbeb;
+      padding:14px;
+      line-height:1.55;
+      color:#713f12;
+      font-weight:750;
+    }
+    .solution-panel.show{display:block;animation:slide .25s ease both}
+    .solution-panel strong{color:#451a03}
+    .confetti{position:fixed;top:-20px;width:9px;height:16px;border-radius:4px;z-index:25;pointer-events:none;animation:fall 1.2s linear forwards}
+    @keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+    .small-note{font-size:.9rem;color:var(--muted);line-height:1.45;margin:8px 0 0}
+    .kbd{display:inline-grid;place-items:center;min-width:30px;height:30px;border-radius:9px;background:#e2e8f0;color:#334155;font-weight:950;padding:0 7px}
+    @media(max-width:930px){
+      .grid{grid-template-columns:1fr}
+      .topbar{align-items:flex-start;flex-direction:column}
+      .stats{justify-content:flex-start}
+      .notice{grid-template-columns:auto 1fr}
+      .notice .buttons{grid-column:1/-1;margin-top:0}
+    }
+    @media(max-width:560px){
+      .input-row{grid-template-columns:1fr}
+      .ineq-controls.show{grid-template-columns:1fr}
+      .math-main{font-size:2rem}
+      .card{padding:15px;border-radius:22px}
+      .notice{padding:14px;border-radius:22px}
+      .topbar{padding:13px}
+    }
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">📈</div>
+      <div>
+        <h1>Drills infinitos de rectas e inecuaciones</h1>
+        <p>Practica siempre el mismo proceso: dos casos, despeje, tabla y gráfica.</p>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="chip">Ejercicio <span id="exerciseCount">1</span></div>
+      <div class="chip">⭐ <span id="score">0</span> puntos</div>
+      <div class="chip">🔥 Racha <span id="streak">0</span></div>
+      <button class="ghost" id="soundBtn" type="button">🔊 Sonido</button>
+      <button class="primary" id="fullBtn" type="button">Pantalla completa</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="notice" aria-label="Explicación breve">
+      <div class="notice-icon" aria-hidden="true">💡</div>
+      <div>
+        <h2>Idea vulgar y simple</h2>
+        <p>
+          Para graficar una inecuación, primero haces casi lo mismo que con una ecuación:
+          cambias mentalmente el signo por igual, haces x = 0 y y = 0, despejas, armas la tabla y dibujas la recta.
+          Lo extra es decidir si la línea es punteada o continua, y qué lado se sombrea.
+        </p>
+      </div>
+      <div class="buttons">
+        <button class="primary" id="newBtnTop" type="button">Nuevo drill</button>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-title">
+          <div>
+            <h2>Ejercicio actual</h2>
+            <p>Resuelve sin saltarte pasos. Cada ejercicio nuevo cambia solo los números o el signo.</p>
+          </div>
+          <span class="pill" id="typePill">Recta</span>
+        </div>
+
+        <div class="exercise-box">
+          <div class="exercise-label">
+            <span id="exerciseKind">Ecuación lineal</span>
+            <span id="levelLabel">Drill rápido</span>
+          </div>
+          <div class="math-main" id="problemText">2x + 3y = 6</div>
+          <div class="hint-strip" id="hintStrip">
+            <span class="mini-tag">Caso 1: x = 0</span>
+            <span class="mini-tag">Caso 2: y = 0</span>
+            <span class="mini-tag">Tabla</span>
+            <span class="mini-tag">Gráfica</span>
+          </div>
+        </div>
+
+        <div class="steps">
+          <section class="step active" id="caseStep">
+            <div class="step-head">
+              <strong><span class="step-num">1</span>Dos casos y despeje</strong>
+              <button class="ghost" id="explainBtn" type="button">Ver despeje</button>
+            </div>
+            <div class="input-row">
+              <div class="field">
+                <label for="yWhenX0">Si x = 0, y =</label>
+                <input id="yWhenX0" inputmode="decimal" autocomplete="off" placeholder="?" />
+              </div>
+              <div class="field">
+                <label for="xWhenY0">Si y = 0, x =</label>
+                <input id="xWhenY0" inputmode="decimal" autocomplete="off" placeholder="?" />
+              </div>
+            </div>
+            <div class="mini-explain" id="miniExplain"></div>
+            <div class="buttons">
+              <button class="primary" id="checkCasesBtn" type="button">Comprobar casos</button>
+              <button class="ghost" id="clearCasesBtn" type="button">Limpiar</button>
+            </div>
+          </section>
+
+          <section class="step" id="tableStep">
+            <div class="step-head">
+              <strong><span class="step-num">2</span>Tabla de valores</strong>
+              <span class="small-note">Usa los dos puntos encontrados</span>
+            </div>
+            <div class="table-card">
+              <table aria-label="Tabla de valores">
+                <thead>
+                  <tr><th>Caso</th><th>x</th><th>y</th><th>Punto</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="fixed">x = 0</td>
+                    <td class="fixed">0</td>
+                    <td><input id="tableY1" inputmode="decimal" autocomplete="off" placeholder="y" /></td>
+                    <td>(0, y)</td>
+                  </tr>
+                  <tr>
+                    <td class="fixed">y = 0</td>
+                    <td><input id="tableX2" inputmode="decimal" autocomplete="off" placeholder="x" /></td>
+                    <td class="fixed">0</td>
+                    <td>(x, 0)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="buttons">
+              <button class="primary" id="checkTableBtn" type="button">Comprobar tabla</button>
+              <button class="secondary" id="copyFromCasesBtn" type="button">Copiar de mis casos</button>
+            </div>
+          </section>
+
+          <section class="step" id="ineqStep">
+            <div class="step-head">
+              <strong><span class="step-num">3</span>Solo si es inecuación</strong>
+              <span class="small-note">Si es ecuación, este paso se marca solo.</span>
+            </div>
+            <p class="small-note" id="ineqText">
+              En una inecuación, la recta se obtiene igual. Después decides línea y sombreado.
+            </p>
+            <div class="ineq-controls" id="ineqControls">
+              <div>
+                <strong>Tipo de línea</strong>
+                <div class="choice-row" id="lineChoices">
+                  <button class="choice" data-line="dashed" type="button">Punteada</button>
+                  <button class="choice" data-line="solid" type="button">Continua</button>
+                </div>
+              </div>
+              <div>
+                <strong>Sombreado</strong>
+                <div class="choice-row" id="shadeChoices">
+                  <button class="choice" data-shade="origin" type="button">Lado del (0,0)</button>
+                  <button class="choice" data-shade="opposite" type="button">Lado contrario</button>
+                </div>
+              </div>
+            </div>
+            <div class="buttons">
+              <button class="primary" id="checkIneqBtn" type="button">Comprobar inecuación</button>
+            </div>
+          </section>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-title">
+          <div>
+            <h2>Gráfica</h2>
+            <p>Haz clic en el plano para ubicar los dos puntos de la tabla. El clic se ajusta al número entero más cercano.</p>
+          </div>
+          <span class="pill eq">Plano</span>
+        </div>
+
+        <div class="graph-area">
+          <div class="canvas-wrap">
+            <canvas id="graph" width="780" height="560" aria-label="Plano cartesiano interactivo"></canvas>
+          </div>
+          <div class="graph-toolbar">
+            <div class="point-list" id="pointList"><span class="point-badge">Sin puntos todavía</span></div>
+            <div class="buttons" style="margin-top:0">
+              <button class="ghost" id="undoPointBtn" type="button">Borrar último</button>
+              <button class="ghost" id="clearPointsBtn" type="button">Limpiar gráfica</button>
+              <button class="primary" id="checkGraphBtn" type="button">Comprobar gráfica</button>
+            </div>
+          </div>
+          <div class="feedback" id="feedback">Empieza con los dos casos: x = 0 y y = 0.</div>
+          <div class="solution-panel" id="solutionPanel"></div>
+          <div class="buttons">
+            <button class="green" id="newBtn" type="button">Siguiente ejercicio</button>
+            <button class="secondary" id="solutionBtn" type="button">Ver solución</button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const state = {
+      exercise: null,
+      count: 1,
+      score: 0,
+      streak: 0,
+      points: [],
+      selectedLine: null,
+      selectedShade: null,
+      graphSolved: false,
+      sound: true,
+      revealed: false
+    };
+
+    const els = {
+      exerciseCount: $('exerciseCount'), score: $('score'), streak: $('streak'), typePill: $('typePill'),
+      exerciseKind: $('exerciseKind'), levelLabel: $('levelLabel'), problemText: $('problemText'), hintStrip: $('hintStrip'),
+      yWhenX0: $('yWhenX0'), xWhenY0: $('xWhenY0'), tableY1: $('tableY1'), tableX2: $('tableX2'),
+      miniExplain: $('miniExplain'), feedback: $('feedback'), solutionPanel: $('solutionPanel'), graph: $('graph'),
+      pointList: $('pointList'), ineqControls: $('ineqControls'), ineqText: $('ineqText'),
+      caseStep: $('caseStep'), tableStep: $('tableStep'), ineqStep: $('ineqStep'), toast: $('toast'), soundBtn: $('soundBtn')
+    };
+
+    const ctx = els.graph.getContext('2d');
+    const bounds = {min:-10,max:10};
+    const margin = 44;
+
+    function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b]}return a||1}
+    function lcm(a,b){return Math.abs(a*b)/gcd(a,b)}
+    function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    function nonZero(min,max){let n=0;while(n===0)n=randInt(min,max);return n}
+    function niceNumber(n){
+      if(Math.abs(n-Math.round(n))<1e-9) return String(Math.round(n));
+      return (Math.round(n*100)/100).toString().replace('.',',');
+    }
+    function parseNum(v){
+      if(typeof v !== 'string') return NaN;
+      const cleaned = v.trim().replace(',', '.');
+      if(cleaned === '') return NaN;
+      return Number(cleaned);
+    }
+    function nearly(a,b){return Number.isFinite(a) && Math.abs(a-b) < .01}
+    function term(coef, variable, first=false){
+      const abs = Math.abs(coef);
+      const body = (abs===1 ? '' : abs) + variable;
+      if(first) return coef < 0 ? '-' + body : body;
+      return coef < 0 ? ' - ' + body : ' + ' + body;
+    }
+    function boundaryText(ex){return `${term(ex.A,'x',true)}${term(ex.B,'y')} = ${ex.C}`}
+    function problemText(ex){return `${term(ex.A,'x',true)}${term(ex.B,'y')} ${ex.op} ${ex.C}`}
+    function inverseOp(op){return ({'>':'<','<':'>','≥':'≤','≤':'≥'})[op] || op}
+    function isStrict(op){return op === '>' || op === '<'}
+    function evalIneq(A,B,C,op,x,y){
+      const v = A*x + B*y;
+      if(op === '>') return v > C;
+      if(op === '<') return v < C;
+      if(op === '≥') return v >= C;
+      if(op === '≤') return v <= C;
+      return Math.abs(v-C)<1e-9;
+    }
+
+    function makeExercise(){
+      let xInt = nonZero(-7,7);
+      let yInt = nonZero(-7,7);
+      while(Math.abs(xInt) === Math.abs(yInt) && Math.random()<.5) yInt = nonZero(-7,7);
+      const C = lcm(Math.abs(xInt), Math.abs(yInt));
+      const A = C / xInt;
+      const B = C / yInt;
+      const type = Math.random() < .55 ? 'equation' : 'inequality';
+      const op = type === 'equation' ? '=' : pick(['>','<','≥','≤']);
+      return {
+        A,B,C,type,op,
+        xInt:C/A,
+        yInt:C/B,
+        expectedLine:type==='inequality' ? (isStrict(op) ? 'dashed' : 'solid') : 'solid',
+        expectedShade:type==='inequality' ? (evalIneq(A,B,C,op,0,0) ? 'origin' : 'opposite') : null
+      };
+    }
+
+    function resetInputs(){
+      ['yWhenX0','xWhenY0','tableY1','tableX2'].forEach(id => els[id].value = '');
+      state.points = [];
+      state.selectedLine = null;
+      state.selectedShade = null;
+      state.graphSolved = false;
+      state.revealed = false;
+      els.solutionPanel.classList.remove('show');
+      els.solutionPanel.innerHTML = '';
+      els.miniExplain.classList.remove('show');
+      els.miniExplain.innerHTML = '';
+      document.querySelectorAll('.choice').forEach(b=>b.classList.remove('selected'));
+      [els.caseStep, els.tableStep, els.ineqStep].forEach(s=>s.classList.remove('good','bad','active'));
+      els.caseStep.classList.add('active');
+      updatePointList();
+    }
+
+    function loadExercise(increment=true){
+      if(increment && state.exercise) state.count++;
+      state.exercise = makeExercise();
+      resetInputs();
+      const ex = state.exercise;
+      els.exerciseCount.textContent = state.count;
+      els.problemText.textContent = problemText(ex);
+      if(ex.type === 'equation'){
+        els.typePill.textContent = 'Ecuación';
+        els.typePill.className = 'pill eq';
+        els.exerciseKind.textContent = 'Ecuación lineal';
+        els.levelLabel.textContent = 'Corte con ejes';
+        els.hintStrip.innerHTML = '<span class="mini-tag">x = 0</span><span class="mini-tag">y = 0</span><span class="mini-tag">tabla</span><span class="mini-tag">línea continua</span>';
+        els.ineqControls.classList.remove('show');
+        els.ineqText.textContent = 'Este ejercicio es ecuación: solo ubica los dos puntos y une con línea continua.';
+        els.ineqStep.classList.add('good');
+      } else {
+        els.typePill.textContent = 'Inecuación';
+        els.typePill.className = 'pill ineq';
+        els.exerciseKind.textContent = 'Inecuación lineal';
+        els.levelLabel.textContent = 'Mismo despeje + sombreado';
+        els.hintStrip.innerHTML = '<span class="mini-tag">primero usa =</span><span class="mini-tag">x = 0</span><span class="mini-tag">y = 0</span><span class="mini-tag">sombreado</span>';
+        els.ineqControls.classList.add('show');
+        const lineMsg = isStrict(ex.op) ? 'Como el signo no tiene rayita de igual, la línea debe ser punteada.' : 'Como el signo tiene rayita de igual, la línea debe ser continua.';
+        const shadeMsg = ex.expectedShade === 'origin' ? 'El punto (0,0) sí cumple, así que se sombrea ese lado.' : 'El punto (0,0) no cumple, así que se sombrea el lado contrario.';
+        els.ineqText.textContent = `Mismo proceso para hallar la recta guía: ${boundaryText(ex)}. Después: ${lineMsg} ${shadeMsg}`;
+      }
+      setFeedback('Empieza haciendo dos casos: cuando x = 0 encuentras y; cuando y = 0 encuentras x.', '');
+      drawGraph();
+    }
+
+    function showToast(msg){
+      els.toast.textContent = msg;
+      els.toast.classList.add('show');
+      clearTimeout(showToast.t);
+      showToast.t = setTimeout(()=>els.toast.classList.remove('show'), 1900);
+    }
+
+    function setFeedback(msg, kind=''){
+      els.feedback.className = 'feedback' + (kind ? ' ' + kind : '');
+      els.feedback.innerHTML = msg;
+    }
+
+    function bumpScore(n){
+      state.score += n;
+      state.streak += 1;
+      els.score.textContent = state.score;
+      els.streak.textContent = state.streak;
+      if(n>0) sound('good');
+    }
+    function breakStreak(){
+      state.streak = 0;
+      els.streak.textContent = state.streak;
+      sound('bad');
+    }
+
+    function sound(type){
+      if(!state.sound) return;
+      try{
+        const ac = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ac.createOscillator();
+        const g = ac.createGain();
+        o.connect(g);g.connect(ac.destination);
+        const now=ac.currentTime;
+        if(type==='good'){
+          o.frequency.setValueAtTime(660,now); o.frequency.exponentialRampToValueAtTime(990,now+.12);
+          g.gain.setValueAtTime(.08,now); g.gain.exponentialRampToValueAtTime(.001,now+.18);
+        }else{
+          o.frequency.setValueAtTime(210,now); o.frequency.exponentialRampToValueAtTime(120,now+.12);
+          g.gain.setValueAtTime(.08,now); g.gain.exponentialRampToValueAtTime(.001,now+.18);
+        }
+        o.start(now);o.stop(now+.2);
+      }catch(e){}
+    }
+
+    function confetti(){
+      const colors=['#5b6cff','#0ea5e9','#16a34a','#f59e0b','#db2777','#ef4444'];
+      for(let i=0;i<22;i++){
+        const p=document.createElement('span');
+        p.className='confetti';
+        p.style.left=Math.random()*100+'vw';
+        p.style.background=pick(colors);
+        p.style.animationDelay=(Math.random()*.15)+'s';
+        p.style.transform=`rotate(${Math.random()*180}deg)`;
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),1400);
+      }
+    }
+
+    function showExplain(){
+      const ex = state.exercise;
+      const top = ex.type === 'inequality'
+        ? `<strong>Inecuación:</strong> para graficar, primero úsala como recta guía: <span class="line">${boundaryText(ex)}</span>`
+        : `<strong>Ecuación:</strong> trabaja directamente con: <span class="line">${boundaryText(ex)}</span>`;
+      els.miniExplain.innerHTML = `${top}
+        <strong>Caso 1: x = 0</strong>
+        <span class="line">${ex.A}(0) ${ex.B<0?'-':'+'} ${Math.abs(ex.B)}y = ${ex.C}</span>
+        <span class="line">${ex.B}y = ${ex.C}</span>
+        <span class="line">y = ${ex.C} ÷ ${ex.B} = ${niceNumber(ex.yInt)}</span>
+        <strong>Caso 2: y = 0</strong>
+        <span class="line">${ex.A}x ${ex.B<0?'-':'+'} ${Math.abs(ex.B)}(0) = ${ex.C}</span>
+        <span class="line">${ex.A}x = ${ex.C}</span>
+        <span class="line">x = ${ex.C} ÷ ${ex.A} = ${niceNumber(ex.xInt)}</span>`;
+      els.miniExplain.classList.toggle('show');
+    }
+
+    function checkCases(){
+      const ex = state.exercise;
+      const y = parseNum(els.yWhenX0.value);
+      const x = parseNum(els.xWhenY0.value);
+      const okY = nearly(y, ex.yInt);
+      const okX = nearly(x, ex.xInt);
+      els.caseStep.classList.remove('bad','good');
+      if(okY && okX){
+        els.caseStep.classList.add('good');
+        els.tableStep.classList.add('active');
+        setFeedback(`Correcto. Los dos cortes son (0, ${niceNumber(ex.yInt)}) y (${niceNumber(ex.xInt)}, 0). Ahora pásalos a la tabla.`, 'good');
+        showToast('¡Bien! Dos casos listos.');
+        bumpScore(10);
+      } else {
+        els.caseStep.classList.add('bad');
+        const msg = [];
+        if(!okY) msg.push('Revisa el caso x = 0: ahí queda solo la y.');
+        if(!okX) msg.push('Revisa el caso y = 0: ahí queda solo la x.');
+        setFeedback(msg.join(' '), 'bad');
+        showToast('Hay un error en los casos.');
+        breakStreak();
+      }
+    }
+
+    function copyFromCases(){
+      els.tableY1.value = els.yWhenX0.value;
+      els.tableX2.value = els.xWhenY0.value;
+      showToast('Valores copiados a la tabla.');
+    }
+
+    function checkTable(){
+      const ex = state.exercise;
+      const y1 = parseNum(els.tableY1.value);
+      const x2 = parseNum(els.tableX2.value);
+      const ok = nearly(y1, ex.yInt) && nearly(x2, ex.xInt);
+      els.tableStep.classList.remove('bad','good');
+      if(ok){
+        els.tableStep.classList.add('good');
+        if(ex.type === 'inequality') els.ineqStep.classList.add('active');
+        setFeedback(`Tabla correcta: punto A = (0, ${niceNumber(ex.yInt)}) y punto B = (${niceNumber(ex.xInt)}, 0). Ahora haz clic en esos dos puntos en el plano.`, 'good');
+        showToast('Tabla correcta.');
+        bumpScore(10);
+      } else {
+        els.tableStep.classList.add('bad');
+        setFeedback('La tabla debe repetir exactamente los resultados de los dos casos. Revisa los espacios.', 'bad');
+        showToast('Revisa la tabla.');
+        breakStreak();
+      }
+    }
+
+    function checkIneq(){
+      const ex = state.exercise;
+      if(ex.type === 'equation'){
+        els.ineqStep.classList.add('good');
+        setFeedback('Este no es una inecuación. Sigue con la gráfica.', 'good');
+        return;
+      }
+      const okLine = state.selectedLine === ex.expectedLine;
+      const okShade = state.selectedShade === ex.expectedShade;
+      els.ineqStep.classList.remove('bad','good');
+      if(okLine && okShade){
+        els.ineqStep.classList.add('good');
+        const lineWord = ex.expectedLine === 'dashed' ? 'punteada' : 'continua';
+        const shadeWord = ex.expectedShade === 'origin' ? 'el lado del (0,0)' : 'el lado contrario al (0,0)';
+        setFeedback(`Correcto: línea ${lineWord} y sombreado hacia ${shadeWord}.`, 'good');
+        showToast('Inecuación lista.');
+        bumpScore(10);
+        drawGraph();
+      }else{
+        els.ineqStep.classList.add('bad');
+        let msg = 'Ajusta la inecuación: ';
+        if(!okLine) msg += isStrict(ex.op) ? 'si es > o <, la línea es punteada. ' : 'si es ≥ o ≤, la línea es continua. ';
+        if(!okShade) msg += 'Prueba el punto (0,0): si cumple, sombreas su lado; si no cumple, sombreas el contrario.';
+        setFeedback(msg, 'bad');
+        breakStreak();
+      }
+    }
+
+    function updatePointList(){
+      if(!state.points.length){
+        els.pointList.innerHTML='<span class="point-badge">Sin puntos todavía</span>';
+        return;
+      }
+      els.pointList.innerHTML = state.points.map((p,i)=>`<span class="point-badge">P${i+1}: (${p.x}, ${p.y})</span>`).join('');
+    }
+
+    function toPxX(x){return margin + (x-bounds.min)/(bounds.max-bounds.min)*(els.graph.width-2*margin)}
+    function toPxY(y){return els.graph.height - margin - (y-bounds.min)/(bounds.max-bounds.min)*(els.graph.height-2*margin)}
+    function toCoord(px,py){
+      const x = bounds.min + (px-margin)/(els.graph.width-2*margin)*(bounds.max-bounds.min);
+      const y = bounds.min + (els.graph.height-margin-py)/(els.graph.height-2*margin)*(bounds.max-bounds.min);
+      return {x:Math.round(x), y:Math.round(y)};
+    }
+    function lineEndpoints(ex){
+      // Intersections of Ax + By = C with the square boundaries.
+      const pts=[];
+      for(const x of [bounds.min,bounds.max]){
+        const y=(ex.C-ex.A*x)/ex.B;
+        if(y>=bounds.min-.001 && y<=bounds.max+.001) pts.push({x,y});
+      }
+      for(const y of [bounds.min,bounds.max]){
+        const x=(ex.C-ex.B*y)/ex.A;
+        if(x>=bounds.min-.001 && x<=bounds.max+.001) pts.push({x,y});
+      }
+      // remove duplicates
+      const uniq=[];
+      for(const p of pts){ if(!uniq.some(q=>Math.abs(q.x-p.x)<.001 && Math.abs(q.y-p.y)<.001)) uniq.push(p); }
+      return uniq.slice(0,2);
+    }
+
+    function drawGraph(showSolution=false){
+      const ex = state.exercise;
+      const w=els.graph.width, h=els.graph.height;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
+
+      // Solution shading for inequalities, once selected correctly or solution shown.
+      const showShade = ex && ex.type === 'inequality' && (showSolution || (state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade));
+      if(showShade){
+        ctx.save();
+        ctx.fillStyle='rgba(155,92,255,.15)';
+        const step=7;
+        for(let px=margin; px<=w-margin; px+=step){
+          for(let py=margin; py<=h-margin; py+=step){
+            const c = toCoord(px,py);
+            if(evalIneq(ex.A,ex.B,ex.C,ex.op,c.x,c.y)) ctx.fillRect(px-step/2,py-step/2,step,step);
+          }
+        }
+        ctx.restore();
+      }
+
+      // Grid
+      ctx.lineWidth=1;
+      for(let i=bounds.min;i<=bounds.max;i++){
+        ctx.strokeStyle = i===0 ? '#334155' : '#e2e8f0';
+        ctx.lineWidth = i===0 ? 2 : 1;
+        ctx.beginPath();ctx.moveTo(toPxX(i), margin);ctx.lineTo(toPxX(i), h-margin);ctx.stroke();
+        ctx.beginPath();ctx.moveTo(margin, toPxY(i));ctx.lineTo(w-margin, toPxY(i));ctx.stroke();
+      }
+      // Labels
+      ctx.fillStyle='#64748b';ctx.font='13px Inter, sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+      for(let i=bounds.min;i<=bounds.max;i+=2){ if(i!==0) ctx.fillText(i, toPxX(i), toPxY(0)+8); }
+      ctx.textAlign='left';ctx.textBaseline='middle';
+      for(let i=bounds.min;i<=bounds.max;i+=2){ if(i!==0) ctx.fillText(i, toPxX(0)+8, toPxY(i)); }
+      ctx.fillStyle='#0f172a';ctx.font='bold 16px Inter, sans-serif';
+      ctx.fillText('x', w-margin+12, toPxY(0));
+      ctx.fillText('y', toPxX(0)+8, margin-14);
+
+      // Origin marker for inequality tests
+      if(ex && ex.type === 'inequality'){
+        ctx.fillStyle='#f59e0b';
+        ctx.beginPath();ctx.arc(toPxX(0),toPxY(0),6,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#92400e';ctx.font='bold 13px Inter, sans-serif';ctx.fillText('(0,0)',toPxX(0)+9,toPxY(0)-10);
+      }
+
+      // Draw student points
+      state.points.forEach((p,i)=>{
+        ctx.fillStyle=i===0?'#5b6cff':'#0ea5e9';
+        ctx.beginPath();ctx.arc(toPxX(p.x),toPxY(p.y),9,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+        ctx.fillStyle='#1e293b';ctx.font='bold 14px Inter, sans-serif';
+        ctx.fillText(`P${i+1}`, toPxX(p.x)+10, toPxY(p.y)-10);
+      });
+      if(state.points.length >= 2){
+        ctx.save();
+        ctx.strokeStyle='rgba(91,108,255,.55)';ctx.lineWidth=4;
+        ctx.beginPath();ctx.moveTo(toPxX(state.points[0].x),toPxY(state.points[0].y));ctx.lineTo(toPxX(state.points[1].x),toPxY(state.points[1].y));ctx.stroke();
+        ctx.restore();
+      }
+
+      // Draw correct line if solved or solution
+      const lineReady = showSolution || state.graphSolved || (ex && ex.type==='inequality' && state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade);
+      if(ex && lineReady){
+        const pts=lineEndpoints(ex);
+        if(pts.length>=2){
+          ctx.save();
+          ctx.strokeStyle=ex.type==='inequality'?'#9b5cff':'#16a34a';
+          ctx.lineWidth=5;
+          ctx.lineCap='round';
+          if(ex.type==='inequality' && ex.expectedLine==='dashed') ctx.setLineDash([12,12]);
+          ctx.beginPath();ctx.moveTo(toPxX(pts[0].x),toPxY(pts[0].y));ctx.lineTo(toPxX(pts[1].x),toPxY(pts[1].y));ctx.stroke();
+          ctx.restore();
+        }
+        // Highlight exact intercepts
+        [{x:0,y:ex.yInt},{x:ex.xInt,y:0}].forEach(p=>{
+          ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(toPxX(p.x),toPxY(p.y),10,0,Math.PI*2);ctx.fill();
+          ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.stroke();
+        });
+      }
+    }
+
+    function addPoint(evt){
+      const rect=els.graph.getBoundingClientRect();
+      const scaleX=els.graph.width/rect.width, scaleY=els.graph.height/rect.height;
+      const px=(evt.clientX-rect.left)*scaleX;
+      const py=(evt.clientY-rect.top)*scaleY;
+      const p=toCoord(px,py);
+      if(p.x<bounds.min || p.x>bounds.max || p.y<bounds.min || p.y>bounds.max) return;
+      if(state.points.length>=2) state.points.shift();
+      state.points.push(p);
+      updatePointList();
+      drawGraph();
+      showToast(`Punto agregado: (${p.x}, ${p.y})`);
+    }
+
+    function checkGraph(){
+      const ex=state.exercise;
+      if(state.points.length<2){
+        setFeedback('Faltan puntos. Debes ubicar dos: (0, y) y (x, 0).', 'bad');
+        breakStreak();
+        return;
+      }
+      const expected=[{x:0,y:ex.yInt},{x:ex.xInt,y:0}];
+      const ok = expected.every(ep => state.points.some(p=>nearly(p.x,ep.x)&&nearly(p.y,ep.y)));
+      if(!ok){
+        setFeedback(`La gráfica todavía no coincide. Debes ubicar exactamente (0, ${niceNumber(ex.yInt)}) y (${niceNumber(ex.xInt)}, 0).`, 'bad');
+        breakStreak();
+        return;
+      }
+      if(ex.type==='inequality' && !(state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade)){
+        setFeedback('Los puntos están bien. Ahora completa el paso de inecuación: tipo de línea y sombreado.', 'bad');
+        els.ineqStep.classList.add('active');
+        sound('bad');
+        return;
+      }
+      state.graphSolved=true;
+      drawGraph();
+      const extra = ex.type==='inequality'
+        ? ` Además, la línea es ${ex.expectedLine==='dashed'?'punteada':'continua'} y el sombreado va hacia ${ex.expectedShade==='origin'?'el lado del (0,0)':'el lado contrario al (0,0)'}.`
+        : ' Une los puntos con una línea continua.';
+      setFeedback(`Correcto. La gráfica pasa por (0, ${niceNumber(ex.yInt)}) y (${niceNumber(ex.xInt)}, 0).${extra}`, 'good');
+      showToast('¡Gráfica correcta!');
+      bumpScore(15);
+      confetti();
+    }
+
+    function showSolution(){
+      const ex=state.exercise;
+      state.revealed=true;
+      els.solutionPanel.classList.add('show');
+      const lineText = ex.type==='inequality'
+        ? `<li><strong>Recta guía:</strong> ${boundaryText(ex)}. Primero se resuelve como ecuación.</li>
+           <li><strong>Línea:</strong> ${ex.expectedLine==='dashed'?'punteada porque el signo es > o <':'continua porque el signo es ≥ o ≤'}.</li>
+           <li><strong>Sombreado:</strong> ${ex.expectedShade==='origin'?'lado del (0,0), porque al probarlo sí cumple':'lado contrario al (0,0), porque al probarlo no cumple'}.</li>`
+        : `<li><strong>Línea:</strong> continua, porque es ecuación.</li>`;
+      els.solutionPanel.innerHTML = `
+        <strong>Solución paso a paso</strong>
+        <ol>
+          <li>Usa la recta: ${boundaryText(ex)}</li>
+          <li>Si x = 0: ${ex.B}y = ${ex.C}, entonces y = ${niceNumber(ex.yInt)}. Punto: (0, ${niceNumber(ex.yInt)}).</li>
+          <li>Si y = 0: ${ex.A}x = ${ex.C}, entonces x = ${niceNumber(ex.xInt)}. Punto: (${niceNumber(ex.xInt)}, 0).</li>
+          <li><strong>Tabla:</strong> (0, ${niceNumber(ex.yInt)}) y (${niceNumber(ex.xInt)}, 0).</li>
+          ${lineText}
+        </ol>`;
+      state.points = [{x:0,y:ex.yInt},{x:ex.xInt,y:0}];
+      if(ex.type==='inequality'){
+        state.selectedLine = ex.expectedLine;
+        state.selectedShade = ex.expectedShade;
+        document.querySelectorAll('.choice').forEach(b=>{
+          b.classList.toggle('selected', b.dataset.line === state.selectedLine || b.dataset.shade === state.selectedShade);
+        });
+      }
+      state.graphSolved=true;
+      updatePointList();
+      drawGraph(true);
+      setFeedback('Solución mostrada. Intenta el siguiente sin mirar la respuesta.', '');
+    }
+
+    // Events
+    $('explainBtn').addEventListener('click', showExplain);
+    $('checkCasesBtn').addEventListener('click', checkCases);
+    $('clearCasesBtn').addEventListener('click', ()=>{els.yWhenX0.value='';els.xWhenY0.value='';});
+    $('copyFromCasesBtn').addEventListener('click', copyFromCases);
+    $('checkTableBtn').addEventListener('click', checkTable);
+    $('checkIneqBtn').addEventListener('click', checkIneq);
+    $('checkGraphBtn').addEventListener('click', checkGraph);
+    $('solutionBtn').addEventListener('click', showSolution);
+    $('newBtn').addEventListener('click', ()=>loadExercise(true));
+    $('newBtnTop').addEventListener('click', ()=>loadExercise(true));
+    $('undoPointBtn').addEventListener('click', ()=>{state.points.pop();updatePointList();drawGraph();});
+    $('clearPointsBtn').addEventListener('click', ()=>{state.points=[];state.graphSolved=false;updatePointList();drawGraph();});
+    els.graph.addEventListener('click', addPoint);
+    document.querySelectorAll('[data-line]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.selectedLine=btn.dataset.line;
+      document.querySelectorAll('[data-line]').forEach(b=>b.classList.toggle('selected',b===btn));
+      drawGraph();
+    }));
+    document.querySelectorAll('[data-shade]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.selectedShade=btn.dataset.shade;
+      document.querySelectorAll('[data-shade]').forEach(b=>b.classList.toggle('selected',b===btn));
+      drawGraph();
+    }));
+    els.soundBtn.addEventListener('click',()=>{
+      state.sound=!state.sound;
+      els.soundBtn.textContent=state.sound?'🔊 Sonido':'🔇 Silencio';
+    });
+    $('fullBtn').addEventListener('click',()=>{
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    });
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter'){
+        const active=document.activeElement?.id;
+        if(active==='yWhenX0'||active==='xWhenY0') checkCases();
+        if(active==='tableY1'||active==='tableX2') checkTable();
+      }
+      if(e.key.toLowerCase()==='n') loadExercise(true);
+    });
+
+    loadExercise(false);
+  </script>
+</body>
+</html>
