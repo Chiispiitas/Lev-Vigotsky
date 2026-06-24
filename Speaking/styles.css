@@ -143,8 +143,7 @@ button {
 
 .topbar h1,
 .hero-card h2,
-.panel h3,
-.history-dialog h2 {
+.panel h3 {
   margin: 0;
   letter-spacing: -0.035em;
   line-height: 0.98;
@@ -610,30 +609,6 @@ button {
   font-weight: 700;
 }
 
-.quick-notes {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.note-checkbox {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 11px 12px;
-  border: 2px solid var(--line);
-  border-radius: 16px;
-  background: #fff;
-  font-weight: 850;
-}
-
-.note-checkbox input {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--blue);
-}
 
 .report-preview {
   white-space: pre-wrap;
@@ -651,126 +626,7 @@ button {
   line-height: 1.44;
 }
 
-.action-bar {
-  position: fixed;
-  left: 50%;
-  bottom: 0;
-  z-index: 20;
-  display: none;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
-  width: min(100%, 560px);
-  transform: translateX(-50%);
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(255,255,255,.82);
-  border-top: 2px solid rgba(255,255,255,.9);
-  box-shadow: 0 -14px 36px rgba(10, 43, 104, 0.22);
-  backdrop-filter: blur(14px);
-}
 
-.action-bar.visible {
-  display: grid;
-}
-
-.primary-action,
-.secondary-action {
-  min-height: 52px;
-  border-radius: 17px;
-  font-weight: 1000;
-  letter-spacing: -.03em;
-  font-size: .82rem;
-}
-
-.primary-action {
-  color: #fff;
-  background: linear-gradient(145deg, #1fc75b, #0c9d47);
-  box-shadow: 0 7px 0 rgba(7,101,42,.22);
-}
-
-.secondary-action {
-  color: var(--blue-dark);
-  background: #eaf4ff;
-  box-shadow: 0 7px 0 rgba(8,75,181,.12);
-}
-
-.history-dialog {
-  width: min(calc(100% - 24px), 540px);
-  max-height: 86svh;
-  padding: 0;
-  border: 0;
-  border-radius: 28px;
-  color: var(--ink);
-  background: #fff;
-  box-shadow: 0 25px 80px rgba(0,0,0,.32);
-  overflow: hidden;
-}
-
-.history-dialog::backdrop {
-  background: rgba(7, 17, 40, .46);
-  backdrop-filter: blur(4px);
-}
-
-.dialog-head,
-.history-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px;
-  border-bottom: 2px solid var(--line);
-}
-
-.dialog-head {
-  background: linear-gradient(145deg, #fff, #fff7df);
-}
-
-.history-actions {
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  background: #f7fbff;
-}
-
-.history-list {
-  display: grid;
-  gap: 10px;
-  max-height: 58svh;
-  overflow: auto;
-  padding: 14px;
-}
-
-.history-item {
-  padding: 13px;
-  border: 2px solid var(--line);
-  border-radius: 18px;
-  background: #fff;
-}
-
-.history-item strong {
-  display: block;
-  margin-bottom: 3px;
-}
-
-.history-item p {
-  margin: 0 0 10px;
-  color: var(--muted);
-  font-size: .84rem;
-  font-weight: 750;
-}
-
-.history-mini-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.history-mini-actions button {
-  min-height: 38px;
-  padding: 0 11px;
-  border-radius: 13px;
-  color: var(--blue-dark);
-  background: #eaf4ff;
-  font-weight: 950;
-}
 
 .toast {
   position: fixed;
@@ -809,9 +665,6 @@ button {
     grid-template-columns: 1fr 1fr;
   }
 
-  .quick-notes {
-    grid-template-columns: 1fr 1fr;
-  }
 }
 
 @media print {
@@ -826,8 +679,6 @@ button {
   .student-panel,
   .score-card,
   .rubric-list,
-  .quick-notes,
-  .action-bar,
   .panel-head button,
   dialog {
     display: none !important;
@@ -914,7 +765,4 @@ button {
     grid-template-columns: 1fr 1fr;
   }
 
-  .bulk-actions .ghost-button:last-child {
-    grid-column: 1 / -1;
-  }
 }

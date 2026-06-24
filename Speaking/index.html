@@ -23,7 +23,6 @@
         <p class="eyebrow">Lev Vigotsky · English Area</p>
         <h1>Speaking Report Maker</h1>
       </div>
-      <button class="icon-button" id="openHistory" type="button" aria-label="Open saved reports">☰</button>
     </header>
 
     <main>
@@ -32,7 +31,7 @@
           <div>
             <p class="eyebrow dark">Step 1</p>
             <h2 id="classTitle">Select a class</h2>
-            <p class="hero-copy">Choose the course first. Then select the student, adjust the rubric only where needed, add quick notes, and send the report to WhatsApp.</p>
+            <p class="hero-copy">Choose the course first. Then lock the student, adjust the rubric only where needed, add a teacher comment, and export the class results.</p>
           </div>
           <div class="phone-chip">Mobile ready</div>
         </div>
@@ -112,11 +111,9 @@
           <div class="panel-head">
             <div>
               <p class="eyebrow dark">Step 4</p>
-              <h3>Quick observations</h3>
+              <h3>Teacher comment</h3>
             </div>
-            <button class="ghost-button" id="clearNotes" type="button">Clear</button>
           </div>
-          <div class="quick-notes" id="quickNotes"></div>
 
           <label class="field-label" for="teacherComment">Teacher comment</label>
           <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
@@ -131,9 +128,8 @@
           </div>
           <p class="bulk-copy">These buttons collect the current class in one table. Assessed students appear with their scores; missing students remain marked as pending.</p>
           <div class="bulk-actions">
-            <button class="ghost-button" id="exportClassCsv" type="button">Export class CSV</button>
-            <button class="ghost-button" id="exportClassPdf" type="button">Create class PDF</button>
-            <button class="ghost-button" id="copyClassSummary" type="button">Copy class summary</button>
+            <button class="ghost-button" id="exportClassCsv" type="button">Export CSV</button>
+            <button class="ghost-button" id="exportClassPdf" type="button">Create PDF</button>
           </div>
         </section>
 
@@ -145,29 +141,7 @@
     </main>
   </div>
 
-  <nav class="action-bar" id="actionBar" aria-label="Report actions">
-    <button id="saveReport" type="button" class="secondary-action">Save</button>
-    <button id="copyReport" type="button" class="secondary-action">Copy</button>
-    <button id="exportClassCsvBar" type="button" class="secondary-action">CSV</button>
-    <button id="exportClassPdfBar" type="button" class="secondary-action">PDF</button>
-    <button id="shareWhatsapp" type="button" class="primary-action">WhatsApp</button>
-  </nav>
 
-  <dialog class="history-dialog" id="historyDialog">
-    <div class="dialog-head">
-      <div>
-        <p class="eyebrow dark">Local history</p>
-        <h2>Saved reports</h2>
-      </div>
-      <button class="icon-button dark-icon" id="closeHistory" type="button" aria-label="Close history">×</button>
-    </div>
-    <div class="history-actions">
-      <button class="ghost-button" id="exportCsv" type="button">All saved CSV</button>
-      <button class="ghost-button" id="exportAllPdf" type="button">All saved PDF</button>
-      <button class="ghost-button danger" id="clearHistory" type="button">Clear history</button>
-    </div>
-    <div id="historyList" class="history-list"></div>
-  </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 

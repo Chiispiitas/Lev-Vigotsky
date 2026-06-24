@@ -1083,29 +1083,13 @@ const RUBRIC = [
   }
 ];
 
-const QUICK_NOTES = [
-  "Good confidence",
-  "Clear pronunciation",
-  "Strong vocabulary use",
-  "Answered follow-up",
-  "Needs longer answers",
-  "Used Spanish",
-  "Read from notes",
-  "Needed repetition",
-  "Needs more target grammar",
-  "Interrupted / distracted",
-  "Excellent improvement",
-  "Did not participate"
-];
 
 const STORAGE_KEY = "lv-speaking-reports-v1";
-const STATUS_KEY = "lv-speaking-status-v1";
 
 const state = {
   classId: null,
   studentNumber: null,
   scores: {},
-  notes: new Set(),
   comment: "",
   activity: "Oral speaking assessment"
 };
@@ -1121,21 +1105,16 @@ const studentSearch = $("#studentSearch");
 const studentSelect = $("#studentSelect");
 const activityInput = $("#activityInput");
 const rubricList = $("#rubricList");
-const quickNotes = $("#quickNotes");
 const scoreValue = $("#scoreValue");
 const scoreStatus = $("#scoreStatus");
 const scoreRing = $("#scoreRing");
 const reportPreview = $("#reportPreview");
-const actionBar = $("#actionBar");
 const teacherComment = $("#teacherComment");
-const historyDialog = $("#historyDialog");
-const historyList = $("#historyList");
 const toast = $("#toast");
 
 function init() {
   renderClasses();
   renderRubric();
-  renderQuickNotes();
   bindEvents();
   updatePreview();
   saveStudentDraft();
@@ -1144,21 +1123,9 @@ function init() {
 function bindEvents() {
   $("#backToClasses").addEventListener("click", showClassScreen);
   $("#markExcellent").addEventListener("click", markAllExcellent);
-  $("#clearNotes").addEventListener("click", clearQuickNotes);
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
-  $("#saveReport").addEventListener("click", saveCurrentReport);
-  $("#copyReport").addEventListener("click", copyCurrentReport);
-  $("#exportClassCsvBar").addEventListener("click", exportClassCsv);
-  $("#exportClassPdfBar").addEventListener("click", exportClassPdf);
-  $("#shareWhatsapp").addEventListener("click", shareCurrentWhatsapp);
-  $("#openHistory").addEventListener("click", openHistory);
-  $("#closeHistory").addEventListener("click", () => historyDialog.close());
   $("#exportClassCsv").addEventListener("click", exportClassCsv);
   $("#exportClassPdf").addEventListener("click", exportClassPdf);
-  $("#copyClassSummary").addEventListener("click", copyClassSummary);
-  $("#exportCsv").addEventListener("click", exportAllCsv);
-  $("#exportAllPdf").addEventListener("click", exportAllPdf);
-  $("#clearHistory").addEventListener("click", clearHistory);
 
   activityInput.addEventListener("input", () => { state.activity = activityInput.value.trim() || "Oral speaking assessment"; updatePreview(); saveStudentDraft(); });
   teacherComment.addEventListener("input", () => { state.comment = teacherComment.value.trim(); updatePreview(); saveStudentDraft(); });
@@ -1166,17 +1133,21 @@ function bindEvents() {
   $("#nextStudent").addEventListener("click", () => moveStudent(1));
   $("#resetCurrent").addEventListener("click", () => { clearAssessment(true); updatePreview(); saveStudentDraft(); showToast("Current student reset"); });
   studentSearch.addEventListener("input", () => {
-    saveStudentDraft();
-    const before = state.studentNumber;
-    renderStudentOptions();
-    if (state.studentNumber !== before) loadStudentDraft();
-    updatePreview();
+    renderStudentOptions({ preserveSelection: true });
+  });
+  studentSearch.addEventListener("change", () => {
+    lockStudentFromSearch({ allowUnique: true, silent: false });
+  });
+  studentSearch.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      lockStudentFromSearch({ allowUnique: true, silent: false });
+    }
   });
   studentSelect.addEventListener("change", () => {
-    saveStudentDraft();
-    state.studentNumber = Number(studentSelect.value);
-    loadStudentDraft();
-    updatePreview();
+    const value = Number(studentSelect.value);
+    if (!Number.isFinite(value)) return;
+    selectStudentNumber(value, { clearSearch: true });
   });
 }
 
@@ -1187,7 +1158,8 @@ function getSelectedClass() {
 function getSelectedStudent() {
   const klass = getSelectedClass();
   if (!klass) return null;
-  return klass.students.find(student => student.n === state.studentNumber) || klass.students[0] || null;
+  if (state.studentNumber == null) return klass.students[0] || null;
+  return klass.students.find(student => student.n === state.studentNumber) || null;
 }
 
 function renderClasses() {
@@ -1222,7 +1194,6 @@ function selectClass(classId) {
 
   classScreen.classList.remove("screen-active");
   assessmentScreen.classList.add("screen-active");
-  actionBar.classList.add("visible");
   window.scrollTo({ top: 0, behavior: "smooth" });
   updatePreview();
 }
@@ -1231,22 +1202,62 @@ function showClassScreen() {
   saveStudentDraft();
   assessmentScreen.classList.remove("screen-active");
   classScreen.classList.add("screen-active");
-  actionBar.classList.remove("visible");
   renderClasses();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function renderStudentOptions() {
-  const klass = getSelectedClass();
-  if (!klass) return;
-  const query = normalize(studentSearch.value);
-  const current = state.studentNumber;
-  const filtered = klass.students.filter(student =>
+function getStudentsMatchingSearch(klass, rawQuery = studentSearch.value) {
+  const query = normalize(rawQuery);
+  if (!klass) return [];
+  if (!query) return klass.students;
+  return klass.students.filter(student =>
     normalize(student.name).includes(query) || String(student.n).includes(query)
   );
+}
+
+function findExactStudentFromSearch(klass, rawQuery = studentSearch.value) {
+  const query = normalize(rawQuery);
+  if (!klass || !query) return null;
+
+  const numberPrefix = query.match(/^(\d+)(?:\.|\s|$)/);
+  if (numberPrefix) {
+    const exactNumber = klass.students.find(student => String(student.n) === numberPrefix[1]);
+    if (exactNumber) return exactNumber;
+  }
+
+  return klass.students.find(student => normalize(student.name) === query) || null;
+}
+
+function renderStudentOptions({ preserveSelection = true } = {}) {
+  const klass = getSelectedClass();
+  if (!klass) return;
+
+  const query = normalize(studentSearch.value);
+  const currentStudent = klass.students.find(student => student.n === state.studentNumber) || klass.students[0] || null;
+
+  if (!currentStudent) {
+    studentSelect.innerHTML = "";
+    state.studentNumber = null;
+    return;
+  }
+
+  if (!klass.students.some(student => student.n === state.studentNumber)) {
+    state.studentNumber = currentStudent.n;
+  }
+
+  const filtered = getStudentsMatchingSearch(klass);
+  const studentsToShow = query ? filtered : klass.students;
+  const currentInList = studentsToShow.some(student => student.n === state.studentNumber);
 
   studentSelect.innerHTML = "";
-  const studentsToShow = filtered.length ? filtered : klass.students;
+
+  if (preserveSelection && query && !currentInList) {
+    const currentOption = document.createElement("option");
+    currentOption.value = String(state.studentNumber);
+    currentOption.textContent = `Current: ${currentStudent.n}. ${currentStudent.name}`;
+    studentSelect.appendChild(currentOption);
+  }
+
   studentsToShow.forEach(student => {
     const option = document.createElement("option");
     option.value = String(student.n);
@@ -1254,12 +1265,54 @@ function renderStudentOptions() {
     studentSelect.appendChild(option);
   });
 
-  if (studentsToShow.some(student => student.n === current)) {
-    studentSelect.value = String(current);
-  } else if (studentsToShow[0]) {
-    state.studentNumber = studentsToShow[0].n;
-    studentSelect.value = String(state.studentNumber);
+  studentSelect.value = String(state.studentNumber);
+}
+
+function selectStudentNumber(studentNumber, { clearSearch = false, showMessage = false } = {}) {
+  const klass = getSelectedClass();
+  if (!klass) return false;
+
+  const nextStudent = klass.students.find(student => student.n === Number(studentNumber));
+  if (!nextStudent) return false;
+
+  const previousStudentNumber = state.studentNumber;
+  if (previousStudentNumber !== nextStudent.n) {
+    saveStudentDraft();
+    state.studentNumber = nextStudent.n;
+    loadStudentDraft();
   }
+
+  if (clearSearch) studentSearch.value = "";
+  renderStudentOptions({ preserveSelection: true });
+  studentSelect.value = String(nextStudent.n);
+  updatePreview();
+
+  if (showMessage) showToast(`Student locked: ${nextStudent.n}. ${nextStudent.name}`);
+  return true;
+}
+
+function lockStudentFromSearch({ allowUnique = false, silent = false } = {}) {
+  const klass = getSelectedClass();
+  if (!klass) return false;
+
+  const query = normalize(studentSearch.value);
+  if (!query) {
+    renderStudentOptions({ preserveSelection: true });
+    return false;
+  }
+
+  const exact = findExactStudentFromSearch(klass);
+  const matches = getStudentsMatchingSearch(klass);
+  const match = exact || (allowUnique && matches.length === 1 ? matches[0] : null);
+
+  if (!match) {
+    renderStudentOptions({ preserveSelection: true });
+    if (!silent && matches.length > 1) showToast("Choose the exact student from the list");
+    if (!silent && !matches.length) showToast("No exact student found");
+    return false;
+  }
+
+  return selectStudentNumber(match.n, { clearSearch: true, showMessage: !silent });
 }
 
 function moveStudent(direction) {
@@ -1310,24 +1363,6 @@ function renderRubric() {
   });
 }
 
-function renderQuickNotes() {
-  quickNotes.innerHTML = "";
-  QUICK_NOTES.forEach((note, index) => {
-    const id = `note-${index}`;
-    const label = document.createElement("label");
-    label.className = "note-checkbox";
-    label.innerHTML = `<input type="checkbox" id="${id}" value="${escapeAttribute(note)}" /> <span>${escapeHtml(note)}</span>`;
-    const input = label.querySelector("input");
-    input.addEventListener("change", () => {
-      if (input.checked) state.notes.add(note);
-      else state.notes.delete(note);
-      updatePreview();
-      saveStudentDraft();
-    });
-    quickNotes.appendChild(label);
-  });
-}
-
 function selectRubricOption(criterionId, optionIndex) {
   const criterion = RUBRIC.find(item => item.id === criterionId);
   if (!criterion || !criterion.options[optionIndex]) return;
@@ -1372,20 +1407,11 @@ function markAllExcellent() {
   showToast("All criteria marked as excellent");
 }
 
-function clearQuickNotes() {
-  state.notes.clear();
-  document.querySelectorAll("#quickNotes input").forEach(input => input.checked = false);
-  updatePreview();
-  saveStudentDraft();
-}
-
 function clearAssessment(keepStudent = true) {
   state.scores = {};
-  state.notes = new Set();
   state.comment = "";
   state.activity = activityInput.value.trim() || "Oral speaking assessment";
   teacherComment.value = "";
-  document.querySelectorAll("#quickNotes input").forEach(input => input.checked = false);
   updateRubricSelection();
   updateScore();
   if (!keepStudent) loadStudentDraft();
@@ -1423,14 +1449,12 @@ function getReportObject() {
     activity: state.activity || "Oral speaking assessment",
     total,
     rows,
-    notes: Array.from(state.notes),
     comment: state.comment || ""
   };
 }
 
 function buildReportText(report = getReportObject()) {
   const marked = report.rows.filter(row => row.level !== "Not marked").length;
-  const noteText = report.notes.length ? report.notes.map(note => `- ${note}`).join("\n") : "No quick observations selected.";
   const rubricText = report.rows.map(row =>
     `${row.criterion}
    Level: ${row.level} · Points: ${formatScore(row.points)}/${formatScore(row.max)}`
@@ -1450,9 +1474,6 @@ function buildReportText(report = getReportObject()) {
     "RUBRIC DETAILS",
     rubricText,
     "",
-    "QUICK OBSERVATIONS",
-    noteText,
-    "",
     "TEACHER COMMENT",
     report.comment || "No additional comment.",
     "",
@@ -1465,55 +1486,6 @@ function updatePreview() {
   updateScore();
 }
 
-function saveCurrentReport() {
-  const report = getReportObject();
-  report.text = buildReportText(report);
-  const reports = loadReports();
-  reports.unshift(report);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(reports.slice(0, 250)));
-  markStudentSaved(report);
-  showToast("Report saved locally");
-  renderClasses();
-  return report;
-}
-
-async function copyCurrentReport() {
-  const text = buildReportText();
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast("Report copied");
-  } catch (error) {
-    fallbackCopy(text);
-    showToast("Report copied");
-  }
-}
-
-function exportCurrentTxt() {
-  const report = getReportObject();
-  const filename = `${safeFilename(report.classLabel)}-${safeFilename(report.studentName)}-${dateForFilename()}.txt`;
-  downloadBlob(buildReportText(report), filename, "text/plain;charset=utf-8");
-  showToast("TXT report exported");
-}
-
-async function shareCurrentWhatsapp() {
-  const report = saveCurrentReport();
-  const text = report.text || buildReportText(report);
-
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: "Speaking Performance Report", text });
-      showToast("Share sheet opened");
-      return;
-    } catch (error) {
-      // Fall back to WhatsApp link if sharing is cancelled or unavailable.
-    }
-  }
-
-  const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-  window.open(url, "_blank", "noopener,noreferrer");
-  showToast("Opening WhatsApp");
-}
-
 function loadReports() {
   try {
     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -1522,20 +1494,6 @@ function loadReports() {
   }
 }
 
-function loadStatus() {
-  try {
-    return JSON.parse(localStorage.getItem(STATUS_KEY) || "{}");
-  } catch (error) {
-    return {};
-  }
-}
-
-function markStudentSaved(report) {
-  const status = loadStatus();
-  status[report.classId] = status[report.classId] || {};
-  status[report.classId][report.studentNumber] = { score: report.total, date: report.date };
-  localStorage.setItem(STATUS_KEY, JSON.stringify(status));
-}
 
 function saveStudentDraft() {
   const klass = getSelectedClass();
@@ -1544,7 +1502,6 @@ function saveStudentDraft() {
   const key = `lv-draft-${klass.id}-${student.n}`;
   localStorage.setItem(key, JSON.stringify({
     scores: state.scores,
-    notes: Array.from(state.notes),
     comment: state.comment,
     activity: state.activity,
     updatedAt: new Date().toISOString()
@@ -1560,57 +1517,12 @@ function loadStudentDraft() {
   try { draft = JSON.parse(localStorage.getItem(key) || "null"); } catch (error) { draft = null; }
 
   state.scores = draft?.scores || {};
-  state.notes = new Set(draft?.notes || []);
   state.comment = draft?.comment || "";
   state.activity = draft?.activity || activityInput.value.trim() || "Oral speaking assessment";
   activityInput.value = state.activity;
   teacherComment.value = state.comment;
-  document.querySelectorAll("#quickNotes input").forEach(input => {
-    input.checked = state.notes.has(input.value);
-  });
   updateRubricSelection();
   updateScore();
-}
-
-function openHistory() {
-  renderHistory();
-  if (typeof historyDialog.showModal === "function") historyDialog.showModal();
-  else historyDialog.setAttribute("open", "");
-}
-
-function renderHistory() {
-  const reports = loadReports();
-  historyList.innerHTML = "";
-  if (!reports.length) {
-    historyList.innerHTML = `<div class="empty-state">No saved reports yet.</div>`;
-    return;
-  }
-
-  reports.forEach(report => {
-    const item = document.createElement("article");
-    item.className = "history-item";
-    item.innerHTML = `
-      <strong>${escapeHtml(report.studentName)} · ${formatScore(report.total)}/10</strong>
-      <p>${escapeHtml(report.classLabel)} · ${escapeHtml(report.date)} · ${escapeHtml(report.activity)}</p>
-      <div class="history-mini-actions">
-        <button type="button" data-action="copy">Copy</button>
-        <button type="button" data-action="txt">TXT</button>
-        <button type="button" data-action="whatsapp">WhatsApp</button>
-      </div>
-    `;
-    item.querySelector('[data-action="copy"]').addEventListener("click", async () => {
-      await navigator.clipboard.writeText(report.text || buildReportText(report));
-      showToast("Saved report copied");
-    });
-    item.querySelector('[data-action="txt"]').addEventListener("click", () => {
-      const filename = `${safeFilename(report.classLabel)}-${safeFilename(report.studentName)}-${dateForFilename(new Date(report.createdAt))}.txt`;
-      downloadBlob(report.text || buildReportText(report), filename, "text/plain;charset=utf-8");
-    });
-    item.querySelector('[data-action="whatsapp"]').addEventListener("click", () => {
-      window.open(`https://wa.me/?text=${encodeURIComponent(report.text || buildReportText(report))}`, "_blank", "noopener,noreferrer");
-    });
-    historyList.appendChild(item);
-  });
 }
 
 const RUBRIC_SHORT = [
@@ -1634,9 +1546,8 @@ function getDraftForStudent(classId, studentNumber) {
 function hasDraftData(draft) {
   if (!draft) return false;
   const scoreCount = Object.keys(draft.scores || {}).length;
-  const noteCount = Array.isArray(draft.notes) ? draft.notes.length : 0;
   const comment = String(draft.comment || "").trim();
-  return scoreCount > 0 || noteCount > 0 || comment.length > 0;
+  return scoreCount > 0 || comment.length > 0;
 }
 
 function buildLatestSavedMap(reports = loadReports()) {
@@ -1677,7 +1588,6 @@ function buildReportFromDraft(klass, student, draft) {
     activity: draft?.activity || "Oral speaking assessment",
     total: Math.round(total * 100) / 100,
     rows,
-    notes: Array.isArray(draft?.notes) ? draft.notes : [],
     comment: draft?.comment || "",
     text: ""
   };
@@ -1739,7 +1649,7 @@ function buildGradeCsv(rows) {
   const header = [
     "Class", "Course", "Section", "Student Number", "Student", "Status", "Activity", "Date", "Total /10", "Marked Criteria",
     ...RUBRIC.flatMap(criterion => [criterion.title + " Level", criterion.title + " Points"]),
-    "Quick Notes", "Teacher Comment"
+    "Teacher Comment"
   ];
 
   const body = rows.map(({ klass, student, report, status, marked }) => {
@@ -1759,7 +1669,6 @@ function buildGradeCsv(rows) {
         rowMap[criterion.title]?.level || "",
         rowMap[criterion.title] ? formatScore(rowMap[criterion.title].points || 0) : ""
       ]),
-      (report?.notes || []).join(" | "),
       report?.comment || ""
     ];
   });
@@ -1819,41 +1728,6 @@ function exportAllPdf() {
   openPrintableReport(html, `all-speaking-grades-${dateForFilename()}.html`);
 }
 
-async function copyClassSummary() {
-  const klass = getSelectedClass();
-  if (!klass) { showToast("Select a class first"); return; }
-  const rows = getClassExportRows();
-  const stats = getRowsStats(rows);
-  const assessed = rows.filter(row => row.status === "Assessed");
-  const lines = [
-    "SPEAKING PERFORMANCE CLASS SUMMARY",
-    `Class: ${klass.label}`,
-    `Generated: ${formatDateTime(new Date())}`,
-    `Assessed: ${stats.assessed}/${stats.total}`,
-    `Pending: ${stats.pending}`,
-    `Average: ${stats.assessed ? formatScore(stats.average) : "N/A"} / 10`,
-    "",
-    "GRADES"
-  ];
-  if (!assessed.length) lines.push("No assessed students yet.");
-  assessed.forEach(({ student, report }) => {
-    lines.push(`#${student.n} ${student.name}: ${formatScore(report.total)} / 10`);
-  });
-  const pending = rows.filter(row => row.status !== "Assessed");
-  if (pending.length) {
-    lines.push("", "PENDING");
-    pending.forEach(({ student }) => lines.push(`#${student.n} ${student.name}`));
-  }
-
-  try {
-    await navigator.clipboard.writeText(lines.join("\n"));
-    showToast("Class summary copied");
-  } catch (error) {
-    fallbackCopy(lines.join("\n"));
-    showToast("Class summary copied");
-  }
-}
-
 function buildPrintableGradeHtml(rows, options = {}) {
   const title = options.title || "Speaking Performance Grade Report";
   const subtitle = options.subtitle || "";
@@ -1886,7 +1760,6 @@ function buildPrintableGradeHtml(rows, options = {}) {
         <td>${escapeHtml(status)}</td>
         <td>${escapeHtml(marked || 0)}/${RUBRIC.length}</td>
         <td>${escapeHtml(report?.activity || "")}</td>
-        <td>${escapeHtml((report?.notes || []).join(" · "))}</td>
         <td>${escapeHtml(report?.comment || "")}</td>
       </tr>
     `).join("");
@@ -1920,7 +1793,6 @@ function buildPrintableGradeHtml(rows, options = {}) {
               <th>Status</th>
               <th>Rubric</th>
               <th>Activity</th>
-              <th>Quick notes</th>
               <th>Teacher comment</th>
             </tr>
           </thead>
@@ -2021,18 +1893,6 @@ function safeDateLabel(isoDate) {
   const date = new Date(isoDate);
   if (Number.isNaN(date.getTime())) return "";
   return formatDateTime(date);
-}
-
-function clearHistory() {
-  if (!confirm("Clear all saved reports from this device?")) return;
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(STATUS_KEY);
-  Object.keys(localStorage).forEach(key => {
-    if (key.startsWith("lv-draft-")) localStorage.removeItem(key);
-  });
-  renderHistory();
-  renderClasses();
-  showToast("History cleared");
 }
 
 function fallbackCopy(text) {
