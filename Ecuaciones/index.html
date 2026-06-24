@@ -346,9 +346,31 @@
         </div>
 
         <div class="steps">
+          <section class="step active" id="caseStep">
+            <div class="step-head">
+              <strong><span class="step-num">1</span>Dos casos y despeje</strong>
+              <button class="ghost" id="explainBtn" type="button">Ver despeje</button>
+            </div>
+            <div class="input-row">
+              <div class="field">
+                <label for="yWhenX0">CASO 1, Si x = 0, y =</label>
+                <input id="yWhenX0" inputmode="decimal" autocomplete="off" placeholder="?" />
+              </div>
+              <div class="field">
+                <label for="xWhenY0">CASO 2, Si y = 0, x =</label>
+                <input id="xWhenY0" inputmode="decimal" autocomplete="off" placeholder="?" />
+              </div>
+            </div>
+            <div class="mini-explain" id="miniExplain"></div>
+            <div class="buttons">
+              <button class="primary" id="checkCasesBtn" type="button">Comprobar casos</button>
+              <button class="ghost" id="clearCasesBtn" type="button">Limpiar</button>
+            </div>
+          </section>
+
           <section class="step" id="tableStep">
             <div class="step-head">
-              <strong><span class="step-num">1</span>Tabla de valores</strong>
+              <strong><span class="step-num">2</span>Tabla de valores</strong>
               <span class="small-note">Usa los dos puntos encontrados</span>
             </div>
             <div class="table-card">
@@ -901,17 +923,22 @@ function makeExercise(){
     }
 
     // Events
-    $('explainBtn').addEventListener('click', showExplain);
-    $('checkCasesBtn').addEventListener('click', checkCases);
-    $('clearCasesBtn').addEventListener('click', ()=>{els.yWhenX0.value='';els.xWhenY0.value='';});
-    $('copyFromCasesBtn').addEventListener('click', copyFromCases);
-    $('checkTableBtn').addEventListener('click', checkTable);
-    $('checkGraphBtn').addEventListener('click', checkGraph);
-    $('solutionBtn').addEventListener('click', showSolution);
-    $('newBtn').addEventListener('click', ()=>loadExercise(true));
-    $('newBtnTop').addEventListener('click', ()=>loadExercise(true));
-    $('undoPointBtn').addEventListener('click', ()=>{state.points.pop();updatePointList();drawGraph();});
-    $('clearPointsBtn').addEventListener('click', ()=>{state.points=[];state.graphSolved=false;updatePointList();drawGraph();});
+    function on(id, event, handler){
+      const el = $(id);
+      if(el) el.addEventListener(event, handler);
+    }
+
+    on('explainBtn', 'click', showExplain);
+    on('checkCasesBtn', 'click', checkCases);
+    on('clearCasesBtn', 'click', ()=>{els.yWhenX0.value='';els.xWhenY0.value='';});
+    on('copyFromCasesBtn', 'click', copyFromCases);
+    on('checkTableBtn', 'click', checkTable);
+    on('checkGraphBtn', 'click', checkGraph);
+    on('solutionBtn', 'click', showSolution);
+    on('newBtn', 'click', ()=>loadExercise(true));
+    on('newBtnTop', 'click', ()=>loadExercise(true));
+    on('undoPointBtn', 'click', ()=>{state.points.pop();updatePointList();drawGraph();});
+    on('clearPointsBtn', 'click', ()=>{state.points=[];state.graphSolved=false;updatePointList();drawGraph();});
     els.graph.addEventListener('click', addPoint);
     document.querySelectorAll('[data-line]').forEach(btn=>btn.addEventListener('click',()=>{
       state.selectedLine=btn.dataset.line;
