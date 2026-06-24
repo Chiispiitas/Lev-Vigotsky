@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drills infinitos: rectas e inecuaciones</title>
+  <title>Práctica infinita de rectas</title>
   <style>
     :root{
       --bg1:#fff7e8;
@@ -230,7 +230,7 @@
       box-shadow:inset 0 0 0 1px rgba(36,48,68,.03);
       position:relative;
     }
-    canvas{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair}
+    canvas{display:block;width:100%;height:auto;min-height:320px;touch-action:none;cursor:crosshair;background-color:#fff;background-image:linear-gradient(#eef2f7 1px, transparent 1px),linear-gradient(90deg,#eef2f7 1px, transparent 1px);background-size:24px 24px}
     .graph-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
     .point-list{display:flex;gap:8px;flex-wrap:wrap;color:#475569;font-weight:800;font-size:.9rem}
     .point-badge{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:8px 10px}
@@ -296,14 +296,12 @@
     <div class="brand">
       <div class="logo" aria-hidden="true">📈</div>
       <div>
-        <h1>Drills infinitos de rectas e inecuaciones</h1>
+        <h1>Práctica infinita de rectas</h1>
         <p>Practica siempre el mismo proceso: dos casos, despeje, tabla y gráfica.</p>
       </div>
     </div>
     <div class="stats">
       <div class="chip">Ejercicio <span id="exerciseCount">1</span></div>
-      <div class="chip">⭐ <span id="score">0</span> puntos</div>
-      <div class="chip">🔥 Racha <span id="streak">0</span></div>
       <button class="ghost" id="soundBtn" type="button">🔊 Sonido</button>
       <button class="primary" id="fullBtn" type="button">Pantalla completa</button>
     </div>
@@ -313,15 +311,13 @@
     <section class="notice" aria-label="Explicación breve">
       <div class="notice-icon" aria-hidden="true">💡</div>
       <div>
-        <h2>Idea vulgar y simple</h2>
+        <h2></h2>
         <p>
-          Para graficar una inecuación, primero haces casi lo mismo que con una ecuación:
-          cambias mentalmente el signo por igual, haces x = 0 y y = 0, despejas, armas la tabla y dibujas la recta.
-          Lo extra es decidir si la línea es punteada o continua, y qué lado se sombrea.
+          Para graficar una recta, usa siempre este proceso: primero haces CASO 1, donde x = 0, luego haces CASO 2, donde y = 0, despejas, completas la tabla y ubicas los dos puntos en la gráfica.
         </p>
       </div>
       <div class="buttons">
-        <button class="primary" id="newBtnTop" type="button">Nuevo drill</button>
+        <button class="primary" id="newBtnTop" type="button">Nuevo ejercicio</button>
       </div>
     </section>
 
@@ -330,7 +326,7 @@
         <div class="card-title">
           <div>
             <h2>Ejercicio actual</h2>
-            <p>Resuelve sin saltarte pasos. Cada ejercicio nuevo cambia solo los números o el signo.</p>
+            <p>Resuelve sin saltarte pasos. Cada ejercicio nuevo cambia los números para practicar el mismo procedimiento.</p>
           </div>
           <span class="pill" id="typePill">Recta</span>
         </div>
@@ -338,14 +334,14 @@
         <div class="exercise-box">
           <div class="exercise-label">
             <span id="exerciseKind">Ecuación lineal</span>
-            <span id="levelLabel">Drill rápido</span>
+            <span id="levelLabel">Práctica</span>
           </div>
           <div class="math-main" id="problemText">2x + 3y = 6</div>
           <div class="hint-strip" id="hintStrip">
-            <span class="mini-tag">Caso 1: x = 0</span>
-            <span class="mini-tag">Caso 2: y = 0</span>
-            <span class="mini-tag">Tabla</span>
-            <span class="mini-tag">Gráfica</span>
+            <span class="mini-tag">x = 0</span>
+            <span class="mini-tag">y = 0</span>
+            <span class="mini-tag">tabla</span>
+            <span class="mini-tag">gráfica</span>
           </div>
         </div>
 
@@ -357,11 +353,11 @@
             </div>
             <div class="input-row">
               <div class="field">
-                <label for="yWhenX0">Si x = 0, y =</label>
+                <label for="yWhenX0">CASO 1, Si x = 0, y =</label>
                 <input id="yWhenX0" inputmode="decimal" autocomplete="off" placeholder="?" />
               </div>
               <div class="field">
-                <label for="xWhenY0">Si y = 0, x =</label>
+                <label for="xWhenY0">CASO 2, Si y = 0, x =</label>
                 <input id="xWhenY0" inputmode="decimal" autocomplete="off" placeholder="?" />
               </div>
             </div>
@@ -403,36 +399,10 @@
               <button class="secondary" id="copyFromCasesBtn" type="button">Copiar de mis casos</button>
             </div>
           </section>
-
-          <section class="step" id="ineqStep">
-            <div class="step-head">
-              <strong><span class="step-num">3</span>Solo si es inecuación</strong>
-              <span class="small-note">Si es ecuación, este paso se marca solo.</span>
-            </div>
-            <p class="small-note" id="ineqText">
-              En una inecuación, la recta se obtiene igual. Después decides línea y sombreado.
-            </p>
-            <div class="ineq-controls" id="ineqControls">
-              <div>
-                <strong>Tipo de línea</strong>
-                <div class="choice-row" id="lineChoices">
-                  <button class="choice" data-line="dashed" type="button">Punteada</button>
-                  <button class="choice" data-line="solid" type="button">Continua</button>
-                </div>
-              </div>
-              <div>
-                <strong>Sombreado</strong>
-                <div class="choice-row" id="shadeChoices">
-                  <button class="choice" data-shade="origin" type="button">Lado del (0,0)</button>
-                  <button class="choice" data-shade="opposite" type="button">Lado contrario</button>
-                </div>
-              </div>
-            </div>
-            <div class="buttons">
-              <button class="primary" id="checkIneqBtn" type="button">Comprobar inecuación</button>
-            </div>
-          </section>
-        </div>
+          <div id="ineqStep" style="display:none"></div>
+          <div id="ineqControls" style="display:none"></div>
+          <div id="ineqText" style="display:none"></div>
+</div>
       </article>
 
       <article class="card">
@@ -475,8 +445,6 @@
     const state = {
       exercise: null,
       count: 1,
-      score: 0,
-      streak: 0,
       points: [],
       selectedLine: null,
       selectedShade: null,
@@ -486,7 +454,7 @@
     };
 
     const els = {
-      exerciseCount: $('exerciseCount'), score: $('score'), streak: $('streak'), typePill: $('typePill'),
+      exerciseCount: $('exerciseCount'), typePill: $('typePill'),
       exerciseKind: $('exerciseKind'), levelLabel: $('levelLabel'), problemText: $('problemText'), hintStrip: $('hintStrip'),
       yWhenX0: $('yWhenX0'), xWhenY0: $('xWhenY0'), tableY1: $('tableY1'), tableX2: $('tableX2'),
       miniExplain: $('miniExplain'), feedback: $('feedback'), solutionPanel: $('solutionPanel'), graph: $('graph'),
@@ -521,7 +489,10 @@
       return coef < 0 ? ' - ' + body : ' + ' + body;
     }
     function boundaryText(ex){return `${term(ex.A,'x',true)}${term(ex.B,'y')} = ${ex.C}`}
-    function problemText(ex){return `${term(ex.A,'x',true)}${term(ex.B,'y')} ${ex.op} ${ex.C}`}
+function problemText(ex){
+  if(ex.displayText) return ex.displayText;
+  return `${term(ex.A,'x',true)}${term(ex.B,'y')} ${ex.op} ${ex.C}`;
+}
     function inverseOp(op){return ({'>':'<','<':'>','≥':'≤','≤':'≥'})[op] || op}
     function isStrict(op){return op === '>' || op === '<'}
     function evalIneq(A,B,C,op,x,y){
@@ -533,23 +504,120 @@
       return Math.abs(v-C)<1e-9;
     }
 
-    function makeExercise(){
-      let xInt = nonZero(-7,7);
-      let yInt = nonZero(-7,7);
-      while(Math.abs(xInt) === Math.abs(yInt) && Math.random()<.5) yInt = nonZero(-7,7);
-      const C = lcm(Math.abs(xInt), Math.abs(yInt));
-      const A = C / xInt;
-      const B = C / yInt;
-      const type = Math.random() < .55 ? 'equation' : 'inequality';
-      const op = type === 'equation' ? '=' : pick(['>','<','≥','≤']);
+function makeEasyExercise(){
+  const easyList = [
+    { A:-1, B:1, C:2, displayText:'y = x + 2' },
+    { A:-1, B:1, C:3, displayText:'y = x + 3' },
+    { A:-2, B:1, C:4, displayText:'y = 2x + 4' },
+    { A:1, B:1, C:4, displayText:'y = -x + 4' },
+    { A:2, B:1, C:6, displayText:'y = -2x + 6' },
+    { A:-1, B:1, C:-2, displayText:'y = x - 2' }
+  ];
+
+  const ex = pick(easyList);
+
+  return {
+    A: ex.A,
+    B: ex.B,
+    C: ex.C,
+    type: 'equation',
+    op: '=',
+    displayText: ex.displayText,
+    xInt: ex.C / ex.A,
+    yInt: ex.C / ex.B,
+    expectedLine: 'solid',
+    expectedShade: null
+  };
+}
+
+function makeExercise(){
+  const style = Math.random();
+
+  // 75% de ejercicios con una incógnita ya despejada
+  // Ejemplos: y = 2x + 4 / y = -3x + 6 / x = 2y - 8
+  if(style < 0.75){
+    const isolated = Math.random() < 0.85 ? 'y' : 'x';
+    const m = nonZero(-5, 5);
+
+    // Escogemos interceptos que den resultados enteros para x = 0 y y = 0.
+    let intercept = nonZero(-9, 9);
+    while(intercept % m !== 0){
+      intercept = nonZero(-9, 9);
+    }
+
+    if(isolated === 'y'){
+      // y = mx + b
+      // Forma interna: -mx + y = b
+      const A = -m;
+      const B = 1;
+      const C = intercept;
+
+      const sign = intercept < 0 ? ' - ' : ' + ';
+      const bText = Math.abs(intercept);
+      const mText = m === 1 ? 'x' : m === -1 ? '-x' : `${m}x`;
+
       return {
-        A,B,C,type,op,
+        A,
+        B,
+        C,
+        type:'equation',
+        op:'=',
+        displayText:`y = ${mText}${sign}${bText}`,
         xInt:C/A,
         yInt:C/B,
-        expectedLine:type==='inequality' ? (isStrict(op) ? 'dashed' : 'solid') : 'solid',
-        expectedShade:type==='inequality' ? (evalIneq(A,B,C,op,0,0) ? 'origin' : 'opposite') : null
+        expectedLine:'solid',
+        expectedShade:null
+      };
+    } else {
+      // x = my + b
+      // Forma interna: x - my = b
+      const A = 1;
+      const B = -m;
+      const C = intercept;
+
+      const sign = intercept < 0 ? ' - ' : ' + ';
+      const bText = Math.abs(intercept);
+      const mText = m === 1 ? 'y' : m === -1 ? '-y' : `${m}y`;
+
+      return {
+        A,
+        B,
+        C,
+        type:'equation',
+        op:'=',
+        displayText:`x = ${mText}${sign}${bText}`,
+        xInt:C/A,
+        yInt:C/B,
+        expectedLine:'solid',
+        expectedShade:null
       };
     }
+  }
+
+  // 25% de ejercicios menos comunes en forma ax + by = c
+  let xInt = nonZero(-7,7);
+  let yInt = nonZero(-7,7);
+
+  while(Math.abs(xInt) === Math.abs(yInt) && Math.random() < .5){
+    yInt = nonZero(-7,7);
+  }
+
+  const C = lcm(Math.abs(xInt), Math.abs(yInt));
+  const A = C / xInt;
+  const B = C / yInt;
+
+  return {
+    A,
+    B,
+    C,
+    type:'equation',
+    op:'=',
+    xInt:C/A,
+    yInt:C/B,
+    expectedLine:'solid',
+    expectedShade:null
+  };
+}
 
     function resetInputs(){
       ['yWhenX0','xWhenY0','tableY1','tableX2'].forEach(id => els[id].value = '');
@@ -570,31 +638,20 @@
 
     function loadExercise(increment=true){
       if(increment && state.exercise) state.count++;
-      state.exercise = makeExercise();
+      state.exercise = state.count === 1 ? makeEasyExercise() : makeExercise();
       resetInputs();
       const ex = state.exercise;
       els.exerciseCount.textContent = state.count;
       els.problemText.textContent = problemText(ex);
-      if(ex.type === 'equation'){
-        els.typePill.textContent = 'Ecuación';
-        els.typePill.className = 'pill eq';
-        els.exerciseKind.textContent = 'Ecuación lineal';
-        els.levelLabel.textContent = 'Corte con ejes';
-        els.hintStrip.innerHTML = '<span class="mini-tag">x = 0</span><span class="mini-tag">y = 0</span><span class="mini-tag">tabla</span><span class="mini-tag">línea continua</span>';
-        els.ineqControls.classList.remove('show');
-        els.ineqText.textContent = 'Este ejercicio es ecuación: solo ubica los dos puntos y une con línea continua.';
-        els.ineqStep.classList.add('good');
-      } else {
-        els.typePill.textContent = 'Inecuación';
-        els.typePill.className = 'pill ineq';
-        els.exerciseKind.textContent = 'Inecuación lineal';
-        els.levelLabel.textContent = 'Mismo despeje + sombreado';
-        els.hintStrip.innerHTML = '<span class="mini-tag">primero usa =</span><span class="mini-tag">x = 0</span><span class="mini-tag">y = 0</span><span class="mini-tag">sombreado</span>';
-        els.ineqControls.classList.add('show');
-        const lineMsg = isStrict(ex.op) ? 'Como el signo no tiene rayita de igual, la línea debe ser punteada.' : 'Como el signo tiene rayita de igual, la línea debe ser continua.';
-        const shadeMsg = ex.expectedShade === 'origin' ? 'El punto (0,0) sí cumple, así que se sombrea ese lado.' : 'El punto (0,0) no cumple, así que se sombrea el lado contrario.';
-        els.ineqText.textContent = `Mismo proceso para hallar la recta guía: ${boundaryText(ex)}. Después: ${lineMsg} ${shadeMsg}`;
-      }
+      els.typePill.textContent = 'Recta';
+      els.typePill.className = 'pill eq';
+      els.exerciseKind.textContent = 'Ecuación lineal';
+      els.levelLabel.textContent = 'Práctica';
+      if (els.hintStrip) {
+  els.hintStrip.innerHTML = '<span class="mini-tag">x = 0</span><span class="mini-tag">y = 0</span><span class="mini-tag">tabla</span><span class="mini-tag">gráfica</span>';
+}
+      els.ineqControls.classList.remove('show');
+      els.ineqStep.classList.add('good');
       setFeedback('Empieza haciendo dos casos: cuando x = 0 encuentras y; cuando y = 0 encuentras x.', '');
       drawGraph();
     }
@@ -612,15 +669,9 @@
     }
 
     function bumpScore(n){
-      state.score += n;
-      state.streak += 1;
-      els.score.textContent = state.score;
-      els.streak.textContent = state.streak;
       if(n>0) sound('good');
     }
     function breakStreak(){
-      state.streak = 0;
-      els.streak.textContent = state.streak;
       sound('bad');
     }
 
@@ -659,9 +710,7 @@
 
     function showExplain(){
       const ex = state.exercise;
-      const top = ex.type === 'inequality'
-        ? `<strong>Inecuación:</strong> para graficar, primero úsala como recta guía: <span class="line">${boundaryText(ex)}</span>`
-        : `<strong>Ecuación:</strong> trabaja directamente con: <span class="line">${boundaryText(ex)}</span>`;
+      const top = `<strong>Ecuación:</strong> trabaja directamente con: <span class="line">${boundaryText(ex)}</span>`;
       els.miniExplain.innerHTML = `${top}
         <strong>Caso 1: x = 0</strong>
         <span class="line">${ex.A}(0) ${ex.B<0?'-':'+'} ${Math.abs(ex.B)}y = ${ex.C}</span>
@@ -712,7 +761,6 @@
       els.tableStep.classList.remove('bad','good');
       if(ok){
         els.tableStep.classList.add('good');
-        if(ex.type === 'inequality') els.ineqStep.classList.add('active');
         setFeedback(`Tabla correcta: punto A = (0, ${niceNumber(ex.yInt)}) y punto B = (${niceNumber(ex.xInt)}, 0). Ahora haz clic en esos dos puntos en el plano.`, 'good');
         showToast('Tabla correcta.');
         bumpScore(10);
@@ -720,34 +768,6 @@
         els.tableStep.classList.add('bad');
         setFeedback('La tabla debe repetir exactamente los resultados de los dos casos. Revisa los espacios.', 'bad');
         showToast('Revisa la tabla.');
-        breakStreak();
-      }
-    }
-
-    function checkIneq(){
-      const ex = state.exercise;
-      if(ex.type === 'equation'){
-        els.ineqStep.classList.add('good');
-        setFeedback('Este no es una inecuación. Sigue con la gráfica.', 'good');
-        return;
-      }
-      const okLine = state.selectedLine === ex.expectedLine;
-      const okShade = state.selectedShade === ex.expectedShade;
-      els.ineqStep.classList.remove('bad','good');
-      if(okLine && okShade){
-        els.ineqStep.classList.add('good');
-        const lineWord = ex.expectedLine === 'dashed' ? 'punteada' : 'continua';
-        const shadeWord = ex.expectedShade === 'origin' ? 'el lado del (0,0)' : 'el lado contrario al (0,0)';
-        setFeedback(`Correcto: línea ${lineWord} y sombreado hacia ${shadeWord}.`, 'good');
-        showToast('Inecuación lista.');
-        bumpScore(10);
-        drawGraph();
-      }else{
-        els.ineqStep.classList.add('bad');
-        let msg = 'Ajusta la inecuación: ';
-        if(!okLine) msg += isStrict(ex.op) ? 'si es > o <, la línea es punteada. ' : 'si es ≥ o ≤, la línea es continua. ';
-        if(!okShade) msg += 'Prueba el punto (0,0): si cumple, sombreas su lado; si no cumple, sombreas el contrario.';
-        setFeedback(msg, 'bad');
         breakStreak();
       }
     }
@@ -790,26 +810,11 @@
       ctx.clearRect(0,0,w,h);
       ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,w,h);
 
-      // Solution shading for inequalities, once selected correctly or solution shown.
-      const showShade = ex && ex.type === 'inequality' && (showSolution || (state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade));
-      if(showShade){
-        ctx.save();
-        ctx.fillStyle='rgba(155,92,255,.15)';
-        const step=7;
-        for(let px=margin; px<=w-margin; px+=step){
-          for(let py=margin; py<=h-margin; py+=step){
-            const c = toCoord(px,py);
-            if(evalIneq(ex.A,ex.B,ex.C,ex.op,c.x,c.y)) ctx.fillRect(px-step/2,py-step/2,step,step);
-          }
-        }
-        ctx.restore();
-      }
-
       // Grid
       ctx.lineWidth=1;
       for(let i=bounds.min;i<=bounds.max;i++){
-        ctx.strokeStyle = i===0 ? '#334155' : '#e2e8f0';
-        ctx.lineWidth = i===0 ? 2 : 1;
+        ctx.strokeStyle = i===0 ? '#1e293b' : '#cbd5e1';
+        ctx.lineWidth = i===0 ? 3 : 1.2;
         ctx.beginPath();ctx.moveTo(toPxX(i), margin);ctx.lineTo(toPxX(i), h-margin);ctx.stroke();
         ctx.beginPath();ctx.moveTo(margin, toPxY(i));ctx.lineTo(w-margin, toPxY(i));ctx.stroke();
       }
@@ -821,13 +826,8 @@
       ctx.fillStyle='#0f172a';ctx.font='bold 16px Inter, sans-serif';
       ctx.fillText('x', w-margin+12, toPxY(0));
       ctx.fillText('y', toPxX(0)+8, margin-14);
-
-      // Origin marker for inequality tests
-      if(ex && ex.type === 'inequality'){
-        ctx.fillStyle='#f59e0b';
-        ctx.beginPath();ctx.arc(toPxX(0),toPxY(0),6,0,Math.PI*2);ctx.fill();
-        ctx.fillStyle='#92400e';ctx.font='bold 13px Inter, sans-serif';ctx.fillText('(0,0)',toPxX(0)+9,toPxY(0)-10);
-      }
+      ctx.fillStyle='#334155';ctx.font='bold 13px Inter, sans-serif';
+      ctx.fillText('0', toPxX(0)+8, toPxY(0)+16);
 
       // Draw student points
       state.points.forEach((p,i)=>{
@@ -845,15 +845,14 @@
       }
 
       // Draw correct line if solved or solution
-      const lineReady = showSolution || state.graphSolved || (ex && ex.type==='inequality' && state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade);
+      const lineReady = showSolution || state.graphSolved;
       if(ex && lineReady){
         const pts=lineEndpoints(ex);
         if(pts.length>=2){
           ctx.save();
-          ctx.strokeStyle=ex.type==='inequality'?'#9b5cff':'#16a34a';
+          ctx.strokeStyle='#16a34a';
           ctx.lineWidth=5;
           ctx.lineCap='round';
-          if(ex.type==='inequality' && ex.expectedLine==='dashed') ctx.setLineDash([12,12]);
           ctx.beginPath();ctx.moveTo(toPxX(pts[0].x),toPxY(pts[0].y));ctx.lineTo(toPxX(pts[1].x),toPxY(pts[1].y));ctx.stroke();
           ctx.restore();
         }
@@ -893,17 +892,9 @@
         breakStreak();
         return;
       }
-      if(ex.type==='inequality' && !(state.selectedLine === ex.expectedLine && state.selectedShade === ex.expectedShade)){
-        setFeedback('Los puntos están bien. Ahora completa el paso de inecuación: tipo de línea y sombreado.', 'bad');
-        els.ineqStep.classList.add('active');
-        sound('bad');
-        return;
-      }
       state.graphSolved=true;
       drawGraph();
-      const extra = ex.type==='inequality'
-        ? ` Además, la línea es ${ex.expectedLine==='dashed'?'punteada':'continua'} y el sombreado va hacia ${ex.expectedShade==='origin'?'el lado del (0,0)':'el lado contrario al (0,0)'}.`
-        : ' Une los puntos con una línea continua.';
+      const extra = ' Une los puntos con una línea continua.';
       setFeedback(`Correcto. La gráfica pasa por (0, ${niceNumber(ex.yInt)}) y (${niceNumber(ex.xInt)}, 0).${extra}`, 'good');
       showToast('¡Gráfica correcta!');
       bumpScore(15);
@@ -914,11 +905,7 @@
       const ex=state.exercise;
       state.revealed=true;
       els.solutionPanel.classList.add('show');
-      const lineText = ex.type==='inequality'
-        ? `<li><strong>Recta guía:</strong> ${boundaryText(ex)}. Primero se resuelve como ecuación.</li>
-           <li><strong>Línea:</strong> ${ex.expectedLine==='dashed'?'punteada porque el signo es > o <':'continua porque el signo es ≥ o ≤'}.</li>
-           <li><strong>Sombreado:</strong> ${ex.expectedShade==='origin'?'lado del (0,0), porque al probarlo sí cumple':'lado contrario al (0,0), porque al probarlo no cumple'}.</li>`
-        : `<li><strong>Línea:</strong> continua, porque es ecuación.</li>`;
+      const lineText = `<li><strong>Línea:</strong> continua, porque es ecuación.</li>`;
       els.solutionPanel.innerHTML = `
         <strong>Solución paso a paso</strong>
         <ol>
@@ -929,13 +916,6 @@
           ${lineText}
         </ol>`;
       state.points = [{x:0,y:ex.yInt},{x:ex.xInt,y:0}];
-      if(ex.type==='inequality'){
-        state.selectedLine = ex.expectedLine;
-        state.selectedShade = ex.expectedShade;
-        document.querySelectorAll('.choice').forEach(b=>{
-          b.classList.toggle('selected', b.dataset.line === state.selectedLine || b.dataset.shade === state.selectedShade);
-        });
-      }
       state.graphSolved=true;
       updatePointList();
       drawGraph(true);
@@ -948,7 +928,6 @@
     $('clearCasesBtn').addEventListener('click', ()=>{els.yWhenX0.value='';els.xWhenY0.value='';});
     $('copyFromCasesBtn').addEventListener('click', copyFromCases);
     $('checkTableBtn').addEventListener('click', checkTable);
-    $('checkIneqBtn').addEventListener('click', checkIneq);
     $('checkGraphBtn').addEventListener('click', checkGraph);
     $('solutionBtn').addEventListener('click', showSolution);
     $('newBtn').addEventListener('click', ()=>loadExercise(true));
@@ -983,7 +962,26 @@
       if(e.key.toLowerCase()==='n') loadExercise(true);
     });
 
-    loadExercise(false);
+function startApp(){
+  loadExercise(false);
+
+  function safeDraw(){
+    state.points = [];
+    state.graphSolved = false;
+    updatePointList();
+    drawGraph();
+  }
+
+  safeDraw();
+  requestAnimationFrame(safeDraw);
+  setTimeout(safeDraw, 100);
+  setTimeout(safeDraw, 300);
+}
+if(document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startApp);
+} else {
+  startApp();
+}
   </script>
 </body>
 </html>
