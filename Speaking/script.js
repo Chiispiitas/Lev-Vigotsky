@@ -480,7 +480,7 @@ const CLASS_DATA = [
       },
       {
         "n": 13,
-        "name": "GARCÉS ESPINALES MÍA MAYTTÉ"
+        "name": "GALLEGOS MERO STEFANY ELIZABETH"
       },
       {
         "n": 14,
@@ -496,15 +496,15 @@ const CLASS_DATA = [
       },
       {
         "n": 17,
-        "name": "MACIAS GUERRERO KRUSPKAYA LOREDANA"
+        "name": "LÓPEZ ÁVILA MARÍA PAULA"
       },
       {
         "n": 18,
-        "name": "MACIAS VINUEZA JUNAIRY SOLANGE"
+        "name": "MACIAS GUERRERO KRUSPKAYA LOREDANA"
       },
       {
         "n": 19,
-        "name": "MAJOJO MERA DULCE MARIA"
+        "name": "MACIAS VINUEZA JUNAIRY SOLANGE"
       },
       {
         "n": 20,
@@ -528,23 +528,23 @@ const CLASS_DATA = [
       },
       {
         "n": 25,
-        "name": "PALMA ALCIVAR KENYA NAIROBY"
-      },
-      {
-        "n": 26,
         "name": "PARRAGA SANDOYA JUAN JOSE"
       },
       {
-        "n": 27,
+        "n": 26,
         "name": "PONCE BAQUE VERÓNICA XASBEIDY"
       },
       {
-        "n": 28,
+        "n": 27,
         "name": "QUIROZ ZAMBRANO CARLOS SEBASTIÁN"
       },
       {
-        "n": 29,
+        "n": 28,
         "name": "RODAS VALERIANO MATIAS ALEXANDER"
+      },
+      {
+        "n": 29,
+        "name": "RUBIAN CORREA VALENTINA"
       },
       {
         "n": 30,
