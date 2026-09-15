@@ -1120,12 +1120,10 @@ const teacherComment = $("#teacherComment");
 const toast = $("#toast");
 
 function init() {
-  renderClasses();
   renderRubric();
   bindEvents();
   initSharedSessions();
   updatePreview();
-  saveStudentDraft();
 }
 
 function bindEvents() {
@@ -1135,11 +1133,27 @@ function bindEvents() {
   $("#exportClassCsv").addEventListener("click", exportClassCsv);
   $("#exportClassPdf").addEventListener("click", exportClassPdf);
 
-  activityInput.addEventListener("input", () => { state.activity = activityInput.value.trim() || "Oral speaking assessment"; updatePreview(); saveStudentDraft(); });
-  teacherComment.addEventListener("input", () => { state.comment = teacherComment.value.trim(); updatePreview(); saveStudentDraft(); });
+  activityInput.addEventListener("input", () => {
+    state.activity = activityInput.value.trim() || "Oral speaking assessment";
+    updatePreview();
+    saveStudentDraft();
+    queueAutoPublishCurrentStudent();
+  });
+  teacherComment.addEventListener("input", () => {
+    state.comment = teacherComment.value.trim();
+    updatePreview();
+    saveStudentDraft();
+    queueAutoPublishCurrentStudent();
+  });
   $("#previousStudent").addEventListener("click", () => moveStudent(-1));
   $("#nextStudent").addEventListener("click", () => moveStudent(1));
-  $("#resetCurrent").addEventListener("click", () => { clearAssessment(true); updatePreview(); saveStudentDraft(); showToast("Current student reset"); });
+  $("#resetCurrent").addEventListener("click", () => {
+    clearAssessment(true);
+    updatePreview();
+    saveStudentDraft();
+    queueAutoPublishCurrentStudent();
+    showToast("Current student reset");
+  });
   studentSearch.addEventListener("input", () => {
     renderStudentOptions({ preserveSelection: true });
   });
@@ -1188,6 +1202,10 @@ function renderClasses() {
 }
 
 function selectClass(classId) {
+  if (!activeSpeakingSession || activeSpeakingSession.classId !== classId) {
+    showToast("Create or join a session for this class first");
+    return;
+  }
   state.classId = classId;
   const klass = getSelectedClass();
   if (!klass) return;
@@ -1211,7 +1229,8 @@ function showClassScreen() {
   saveStudentDraft();
   assessmentScreen.classList.remove("screen-active");
   classScreen.classList.add("screen-active");
-  renderClasses();
+  refreshSharedSessionUI();
+  loadAvailableSpeakingSessions();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1380,6 +1399,7 @@ function selectRubricOption(criterionId, optionIndex) {
   updateScore();
   updatePreview();
   saveStudentDraft();
+  queueAutoPublishCurrentStudent();
 }
 
 function updateRubricSelection() {
@@ -1392,6 +1412,14 @@ function updateRubricSelection() {
 
 function updateScore() {
   const marked = Object.keys(state.scores).length;
+  if (marked === 0) {
+    scoreValue.textContent = "— / 10";
+    scoreStatus.textContent = "No criteria marked";
+    scoreRing.textContent = "—";
+    scoreRing.style.background = "rgba(255,255,255,.23)";
+    return;
+  }
+
   const total = getTotalScore();
   const percentage = Math.round((total / 10) * 100);
   scoreValue.textContent = `${formatScore(total)} / 10`;
@@ -1413,6 +1441,7 @@ function markAllExcellent() {
   updateScore();
   updatePreview();
   saveStudentDraft();
+  queueAutoPublishCurrentStudent();
   showToast("All criteria marked as excellent");
 }
 
@@ -1438,7 +1467,7 @@ function getReportObject() {
       criterion: criterion.title,
       max: criterion.max,
       level: option ? option.label : "Not marked",
-      points: selected ? selected.points : 0,
+      points: selected ? selected.points : null,
       observation: option ? option.description : ""
     };
   });
@@ -1504,11 +1533,17 @@ function loadReports() {
 }
 
 
+function getStudentDraftKey(classId, studentNumber, sessionId = activeSpeakingSession?.sessionId) {
+  if (!sessionId) return "";
+  return `lv-speaking-draft-${sessionId}-${classId}-${studentNumber}`;
+}
+
 function saveStudentDraft() {
   const klass = getSelectedClass();
   const student = getSelectedStudent();
-  if (!klass || !student) return;
-  const key = `lv-draft-${klass.id}-${student.n}`;
+  const key = klass && student ? getStudentDraftKey(klass.id, student.n) : "";
+  if (!key) return;
+
   localStorage.setItem(key, JSON.stringify({
     scores: state.scores,
     comment: state.comment,
@@ -1520,14 +1555,22 @@ function saveStudentDraft() {
 function loadStudentDraft() {
   const klass = getSelectedClass();
   const student = getSelectedStudent();
-  if (!klass || !student) return;
-  const key = `lv-draft-${klass.id}-${student.n}`;
+  const key = klass && student ? getStudentDraftKey(klass.id, student.n) : "";
+  if (!key) {
+    state.scores = {};
+    state.comment = "";
+    teacherComment.value = "";
+    updateRubricSelection();
+    updateScore();
+    return;
+  }
+
   let draft = null;
   try { draft = JSON.parse(localStorage.getItem(key) || "null"); } catch (error) { draft = null; }
 
   state.scores = draft?.scores || {};
   state.comment = draft?.comment || "";
-  state.activity = draft?.activity || activityInput.value.trim() || "Oral speaking assessment";
+  state.activity = draft?.activity || activeSpeakingSession?.activity || "Oral speaking assessment";
   activityInput.value = state.activity;
   teacherComment.value = state.comment;
   updateRubricSelection();
@@ -1545,8 +1588,10 @@ const RUBRIC_SHORT = [
 ];
 
 function getDraftForStudent(classId, studentNumber) {
+  const key = getStudentDraftKey(classId, studentNumber);
+  if (!key) return null;
   try {
-    return JSON.parse(localStorage.getItem(`lv-draft-${classId}-${studentNumber}`) || "null");
+    return JSON.parse(localStorage.getItem(key) || "null");
   } catch (error) {
     return null;
   }
@@ -1576,7 +1621,7 @@ function buildReportFromDraft(klass, student, draft) {
       criterion: criterion.title,
       max: criterion.max,
       level: option ? option.label : "Not marked",
-      points: option ? option.points : 0,
+      points: option ? option.points : null,
       observation: option ? option.description : ""
     };
   });
@@ -1995,9 +2040,11 @@ function escapeAttribute(value) {
    SHARED SPEAKING SESSIONS
    ========================================================= */
 
-const SPEAKING_SESSION_STORAGE_KEY = "lv-speaking-active-session-v1";
+const SPEAKING_SESSION_STORAGE_KEY = "lv-speaking-active-session-v2";
 const SPEAKING_DEVICE_STORAGE_KEY = "lv-speaking-device-id-v1";
+const autoPublishTimers = new Map();
 let activeSpeakingSession = loadActiveSpeakingSession();
+let availableSpeakingSessions = [];
 
 function loadActiveSpeakingSession() {
   try {
@@ -2028,7 +2075,73 @@ function getSpeakingDeviceId() {
 }
 
 function normalizeSpeakingSessionId(value) {
-  return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
+  return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 48);
+}
+
+function courseYearNumber(klass) {
+  const id = String(klass?.id || "").toLowerCase();
+  if (id.startsWith("decimo")) return "10";
+  if (id.startsWith("primero")) return "1";
+  if (id.startsWith("segundo")) return "2";
+  if (id.startsWith("tercero")) return "3";
+
+  const labelMatch = String(klass?.label || "").match(/\d+/);
+  return labelMatch?.[0] || "X";
+}
+
+function courseTrackCode(klass) {
+  return /tec|t[eé]cnico/i.test(`${klass?.id || ""} ${klass?.specialty || ""} ${klass?.label || ""}`) ? "TEC" : "CC";
+}
+
+function localDateId(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "America/Guayaquil",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  }).formatToParts(date);
+  const get = type => parts.find(part => part.type === type)?.value || "";
+  return `${get("day")}-${get("month")}-${get("year")}`;
+}
+
+function generatedSessionIdForClass(klass) {
+  if (!klass) return "";
+  return `${courseYearNumber(klass)}-${courseTrackCode(klass)}-${localDateId()}`;
+}
+
+function populateSessionClassSelect() {
+  const select = $("#sessionClassSelect");
+  if (!select) return;
+
+  const selected = select.value;
+  select.innerHTML = '<option value="">Choose a class…</option>';
+  CLASS_DATA.forEach(klass => {
+    const option = document.createElement("option");
+    option.value = klass.id;
+    option.textContent = klass.label;
+    select.appendChild(option);
+  });
+
+  if (CLASS_DATA.some(klass => klass.id === selected)) select.value = selected;
+  updateGeneratedSessionId();
+}
+
+function updateGeneratedSessionId() {
+  const classId = $("#sessionClassSelect")?.value || "";
+  const klass = CLASS_DATA.find(item => item.id === classId) || null;
+  const output = $("#generatedSessionId");
+  if (output) output.value = generatedSessionIdForClass(klass);
+}
+
+function setSessionMode(mode) {
+  const create = mode !== "join";
+  $("#createModeButton")?.classList.toggle("active", create);
+  $("#joinModeButton")?.classList.toggle("active", !create);
+  $("#createModeButton")?.setAttribute("aria-selected", String(create));
+  $("#joinModeButton")?.setAttribute("aria-selected", String(!create));
+  $("#createSessionPane")?.classList.toggle("active", create);
+  $("#joinSessionPane")?.classList.toggle("active", !create);
+  if (!create) loadAvailableSpeakingSessions();
 }
 
 function setSharedSessionStatus(message, isError = false) {
@@ -2048,54 +2161,29 @@ function sessionResultsUrl(sessionId = activeSpeakingSession?.sessionId) {
 
 function refreshSharedSessionUI() {
   const session = activeSpeakingSession;
-  const currentClass = getSelectedClass();
-  const isClosed = String(session?.status || "").toLowerCase() === "closed";
-  const classMatches = Boolean(session && currentClass && session.classId === currentClass.id);
+  const summary = $("#currentSessionSummary");
+  if (summary) summary.hidden = !session;
 
-  const homeState = $("#homeSessionState");
-  const assessmentState = $("#assessmentSessionState");
-  const joinInput = $("#joinSessionId");
-  const createInput = $("#createSessionId");
-  const activeId = $("#activeSessionId");
-  const activeMeta = $("#activeSessionMeta");
-  const submitButton = $("#submitSessionButton");
-  const resultsButtons = [$("#openHomeResults"), $("#openAssessmentResults")];
-  const leaveButtons = [$("#leaveHomeSession"), $("#leaveAssessmentSession")];
-
-  [homeState, assessmentState].forEach(element => {
-    if (!element) return;
-    element.classList.toggle("active", Boolean(session && !isClosed));
-    element.classList.toggle("closed", Boolean(session && isClosed));
-    element.textContent = session ? (isClosed ? "Closed" : "Active") : "No session";
-  });
-
-  if (joinInput && session?.sessionId && !joinInput.value.trim()) {
-    joinInput.value = session.sessionId;
-  }
-  if (createInput && session?.sessionId && !createInput.value.trim()) {
-    createInput.value = session.sessionId;
+  const statePill = $("#homeSessionState");
+  if (statePill) {
+    statePill.textContent = session ? "Active" : "Required";
+    statePill.classList.toggle("active", Boolean(session));
   }
 
-  if (activeId) activeId.textContent = session?.sessionId || "No active session";
-  if (activeMeta) {
-    activeMeta.textContent = session
-      ? `${session.classLabel || session.classId || "Class"} · ${session.activity || "Oral speaking assessment"}`
-      : "Create a session for this class, or join one from the class screen.";
+  if ($("#currentSessionId")) $("#currentSessionId").textContent = session?.sessionId || "—";
+  if ($("#currentSessionMeta")) {
+    $("#currentSessionMeta").textContent = session
+      ? `${session.title || "Speaking session"} · ${session.classLabel || session.classId || "Class"}`
+      : "—";
   }
 
-  if (submitButton) {
-    submitButton.disabled = !session || isClosed || !classMatches;
-    submitButton.title = session && currentClass && !classMatches
-      ? "This session belongs to another class."
-      : "";
+  if ($("#assessmentSessionId")) $("#assessmentSessionId").textContent = session?.sessionId || "No session";
+  if ($("#assessmentSessionState")) {
+    const closed = String(session?.status || "").toLowerCase() === "closed";
+    $("#assessmentSessionState").textContent = closed ? "Closed" : "Live";
+    $("#assessmentSessionState").classList.toggle("closed", closed);
+    $("#assessmentSessionState").classList.toggle("active", Boolean(session && !closed));
   }
-
-  resultsButtons.forEach(button => {
-    if (button) button.disabled = false;
-  });
-  leaveButtons.forEach(button => {
-    if (button) button.disabled = !session;
-  });
 }
 
 async function speakingApiJson(url, options = {}) {
@@ -2104,7 +2192,7 @@ async function speakingApiJson(url, options = {}) {
   if (!response.ok || data.ok === false) {
     const rawError = data.error || `Server error ${response.status}`;
     if (String(rawError).includes("WDE0025")) {
-      throw new Error("Wix CMS collection not found. Check the collection API ID used by the Wix backend.");
+      throw new Error("Wix CMS collection not found. Verify Import1/Import2 in the Wix backend.");
     }
     throw new Error(rawError);
   }
@@ -2112,189 +2200,286 @@ async function speakingApiJson(url, options = {}) {
 }
 
 async function createSpeakingSession() {
-  const klass = getSelectedClass();
+  const classId = $("#sessionClassSelect")?.value || "";
+  const klass = CLASS_DATA.find(item => item.id === classId) || null;
   if (!klass) {
-    showToast("Select a class first");
+    showToast("Choose a class first");
+    $("#sessionClassSelect")?.focus();
     return;
   }
 
-  const sessionInput = $("#createSessionId");
-  const requestedSessionId = normalizeSpeakingSessionId(sessionInput?.value);
-  if (!requestedSessionId) {
-    showToast("Enter the session ID you want to create");
-    sessionInput?.focus();
-    return;
-  }
-  if (requestedSessionId.length < 3) {
-    showToast("Session ID must be at least 3 characters");
-    sessionInput?.focus();
-    return;
-  }
-  if (sessionInput) sessionInput.value = requestedSessionId;
-
+  const sessionId = generatedSessionIdForClass(klass);
+  const customTitle = $("#sessionTitleInput")?.value.trim() || "";
+  const title = customTitle || `${klass.label} · ${localDateId()}`;
   const button = $("#createSessionButton");
-  const oldText = button.textContent;
+  const oldText = button?.textContent || "Create session";
 
   try {
-    button.disabled = true;
-    button.textContent = "Creating…";
-    setSharedSessionStatus("Creating shared session…");
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Creating…";
+    }
+    setSharedSessionStatus(`Creating ${sessionId}…`);
 
     const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify({
         action: "create",
-        sessionId: requestedSessionId,
-        title: `${klass.label} - ${activityInput.value.trim() || "Oral speaking assessment"}`,
+        sessionId,
+        title,
         classId: klass.id,
         classLabel: klass.label,
-        activity: activityInput.value.trim() || "Oral speaking assessment",
+        activity: "Oral speaking assessment",
         createdBy: "David Santana"
       })
     });
 
     saveActiveSpeakingSession(data.session);
-    if ($("#joinSessionId")) $("#joinSessionId").value = data.session.sessionId;
-    setSharedSessionStatus(`Session ${data.session.sessionId} created. Other devices can join with this ID.`);
+    await hydrateDraftsFromSession(data.session);
+    setSharedSessionStatus(`Session ${data.session.sessionId} created. Changes will sync automatically.`);
     showToast(`Session ${data.session.sessionId} created`);
+    selectClass(klass.id);
   } catch (error) {
     console.error(error);
     setSharedSessionStatus(`Could not create session: ${error.message}`, true);
     showToast("Could not create session");
   } finally {
-    button.disabled = false;
-    button.textContent = oldText;
-    refreshSharedSessionUI();
+    if (button) {
+      button.disabled = false;
+      button.textContent = oldText;
+    }
+  }
+}
+
+async function loadAvailableSpeakingSessions() {
+  const select = $("#availableSessionsSelect");
+  const status = $("#sessionListStatus");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Loading sessions…</option>';
+  select.disabled = true;
+  if (status) status.textContent = "Loading available sessions from Wix…";
+
+  try {
+    const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT);
+    const sessions = Array.isArray(data.sessions)
+      ? data.sessions
+      : Array.isArray(data.items)
+        ? data.items
+        : [];
+
+    availableSpeakingSessions = sessions
+      .filter(session => session?.sessionId)
+      .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
+
+    select.innerHTML = '<option value="">Choose a session…</option>';
+    availableSpeakingSessions.forEach(session => {
+      const option = document.createElement("option");
+      option.value = session.sessionId;
+      const statusText = String(session.status || "open").toLowerCase() === "closed" ? " · CLOSED" : "";
+      option.textContent = `${session.sessionId} · ${session.title || session.classLabel || "Speaking"}${statusText}`;
+      select.appendChild(option);
+    });
+
+    if (status) {
+      status.textContent = availableSpeakingSessions.length
+        ? `${availableSpeakingSessions.length} session(s) available.`
+        : "No sessions found.";
+    }
+  } catch (error) {
+    console.error(error);
+    availableSpeakingSessions = [];
+    select.innerHTML = '<option value="">Sessions unavailable</option>';
+    if (status) {
+      status.textContent = String(error.message).includes("sessionId")
+        ? "The Wix speakingSession GET endpoint must return all sessions when no sessionId is supplied."
+        : `Could not load sessions: ${error.message}`;
+      status.classList.add("error");
+    }
+  } finally {
+    select.disabled = false;
   }
 }
 
 async function joinSpeakingSession() {
-  const input = $("#joinSessionId");
-  const sessionId = normalizeSpeakingSessionId(input?.value);
+  const sessionId = normalizeSpeakingSessionId($("#availableSessionsSelect")?.value);
   if (!sessionId) {
-    showToast("Enter a session ID");
-    input?.focus();
+    showToast("Choose a session");
     return;
   }
 
   const button = $("#joinSessionButton");
-  const oldText = button.textContent;
-
+  const oldText = button?.textContent || "Join selected session";
   try {
-    button.disabled = true;
-    button.textContent = "Joining…";
-    setSharedSessionStatus(`Opening ${sessionId}…`);
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Joining…";
+    }
 
     const url = new URL(SPEAKING_SESSION_ENDPOINT);
     url.searchParams.set("sessionId", sessionId);
     const data = await speakingApiJson(url.toString());
+    const session = data.session;
+    const klass = CLASS_DATA.find(item => item.id === session?.classId);
 
-    saveActiveSpeakingSession(data.session);
-    input.value = data.session.sessionId;
-
-    const klass = CLASS_DATA.find(item => item.id === data.session.classId);
-    if (klass) {
-      selectClass(klass.id);
-      if (data.session.activity) {
-        state.activity = data.session.activity;
-        activityInput.value = data.session.activity;
-        saveStudentDraft();
-      }
+    if (!session || !klass) {
+      throw new Error("This session does not match a class in the Speaking app.");
     }
 
-    setSharedSessionStatus(`Joined ${data.session.sessionId}. This device is now contributing to the shared session.`);
-    showToast(`Joined ${data.session.sessionId}`);
+    saveActiveSpeakingSession(session);
+    await hydrateDraftsFromSession(session);
+    setSharedSessionStatus(`Joined ${session.sessionId}. Changes will sync automatically.`);
+    showToast(`Joined ${session.sessionId}`);
+    selectClass(klass.id);
   } catch (error) {
     console.error(error);
     setSharedSessionStatus(`Could not join session: ${error.message}`, true);
-    showToast("Session not found");
+    showToast("Could not join session");
   } finally {
-    button.disabled = false;
-    button.textContent = oldText;
-    refreshSharedSessionUI();
+    if (button) {
+      button.disabled = false;
+      button.textContent = oldText;
+    }
+  }
+}
+
+async function hydrateDraftsFromSession(session) {
+  if (!session?.sessionId || !session?.classId) return;
+
+  try {
+    const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
+    url.searchParams.set("sessionId", session.sessionId);
+    const data = await speakingApiJson(url.toString());
+    const items = Array.isArray(data.items) ? data.items : [];
+
+    items.forEach(item => {
+      const key = getStudentDraftKey(session.classId, item.studentNumber, session.sessionId);
+      if (!key) return;
+
+      let rows = [];
+      try {
+        rows = Array.isArray(item.rows)
+          ? item.rows
+          : JSON.parse(item.criteriaJson || "[]");
+      } catch {
+        rows = [];
+      }
+
+      const scores = {};
+      rows.forEach(row => {
+        if (!row || row.level === "Not marked") return;
+        const criterion = RUBRIC.find(item => item.title === row.criterion);
+        if (!criterion) return;
+        const optionIndex = criterion.options.findIndex(option =>
+          option.label === row.level || Number(option.points) === Number(row.points)
+        );
+        if (optionIndex >= 0) {
+          scores[criterion.id] = {
+            optionIndex,
+            points: criterion.options[optionIndex].points
+          };
+        }
+      });
+
+      localStorage.setItem(key, JSON.stringify({
+        scores,
+        comment: item.comment || "",
+        activity: item.activity || session.activity || "Oral speaking assessment",
+        updatedAt: item.updatedAt || item.submittedAt || new Date().toISOString()
+      }));
+    });
+  } catch (error) {
+    console.warn("Could not hydrate session submissions", error);
   }
 }
 
 function leaveSpeakingSession() {
   if (!activeSpeakingSession) return;
   const oldId = activeSpeakingSession.sessionId;
+  autoPublishTimers.forEach(timer => clearTimeout(timer));
+  autoPublishTimers.clear();
   saveActiveSpeakingSession(null);
-  if ($("#joinSessionId")) $("#joinSessionId").value = "";
-  if ($("#createSessionId")) $("#createSessionId").value = "";
-  setSharedSessionStatus(`Left session ${oldId}. Local drafts remain on this device.`);
-  showToast("Shared session left");
+  state.classId = null;
+  state.studentNumber = null;
+  state.scores = {};
+  state.comment = "";
+  assessmentScreen.classList.remove("screen-active");
+  classScreen.classList.add("screen-active");
+  setSharedSessionStatus(`Left session ${oldId}. Create or join another session to continue.`);
+  loadAvailableSpeakingSessions();
 }
 
-async function submitCurrentStudentToSession() {
+function captureCurrentStudentSnapshot() {
   const session = activeSpeakingSession;
   const klass = getSelectedClass();
   const student = getSelectedStudent();
+  if (!session || !klass || !student || session.classId !== klass.id) return null;
+  if (String(session.status || "").toLowerCase() === "closed") return null;
 
-  if (!session) {
-    showToast("Create or join a session first");
-    return;
-  }
-  if (!klass || session.classId !== klass.id) {
-    showToast("This session belongs to another class");
-    return;
-  }
-  if (!student) return;
-
-  saveStudentDraft();
   const report = getReportObject();
-  const markedCriteria = getMarkedCount(report);
+  return {
+    sessionId: session.sessionId,
+    recordKey: `${session.sessionId}|${student.n}`,
+    deviceId: getSpeakingDeviceId(),
+    contributorName: "David Santana",
+    record: {
+      classId: klass.id,
+      classLabel: klass.label,
+      course: klass.course,
+      section: klass.section,
+      specialty: klass.specialty,
+      tutor: klass.tutor,
+      studentNumber: student.n,
+      studentName: student.name,
+      activity: report.activity,
+      total: report.total,
+      markedCriteria: getMarkedCount(report),
+      rows: report.rows,
+      comment: report.comment,
+      createdAt: report.createdAt,
+      submittedAt: new Date().toISOString()
+    }
+  };
+}
 
-  if (!markedCriteria) {
-    showToast("Mark at least one rubric criterion first");
-    return;
-  }
+function queueAutoPublishCurrentStudent() {
+  const snapshot = captureCurrentStudentSnapshot();
+  if (!snapshot) return;
 
-  const button = $("#submitSessionButton");
-  const oldText = button.textContent;
+  const existing = autoPublishTimers.get(snapshot.recordKey);
+  if (existing) clearTimeout(existing);
 
+  const timer = setTimeout(() => {
+    autoPublishTimers.delete(snapshot.recordKey);
+    publishSpeakingSnapshot(snapshot);
+  }, 450);
+
+  autoPublishTimers.set(snapshot.recordKey, timer);
+  setSharedSessionStatus("Saving changes…");
+}
+
+async function publishSpeakingSnapshot(snapshot) {
   try {
-    button.disabled = true;
-    button.textContent = "Publishing…";
-    setSharedSessionStatus(`Publishing ${student.name}…`);
-
     await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify({
-        sessionId: session.sessionId,
-        deviceId: getSpeakingDeviceId(),
-        contributorName: "David Santana",
-        record: {
-          classId: klass.id,
-          classLabel: klass.label,
-          course: klass.course,
-          section: klass.section,
-          specialty: klass.specialty,
-          tutor: klass.tutor,
-          studentNumber: student.n,
-          studentName: student.name,
-          activity: report.activity,
-          total: report.total,
-          markedCriteria,
-          rows: report.rows,
-          comment: report.comment,
-          createdAt: report.createdAt,
-          submittedAt: new Date().toISOString()
-        }
+        sessionId: snapshot.sessionId,
+        deviceId: snapshot.deviceId,
+        contributorName: snapshot.contributorName,
+        record: snapshot.record
       })
     });
 
-    setSharedSessionStatus(`${student.name} published to session ${session.sessionId}.`);
-    showToast("Student published");
+    if (activeSpeakingSession?.sessionId === snapshot.sessionId) {
+      setSharedSessionStatus("All changes saved to the shared session.");
+    }
   } catch (error) {
     console.error(error);
-    setSharedSessionStatus(`Could not publish: ${error.message}`, true);
-    showToast("Could not publish student");
-  } finally {
-    button.disabled = false;
-    button.textContent = oldText;
-    refreshSharedSessionUI();
+    if (activeSpeakingSession?.sessionId === snapshot.sessionId) {
+      setSharedSessionStatus(`Auto-save failed: ${error.message}`, true);
+    }
   }
 }
 
@@ -2303,30 +2488,29 @@ function openSpeakingResults() {
 }
 
 function initSharedSessions() {
+  populateSessionClassSelect();
+
+  $("#sessionClassSelect")?.addEventListener("change", updateGeneratedSessionId);
+  $("#createModeButton")?.addEventListener("click", () => setSessionMode("create"));
+  $("#joinModeButton")?.addEventListener("click", () => setSessionMode("join"));
   $("#createSessionButton")?.addEventListener("click", createSpeakingSession);
-  $("#createSessionId")?.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      createSpeakingSession();
-    }
-  });
   $("#joinSessionButton")?.addEventListener("click", joinSpeakingSession);
-  $("#joinSessionId")?.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      joinSpeakingSession();
-    }
-  });
-  $("#submitSessionButton")?.addEventListener("click", submitCurrentStudentToSession);
+  $("#refreshSessionsButton")?.addEventListener("click", loadAvailableSpeakingSessions);
   $("#openHomeResults")?.addEventListener("click", openSpeakingResults);
   $("#openAssessmentResults")?.addEventListener("click", openSpeakingResults);
   $("#leaveHomeSession")?.addEventListener("click", leaveSpeakingSession);
-  $("#leaveAssessmentSession")?.addEventListener("click", leaveSpeakingSession);
 
-  if (activeSpeakingSession?.sessionId && $("#joinSessionId")) {
-    $("#joinSessionId").value = activeSpeakingSession.sessionId;
-  }
   refreshSharedSessionUI();
+  loadAvailableSpeakingSessions();
+
+  if (activeSpeakingSession?.sessionId) {
+    const klass = CLASS_DATA.find(item => item.id === activeSpeakingSession.classId);
+    if (klass) {
+      hydrateDraftsFromSession(activeSpeakingSession).then(() => {
+        selectClass(klass.id);
+      });
+    }
+  }
 }
 
 window.addEventListener("beforeunload", saveStudentDraft);
