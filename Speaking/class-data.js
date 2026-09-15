@@ -7,7 +7,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "C",
     "specialty": "Educación General Básica",
     "tutor": "DAVID ALEJANDRO SANTANA MORALES",
-    "source": "DECIMO C.pdf",
+    "source": "datosreportes (6).xls",
     "students": [
       {
         "n": 1,
@@ -55,62 +55,78 @@ window.SPEAKING_CLASS_DATA = [
       },
       {
         "n": 12,
-        "name": "LOOR SUAREZ KIARA VALENTINA"
+        "name": "HOLGUÍN GARCIA DOMENICA ROMINA"
       },
       {
         "n": 13,
-        "name": "LUCAS VERA SANTIAGO JAVIER"
+        "name": "LOOR SUAREZ KIARA VALENTINA"
       },
       {
         "n": 14,
-        "name": "MEDRANDA VERA AMBAR GIANELLA"
+        "name": "LOPEZ MURILLO HANNIE ISABELLA"
       },
       {
         "n": 15,
-        "name": "MENDOZA FLORES JHON ROBERTH"
+        "name": "LUCAS VERA SANTIAGO JAVIER"
       },
       {
         "n": 16,
-        "name": "MENDOZA LÓPEZ REBECA ANTHONELLA"
+        "name": "LUCIO ANCHUNDIA CAMILA ALEJANDRA"
       },
       {
         "n": 17,
-        "name": "MENDOZA PEÑAFIEL NATHALIA MISHELL"
+        "name": "MEDRANDA VERA AMBAR GIANELLA"
       },
       {
         "n": 18,
-        "name": "MOLINA MONTESDEOCA LEILANY ANAHI"
+        "name": "MENDOZA FLORES JHON ROBERTH"
       },
       {
         "n": 19,
-        "name": "MOTATO REVELO EMY LISSETH"
+        "name": "MENDOZA LÓPEZ REBECA ANTHONELLA"
       },
       {
         "n": 20,
-        "name": "PAREDES CHONG GABRIELA VALENTINA"
+        "name": "MENDOZA PEÑAFIEL NATHALIA MISHELL"
       },
       {
         "n": 21,
-        "name": "PEÑARRIETA MURILLO JOEL EMILIANO"
+        "name": "MOLINA MONTESDEOCA LEILANY ANAHI"
       },
       {
         "n": 22,
-        "name": "PINCAY ARTEAGA IKER DAMIAN"
+        "name": "MORAN HOLGUIN SHUANY ALESKA"
       },
       {
         "n": 23,
-        "name": "SOLORZANO FRANCO JESUS MIGUEL"
+        "name": "MOTATO REVELO EMY LISSETH"
       },
       {
         "n": 24,
-        "name": "VELEZ MARIN SEBASTIAN SAID"
+        "name": "PAREDES CHONG GABRIELA VALENTINA"
       },
       {
         "n": 25,
-        "name": "VERA ALAVA LYA MAYTE"
+        "name": "PEÑARRIETA MURILLO JOEL EMILIANO"
       },
       {
         "n": 26,
+        "name": "PINCAY ARTEAGA IKER DAMIAN"
+      },
+      {
+        "n": 27,
+        "name": "SOLORZANO FRANCO JESUS MIGUEL"
+      },
+      {
+        "n": 28,
+        "name": "VELEZ MARIN SEBASTIAN SAID"
+      },
+      {
+        "n": 29,
+        "name": "VERA ALAVA LYA MAYTE"
+      },
+      {
+        "n": 30,
         "name": "ZAMBRANO LINO ALAN ALEXANDER"
       }
     ]
@@ -122,7 +138,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "A",
     "specialty": "CIENCIAS",
     "tutor": "CARLOS EDUARDO MENDOZA TUBAY",
-    "source": "PRIMERO CC.pdf",
+    "source": "datosreportes (7).xls",
     "students": [
       {
         "n": 1,
@@ -222,42 +238,46 @@ window.SPEAKING_CLASS_DATA = [
       },
       {
         "n": 25,
-        "name": "QUIJIJE CATAGUA RUT JONAHIRA"
+        "name": "PESANTES BARCIA JULIETH MARANYELI"
       },
       {
         "n": 26,
-        "name": "SANCHEZ VALVERDE BRITHANY ANDREA"
+        "name": "QUIJIJE CATAGUA RUT JONAHIRA"
       },
       {
         "n": 27,
-        "name": "TAPIA TUBAY SCARLETH ALEJANDRA"
+        "name": "SANCHEZ VALVERDE BRITHANY ANDREA"
       },
       {
         "n": 28,
-        "name": "TAQUES VEGA DYLAN SAID"
+        "name": "TAPIA TUBAY SCARLETH ALEJANDRA"
       },
       {
         "n": 29,
-        "name": "VÉLIZ ROSADO MILEY LISBETH"
+        "name": "TAQUES VEGA DYLAN SAID"
       },
       {
         "n": 30,
-        "name": "VINCES GARCIA FRANSHESKA VALENTINA"
+        "name": "VÉLIZ ROSADO MILEY LISBETH"
       },
       {
         "n": 31,
-        "name": "VIZUETA GARCIA VALERIA ANDREINA"
+        "name": "VINCES GARCIA FRANSHESKA VALENTINA"
       },
       {
         "n": 32,
-        "name": "ZACASARI LÓPEZ LILLY GUADALUPE"
+        "name": "VIZUETA GARCIA VALERIA ANDREINA"
       },
       {
         "n": 33,
-        "name": "ZAMBRANO ZAMBRANO ANGELA DAIMAY"
+        "name": "ZACASARI LÓPEZ LILLY GUADALUPE"
       },
       {
         "n": 34,
+        "name": "ZAMBRANO ZAMBRANO ANGELA DAIMAY"
+      },
+      {
+        "n": 35,
         "name": "ZAMORA ESMERALDAS MIRELY ANAHI"
       }
     ]
@@ -269,7 +289,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "B",
     "specialty": "TÉCNICO - CONTABILIDAD Y ADMINISTRACIÓN",
     "tutor": "JAHAIRA MARIUXI RODRÍGUEZ SALAZAR",
-    "source": "PRIMERO TEC.pdf",
+    "source": "datosreportes (8).xls",
     "students": [
       {
         "n": 1,
@@ -428,7 +448,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "A",
     "specialty": "CIENCIAS",
     "tutor": "Edison David Palma Palacios",
-    "source": "SEGUNDO CC.pdf",
+    "source": "datosreportes (9).xls",
     "students": [
       {
         "n": 1,
@@ -595,7 +615,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "B",
     "specialty": "TÉCNICO - CONTABILIDAD Y ADMINISTRACIÓN",
     "tutor": "OSCAR OMAR ALCIVAR VALDERRAMO",
-    "source": "SEGUNDO TEC.pdf",
+    "source": "datosreportes (10).xls",
     "students": [
       {
         "n": 1,
@@ -623,66 +643,78 @@ window.SPEAKING_CLASS_DATA = [
       },
       {
         "n": 7,
-        "name": "LOOR SALAZAR DANIEL STEVEN"
+        "name": "LOOR DELGADO JORGE EMMANUEL"
       },
       {
         "n": 8,
-        "name": "MENDOZA FLORES FREDERID JOSNAYDER"
+        "name": "LOOR SALAZAR DANIEL STEVEN"
       },
       {
         "n": 9,
-        "name": "MERO ZAMBRANO JUAN SEBASTIÁN"
+        "name": "MENDOZA FLORES FREDERID JOSNAYDER"
       },
       {
         "n": 10,
-        "name": "MEZA DELGADO KRISTINE LEONELA"
+        "name": "MERO BOWEN MATHIAS DANIEL"
       },
       {
         "n": 11,
-        "name": "MOREIRA VERA PAUL JOSHUE"
+        "name": "MERO ZAMBRANO JUAN SEBASTIÁN"
       },
       {
         "n": 12,
-        "name": "PALACIOS QUIROZ STEPHANO ADRIAN"
+        "name": "MEZA DELGADO KRISTINE LEONELA"
       },
       {
         "n": 13,
-        "name": "RODRIGUEZ ZAVALA JOSE VICENTE"
+        "name": "MOREIRA VERA PAUL JOSHUE"
       },
       {
         "n": 14,
-        "name": "ROLDÁN SÁNCHEZ MAHOLY JASLIN"
+        "name": "PALACIOS QUIROZ STEPHANO ADRIAN"
       },
       {
         "n": 15,
-        "name": "RUEDA GARCÍA CARIM ALEJANDRO"
+        "name": "PALMA ALCIVAR KENYA NAIROBY"
       },
       {
         "n": 16,
-        "name": "SAAVEDRA VERA AYMARA RAFAELA"
+        "name": "RODRIGUEZ ZAVALA JOSE VICENTE"
       },
       {
         "n": 17,
-        "name": "VALENCIA MENDOZA JORDAN ARIEL"
+        "name": "ROLDÁN SÁNCHEZ MAHOLY JASLIN"
       },
       {
         "n": 18,
-        "name": "VASQUEZ CHAVEZ WESLEY JASSET"
+        "name": "RUEDA GARCÍA CARIM ALEJANDRO"
       },
       {
         "n": 19,
-        "name": "VELEZ LOPEZ TIFANY ANAHIS"
+        "name": "SAAVEDRA VERA AYMARA RAFAELA"
       },
       {
         "n": 20,
-        "name": "VINCES MACIAS LEAH VALENTINA"
+        "name": "VALENCIA MENDOZA JORDAN ARIEL"
       },
       {
         "n": 21,
-        "name": "ZAMBRANO MENENDEZ MAYKEL ADONYS"
+        "name": "VASQUEZ CHAVEZ WESLEY JASSET"
       },
       {
         "n": 22,
+        "name": "VELEZ LOPEZ TIFANY ANAHIS"
+      },
+      {
+        "n": 23,
+        "name": "VINCES MACIAS LEAH VALENTINA"
+      },
+      {
+        "n": 24,
+        "name": "ZAMBRANO MENENDEZ MAYKEL ADONYS"
+      },
+      {
+        "n": 25,
         "name": "ZAMBRANO ZAMBRANO ADONYS JESUS"
       }
     ]
@@ -694,7 +726,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "A",
     "specialty": "CIENCIAS",
     "tutor": "ISRAEL SMITH FRANCO MERO",
-    "source": "TERCERO CC.pdf",
+    "source": "datosreportes (11).xls",
     "students": [
       {
         "n": 1,
@@ -838,7 +870,7 @@ window.SPEAKING_CLASS_DATA = [
       },
       {
         "n": 36,
-        "name": "VASQUES JIMENEZ IVANNA MELINA"
+        "name": "VASQUEZ JIMENEZ IVANNA MELINA"
       },
       {
         "n": 37,
@@ -857,7 +889,7 @@ window.SPEAKING_CLASS_DATA = [
     "section": "B",
     "specialty": "TÉCNICO - CONTABILIDAD Y ADMINISTRACIÓN",
     "tutor": "VERÓNICA RAQUEL LÓPEZ FIGUEROA",
-    "source": "TERCERO TEC.pdf",
+    "source": "datosreportes (12).xls",
     "students": [
       {
         "n": 1,
@@ -993,10 +1025,14 @@ window.SPEAKING_CLASS_DATA = [
       },
       {
         "n": 34,
-        "name": "VIDAL FREYA MELINA"
+        "name": "VERA PILAY JHON WALTER"
       },
       {
         "n": 35,
+        "name": "VIDAL FREYA MELINA"
+      },
+      {
+        "n": 36,
         "name": "ZAMORA ESCALANTE MATIAS BENJAMIN"
       }
     ]
