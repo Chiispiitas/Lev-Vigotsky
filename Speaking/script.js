@@ -91,6 +91,14 @@ const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
 const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
 const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSubmission`;
 
+const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist";
+const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number";
+
+let currentAppMode = null;
+let regularSubmode = "checklist";
+let regularGrades = new Map();
+const regularPublishTimers = new Map();
+
 const state = {
   classId: null,
   studentNumber: null,
@@ -100,8 +108,10 @@ const state = {
 };
 
 const $ = (selector) => document.querySelector(selector);
+const modeScreen = $("#modeScreen");
 const classScreen = $("#classScreen");
 const assessmentScreen = $("#assessmentScreen");
+const regularAssessmentScreen = $("#regularAssessmentScreen");
 const classGrid = $("#classGrid");
 const assessmentTitle = $("#assessmentTitle");
 const classMeta = $("#classMeta");
@@ -126,6 +136,7 @@ function init() {
 
 function bindEvents() {
   $("#backToClasses").addEventListener("click", showClassScreen);
+  $("#backRegularToSession")?.addEventListener("click", showClassScreen);
   $("#markExcellent").addEventListener("click", markAllExcellent);
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
 
@@ -198,7 +209,7 @@ function renderClasses() {
 }
 
 function selectClass(classId) {
-  if (!activeSpeakingSession || activeSpeakingSession.classId !== classId) {
+  if (!activeSpeakingSession || activeSpeakingSession.classId !== classId || sessionAppMode(activeSpeakingSession) !== "speaking") {
     showToast("Create or join a session for this class first");
     return;
   }
@@ -214,7 +225,10 @@ function selectClass(classId) {
   renderStudentOptions();
   clearAssessment(false);
 
+  currentAppMode = "speaking";
+  modeScreen?.classList.remove("screen-active");
   classScreen.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
   assessmentScreen.classList.add("screen-active");
   window.scrollTo({ top: 0, behavior: "smooth" });
   updatePreview();
@@ -222,9 +236,12 @@ function selectClass(classId) {
 }
 
 function showClassScreen() {
-  saveStudentDraft();
-  assessmentScreen.classList.remove("screen-active");
+  if (assessmentScreen?.classList.contains("screen-active")) saveStudentDraft();
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  modeScreen?.classList.remove("screen-active");
   classScreen.classList.add("screen-active");
+  refreshSessionModeUI();
   refreshSharedSessionUI();
   loadAvailableSpeakingSessions();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1102,7 +1119,76 @@ function localDateId(date = new Date()) {
 
 function generatedSessionIdForClass(klass) {
   if (!klass) return "";
-  return `${courseYearNumber(klass)}-${courseTrackCode(klass)}-${localDateId()}`;
+  const base = `${courseYearNumber(klass)}-${courseTrackCode(klass)}-${localDateId()}`;
+  if (currentAppMode === "regular") {
+    return `${base}-${regularSubmode === "checklist" ? "CHK" : "NUM"}`;
+  }
+  return base;
+}
+
+function sessionAppMode(session) {
+  const activity = String(session?.activity || "");
+  return activity === REGULAR_CHECKLIST_ACTIVITY || activity === REGULAR_NUMBER_ACTIVITY
+    ? "regular"
+    : "speaking";
+}
+
+function sessionRegularSubmode(session) {
+  return String(session?.activity || "") === REGULAR_NUMBER_ACTIVITY ? "number" : "checklist";
+}
+
+function selectWebsiteMode(mode) {
+  currentAppMode = mode === "regular" ? "regular" : "speaking";
+  modeScreen?.classList.remove("screen-active");
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  classScreen?.classList.add("screen-active");
+  setSessionMode("create");
+  refreshSessionModeUI();
+  refreshSharedSessionUI();
+  loadAvailableSpeakingSessions();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showModeSelection() {
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  classScreen?.classList.remove("screen-active");
+  modeScreen?.classList.add("screen-active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function setRegularSubmode(mode) {
+  regularSubmode = mode === "number" ? "number" : "checklist";
+  $("#checklistVariantButton")?.classList.toggle("active", regularSubmode === "checklist");
+  $("#numberVariantButton")?.classList.toggle("active", regularSubmode === "number");
+  updateGeneratedSessionId();
+}
+
+function refreshSessionModeUI() {
+  const regular = currentAppMode === "regular";
+  const activeMatches = activeSpeakingSession && sessionAppMode(activeSpeakingSession) === currentAppMode;
+
+  if ($("#sessionModeEyebrow")) $("#sessionModeEyebrow").textContent = regular ? "Regular grading" : "Speaking";
+  if ($("#sessionModeCopy")) {
+    $("#sessionModeCopy").textContent = regular
+      ? "Create or join a shared grading session, then grade the whole class using a checklist or direct numbers."
+      : "A session is required before grading. Create a new one for a class or join an existing shared session.";
+  }
+  if ($("#sessionModeChip")) $("#sessionModeChip").textContent = regular ? "Fast grading" : "Shared grading";
+  if ($("#regularVariantBlock")) $("#regularVariantBlock").hidden = !regular;
+  if ($("#sessionTitleInput")) {
+    $("#sessionTitleInput").placeholder = regular
+      ? "Example: Homework 3"
+      : "Example: Unit 9 speaking assessment";
+  }
+  if ($("#generatedIdHelp")) {
+    $("#generatedIdHelp").textContent = regular
+      ? "Regular sessions add CHK or NUM to keep checklist and numerical sessions separate."
+      : "ID format: course year + CC/TEC + date (DD-MM-YYYY).";
+  }
+  if ($("#currentSessionSummary")) $("#currentSessionSummary").hidden = !activeMatches;
+  updateGeneratedSessionId();
 }
 
 function populateSessionClassSelect() {
