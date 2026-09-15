@@ -1087,8 +1087,7 @@ const RUBRIC = [
 const STORAGE_KEY = "lv-speaking-reports-v1";
 
 /*
-  Wix Velo backend configuration for shared Speaking sessions.
-  Replace this placeholder only after the new Wix site has been created/published.
+  Wix Velo production endpoints for shared Speaking sessions.
 */
 const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
 const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
