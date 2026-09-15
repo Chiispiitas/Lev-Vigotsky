@@ -48,7 +48,7 @@
             <span class="mode-number">02</span>
             <span class="mode-icon" aria-hidden="true">✓</span>
             <strong>Regular Grading</strong>
-            <small>Grade a whole class quickly with a checklist or direct numerical scores.</small>
+            <small>Grade a whole class quickly with ✓, X, or a direct numerical score for each student.</small>
           </button>
         </div>
       </section>
@@ -78,20 +78,6 @@
                 <h3>Create session</h3>
               </div>
               <span class="session-state-pill" id="homeSessionState">Required</span>
-            </div>
-
-            <div class="regular-variant-block" id="regularVariantBlock" hidden>
-              <label class="field-label">Regular grading type</label>
-              <div class="regular-variant-toggle">
-                <button class="regular-variant-button active" id="checklistVariantButton" type="button">
-                  <strong>Checklist</strong>
-                  <small>✓ = 10 · X = 0 · blank = no grade</small>
-                </button>
-                <button class="regular-variant-button" id="numberVariantButton" type="button">
-                  <strong>Number</strong>
-                  <small>Enter any grade from 0 to 10</small>
-                </button>
-              </div>
             </div>
 
             <label class="field-label" for="sessionTitleInput">Session title</label>
@@ -266,12 +252,12 @@
         <section class="panel regular-roster-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow dark" id="regularRosterEyebrow">Checklist</p>
+              <p class="eyebrow dark" id="regularRosterEyebrow">Regular grading</p>
               <h3>Grade students</h3>
             </div>
             <span class="student-count" id="regularStudentCount">0 students</span>
           </div>
-          <p class="regular-instructions" id="regularInstructions">✓ gives 10, X gives 0, and leaving both blank means no grade.</p>
+          <p class="regular-instructions" id="regularInstructions">✓ gives 10, X gives 0, or type any score from 0 to 10. Leave all controls blank for no grade.</p>
           <div class="regular-roster" id="regularRoster"></div>
         </section>
       </section>
