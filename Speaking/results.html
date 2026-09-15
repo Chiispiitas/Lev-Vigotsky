@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1375ff" />
-  <title>Speaking Session Results</title>
+  <title>Grading Session Results</title>
   <link rel="stylesheet" href="results.css" />
 </head>
 <body>
   <div class="page-shell">
     <header class="results-header">
       <div>
-        <p class="eyebrow">Lev Vigotsky · English Area</p>
-        <h1>Speaking Session Results</h1>
-        <p class="subtitle">Shared results from all devices connected to the same session.</p>
+        <p class="eyebrow">Lev Vigotsky · Grading</p>
+        <h1>Grading Session Results</h1>
+        <p class="subtitle">Shared results from Speaking, Checklist, and Numerical grading sessions.</p>
       </div>
       <a class="back-link" href="./">← Grading</a>
     </header>
@@ -24,7 +24,7 @@
         <input id="sessionIdInput" type="text" placeholder="SPK-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" />
         <button id="loadSessionButton" type="button">Load session</button>
       </div>
-      <p id="statusBox" class="status-box">Enter a session ID or open this page from an active Speaking session.</p>
+      <p id="statusBox" class="status-box">Enter a session ID or open this page from an active grading session.</p>
     </section>
 
     <section class="session-banner" id="sessionBanner" hidden>
@@ -82,7 +82,7 @@
               <th>Rank</th>
               <th>Student</th>
               <th>Score</th>
-              <th>Rubric</th>
+              <th id="detailColumnHeader">Details</th>
               <th>Contributor</th>
               <th>Updated</th>
               <th></th>
