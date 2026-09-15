@@ -1958,6 +1958,68 @@ async function continueActiveSession() {
   }
 }
 
+function resultSessionModeLabel(session) {
+  return sessionAppMode(session) === "regular" ? "Regular" : "Speaking";
+}
+
+async function loadStartResultsSessions() {
+  const panel = $("#startResultsPanel");
+  const select = $("#startResultsSessionSelect");
+  const status = $("#startResultsStatus");
+  if (!panel || !select) return;
+
+  panel.hidden = false;
+  select.disabled = true;
+  select.innerHTML = '<option value="">Loading sessions…</option>';
+  if (status) {
+    status.classList.remove("error");
+    status.textContent = "Loading all saved sessions…";
+  }
+
+  try {
+    const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT);
+    const sessions = (Array.isArray(data.sessions) ? data.sessions : Array.isArray(data.items) ? data.items : [])
+      .filter(session => session?.sessionId)
+      .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
+
+    select.innerHTML = '<option value="">Choose a session…</option>';
+    sessions.forEach(session => {
+      const option = document.createElement("option");
+      option.value = session.sessionId;
+      const mode = resultSessionModeLabel(session);
+      const statusText = String(session.status || "open").toLowerCase() === "closed" ? " · CLOSED" : "";
+      const classText = session.classLabel || session.classId || "Class";
+      const title = session.title || session.activity || "Session";
+      option.textContent = `${mode} · ${classText} · ${title} · ${session.sessionId}${statusText}`;
+      select.appendChild(option);
+    });
+
+    if (status) {
+      status.textContent = sessions.length
+        ? `${sessions.length} session(s) available.`
+        : "No saved sessions found.";
+    }
+  } catch (error) {
+    console.error(error);
+    select.innerHTML = '<option value="">Sessions unavailable</option>';
+    if (status) {
+      status.textContent = `Could not load sessions: ${error.message}`;
+      status.classList.add("error");
+    }
+  } finally {
+    select.disabled = false;
+  }
+}
+
+function openSelectedSessionResults() {
+  const sessionId = normalizeSpeakingSessionId($("#startResultsSessionSelect")?.value);
+  if (!sessionId) {
+    showToast("Choose a session first");
+    return;
+  }
+  window.location.href = sessionResultsUrl(sessionId);
+}
+
 function openSpeakingResults() {
   window.location.href = sessionResultsUrl(activeSpeakingSession?.sessionId || "");
 }
@@ -1967,6 +2029,9 @@ function initSharedSessions() {
 
   $("#chooseSpeakingMode")?.addEventListener("click", () => selectWebsiteMode("speaking"));
   $("#chooseRegularMode")?.addEventListener("click", () => selectWebsiteMode("regular"));
+  $("#chooseResultsMode")?.addEventListener("click", loadStartResultsSessions);
+  $("#refreshStartResults")?.addEventListener("click", loadStartResultsSessions);
+  $("#openSelectedResults")?.addEventListener("click", openSelectedSessionResults);
   $("#backToModeSelection")?.addEventListener("click", showModeSelection);
 
   $("#sessionClassSelect")?.addEventListener("change", updateGeneratedSessionId);
