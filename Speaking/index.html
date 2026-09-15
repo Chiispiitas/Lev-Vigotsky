@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1875ff" />
-  <title>Speaking Report Maker</title>
+  <title>Lev Grading</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="speaking-fixes.css" />
 </head>
@@ -20,24 +20,53 @@
     <header class="topbar">
       <div class="brand-mark" aria-hidden="true">🦉</div>
       <div>
-        <p class="eyebrow">Lev Vigotsky · English Area</p>
-        <h1>Speaking Report Maker</h1>
+        <p class="eyebrow">Lev Vigotsky · Grading</p>
+        <h1>Lev Grading</h1>
       </div>
     </header>
 
     <main>
-      <section class="screen screen-active" id="classScreen" aria-labelledby="sessionTitle">
+      <section class="screen screen-active" id="modeScreen" aria-labelledby="modeTitle">
         <div class="hero-card">
           <div>
-            <p class="eyebrow dark">Section 1</p>
-            <h2 id="sessionTitle">Session</h2>
-            <p class="hero-copy">A session is required before grading. Create a new one for a class or join an existing shared session.</p>
+            <p class="eyebrow dark">Start</p>
+            <h2 id="modeTitle">Choose a mode</h2>
+            <p class="hero-copy">Choose how you want to grade. Each mode uses shared sessions and saves into the same Results dashboard.</p>
           </div>
-          <div class="phone-chip">Shared grading</div>
+          <div class="phone-chip">2 modes</div>
+        </div>
+
+        <div class="grading-mode-grid">
+          <button class="grading-mode-card speaking" id="chooseSpeakingMode" type="button">
+            <span class="mode-number">01</span>
+            <span class="mode-icon" aria-hidden="true">🎤</span>
+            <strong>Speaking</strong>
+            <small>7-criterion oral speaking rubric with comments and student tabs.</small>
+          </button>
+
+          <button class="grading-mode-card regular" id="chooseRegularMode" type="button">
+            <span class="mode-number">02</span>
+            <span class="mode-icon" aria-hidden="true">✓</span>
+            <strong>Regular Grading</strong>
+            <small>Grade a whole class quickly with a checklist or direct numerical scores.</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="screen" id="classScreen" aria-labelledby="sessionTitle">
+        <button class="mode-back-button" id="backToModeSelection" type="button">← Modes</button>
+
+        <div class="hero-card">
+          <div>
+            <p class="eyebrow dark" id="sessionModeEyebrow">Speaking</p>
+            <h2 id="sessionTitle">Session</h2>
+            <p class="hero-copy" id="sessionModeCopy">A session is required before grading. Create a new one for a class or join an existing shared session.</p>
+          </div>
+          <div class="phone-chip" id="sessionModeChip">Shared grading</div>
         </div>
 
         <section class="panel session-gateway">
-          <div class="session-mode-toggle" role="tablist" aria-label="Session mode">
+          <div class="session-mode-toggle" role="tablist" aria-label="Session action">
             <button class="session-mode-button active" id="createModeButton" type="button" role="tab" aria-selected="true">Create</button>
             <button class="session-mode-button" id="joinModeButton" type="button" role="tab" aria-selected="false">Join</button>
           </div>
@@ -51,6 +80,20 @@
               <span class="session-state-pill" id="homeSessionState">Required</span>
             </div>
 
+            <div class="regular-variant-block" id="regularVariantBlock" hidden>
+              <label class="field-label">Regular grading type</label>
+              <div class="regular-variant-toggle">
+                <button class="regular-variant-button active" id="checklistVariantButton" type="button">
+                  <strong>Checklist</strong>
+                  <small>✓ = 10 · X = 0 · blank = no grade</small>
+                </button>
+                <button class="regular-variant-button" id="numberVariantButton" type="button">
+                  <strong>Number</strong>
+                  <small>Enter any grade from 0 to 10</small>
+                </button>
+              </div>
+            </div>
+
             <label class="field-label" for="sessionTitleInput">Session title</label>
             <input class="text-input" id="sessionTitleInput" type="text" placeholder="Example: Unit 9 speaking assessment" autocomplete="off" />
 
@@ -62,7 +105,7 @@
             <label class="field-label" for="generatedSessionId">Generated session ID</label>
             <input class="text-input session-id-input generated-id" id="generatedSessionId" type="text" value="" placeholder="Select a class" readonly />
 
-            <p class="session-status-text">ID format: course year + CC/TEC + date (DD-MM-YYYY).</p>
+            <p class="session-status-text" id="generatedIdHelp">ID format: course year + CC/TEC + date (DD-MM-YYYY).</p>
             <button class="primary-session-button full-width" id="createSessionButton" type="button">Create session</button>
           </div>
 
@@ -90,7 +133,8 @@
               <strong id="currentSessionId">—</strong>
               <small id="currentSessionMeta">—</small>
             </div>
-            <div class="session-summary-actions">
+            <div class="session-summary-actions three">
+              <button class="primary-session-button compact" id="continueHomeSession" type="button">Continue</button>
               <button class="ghost-button" id="openHomeResults" type="button">Results</button>
               <button class="ghost-button danger" id="leaveHomeSession" type="button">Leave</button>
             </div>
@@ -104,7 +148,7 @@
         <div class="class-strip">
           <button class="back-button" id="backToClasses" type="button">← Session</button>
           <div>
-            <p class="eyebrow dark">Active class</p>
+            <p class="eyebrow dark">Speaking mode</p>
             <h2 id="assessmentTitle">Assessment</h2>
             <p id="classMeta" class="small-muted"></p>
           </div>
@@ -191,11 +235,45 @@
           <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
         </section>
 
-
         <div class="compat-hooks" aria-hidden="true" hidden>
           <button class="ghost-button" id="refreshPreview" type="button" tabindex="-1">Refresh</button>
           <pre id="reportPreview" class="report-preview"></pre>
         </div>
+      </section>
+
+      <section class="screen" id="regularAssessmentScreen" aria-labelledby="regularAssessmentTitle">
+        <div class="class-strip">
+          <button class="back-button" id="backRegularToSession" type="button">← Session</button>
+          <div>
+            <p class="eyebrow dark" id="regularAssessmentEyebrow">Regular grading</p>
+            <h2 id="regularAssessmentTitle">Class grading</h2>
+            <p id="regularClassMeta" class="small-muted"></p>
+          </div>
+        </div>
+
+        <section class="panel assessment-sync-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Auto-sync</p>
+              <h3 id="regularSessionId">No session</h3>
+            </div>
+            <span class="session-state-pill active" id="regularSessionState">Live</span>
+          </div>
+          <p class="session-status-text" id="regularSyncStatus">Every change is saved automatically to Results.</p>
+          <button class="ghost-button" id="openRegularResults" type="button">View session results</button>
+        </section>
+
+        <section class="panel regular-roster-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark" id="regularRosterEyebrow">Checklist</p>
+              <h3>Grade students</h3>
+            </div>
+            <span class="student-count" id="regularStudentCount">0 students</span>
+          </div>
+          <p class="regular-instructions" id="regularInstructions">✓ gives 10, X gives 0, and leaving both blank means no grade.</p>
+          <div class="regular-roster" id="regularRoster"></div>
+        </section>
       </section>
     </main>
   </div>
