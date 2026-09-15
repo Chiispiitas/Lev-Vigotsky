@@ -26,48 +26,101 @@
     </header>
 
     <main>
-      <section class="screen screen-active" id="classScreen" aria-labelledby="classTitle">
+      <section class="screen screen-active" id="classScreen" aria-labelledby="sessionTitle">
         <div class="hero-card">
           <div>
-            <p class="eyebrow dark">Step 1</p>
-            <h2 id="classTitle">Select a class</h2>
-            <p class="hero-copy">Choose the course first. Then lock the student, adjust the rubric only where needed, add a teacher comment, and export the class results.</p>
+            <p class="eyebrow dark">Section 1</p>
+            <h2 id="sessionTitle">Session</h2>
+            <p class="hero-copy">A session is required before grading. Create a new one for a class or join an existing shared session.</p>
           </div>
-          <div class="phone-chip">Mobile ready</div>
+          <div class="phone-chip">Shared grading</div>
         </div>
 
-        <section class="panel shared-session-panel" id="sharedSessionChooser">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow dark">Shared grading</p>
-              <h3>Join a Speaking session</h3>
-            </div>
-            <span class="session-state-pill" id="homeSessionState">No session</span>
+        <section class="panel session-gateway">
+          <div class="session-mode-toggle" role="tablist" aria-label="Session mode">
+            <button class="session-mode-button active" id="createModeButton" type="button" role="tab" aria-selected="true">Create</button>
+            <button class="session-mode-button" id="joinModeButton" type="button" role="tab" aria-selected="false">Join</button>
           </div>
-          <p class="session-copy">Enter the session ID from another device to work on the same assignment. To create a new session, select a class first.</p>
-          <div class="session-join-row">
-            <input class="text-input session-id-input" id="joinSessionId" type="text" placeholder="SPK-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" />
-            <button class="primary-session-button" id="joinSessionButton" type="button">Join session</button>
-          </div>
-          <div class="session-secondary-actions">
-            <button class="ghost-button" id="openHomeResults" type="button">Results</button>
-            <button class="ghost-button danger" id="leaveHomeSession" type="button">Leave session</button>
-          </div>
-          <p class="session-status-text" id="homeSessionStatus">No shared session is active on this device.</p>
-        </section>
 
-        <div class="class-grid" id="classGrid"></div>
+          <div class="session-mode-pane active" id="createSessionPane">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow dark">New session</p>
+                <h3>Create session</h3>
+              </div>
+              <span class="session-state-pill" id="homeSessionState">Required</span>
+            </div>
+
+            <label class="field-label" for="sessionTitleInput">Session title</label>
+            <input class="text-input" id="sessionTitleInput" type="text" placeholder="Example: Unit 9 speaking assessment" autocomplete="off" />
+
+            <label class="field-label" for="sessionClassSelect">Class</label>
+            <select class="text-input" id="sessionClassSelect">
+              <option value="">Choose a class…</option>
+            </select>
+
+            <label class="field-label" for="generatedSessionId">Generated session ID</label>
+            <input class="text-input session-id-input generated-id" id="generatedSessionId" type="text" value="" placeholder="Select a class" readonly />
+
+            <p class="session-status-text">ID format: course year + CC/TEC + date (DD-MM-YYYY).</p>
+            <button class="primary-session-button full-width" id="createSessionButton" type="button">Create session</button>
+          </div>
+
+          <div class="session-mode-pane" id="joinSessionPane">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow dark">Existing session</p>
+                <h3>Join session</h3>
+              </div>
+              <button class="ghost-button" id="refreshSessionsButton" type="button">Refresh</button>
+            </div>
+
+            <label class="field-label" for="availableSessionsSelect">Available sessions</label>
+            <select class="text-input" id="availableSessionsSelect">
+              <option value="">Loading sessions…</option>
+            </select>
+
+            <p class="session-status-text" id="sessionListStatus">Loading available sessions from Wix…</p>
+            <button class="primary-session-button full-width" id="joinSessionButton" type="button">Join selected session</button>
+          </div>
+
+          <div class="current-session-summary" id="currentSessionSummary" hidden>
+            <div>
+              <span>Current session</span>
+              <strong id="currentSessionId">—</strong>
+              <small id="currentSessionMeta">—</small>
+            </div>
+            <div class="session-summary-actions">
+              <button class="ghost-button" id="openHomeResults" type="button">Results</button>
+              <button class="ghost-button danger" id="leaveHomeSession" type="button">Leave</button>
+            </div>
+          </div>
+
+          <p class="session-status-text" id="homeSessionStatus">Create or join a session to begin grading.</p>
+        </section>
       </section>
 
       <section class="screen" id="assessmentScreen" aria-labelledby="assessmentTitle">
         <div class="class-strip">
-          <button class="back-button" id="backToClasses" type="button">← Classes</button>
+          <button class="back-button" id="backToClasses" type="button">← Session</button>
           <div>
-            <p class="eyebrow dark">Selected class</p>
+            <p class="eyebrow dark">Active class</p>
             <h2 id="assessmentTitle">Assessment</h2>
             <p id="classMeta" class="small-muted"></p>
           </div>
         </div>
+
+        <section class="panel assessment-sync-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Auto-sync</p>
+              <h3 id="assessmentSessionId">No session</h3>
+            </div>
+            <span class="session-state-pill active" id="assessmentSessionState">Live</span>
+          </div>
+          <p class="session-status-text" id="assessmentSessionStatus">Changes are saved to the shared session automatically.</p>
+          <button class="ghost-button" id="openAssessmentResults" type="button">View session results</button>
+        </section>
 
         <section class="panel tabs-panel" id="studentTabsPanel">
           <div class="panel-head">
@@ -78,14 +131,13 @@
             <button class="ghost-button" id="addStudentTab" type="button">+ Add tab</button>
           </div>
           <div class="student-tabs" id="studentTabs" role="tablist" aria-label="Open student grading tabs"></div>
-          <p class="tabs-copy">Open another student in a tab, switch between them, and close tabs when you finish. Each student keeps an independent draft automatically.</p>
+          <p class="tabs-copy">Open another student in a tab and switch between them. Each student starts blank in every new session.</p>
         </section>
-
 
         <section class="panel student-panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow dark">Step 2</p>
+              <p class="eyebrow dark">Section 2</p>
               <h3>Student and activity</h3>
             </div>
             <span class="student-count" id="studentCount">0 students</span>
@@ -110,16 +162,16 @@
         <section class="score-card" aria-live="polite">
           <div>
             <p class="eyebrow light">Current score</p>
-            <strong id="scoreValue">10 / 10</strong>
-            <span id="scoreStatus">All criteria marked</span>
+            <strong id="scoreValue">— / 10</strong>
+            <span id="scoreStatus">No criteria marked</span>
           </div>
-          <div class="score-ring" id="scoreRing">100%</div>
+          <div class="score-ring" id="scoreRing">—</div>
         </section>
 
         <section class="panel">
           <div class="panel-head sticky-mini">
             <div>
-              <p class="eyebrow dark">Step 3</p>
+              <p class="eyebrow dark">Section 3</p>
               <h3>Rubric checklist</h3>
             </div>
             <button class="ghost-button" id="markExcellent" type="button">All excellent</button>
@@ -130,39 +182,13 @@
         <section class="panel">
           <div class="panel-head">
             <div>
-              <p class="eyebrow dark">Step 4</p>
+              <p class="eyebrow dark">Section 4</p>
               <h3>Teacher comment</h3>
             </div>
           </div>
 
           <label class="field-label" for="teacherComment">Teacher comment</label>
           <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
-        </section>
-
-        <section class="panel shared-session-panel assessment-session-panel" id="assessmentSessionPanel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow dark">Shared session</p>
-              <h3>Cloud collaboration</h3>
-            </div>
-            <span class="session-state-pill" id="assessmentSessionState">No session</span>
-          </div>
-          <div class="active-session-box" id="activeSessionBox">
-            <strong id="activeSessionId">No active session</strong>
-            <span id="activeSessionMeta">Create a session for this class, or join one from the class screen.</span>
-          </div>
-
-          <label class="field-label" for="createSessionId">Session ID</label>
-          <input class="text-input session-id-input" id="createSessionId" type="text" placeholder="Example: 10C-U9-SEP15" autocomplete="off" autocapitalize="characters" spellcheck="false" />
-          <p class="session-status-text">Choose the ID that other devices will use to join this exact session.</p>
-
-          <div class="session-action-grid">
-            <button class="primary-session-button" id="createSessionButton" type="button">Create session</button>
-            <button class="primary-session-button secondary" id="submitSessionButton" type="button">Publish current student</button>
-            <button class="ghost-button" id="openAssessmentResults" type="button">View results</button>
-            <button class="ghost-button danger" id="leaveAssessmentSession" type="button">Leave session</button>
-          </div>
-          <p class="session-status-text" id="assessmentSessionStatus">Local drafts still save automatically. Publishing sends the current student to the shared Wix session.</p>
         </section>
 
         <section class="panel bulk-panel">
@@ -172,7 +198,7 @@
               <h3>All grades in one file</h3>
             </div>
           </div>
-          <p class="bulk-copy">These buttons collect the current class in one table. Assessed students appear with their scores; missing students remain marked as pending.</p>
+          <p class="bulk-copy">Assessed students appear with their scores; untouched students remain blank and pending.</p>
           <div class="bulk-actions">
             <button class="ghost-button" id="exportClassCsv" type="button">Export CSV</button>
             <button class="ghost-button" id="exportClassPdf" type="button">Create PDF</button>
@@ -186,8 +212,6 @@
       </section>
     </main>
   </div>
-
-
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
