@@ -1204,6 +1204,7 @@ function selectClass(classId) {
   assessmentScreen.classList.add("screen-active");
   window.scrollTo({ top: 0, behavior: "smooth" });
   updatePreview();
+  refreshSharedSessionUI();
 }
 
 function showClassScreen() {
@@ -2086,7 +2087,7 @@ function refreshSharedSessionUI() {
   }
 
   resultsButtons.forEach(button => {
-    if (button) button.disabled = !session;
+    if (button) button.disabled = false;
   });
   leaveButtons.forEach(button => {
     if (button) button.disabled = !session;
@@ -2274,11 +2275,7 @@ async function submitCurrentStudentToSession() {
 }
 
 function openSpeakingResults() {
-  if (!activeSpeakingSession?.sessionId) {
-    showToast("No active session");
-    return;
-  }
-  window.location.href = sessionResultsUrl();
+  window.location.href = sessionResultsUrl(activeSpeakingSession?.sessionId || "");
 }
 
 function initSharedSessions() {
