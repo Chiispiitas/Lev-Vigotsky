@@ -2055,6 +2055,7 @@ function refreshSharedSessionUI() {
   const homeState = $("#homeSessionState");
   const assessmentState = $("#assessmentSessionState");
   const joinInput = $("#joinSessionId");
+  const createInput = $("#createSessionId");
   const activeId = $("#activeSessionId");
   const activeMeta = $("#activeSessionMeta");
   const submitButton = $("#submitSessionButton");
@@ -2070,6 +2071,9 @@ function refreshSharedSessionUI() {
 
   if (joinInput && session?.sessionId && !joinInput.value.trim()) {
     joinInput.value = session.sessionId;
+  }
+  if (createInput && session?.sessionId && !createInput.value.trim()) {
+    createInput.value = session.sessionId;
   }
 
   if (activeId) activeId.textContent = session?.sessionId || "No active session";
@@ -2098,7 +2102,11 @@ async function speakingApiJson(url, options = {}) {
   const response = await fetch(url, options);
   const data = await response.json().catch(() => ({}));
   if (!response.ok || data.ok === false) {
-    throw new Error(data.error || `Server error ${response.status}`);
+    const rawError = data.error || `Server error ${response.status}`;
+    if (String(rawError).includes("WDE0025")) {
+      throw new Error("Wix CMS collection not found. Check the collection API ID used by the Wix backend.");
+    }
+    throw new Error(rawError);
   }
   return data;
 }
@@ -2109,6 +2117,20 @@ async function createSpeakingSession() {
     showToast("Select a class first");
     return;
   }
+
+  const sessionInput = $("#createSessionId");
+  const requestedSessionId = normalizeSpeakingSessionId(sessionInput?.value);
+  if (!requestedSessionId) {
+    showToast("Enter the session ID you want to create");
+    sessionInput?.focus();
+    return;
+  }
+  if (requestedSessionId.length < 3) {
+    showToast("Session ID must be at least 3 characters");
+    sessionInput?.focus();
+    return;
+  }
+  if (sessionInput) sessionInput.value = requestedSessionId;
 
   const button = $("#createSessionButton");
   const oldText = button.textContent;
@@ -2123,6 +2145,7 @@ async function createSpeakingSession() {
       headers: { "Content-Type": "text/plain;charset=UTF-8" },
       body: JSON.stringify({
         action: "create",
+        sessionId: requestedSessionId,
         title: `${klass.label} - ${activityInput.value.trim() || "Oral speaking assessment"}`,
         classId: klass.id,
         classLabel: klass.label,
@@ -2198,6 +2221,7 @@ function leaveSpeakingSession() {
   const oldId = activeSpeakingSession.sessionId;
   saveActiveSpeakingSession(null);
   if ($("#joinSessionId")) $("#joinSessionId").value = "";
+  if ($("#createSessionId")) $("#createSessionId").value = "";
   setSharedSessionStatus(`Left session ${oldId}. Local drafts remain on this device.`);
   showToast("Shared session left");
 }
@@ -2280,6 +2304,12 @@ function openSpeakingResults() {
 
 function initSharedSessions() {
   $("#createSessionButton")?.addEventListener("click", createSpeakingSession);
+  $("#createSessionId")?.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      createSpeakingSession();
+    }
+  });
   $("#joinSessionButton")?.addEventListener("click", joinSpeakingSession);
   $("#joinSessionId")?.addEventListener("keydown", event => {
     if (event.key === "Enter") {
