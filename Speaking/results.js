@@ -138,6 +138,48 @@ function renderRanking() {
   `).join("");
 }
 
+function parseCriteriaRows(item) {
+  if (Array.isArray(item?.rows)) return item.rows;
+  try {
+    const parsed = JSON.parse(item?.criteriaJson || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function renderEntryDetails(item) {
+  const rows = parseCriteriaRows(item);
+  const markedRows = rows.filter(row => row && row.level !== "Not marked");
+
+  const criteriaHtml = markedRows.length
+    ? markedRows.map(row => `
+        <div class="criteria-detail-card">
+          <div class="criteria-detail-head">
+            <strong>${escapeHtml(row.criterion || "Criterion")}</strong>
+            <span>${row.points == null ? "—" : `${escapeHtml(formatScore(row.points))} / ${escapeHtml(formatScore(row.max || 0))}`}</span>
+          </div>
+          <div class="criteria-detail-level">${escapeHtml(row.level || "—")}</div>
+          ${row.observation ? `<p>${escapeHtml(row.observation)}</p>` : ""}
+        </div>
+      `).join("")
+    : '<div class="empty-detail">No rubric criteria have been marked for this student yet.</div>';
+
+  const comment = String(item?.comment || "").trim();
+
+  return `
+    <div class="entry-detail-wrap">
+      <div class="entry-detail-grid">
+        ${criteriaHtml}
+      </div>
+      <div class="entry-comment-block">
+        <span>Teacher comment</span>
+        <p>${comment ? escapeHtml(comment) : "No comment."}</p>
+      </div>
+    </div>
+  `;
+}
+
 function renderEntries() {
   const query = normalize(els.entrySearch.value);
   const rankingMap = new Map(
@@ -150,24 +192,55 @@ function renderEntries() {
     .sort((a, b) => Number(a.studentNumber || 0) - Number(b.studentNumber || 0));
 
   if (!visible.length) {
-    els.entryTableBody.innerHTML = '<tr><td colspan="6">No matching entries.</td></tr>';
+    els.entryTableBody.innerHTML = '<tr><td colspan="7">No matching entries.</td></tr>';
     return;
   }
 
-  els.entryTableBody.innerHTML = visible.map(item => {
+  els.entryTableBody.innerHTML = visible.map((item, index) => {
     const key = String(item.recordKey || `${item.sessionId}|${item.studentNumber}`);
     const rank = rankingMap.get(key);
+    const detailId = `entry-detail-${index}`;
+
     return `
-    <tr>
-      <td>${rank || "—"}</td>
-      <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
-      <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
-      <td>${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(item.markedCriteria)}/7` : "Pending"}</td>
-      <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
-      <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
-    </tr>
-  `;
+      <tr class="entry-row" data-detail-id="${detailId}" tabindex="0" aria-expanded="false">
+        <td>${rank || "—"}</td>
+        <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
+        <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
+        <td>${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(item.markedCriteria)}/7` : "Pending"}</td>
+        <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
+        <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
+        <td class="expand-cell"><button type="button" class="expand-entry-button" aria-label="Expand entry">⌄</button></td>
+      </tr>
+      <tr class="entry-detail-row" id="${detailId}" hidden>
+        <td colspan="7">${renderEntryDetails(item)}</td>
+      </tr>
+    `;
   }).join("");
+
+  els.entryTableBody.querySelectorAll(".entry-row").forEach(row => {
+    const toggle = () => {
+      const detail = document.getElementById(row.dataset.detailId);
+      if (!detail) return;
+      const opening = detail.hidden;
+      detail.hidden = !opening;
+      row.setAttribute("aria-expanded", String(opening));
+      row.classList.toggle("expanded", opening);
+      const button = row.querySelector(".expand-entry-button");
+      if (button) button.textContent = opening ? "⌃" : "⌄";
+    };
+
+    row.addEventListener("click", event => {
+      if (event.target.closest("a")) return;
+      toggle();
+    });
+
+    row.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggle();
+      }
+    });
+  });
 }
 
 function renderAll(stats = {}) {
