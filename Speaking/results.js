@@ -3,7 +3,9 @@
 const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
 const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
 const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSubmission`;
-const ACTIVE_SESSION_KEY = "lv-speaking-active-session-v1";
+const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist";
+const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number";
+const ACTIVE_SESSION_KEY = "lv-speaking-active-session-v2";
 
 const $ = selector => document.querySelector(selector);
 const els = {
@@ -22,6 +24,7 @@ const els = {
   toggleSessionButton: $("#toggleSessionButton"),
   copySessionButton: $("#copySessionButton"),
   copyGradesButton: $("#copyGradesButton"),
+  detailColumnHeader: $("#detailColumnHeader"),
   rankingGrid: $("#rankingGrid"),
   entrySearch: $("#entrySearch"),
   entryTableBody: $("#entryTableBody"),
@@ -76,6 +79,39 @@ async function fetchJson(url, options = {}) {
   return data;
 }
 
+function sessionMode(session = activeSession) {
+  const activity = String(session?.activity || "");
+  return activity === REGULAR_CHECKLIST_ACTIVITY || activity === REGULAR_NUMBER_ACTIVITY
+    ? "regular"
+    : "speaking";
+}
+
+function regularSessionType(session = activeSession) {
+  return String(session?.activity || "") === REGULAR_NUMBER_ACTIVITY ? "number" : "checklist";
+}
+
+function resultDetailLabel(item) {
+  if (Number(item?.markedCriteria || 0) <= 0) return "Pending";
+
+  if (sessionMode() === "regular") {
+    if (regularSessionType() === "checklist") {
+      return Number(item.scoreTotal) === 10 ? "✓" : "X";
+    }
+    return "Number";
+  }
+
+  return `${item.markedCriteria}/7`;
+}
+
+function rankingSubtitle(item) {
+  if (sessionMode() === "regular") {
+    return regularSessionType() === "checklist"
+      ? `#${item.studentNumber || ""} · ${Number(item.scoreTotal) === 10 ? "✓ Checked" : "X"}`
+      : `#${item.studentNumber || ""} · Numerical grade`;
+  }
+  return `#${item.studentNumber || ""} · ${item.markedCriteria || 0}/7 rubric criteria`;
+}
+
 function rankEntries(items) {
   const sorted = [...items].sort((a,b) => {
     const scoreDiff = Number(b.scoreTotal || 0) - Number(a.scoreTotal || 0);
@@ -111,13 +147,24 @@ function renderSession() {
     return;
   }
 
+  const regular = sessionMode() === "regular";
+  const typeLabel = regular
+    ? (regularSessionType() === "checklist" ? "Checklist" : "Numerical grading")
+    : "Speaking";
+
   els.sessionBanner.hidden = false;
-  els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Speaking session";
-  els.sessionMeta.textContent = `${activeSession.classLabel || activeSession.classId || "Class"} · ${activeSession.activity || "Oral speaking assessment"}`;
+  els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Grading session";
+  els.sessionMeta.textContent = `${activeSession.classLabel || activeSession.classId || "Class"} · ${typeLabel}`;
   els.sessionCode.textContent = activeSession.sessionId;
   els.toggleSessionButton.disabled = false;
   els.copySessionButton.disabled = false;
   els.copyGradesButton.disabled = false;
+  if (els.detailColumnHeader) {
+    els.detailColumnHeader.textContent = regular
+      ? (regularSessionType() === "checklist" ? "Mark" : "Type")
+      : "Rubric";
+  }
+  document.title = `${typeLabel} Results · Lev Grading`;
 
   const closed = String(activeSession.status || "").toLowerCase() === "closed";
   els.toggleSessionButton.textContent = closed ? "Reopen session" : "Close session";
@@ -134,7 +181,7 @@ function renderRanking() {
       <div class="rank-number">${item.rank}</div>
       <div class="rank-name">
         <strong>${escapeHtml(item.studentName || "")}</strong>
-        <span>#${escapeHtml(item.studentNumber || "")} · ${escapeHtml(item.markedCriteria || 0)}/7 rubric criteria</span>
+        <span>${escapeHtml(rankingSubtitle(item))}</span>
       </div>
       <div class="rank-score">${escapeHtml(formatScore(item.scoreTotal))}</div>
     </article>
@@ -166,7 +213,7 @@ function renderEntryDetails(item) {
           ${row.observation ? `<p>${escapeHtml(row.observation)}</p>` : ""}
         </div>
       `).join("")
-    : '<div class="empty-detail">No rubric criteria have been marked for this student yet.</div>';
+    : '<div class="empty-detail">No grade has been entered for this student yet.</div>';
 
   const comment = String(item?.comment || "").trim();
 
@@ -209,7 +256,7 @@ function renderEntries() {
         <td>${rank || "—"}</td>
         <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
         <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
-        <td>${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(item.markedCriteria)}/7` : "Pending"}</td>
+        <td>${escapeHtml(resultDetailLabel(item))}</td>
         <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
         <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
         <td class="expand-cell"><button type="button" class="expand-entry-button" aria-label="Expand entry">⌄</button></td>
