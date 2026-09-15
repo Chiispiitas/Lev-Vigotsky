@@ -1,0 +1,286 @@
+"use strict";
+
+const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
+const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
+const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSubmission`;
+const ACTIVE_SESSION_KEY = "lv-speaking-active-session-v1";
+
+const $ = selector => document.querySelector(selector);
+const els = {
+  sessionIdInput: $("#sessionIdInput"),
+  loadSessionButton: $("#loadSessionButton"),
+  statusBox: $("#statusBox"),
+  sessionBanner: $("#sessionBanner"),
+  sessionTitle: $("#sessionTitle"),
+  sessionMeta: $("#sessionMeta"),
+  sessionCode: $("#sessionCode"),
+  averageValue: $("#averageValue"),
+  assessedValue: $("#assessedValue"),
+  entryValue: $("#entryValue"),
+  sessionStatusValue: $("#sessionStatusValue"),
+  refreshButton: $("#refreshButton"),
+  toggleSessionButton: $("#toggleSessionButton"),
+  copySessionButton: $("#copySessionButton"),
+  rankingGrid: $("#rankingGrid"),
+  entrySearch: $("#entrySearch"),
+  entryTableBody: $("#entryTableBody"),
+  toast: $("#toast")
+};
+
+let activeSession = null;
+let entries = [];
+
+function normalizeSessionId(value) {
+  return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[char]));
+}
+
+function normalize(value) {
+  return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+function formatScore(value) {
+  const number = Math.round(Number(value || 0) * 100) / 100;
+  return Number.isInteger(number) ? String(number) : String(number).replace(".", ",");
+}
+
+function formatDate(value) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return new Intl.DateTimeFormat("es-EC", { dateStyle:"medium", timeStyle:"short" }).format(date);
+}
+
+function setStatus(message, type = "") {
+  els.statusBox.textContent = message;
+  els.statusBox.className = `status-box ${type}`.trim();
+}
+
+function showToast(message) {
+  els.toast.textContent = message;
+  els.toast.classList.add("show");
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => els.toast.classList.remove("show"), 1800);
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) throw new Error(data.error || `Error ${response.status}`);
+  return data;
+}
+
+function rankEntries(items) {
+  const sorted = [...items].sort((a,b) => {
+    const scoreDiff = Number(b.scoreTotal || 0) - Number(a.scoreTotal || 0);
+    if (scoreDiff) return scoreDiff;
+    return Number(a.studentNumber || 0) - Number(b.studentNumber || 0);
+  });
+  let lastScore = null;
+  let lastRank = 0;
+  return sorted.map((item,index) => {
+    const score = Math.round(Number(item.scoreTotal || 0) * 100) / 100;
+    const rank = index === 0 || score !== lastScore ? index + 1 : lastRank;
+    lastScore = score;
+    lastRank = rank;
+    return { ...item, rank };
+  });
+}
+
+function renderSummary(stats = {}) {
+  els.averageValue.textContent = entries.length ? `${formatScore(stats.average || 0)} / 10` : "—";
+  els.assessedValue.textContent = String(stats.assessed ?? entries.length ?? 0);
+  els.entryValue.textContent = String(stats.total ?? entries.length ?? 0);
+  const status = String(activeSession?.status || "—");
+  els.sessionStatusValue.textContent = status ? status.charAt(0).toUpperCase() + status.slice(1) : "—";
+}
+
+function renderSession() {
+  if (!activeSession) {
+    els.sessionBanner.hidden = true;
+    els.toggleSessionButton.disabled = true;
+    els.copySessionButton.disabled = true;
+    return;
+  }
+
+  els.sessionBanner.hidden = false;
+  els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Speaking session";
+  els.sessionMeta.textContent = `${activeSession.classLabel || activeSession.classId || "Class"} · ${activeSession.activity || "Oral speaking assessment"}`;
+  els.sessionCode.textContent = activeSession.sessionId;
+  els.toggleSessionButton.disabled = false;
+  els.copySessionButton.disabled = false;
+
+  const closed = String(activeSession.status || "").toLowerCase() === "closed";
+  els.toggleSessionButton.textContent = closed ? "Reopen session" : "Close session";
+}
+
+function renderRanking() {
+  const ranked = rankEntries(entries);
+  if (!ranked.length) {
+    els.rankingGrid.innerHTML = '<div class="empty-card">No submissions in this session yet.</div>';
+    return;
+  }
+  els.rankingGrid.innerHTML = ranked.map(item => `
+    <article class="rank-card">
+      <div class="rank-number">${item.rank}</div>
+      <div class="rank-name">
+        <strong>${escapeHtml(item.studentName || "")}</strong>
+        <span>#${escapeHtml(item.studentNumber || "")} · ${escapeHtml(item.markedCriteria || 0)}/7 rubric criteria</span>
+      </div>
+      <div class="rank-score">${escapeHtml(formatScore(item.scoreTotal))}</div>
+    </article>
+  `).join("");
+}
+
+function renderEntries() {
+  const query = normalize(els.entrySearch.value);
+  const ranked = rankEntries(entries).filter(item =>
+    !query || normalize(`${item.studentNumber} ${item.studentName} ${item.contributorName}`).includes(query)
+  );
+
+  if (!ranked.length) {
+    els.entryTableBody.innerHTML = '<tr><td colspan="6">No matching entries.</td></tr>';
+    return;
+  }
+
+  els.entryTableBody.innerHTML = ranked.map(item => `
+    <tr>
+      <td>${item.rank}</td>
+      <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
+      <td class="score">${escapeHtml(formatScore(item.scoreTotal))} / 10</td>
+      <td>${escapeHtml(item.markedCriteria || 0)}/7</td>
+      <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
+      <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
+    </tr>
+  `).join("");
+}
+
+function renderAll(stats = {}) {
+  renderSession();
+  renderSummary(stats);
+  renderRanking();
+  renderEntries();
+}
+
+async function loadSession(sessionId = els.sessionIdInput.value) {
+  const normalized = normalizeSessionId(sessionId);
+  if (!normalized) {
+    setStatus("Enter a session ID.", "error");
+    return;
+  }
+
+  els.sessionIdInput.value = normalized;
+  els.loadSessionButton.disabled = true;
+  els.refreshButton.disabled = true;
+  setStatus(`Loading ${normalized}…`);
+
+  try {
+    const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
+    url.searchParams.set("sessionId", normalized);
+    const data = await fetchJson(url.toString());
+
+    activeSession = data.session || null;
+    entries = Array.isArray(data.items) ? data.items : [];
+
+    if (activeSession) {
+      localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
+      const pageUrl = new URL(window.location.href);
+      pageUrl.searchParams.set("sessionId", activeSession.sessionId);
+      history.replaceState(null, "", pageUrl);
+    }
+
+    renderAll(data.stats || {});
+    setStatus(`${entries.length} submission(s) loaded for ${normalized}.`, "ok");
+  } catch (error) {
+    console.error(error);
+    activeSession = null;
+    entries = [];
+    renderAll({});
+    setStatus(`Could not load session: ${error.message}`, "error");
+  } finally {
+    els.loadSessionButton.disabled = false;
+    els.refreshButton.disabled = false;
+  }
+}
+
+async function toggleSessionStatus() {
+  if (!activeSession?.sessionId) return;
+  const currentlyClosed = String(activeSession.status || "").toLowerCase() === "closed";
+  const action = currentlyClosed ? "reopen" : "close";
+
+  els.toggleSessionButton.disabled = true;
+  try {
+    const data = await fetchJson(SPEAKING_SESSION_ENDPOINT, {
+      method:"POST",
+      headers:{ "Content-Type":"text/plain;charset=UTF-8" },
+      body:JSON.stringify({ action, sessionId:activeSession.sessionId })
+    });
+    activeSession = data.session;
+    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
+    renderSession();
+    renderSummary({ total:entries.length, assessed:entries.length, average:entries.length ? entries.reduce((s,x)=>s+Number(x.scoreTotal||0),0)/entries.length : 0 });
+    showToast(currentlyClosed ? "Session reopened" : "Session closed");
+  } catch (error) {
+    setStatus(`Could not update session: ${error.message}`, "error");
+  } finally {
+    els.toggleSessionButton.disabled = false;
+  }
+}
+
+function bindTabs() {
+  document.querySelectorAll(".tab").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
+      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
+      button.classList.add("active");
+      $(button.dataset.tab === "entries" ? "#entriesPanel" : "#rankingPanel").classList.add("active");
+    });
+  });
+}
+
+function init() {
+  bindTabs();
+  els.loadSessionButton.addEventListener("click", () => loadSession());
+  els.refreshButton.addEventListener("click", () => loadSession(activeSession?.sessionId || els.sessionIdInput.value));
+  els.toggleSessionButton.addEventListener("click", toggleSessionStatus);
+  els.copySessionButton.addEventListener("click", async () => {
+    if (!activeSession?.sessionId) return;
+    try {
+      await navigator.clipboard.writeText(activeSession.sessionId);
+    } catch {
+      const area = document.createElement("textarea");
+      area.value = activeSession.sessionId;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      area.remove();
+    }
+    showToast("Session ID copied");
+  });
+  els.entrySearch.addEventListener("input", renderEntries);
+  els.sessionIdInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      loadSession();
+    }
+  });
+
+  const params = new URLSearchParams(window.location.search);
+  const fromUrl = normalizeSessionId(params.get("sessionId"));
+  let stored = "";
+  try {
+    stored = normalizeSessionId(JSON.parse(localStorage.getItem(ACTIVE_SESSION_KEY) || "null")?.sessionId);
+  } catch {}
+  const initial = fromUrl || stored;
+  if (initial) {
+    els.sessionIdInput.value = initial;
+    loadSession(initial);
+  }
+}
+
+init();
