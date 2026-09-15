@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1375ff" />
+  <title>Speaking Session Results</title>
+  <link rel="stylesheet" href="results.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="results-header">
+      <div>
+        <p class="eyebrow">Lev Vigotsky · English Area</p>
+        <h1>Speaking Session Results</h1>
+        <p class="subtitle">Shared results from all devices connected to the same session.</p>
+      </div>
+      <a class="back-link" href="./">← Grading</a>
+    </header>
+
+    <section class="session-loader">
+      <label for="sessionIdInput">Session ID</label>
+      <div class="loader-row">
+        <input id="sessionIdInput" type="text" placeholder="SPK-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+        <button id="loadSessionButton" type="button">Load session</button>
+      </div>
+      <p id="statusBox" class="status-box">Enter a session ID or open this page from an active Speaking session.</p>
+    </section>
+
+    <section class="session-banner" id="sessionBanner" hidden>
+      <div>
+        <p class="eyebrow dark">Active session</p>
+        <h2 id="sessionTitle">—</h2>
+        <p id="sessionMeta">—</p>
+      </div>
+      <div class="session-code" id="sessionCode">—</div>
+    </section>
+
+    <section class="summary-grid" id="summaryGrid">
+      <article><span>Average</span><strong id="averageValue">—</strong></article>
+      <article><span>Assessed</span><strong id="assessedValue">0</strong></article>
+      <article><span>Entries</span><strong id="entryValue">0</strong></article>
+      <article><span>Status</span><strong id="sessionStatusValue">—</strong></article>
+    </section>
+
+    <section class="toolbar">
+      <button id="refreshButton" type="button">Refresh</button>
+      <button id="toggleSessionButton" type="button" disabled>Close session</button>
+      <button id="copySessionButton" type="button" disabled>Copy ID</button>
+    </section>
+
+    <nav class="tabs" aria-label="Results views">
+      <button class="tab active" type="button" data-tab="ranking">Ranking</button>
+      <button class="tab" type="button" data-tab="entries">Entries</button>
+    </nav>
+
+    <section class="tab-panel active" id="rankingPanel">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow dark">Overview</p>
+          <h3>Student ranking</h3>
+        </div>
+      </div>
+      <div class="ranking-grid" id="rankingGrid">
+        <div class="empty-card">No session loaded.</div>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="entriesPanel">
+      <div class="panel-head entries-head">
+        <div>
+          <p class="eyebrow dark">All submissions</p>
+          <h3>Session entries</h3>
+        </div>
+        <input id="entrySearch" type="search" placeholder="Search student…" />
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Student</th>
+              <th>Score</th>
+              <th>Rubric</th>
+              <th>Contributor</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody id="entryTableBody">
+            <tr><td colspan="6">No session loaded.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="results.js"></script>
+</body>
+</html>
