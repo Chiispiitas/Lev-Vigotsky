@@ -867,3 +867,102 @@ button {
     grid-template-columns: 1fr auto;
   }
 }
+
+
+/* Mandatory session gateway */
+.session-gateway {
+  overflow: hidden;
+}
+.session-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 6px;
+  margin-bottom: 16px;
+  border-radius: 18px;
+  background: #eaf2ff;
+}
+.session-mode-button {
+  min-height: 44px;
+  border-radius: 13px;
+  color: var(--blue-dark);
+  background: transparent;
+  font-weight: 1000;
+}
+.session-mode-button.active {
+  color: #fff;
+  background: linear-gradient(145deg, var(--blue), var(--blue-dark));
+  box-shadow: 0 5px 0 rgba(8,75,181,.15);
+}
+.session-mode-pane {
+  display: none;
+}
+.session-mode-pane.active {
+  display: block;
+  animation: popIn .18s ease-out;
+}
+.full-width {
+  width: 100%;
+  margin-top: 14px;
+}
+.generated-id {
+  color: var(--blue-dark);
+  background: #f4f8ff;
+  letter-spacing: .05em;
+  font-weight: 1000;
+}
+.current-session-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 13px;
+  border: 2px solid rgba(19,117,255,.16);
+  border-radius: 18px;
+  background: #f8fbff;
+}
+.current-session-summary[hidden] {
+  display: none;
+}
+.current-session-summary span,
+.current-session-summary small {
+  display: block;
+  color: var(--muted);
+  font-size: .75rem;
+  font-weight: 800;
+}
+.current-session-summary strong {
+  display: block;
+  margin: 2px 0;
+  color: var(--blue-dark);
+  font-size: 1.05rem;
+  letter-spacing: .03em;
+}
+.session-summary-actions {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.assessment-sync-panel {
+  background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(234,244,255,.93));
+}
+.assessment-sync-panel .ghost-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 10px;
+}
+.session-status-text.error {
+  color: #a5272f;
+}
+@media (max-width: 430px) {
+  .current-session-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .session-summary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
