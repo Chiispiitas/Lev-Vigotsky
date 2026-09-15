@@ -36,6 +36,26 @@
           <div class="phone-chip">Mobile ready</div>
         </div>
 
+        <section class="panel shared-session-panel" id="sharedSessionChooser">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Shared grading</p>
+              <h3>Join a Speaking session</h3>
+            </div>
+            <span class="session-state-pill" id="homeSessionState">No session</span>
+          </div>
+          <p class="session-copy">Enter the session ID from another device to work on the same assignment. To create a new session, select a class first.</p>
+          <div class="session-join-row">
+            <input class="text-input session-id-input" id="joinSessionId" type="text" placeholder="SPK-XXXXXX" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+            <button class="primary-session-button" id="joinSessionButton" type="button">Join session</button>
+          </div>
+          <div class="session-secondary-actions">
+            <button class="ghost-button" id="openHomeResults" type="button">Results</button>
+            <button class="ghost-button danger" id="leaveHomeSession" type="button">Leave session</button>
+          </div>
+          <p class="session-status-text" id="homeSessionStatus">No shared session is active on this device.</p>
+        </section>
+
         <div class="class-grid" id="classGrid"></div>
       </section>
 
@@ -117,6 +137,27 @@
 
           <label class="field-label" for="teacherComment">Teacher comment</label>
           <textarea class="comment-box" id="teacherComment" rows="5" placeholder="Write a short comment here…"></textarea>
+        </section>
+
+        <section class="panel shared-session-panel assessment-session-panel" id="assessmentSessionPanel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Shared session</p>
+              <h3>Cloud collaboration</h3>
+            </div>
+            <span class="session-state-pill" id="assessmentSessionState">No session</span>
+          </div>
+          <div class="active-session-box" id="activeSessionBox">
+            <strong id="activeSessionId">No active session</strong>
+            <span id="activeSessionMeta">Create a session for this class, or join one from the class screen.</span>
+          </div>
+          <div class="session-action-grid">
+            <button class="primary-session-button" id="createSessionButton" type="button">Create session</button>
+            <button class="primary-session-button secondary" id="submitSessionButton" type="button">Publish current student</button>
+            <button class="ghost-button" id="openAssessmentResults" type="button">View results</button>
+            <button class="ghost-button danger" id="leaveAssessmentSession" type="button">Leave session</button>
+          </div>
+          <p class="session-status-text" id="assessmentSessionStatus">Local drafts still save automatically. Publishing sends the current student to the shared Wix session.</p>
         </section>
 
         <section class="panel bulk-panel">
