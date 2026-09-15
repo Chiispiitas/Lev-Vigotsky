@@ -151,6 +151,11 @@
             <strong id="activeSessionId">No active session</strong>
             <span id="activeSessionMeta">Create a session for this class, or join one from the class screen.</span>
           </div>
+
+          <label class="field-label" for="createSessionId">Session ID</label>
+          <input class="text-input session-id-input" id="createSessionId" type="text" placeholder="Example: 10C-U9-SEP15" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+          <p class="session-status-text">Choose the ID that other devices will use to join this exact session.</p>
+
           <div class="session-action-grid">
             <button class="primary-session-button" id="createSessionButton" type="button">Create session</button>
             <button class="primary-session-button secondary" id="submitSessionButton" type="button">Publish current student</button>
