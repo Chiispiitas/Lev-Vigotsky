@@ -140,25 +140,34 @@ function renderRanking() {
 
 function renderEntries() {
   const query = normalize(els.entrySearch.value);
-  const ranked = rankEntries(entries).filter(item =>
-    !query || normalize(`${item.studentNumber} ${item.studentName} ${item.contributorName}`).includes(query)
+  const rankingMap = new Map(
+    rankEntries(entries.filter(item => Number(item.markedCriteria || 0) > 0))
+      .map(item => [String(item.recordKey || `${item.sessionId}|${item.studentNumber}`), item.rank])
   );
 
-  if (!ranked.length) {
+  const visible = entries
+    .filter(item => !query || normalize(`${item.studentNumber} ${item.studentName} ${item.contributorName}`).includes(query))
+    .sort((a, b) => Number(a.studentNumber || 0) - Number(b.studentNumber || 0));
+
+  if (!visible.length) {
     els.entryTableBody.innerHTML = '<tr><td colspan="6">No matching entries.</td></tr>';
     return;
   }
 
-  els.entryTableBody.innerHTML = ranked.map(item => `
+  els.entryTableBody.innerHTML = visible.map(item => {
+    const key = String(item.recordKey || `${item.sessionId}|${item.studentNumber}`);
+    const rank = rankingMap.get(key);
+    return `
     <tr>
-      <td>${item.rank}</td>
+      <td>${rank || "—"}</td>
       <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
       <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
       <td>${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(item.markedCriteria)}/7` : "Pending"}</td>
       <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
       <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
     </tr>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function renderAll(stats = {}) {
