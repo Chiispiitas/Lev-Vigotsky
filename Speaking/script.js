@@ -1227,7 +1227,7 @@ function setSessionMode(mode) {
 }
 
 function setSharedSessionStatus(message, isError = false) {
-  ["#homeSessionStatus", "#assessmentSessionStatus"].forEach(selector => {
+  ["#homeSessionStatus", "#assessmentSessionStatus", "#regularSyncStatus"].forEach(selector => {
     const element = $(selector);
     if (!element) return;
     element.textContent = message;
@@ -1243,29 +1243,39 @@ function sessionResultsUrl(sessionId = activeSpeakingSession?.sessionId) {
 
 function refreshSharedSessionUI() {
   const session = activeSpeakingSession;
+  const activeMatches = Boolean(session && currentAppMode && sessionAppMode(session) === currentAppMode);
   const summary = $("#currentSessionSummary");
-  if (summary) summary.hidden = !session;
+  if (summary) summary.hidden = !activeMatches;
 
   const statePill = $("#homeSessionState");
   if (statePill) {
-    statePill.textContent = session ? "Active" : "Required";
-    statePill.classList.toggle("active", Boolean(session));
+    statePill.textContent = activeMatches ? "Active" : "Required";
+    statePill.classList.toggle("active", activeMatches);
   }
 
-  if ($("#currentSessionId")) $("#currentSessionId").textContent = session?.sessionId || "—";
+  if ($("#currentSessionId")) $("#currentSessionId").textContent = activeMatches ? session.sessionId : "—";
   if ($("#currentSessionMeta")) {
-    $("#currentSessionMeta").textContent = session
-      ? `${session.title || "Speaking session"} · ${session.classLabel || session.classId || "Class"}`
+    $("#currentSessionMeta").textContent = activeMatches
+      ? `${session.title || "Grading session"} · ${session.classLabel || session.classId || "Class"}`
       : "—";
   }
 
-  if ($("#assessmentSessionId")) $("#assessmentSessionId").textContent = session?.sessionId || "No session";
-  if ($("#assessmentSessionState")) {
-    const closed = String(session?.status || "").toLowerCase() === "closed";
-    $("#assessmentSessionState").textContent = closed ? "Closed" : "Live";
-    $("#assessmentSessionState").classList.toggle("closed", closed);
-    $("#assessmentSessionState").classList.toggle("active", Boolean(session && !closed));
+  if ($("#assessmentSessionId")) {
+    $("#assessmentSessionId").textContent =
+      session && sessionAppMode(session) === "speaking" ? session.sessionId : "No session";
   }
+  if ($("#regularSessionId")) {
+    $("#regularSessionId").textContent =
+      session && sessionAppMode(session) === "regular" ? session.sessionId : "No session";
+  }
+
+  const closed = String(session?.status || "").toLowerCase() === "closed";
+  [$("#assessmentSessionState"), $("#regularSessionState")].forEach(element => {
+    if (!element) return;
+    element.textContent = closed ? "Closed" : "Live";
+    element.classList.toggle("closed", closed);
+    element.classList.toggle("active", Boolean(session && !closed));
+  });
 }
 
 async function speakingApiJson(url, options = {}) {
@@ -1290,9 +1300,21 @@ async function createSpeakingSession() {
     return;
   }
 
+  if (!currentAppMode) {
+    showToast("Choose a grading mode first");
+    showModeSelection();
+    return;
+  }
+
   const sessionId = generatedSessionIdForClass(klass);
   const customTitle = $("#sessionTitleInput")?.value.trim() || "";
-  const title = customTitle || `${klass.label} · ${localDateId()}`;
+  const modeLabel = currentAppMode === "regular"
+    ? (regularSubmode === "checklist" ? "Checklist" : "Numerical grading")
+    : "Speaking";
+  const title = customTitle || `${klass.label} · ${modeLabel} · ${localDateId()}`;
+  const activity = currentAppMode === "regular"
+    ? (regularSubmode === "checklist" ? REGULAR_CHECKLIST_ACTIVITY : REGULAR_NUMBER_ACTIVITY)
+    : "Oral speaking assessment";
   const button = $("#createSessionButton");
   const oldText = button?.textContent || "Create session";
 
@@ -1312,16 +1334,23 @@ async function createSpeakingSession() {
         title,
         classId: klass.id,
         classLabel: klass.label,
-        activity: "Oral speaking assessment",
+        activity,
         createdBy: "David Santana"
       })
     });
 
     saveActiveSpeakingSession(data.session);
-    await hydrateDraftsFromSession(data.session);
     setSharedSessionStatus(`Session ${data.session.sessionId} created. Changes will sync automatically.`);
     showToast(`Session ${data.session.sessionId} created`);
-    selectClass(klass.id);
+
+    if (currentAppMode === "regular") {
+      regularSubmode = sessionRegularSubmode(data.session);
+      await loadRegularGradesFromSession(data.session);
+      openRegularGrading(data.session);
+    } else {
+      await hydrateDraftsFromSession(data.session);
+      selectClass(klass.id);
+    }
   } catch (error) {
     console.error(error);
     setSharedSessionStatus(`Could not create session: ${error.message}`, true);
@@ -1337,11 +1366,14 @@ async function createSpeakingSession() {
 async function loadAvailableSpeakingSessions() {
   const select = $("#availableSessionsSelect");
   const status = $("#sessionListStatus");
-  if (!select) return;
+  if (!select || !currentAppMode) return;
 
   select.innerHTML = '<option value="">Loading sessions…</option>';
   select.disabled = true;
-  if (status) status.textContent = "Loading available sessions from Wix…";
+  if (status) {
+    status.classList.remove("error");
+    status.textContent = "Loading available sessions from Wix…";
+  }
 
   try {
     const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT);
@@ -1352,7 +1384,7 @@ async function loadAvailableSpeakingSessions() {
         : [];
 
     availableSpeakingSessions = sessions
-      .filter(session => session?.sessionId)
+      .filter(session => session?.sessionId && sessionAppMode(session) === currentAppMode)
       .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
 
     select.innerHTML = '<option value="">Choose a session…</option>';
@@ -1360,14 +1392,17 @@ async function loadAvailableSpeakingSessions() {
       const option = document.createElement("option");
       option.value = session.sessionId;
       const statusText = String(session.status || "open").toLowerCase() === "closed" ? " · CLOSED" : "";
-      option.textContent = `${session.sessionId} · ${session.title || session.classLabel || "Speaking"}${statusText}`;
+      const kindText = sessionAppMode(session) === "regular"
+        ? (sessionRegularSubmode(session) === "checklist" ? " · Checklist" : " · Number")
+        : "";
+      option.textContent = `${session.sessionId} · ${session.title || session.classLabel || "Session"}${kindText}${statusText}`;
       select.appendChild(option);
     });
 
     if (status) {
       status.textContent = availableSpeakingSessions.length
-        ? `${availableSpeakingSessions.length} session(s) available.`
-        : "No sessions found.";
+        ? `${availableSpeakingSessions.length} ${currentAppMode === "regular" ? "regular grading" : "speaking"} session(s) available.`
+        : "No sessions found for this mode.";
     }
   } catch (error) {
     console.error(error);
@@ -1406,14 +1441,25 @@ async function joinSpeakingSession() {
     const klass = CLASS_DATA.find(item => item.id === session?.classId);
 
     if (!session || !klass) {
-      throw new Error("This session does not match a class in the Speaking app.");
+      throw new Error("This session does not match a class in the grading app.");
+    }
+    if (sessionAppMode(session) !== currentAppMode) {
+      throw new Error("This session belongs to another grading mode.");
     }
 
     saveActiveSpeakingSession(session);
-    await hydrateDraftsFromSession(session);
     setSharedSessionStatus(`Joined ${session.sessionId}. Changes will sync automatically.`);
     showToast(`Joined ${session.sessionId}`);
-    selectClass(klass.id);
+
+    if (currentAppMode === "regular") {
+      regularSubmode = sessionRegularSubmode(session);
+      setRegularSubmode(regularSubmode);
+      await loadRegularGradesFromSession(session);
+      openRegularGrading(session);
+    } else {
+      await hydrateDraftsFromSession(session);
+      selectClass(klass.id);
+    }
   } catch (error) {
     console.error(error);
     setSharedSessionStatus(`Could not join session: ${error.message}`, true);
@@ -1479,16 +1525,26 @@ async function hydrateDraftsFromSession(session) {
 function leaveSpeakingSession() {
   if (!activeSpeakingSession) return;
   const oldId = activeSpeakingSession.sessionId;
+
   autoPublishTimers.forEach(timer => clearTimeout(timer));
   autoPublishTimers.clear();
+  regularPublishTimers.forEach(timer => clearTimeout(timer));
+  regularPublishTimers.clear();
+
   saveActiveSpeakingSession(null);
+  regularGrades = new Map();
   state.classId = null;
   state.studentNumber = null;
   state.scores = {};
   state.comment = "";
-  assessmentScreen.classList.remove("screen-active");
-  classScreen.classList.add("screen-active");
+
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  modeScreen?.classList.remove("screen-active");
+  classScreen?.classList.add("screen-active");
+
   setSharedSessionStatus(`Left session ${oldId}. Create or join another session to continue.`);
+  refreshSessionModeUI();
   loadAvailableSpeakingSessions();
 }
 
