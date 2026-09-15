@@ -216,3 +216,10 @@ td.score{font-weight:1000}
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+/* Grade clipboard export */
+#copyGradesButton {
+  color: #fff;
+  background: linear-gradient(145deg, #6f48d8, #4f2ca8);
+}
