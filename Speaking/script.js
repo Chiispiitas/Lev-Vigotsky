@@ -1552,7 +1552,7 @@ function captureCurrentStudentSnapshot() {
   const session = activeSpeakingSession;
   const klass = getSelectedClass();
   const student = getSelectedStudent();
-  if (!session || !klass || !student || session.classId !== klass.id) return null;
+  if (!session || sessionAppMode(session) !== "speaking" || !klass || !student || session.classId !== klass.id) return null;
   if (String(session.status || "").toLowerCase() === "closed") return null;
 
   const report = getReportObject();
@@ -1621,6 +1621,367 @@ async function publishSpeakingSnapshot(snapshot) {
   }
 }
 
+function regularDraftKey(sessionId, classId, studentNumber) {
+  return `lv-regular-grade-${sessionId}-${classId}-${studentNumber}`;
+}
+
+function blankRegularGrade() {
+  return { kind: "blank", value: null };
+}
+
+function normalizeRegularGrade(raw, subtype = regularSubmode) {
+  if (!raw || raw.kind === "blank" || raw.value === null || raw.value === "") {
+    return blankRegularGrade();
+  }
+
+  if (subtype === "checklist") {
+    return raw.kind === "check"
+      ? { kind: "check", value: 10 }
+      : { kind: "x", value: 0 };
+  }
+
+  const value = Number(raw.value);
+  if (!Number.isFinite(value) || value < 0 || value > 10) return blankRegularGrade();
+  return { kind: "number", value: Math.round(value * 100) / 100 };
+}
+
+function saveRegularGradeLocal(studentNumber) {
+  const session = activeSpeakingSession;
+  if (!session?.sessionId || !session?.classId) return;
+  const grade = regularGrades.get(Number(studentNumber)) || blankRegularGrade();
+  localStorage.setItem(
+    regularDraftKey(session.sessionId, session.classId, studentNumber),
+    JSON.stringify({ ...grade, updatedAt: new Date().toISOString() })
+  );
+}
+
+function readRegularGradeLocal(session, studentNumber) {
+  try {
+    const raw = JSON.parse(
+      localStorage.getItem(regularDraftKey(session.sessionId, session.classId, studentNumber)) || "null"
+    );
+    return normalizeRegularGrade(raw, sessionRegularSubmode(session));
+  } catch {
+    return blankRegularGrade();
+  }
+}
+
+async function loadRegularGradesFromSession(session) {
+  regularGrades = new Map();
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!session?.sessionId || !klass) return;
+
+  const localByStudent = new Map(
+    klass.students.map(student => [student.n, readRegularGradeLocal(session, student.n)])
+  );
+
+  try {
+    const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
+    url.searchParams.set("sessionId", session.sessionId);
+    const data = await speakingApiJson(url.toString());
+    const items = Array.isArray(data.items) ? data.items : [];
+    const serverByStudent = new Map(items.map(item => [Number(item.studentNumber), item]));
+    const subtype = sessionRegularSubmode(session);
+
+    klass.students.forEach(student => {
+      const item = serverByStudent.get(student.n);
+      if (!item) {
+        regularGrades.set(student.n, localByStudent.get(student.n) || blankRegularGrade());
+        return;
+      }
+
+      if (Number(item.markedCriteria || 0) <= 0) {
+        regularGrades.set(student.n, blankRegularGrade());
+      } else if (subtype === "checklist") {
+        regularGrades.set(
+          student.n,
+          Number(item.scoreTotal) === 10
+            ? { kind: "check", value: 10 }
+            : { kind: "x", value: 0 }
+        );
+      } else {
+        regularGrades.set(student.n, {
+          kind: "number",
+          value: Math.round(Number(item.scoreTotal || 0) * 100) / 100
+        });
+      }
+    });
+  } catch (error) {
+    console.warn("Could not load regular grades from Wix; using local drafts.", error);
+    klass.students.forEach(student => {
+      regularGrades.set(student.n, localByStudent.get(student.n) || blankRegularGrade());
+    });
+  }
+}
+
+function openRegularGrading(session = activeSpeakingSession) {
+  if (!session || sessionAppMode(session) !== "regular") return;
+
+  const klass = CLASS_DATA.find(item => item.id === session.classId);
+  if (!klass) {
+    showToast("Class not found for this session");
+    return;
+  }
+
+  currentAppMode = "regular";
+  regularSubmode = sessionRegularSubmode(session);
+  state.classId = klass.id;
+
+  modeScreen?.classList.remove("screen-active");
+  classScreen?.classList.remove("screen-active");
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.add("screen-active");
+
+  if ($("#regularAssessmentEyebrow")) {
+    $("#regularAssessmentEyebrow").textContent =
+      regularSubmode === "checklist" ? "Regular grading · Checklist" : "Regular grading · Number";
+  }
+  if ($("#regularAssessmentTitle")) $("#regularAssessmentTitle").textContent = session.title || klass.label;
+  if ($("#regularClassMeta")) {
+    $("#regularClassMeta").textContent = `${klass.label} · ${klass.course} · Tutor(a): ${klass.tutor}`;
+  }
+  if ($("#regularStudentCount")) $("#regularStudentCount").textContent = `${klass.students.length} students`;
+  if ($("#regularRosterEyebrow")) {
+    $("#regularRosterEyebrow").textContent = regularSubmode === "checklist" ? "Checklist" : "Number";
+  }
+  if ($("#regularInstructions")) {
+    $("#regularInstructions").textContent = regularSubmode === "checklist"
+      ? "✓ gives 10, X gives 0, and leaving both unselected means blank."
+      : "Enter a score from 0 to 10. Leave the field empty for a blank grade.";
+  }
+
+  refreshSharedSessionUI();
+  renderRegularRoster();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function regularGradeDisplay(grade) {
+  if (!grade || grade.kind === "blank") return "—";
+  if (grade.kind === "check") return "10";
+  if (grade.kind === "x") return "0";
+  return formatScore(grade.value);
+}
+
+function renderRegularRoster() {
+  const host = $("#regularRoster");
+  const session = activeSpeakingSession;
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!host || !session || !klass) return;
+
+  const closed = String(session.status || "").toLowerCase() === "closed";
+
+  host.innerHTML = klass.students.map(student => {
+    const grade = regularGrades.get(student.n) || blankRegularGrade();
+
+    const control = regularSubmode === "checklist"
+      ? `
+        <div class="regular-check-controls">
+          <button class="regular-mark-button check ${grade.kind === "check" ? "selected" : ""}"
+                  type="button" data-student="${student.n}" data-mark="check" ${closed ? "disabled" : ""}>✓</button>
+          <button class="regular-mark-button x ${grade.kind === "x" ? "selected" : ""}"
+                  type="button" data-student="${student.n}" data-mark="x" ${closed ? "disabled" : ""}>×</button>
+        </div>
+      `
+      : `
+        <input class="regular-number-input"
+               type="number"
+               min="0"
+               max="10"
+               step="0.01"
+               inputmode="decimal"
+               data-student="${student.n}"
+               placeholder="—"
+               value="${grade.kind === "number" ? escapeAttribute(grade.value) : ""}"
+               ${closed ? "disabled" : ""} />
+      `;
+
+    return `
+      <article class="regular-student-row" data-student-row="${student.n}">
+        <div class="regular-student-identity">
+          <span class="regular-student-number">${student.n}</span>
+          <strong>${escapeHtml(student.name)}</strong>
+        </div>
+        <div class="regular-grade-control">${control}</div>
+        <div class="regular-grade-value" id="regular-grade-value-${student.n}">${escapeHtml(regularGradeDisplay(grade))}</div>
+      </article>
+    `;
+  }).join("");
+
+  host.querySelectorAll(".regular-mark-button").forEach(button => {
+    button.addEventListener("click", () => {
+      const studentNumber = Number(button.dataset.student);
+      const mark = button.dataset.mark;
+      const current = regularGrades.get(studentNumber) || blankRegularGrade();
+      const next = current.kind === mark
+        ? blankRegularGrade()
+        : mark === "check"
+          ? { kind: "check", value: 10 }
+          : { kind: "x", value: 0 };
+
+      regularGrades.set(studentNumber, next);
+      saveRegularGradeLocal(studentNumber);
+      renderRegularRoster();
+      queueRegularPublish(studentNumber);
+    });
+  });
+
+  host.querySelectorAll(".regular-number-input").forEach(input => {
+    input.addEventListener("input", () => {
+      const studentNumber = Number(input.dataset.student);
+      const raw = input.value.trim();
+      input.classList.remove("invalid");
+
+      if (raw === "") {
+        regularGrades.set(studentNumber, blankRegularGrade());
+      } else {
+        const value = Number(raw);
+        if (!Number.isFinite(value) || value < 0 || value > 10) {
+          input.classList.add("invalid");
+          $("#regularSyncStatus").textContent = "Grades must be between 0 and 10.";
+          return;
+        }
+        regularGrades.set(studentNumber, {
+          kind: "number",
+          value: Math.round(value * 100) / 100
+        });
+      }
+
+      const display = document.getElementById(`regular-grade-value-${studentNumber}`);
+      if (display) display.textContent = regularGradeDisplay(regularGrades.get(studentNumber));
+      saveRegularGradeLocal(studentNumber);
+      queueRegularPublish(studentNumber);
+    });
+  });
+
+  if (closed && $("#regularSyncStatus")) {
+    $("#regularSyncStatus").textContent = "This session is closed. Grades are read-only.";
+  }
+}
+
+function buildRegularSnapshot(studentNumber) {
+  const session = activeSpeakingSession;
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  const student = klass?.students.find(item => item.n === Number(studentNumber));
+  if (!session || sessionAppMode(session) !== "regular" || !klass || !student) return null;
+  if (String(session.status || "").toLowerCase() === "closed") return null;
+
+  const grade = normalizeRegularGrade(regularGrades.get(student.n), regularSubmode);
+  const blank = grade.kind === "blank";
+  const score = blank ? 0 : Number(grade.value);
+  const checklist = regularSubmode === "checklist";
+
+  const level = blank
+    ? "Not marked"
+    : checklist
+      ? (grade.kind === "check" ? "✓ Checked" : "X")
+      : "Numerical grade";
+
+  const observation = blank
+    ? ""
+    : checklist
+      ? (grade.kind === "check" ? "Checklist marked as complete." : "Checklist marked with X.")
+      : "Direct numerical grade.";
+
+  return {
+    sessionId: session.sessionId,
+    recordKey: `${session.sessionId}|${student.n}`,
+    deviceId: getSpeakingDeviceId(),
+    contributorName: "David Santana",
+    record: {
+      classId: klass.id,
+      classLabel: klass.label,
+      course: klass.course,
+      section: klass.section,
+      specialty: klass.specialty,
+      tutor: klass.tutor,
+      studentNumber: student.n,
+      studentName: student.name,
+      activity: session.title || session.activity,
+      total: score,
+      markedCriteria: blank ? 0 : 1,
+      rows: [{
+        criterion: checklist ? "Checklist grade" : "Regular numerical grade",
+        max: 10,
+        level,
+        points: blank ? null : score,
+        observation
+      }],
+      comment: "",
+      source: checklist ? "Lev Vigotsky Regular Checklist" : "Lev Vigotsky Regular Number",
+      createdAt: new Date().toISOString(),
+      submittedAt: new Date().toISOString()
+    }
+  };
+}
+
+function queueRegularPublish(studentNumber) {
+  const snapshot = buildRegularSnapshot(studentNumber);
+  if (!snapshot) return;
+
+  const key = snapshot.recordKey;
+  const existing = regularPublishTimers.get(key);
+  if (existing) clearTimeout(existing);
+
+  regularPublishTimers.set(key, setTimeout(() => {
+    regularPublishTimers.delete(key);
+    publishRegularSnapshot(snapshot);
+  }, 350));
+
+  if ($("#regularSyncStatus")) {
+    $("#regularSyncStatus").textContent = "Saving changes…";
+    $("#regularSyncStatus").classList.remove("error");
+  }
+}
+
+async function publishRegularSnapshot(snapshot) {
+  try {
+    await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({
+        sessionId: snapshot.sessionId,
+        deviceId: snapshot.deviceId,
+        contributorName: snapshot.contributorName,
+        record: snapshot.record
+      })
+    });
+
+    if (activeSpeakingSession?.sessionId === snapshot.sessionId && $("#regularSyncStatus")) {
+      $("#regularSyncStatus").textContent = "All changes saved to Results.";
+      $("#regularSyncStatus").classList.remove("error");
+    }
+  } catch (error) {
+    console.error(error);
+    if (activeSpeakingSession?.sessionId === snapshot.sessionId && $("#regularSyncStatus")) {
+      $("#regularSyncStatus").textContent = `Auto-save failed: ${error.message}`;
+      $("#regularSyncStatus").classList.add("error");
+    }
+  }
+}
+
+async function continueActiveSession() {
+  const session = activeSpeakingSession;
+  if (!session || sessionAppMode(session) !== currentAppMode) {
+    showToast("No active session for this mode");
+    return;
+  }
+
+  const klass = CLASS_DATA.find(item => item.id === session.classId);
+  if (!klass) {
+    showToast("Class not found");
+    return;
+  }
+
+  if (currentAppMode === "regular") {
+    regularSubmode = sessionRegularSubmode(session);
+    await loadRegularGradesFromSession(session);
+    openRegularGrading(session);
+  } else {
+    await hydrateDraftsFromSession(session);
+    selectClass(klass.id);
+  }
+}
+
 function openSpeakingResults() {
   window.location.href = sessionResultsUrl(activeSpeakingSession?.sessionId || "");
 }
@@ -1628,27 +1989,29 @@ function openSpeakingResults() {
 function initSharedSessions() {
   populateSessionClassSelect();
 
+  $("#chooseSpeakingMode")?.addEventListener("click", () => selectWebsiteMode("speaking"));
+  $("#chooseRegularMode")?.addEventListener("click", () => selectWebsiteMode("regular"));
+  $("#backToModeSelection")?.addEventListener("click", showModeSelection);
+
   $("#sessionClassSelect")?.addEventListener("change", updateGeneratedSessionId);
   $("#createModeButton")?.addEventListener("click", () => setSessionMode("create"));
   $("#joinModeButton")?.addEventListener("click", () => setSessionMode("join"));
+  $("#checklistVariantButton")?.addEventListener("click", () => setRegularSubmode("checklist"));
+  $("#numberVariantButton")?.addEventListener("click", () => setRegularSubmode("number"));
+
   $("#createSessionButton")?.addEventListener("click", createSpeakingSession);
   $("#joinSessionButton")?.addEventListener("click", joinSpeakingSession);
   $("#refreshSessionsButton")?.addEventListener("click", loadAvailableSpeakingSessions);
+  $("#continueHomeSession")?.addEventListener("click", continueActiveSession);
+
   $("#openHomeResults")?.addEventListener("click", openSpeakingResults);
   $("#openAssessmentResults")?.addEventListener("click", openSpeakingResults);
+  $("#openRegularResults")?.addEventListener("click", openSpeakingResults);
   $("#leaveHomeSession")?.addEventListener("click", leaveSpeakingSession);
 
+  currentAppMode = null;
   refreshSharedSessionUI();
-  loadAvailableSpeakingSessions();
-
-  if (activeSpeakingSession?.sessionId) {
-    const klass = CLASS_DATA.find(item => item.id === activeSpeakingSession.classId);
-    if (klass) {
-      hydrateDraftsFromSession(activeSpeakingSession).then(() => {
-        selectClass(klass.id);
-      });
-    }
-  }
+  showModeSelection();
 }
 
 window.addEventListener("beforeunload", saveStudentDraft);
