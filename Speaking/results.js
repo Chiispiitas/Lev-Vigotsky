@@ -3,8 +3,9 @@
 const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
 const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
 const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSubmission`;
-const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist";
-const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number";
+const REGULAR_ACTIVITY = "Regular grading";
+const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist"; // legacy
+const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number"; // legacy
 const ACTIVE_SESSION_KEY = "lv-speaking-active-session-v2";
 
 const $ = selector => document.querySelector(selector);
@@ -81,37 +82,35 @@ async function fetchJson(url, options = {}) {
 
 function sessionMode(session = activeSession) {
   const activity = String(session?.activity || "");
-  return activity === REGULAR_CHECKLIST_ACTIVITY || activity === REGULAR_NUMBER_ACTIVITY
+  return [REGULAR_ACTIVITY, REGULAR_CHECKLIST_ACTIVITY, REGULAR_NUMBER_ACTIVITY].includes(activity)
     ? "regular"
     : "speaking";
 }
 
-function regularSessionType(session = activeSession) {
-  return String(session?.activity || "") === REGULAR_NUMBER_ACTIVITY ? "number" : "checklist";
+function regularEntryKind(item) {
+  const rows = parseCriteriaRows(item);
+  const level = String(rows[0]?.level || "");
+  if (level.startsWith("✓")) return "check";
+  if (level === "X") return "x";
+  return Number(item?.markedCriteria || 0) > 0 ? "number" : "blank";
 }
-
 function resultDetailLabel(item) {
   if (Number(item?.markedCriteria || 0) <= 0) return "Pending";
+  if (sessionMode() !== "regular") return `${item.markedCriteria}/7`;
 
-  if (sessionMode() === "regular") {
-    if (regularSessionType() === "checklist") {
-      return Number(item.scoreTotal) === 10 ? "✓" : "X";
-    }
-    return "Number";
-  }
-
-  return `${item.markedCriteria}/7`;
+  const kind = regularEntryKind(item);
+  if (kind === "check") return "✓";
+  if (kind === "x") return "X";
+  return "Number";
 }
-
 function rankingSubtitle(item) {
   if (sessionMode() === "regular") {
-    return regularSessionType() === "checklist"
-      ? `#${item.studentNumber || ""} · ${Number(item.scoreTotal) === 10 ? "✓ Checked" : "X"}`
-      : `#${item.studentNumber || ""} · Numerical grade`;
+    const kind = regularEntryKind(item);
+    const label = kind === "check" ? "✓ Checked" : kind === "x" ? "X" : "Numerical grade";
+    return `#${item.studentNumber || ""} · ${label}`;
   }
   return `#${item.studentNumber || ""} · ${item.markedCriteria || 0}/7 rubric criteria`;
 }
-
 function rankEntries(items) {
   const sorted = [...items].sort((a,b) => {
     const scoreDiff = Number(b.scoreTotal || 0) - Number(a.scoreTotal || 0);
@@ -148,9 +147,7 @@ function renderSession() {
   }
 
   const regular = sessionMode() === "regular";
-  const typeLabel = regular
-    ? (regularSessionType() === "checklist" ? "Checklist" : "Numerical grading")
-    : "Speaking";
+  const typeLabel = regular ? "Regular grading" : "Speaking";
 
   els.sessionBanner.hidden = false;
   els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Grading session";
@@ -160,9 +157,7 @@ function renderSession() {
   els.copySessionButton.disabled = false;
   els.copyGradesButton.disabled = false;
   if (els.detailColumnHeader) {
-    els.detailColumnHeader.textContent = regular
-      ? (regularSessionType() === "checklist" ? "Mark" : "Type")
-      : "Rubric";
+    els.detailColumnHeader.textContent = regular ? "Input" : "Rubric";
   }
   document.title = `${typeLabel} Results · Lev Grading`;
 
