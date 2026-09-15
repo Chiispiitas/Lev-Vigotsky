@@ -1229,3 +1229,23 @@ button {
     width: 80px;
   }
 }
+
+
+/* Unified regular grading controls */
+.regular-grade-control.combined {
+  display: grid;
+  grid-template-columns: auto 94px;
+  align-items: center;
+  gap: 8px;
+}
+.regular-grade-control.combined .regular-number-input {
+  width: 94px;
+}
+@media (max-width: 470px) {
+  .regular-grade-control.combined {
+    grid-template-columns: auto 78px;
+  }
+  .regular-grade-control.combined .regular-number-input {
+    width: 78px;
+  }
+}
