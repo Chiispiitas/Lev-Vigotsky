@@ -93,8 +93,9 @@ function rankEntries(items) {
 }
 
 function renderSummary(stats = {}) {
-  els.averageValue.textContent = entries.length ? `${formatScore(stats.average || 0)} / 10` : "—";
-  els.assessedValue.textContent = String(stats.assessed ?? entries.length ?? 0);
+  const assessedCount = Number(stats.assessed ?? entries.filter(item => Number(item.markedCriteria || 0) > 0).length);
+  els.averageValue.textContent = assessedCount ? `${formatScore(stats.average || 0)} / 10` : "—";
+  els.assessedValue.textContent = String(assessedCount);
   els.entryValue.textContent = String(stats.total ?? entries.length ?? 0);
   const status = String(activeSession?.status || "—");
   els.sessionStatusValue.textContent = status ? status.charAt(0).toUpperCase() + status.slice(1) : "—";
@@ -120,7 +121,7 @@ function renderSession() {
 }
 
 function renderRanking() {
-  const ranked = rankEntries(entries);
+  const ranked = rankEntries(entries.filter(item => Number(item.markedCriteria || 0) > 0));
   if (!ranked.length) {
     els.rankingGrid.innerHTML = '<div class="empty-card">No submissions in this session yet.</div>';
     return;
@@ -152,8 +153,8 @@ function renderEntries() {
     <tr>
       <td>${item.rank}</td>
       <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
-      <td class="score">${escapeHtml(formatScore(item.scoreTotal))} / 10</td>
-      <td>${escapeHtml(item.markedCriteria || 0)}/7</td>
+      <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
+      <td>${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(item.markedCriteria)}/7` : "Pending"}</td>
       <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
       <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
     </tr>
@@ -223,7 +224,14 @@ async function toggleSessionStatus() {
     activeSession = data.session;
     localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
     renderSession();
-    renderSummary({ total:entries.length, assessed:entries.length, average:entries.length ? entries.reduce((s,x)=>s+Number(x.scoreTotal||0),0)/entries.length : 0 });
+    const assessedEntries = entries.filter(item => Number(item.markedCriteria || 0) > 0);
+    renderSummary({
+      total: entries.length,
+      assessed: assessedEntries.length,
+      average: assessedEntries.length
+        ? assessedEntries.reduce((sum, item) => sum + Number(item.scoreTotal || 0), 0) / assessedEntries.length
+        : 0
+    });
     showToast(currentlyClosed ? "Session reopened" : "Session closed");
   } catch (error) {
     setStatus(`Could not update session: ${error.message}`, "error");
