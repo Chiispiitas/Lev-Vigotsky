@@ -1249,3 +1249,21 @@ button {
     width: 78px;
   }
 }
+
+
+/* Results access from start screen */
+.grading-mode-card.results {
+  background: linear-gradient(145deg, #6f48d8, #4b2aa3);
+}
+.start-results-panel {
+  margin-top: 18px;
+}
+.start-results-panel[hidden] {
+  display: none;
+}
+@media (min-width: 520px) {
+  .grading-mode-card.results {
+    grid-column: 1 / -1;
+    min-height: 150px;
+  }
+}
