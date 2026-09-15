@@ -1130,8 +1130,6 @@ function bindEvents() {
   $("#backToClasses").addEventListener("click", showClassScreen);
   $("#markExcellent").addEventListener("click", markAllExcellent);
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
-  $("#exportClassCsv").addEventListener("click", exportClassCsv);
-  $("#exportClassPdf").addEventListener("click", exportClassPdf);
 
   activityInput.addEventListener("input", () => {
     state.activity = activityInput.value.trim() || "Oral speaking assessment";
