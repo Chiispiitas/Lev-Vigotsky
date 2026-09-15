@@ -50,7 +50,32 @@
             <strong>Regular Grading</strong>
             <small>Grade a whole class quickly with ✓, X, or a direct numerical score for each student.</small>
           </button>
+
+          <button class="grading-mode-card results" id="chooseResultsMode" type="button">
+            <span class="mode-number">RESULTS</span>
+            <span class="mode-icon" aria-hidden="true">📊</span>
+            <strong>Results</strong>
+            <small>Open any existing grading session and review its saved scores.</small>
+          </button>
         </div>
+
+        <section class="panel start-results-panel" id="startResultsPanel" hidden>
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Saved sessions</p>
+              <h3>Choose session results</h3>
+            </div>
+            <button class="ghost-button" id="refreshStartResults" type="button">Refresh</button>
+          </div>
+
+          <label class="field-label" for="startResultsSessionSelect">Session</label>
+          <select class="text-input" id="startResultsSessionSelect">
+            <option value="">Choose a session…</option>
+          </select>
+
+          <p class="session-status-text" id="startResultsStatus">Select Results to load saved sessions.</p>
+          <button class="primary-session-button full-width" id="openSelectedResults" type="button">View results</button>
+        </section>
       </section>
 
       <section class="screen" id="classScreen" aria-labelledby="sessionTitle">
