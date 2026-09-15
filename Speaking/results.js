@@ -21,6 +21,7 @@ const els = {
   refreshButton: $("#refreshButton"),
   toggleSessionButton: $("#toggleSessionButton"),
   copySessionButton: $("#copySessionButton"),
+  copyGradesButton: $("#copyGradesButton"),
   rankingGrid: $("#rankingGrid"),
   entrySearch: $("#entrySearch"),
   entryTableBody: $("#entryTableBody"),
@@ -106,6 +107,7 @@ function renderSession() {
     els.sessionBanner.hidden = true;
     els.toggleSessionButton.disabled = true;
     els.copySessionButton.disabled = true;
+    els.copyGradesButton.disabled = true;
     return;
   }
 
@@ -115,6 +117,7 @@ function renderSession() {
   els.sessionCode.textContent = activeSession.sessionId;
   els.toggleSessionButton.disabled = false;
   els.copySessionButton.disabled = false;
+  els.copyGradesButton.disabled = false;
 
   const closed = String(activeSession.status || "").toLowerCase() === "closed";
   els.toggleSessionButton.textContent = closed ? "Reopen session" : "Close session";
@@ -322,6 +325,73 @@ async function toggleSessionStatus() {
   }
 }
 
+function gradeClipboardValue(entry) {
+  if (!entry || Number(entry.markedCriteria || 0) <= 0) return "0.03";
+
+  const score = Number(entry.scoreTotal);
+  if (!Number.isFinite(score)) return "0.03";
+  if (score === 0) return "0.02";
+  if (Number.isInteger(score)) return String(score);
+  return score.toFixed(2);
+}
+
+function buildGradesClipboardText() {
+  if (!activeSession?.classId) {
+    throw new Error("This session has no class assigned.");
+  }
+
+  const classes = Array.isArray(window.SPEAKING_CLASS_DATA)
+    ? window.SPEAKING_CLASS_DATA
+    : [];
+  const klass = classes.find(item => item.id === activeSession.classId);
+
+  if (!klass) {
+    throw new Error("The class roster for this session could not be found.");
+  }
+
+  const entryByStudent = new Map(
+    entries.map(item => [Number(item.studentNumber), item])
+  );
+
+  return [...klass.students]
+    .sort((a, b) => Number(a.n) - Number(b.n))
+    .map(student => gradeClipboardValue(entryByStudent.get(Number(student.n))))
+    .join("\n");
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+  }
+}
+
+async function copyGradesToClipboard() {
+  if (!activeSession) {
+    showToast("Load a session first");
+    return;
+  }
+
+  try {
+    const text = buildGradesClipboardText();
+    await copyText(text);
+    const lineCount = text ? text.split("\n").length : 0;
+    showToast(`${lineCount} grades copied`);
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || "Could not copy grades");
+  }
+}
+
 function bindTabs() {
   document.querySelectorAll(".tab").forEach(button => {
     button.addEventListener("click", () => {
@@ -340,18 +410,10 @@ function init() {
   els.toggleSessionButton.addEventListener("click", toggleSessionStatus);
   els.copySessionButton.addEventListener("click", async () => {
     if (!activeSession?.sessionId) return;
-    try {
-      await navigator.clipboard.writeText(activeSession.sessionId);
-    } catch {
-      const area = document.createElement("textarea");
-      area.value = activeSession.sessionId;
-      document.body.appendChild(area);
-      area.select();
-      document.execCommand("copy");
-      area.remove();
-    }
+    await copyText(activeSession.sessionId);
     showToast("Session ID copied");
   });
+  els.copyGradesButton.addEventListener("click", copyGradesToClipboard);
   els.entrySearch.addEventListener("input", renderEntries);
   els.sessionIdInput.addEventListener("keydown", event => {
     if (event.key === "Enter") {
