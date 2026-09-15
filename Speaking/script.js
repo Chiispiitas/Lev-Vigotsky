@@ -91,11 +91,11 @@ const SPEAKING_WIX_BASE = "https://chiispiitas.wixsite.com/lev-grading";
 const SPEAKING_SESSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSession`;
 const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSubmission`;
 
-const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist";
-const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number";
+const REGULAR_ACTIVITY = "Regular grading";
+const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist"; // legacy
+const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number"; // legacy
 
 let currentAppMode = null;
-let regularSubmode = "checklist";
 let regularGrades = new Map();
 const regularPublishTimers = new Map();
 
@@ -1120,21 +1120,14 @@ function localDateId(date = new Date()) {
 function generatedSessionIdForClass(klass) {
   if (!klass) return "";
   const base = `${courseYearNumber(klass)}-${courseTrackCode(klass)}-${localDateId()}`;
-  if (currentAppMode === "regular") {
-    return `${base}-${regularSubmode === "checklist" ? "CHK" : "NUM"}`;
-  }
-  return base;
+  return currentAppMode === "regular" ? `${base}-REG` : base;
 }
 
 function sessionAppMode(session) {
   const activity = String(session?.activity || "");
-  return activity === REGULAR_CHECKLIST_ACTIVITY || activity === REGULAR_NUMBER_ACTIVITY
+  return [REGULAR_ACTIVITY, REGULAR_CHECKLIST_ACTIVITY, REGULAR_NUMBER_ACTIVITY].includes(activity)
     ? "regular"
     : "speaking";
-}
-
-function sessionRegularSubmode(session) {
-  return String(session?.activity || "") === REGULAR_NUMBER_ACTIVITY ? "number" : "checklist";
 }
 
 function selectWebsiteMode(mode) {
@@ -1158,13 +1151,6 @@ function showModeSelection() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function setRegularSubmode(mode) {
-  regularSubmode = mode === "number" ? "number" : "checklist";
-  $("#checklistVariantButton")?.classList.toggle("active", regularSubmode === "checklist");
-  $("#numberVariantButton")?.classList.toggle("active", regularSubmode === "number");
-  updateGeneratedSessionId();
-}
-
 function refreshSessionModeUI() {
   const regular = currentAppMode === "regular";
   const activeMatches = activeSpeakingSession && sessionAppMode(activeSpeakingSession) === currentAppMode;
@@ -1176,7 +1162,6 @@ function refreshSessionModeUI() {
       : "A session is required before grading. Create a new one for a class or join an existing shared session.";
   }
   if ($("#sessionModeChip")) $("#sessionModeChip").textContent = regular ? "Fast grading" : "Shared grading";
-  if ($("#regularVariantBlock")) $("#regularVariantBlock").hidden = !regular;
   if ($("#sessionTitleInput")) {
     $("#sessionTitleInput").placeholder = regular
       ? "Example: Homework 3"
@@ -1184,7 +1169,7 @@ function refreshSessionModeUI() {
   }
   if ($("#generatedIdHelp")) {
     $("#generatedIdHelp").textContent = regular
-      ? "Regular sessions add CHK or NUM to keep checklist and numerical sessions separate."
+      ? "Regular sessions use one combined ✓ / X / numerical grading mode."
       : "ID format: course year + CC/TEC + date (DD-MM-YYYY).";
   }
   if ($("#currentSessionSummary")) $("#currentSessionSummary").hidden = !activeMatches;
@@ -1308,12 +1293,10 @@ async function createSpeakingSession() {
 
   const sessionId = generatedSessionIdForClass(klass);
   const customTitle = $("#sessionTitleInput")?.value.trim() || "";
-  const modeLabel = currentAppMode === "regular"
-    ? (regularSubmode === "checklist" ? "Checklist" : "Numerical grading")
-    : "Speaking";
+  const modeLabel = currentAppMode === "regular" ? "Regular grading" : "Speaking";
   const title = customTitle || `${klass.label} · ${modeLabel} · ${localDateId()}`;
   const activity = currentAppMode === "regular"
-    ? (regularSubmode === "checklist" ? REGULAR_CHECKLIST_ACTIVITY : REGULAR_NUMBER_ACTIVITY)
+    ? REGULAR_ACTIVITY
     : "Oral speaking assessment";
   const button = $("#createSessionButton");
   const oldText = button?.textContent || "Create session";
@@ -1344,7 +1327,6 @@ async function createSpeakingSession() {
     showToast(`Session ${data.session.sessionId} created`);
 
     if (currentAppMode === "regular") {
-      regularSubmode = sessionRegularSubmode(data.session);
       await loadRegularGradesFromSession(data.session);
       openRegularGrading(data.session);
     } else {
@@ -1392,9 +1374,7 @@ async function loadAvailableSpeakingSessions() {
       const option = document.createElement("option");
       option.value = session.sessionId;
       const statusText = String(session.status || "open").toLowerCase() === "closed" ? " · CLOSED" : "";
-      const kindText = sessionAppMode(session) === "regular"
-        ? (sessionRegularSubmode(session) === "checklist" ? " · Checklist" : " · Number")
-        : "";
+      const kindText = sessionAppMode(session) === "regular" ? " · Regular" : "";
       option.textContent = `${session.sessionId} · ${session.title || session.classLabel || "Session"}${kindText}${statusText}`;
       select.appendChild(option);
     });
@@ -1452,8 +1432,6 @@ async function joinSpeakingSession() {
     showToast(`Joined ${session.sessionId}`);
 
     if (currentAppMode === "regular") {
-      regularSubmode = sessionRegularSubmode(session);
-      setRegularSubmode(regularSubmode);
       await loadRegularGradesFromSession(session);
       openRegularGrading(session);
     } else {
@@ -1629,22 +1607,18 @@ function blankRegularGrade() {
   return { kind: "blank", value: null };
 }
 
-function normalizeRegularGrade(raw, subtype = regularSubmode) {
+function normalizeRegularGrade(raw) {
   if (!raw || raw.kind === "blank" || raw.value === null || raw.value === "") {
     return blankRegularGrade();
   }
 
-  if (subtype === "checklist") {
-    return raw.kind === "check"
-      ? { kind: "check", value: 10 }
-      : { kind: "x", value: 0 };
-  }
+  if (raw.kind === "check") return { kind: "check", value: 10 };
+  if (raw.kind === "x") return { kind: "x", value: 0 };
 
   const value = Number(raw.value);
   if (!Number.isFinite(value) || value < 0 || value > 10) return blankRegularGrade();
   return { kind: "number", value: Math.round(value * 100) / 100 };
 }
-
 function saveRegularGradeLocal(studentNumber) {
   const session = activeSpeakingSession;
   if (!session?.sessionId || !session?.classId) return;
@@ -1660,7 +1634,7 @@ function readRegularGradeLocal(session, studentNumber) {
     const raw = JSON.parse(
       localStorage.getItem(regularDraftKey(session.sessionId, session.classId, studentNumber)) || "null"
     );
-    return normalizeRegularGrade(raw, sessionRegularSubmode(session));
+    return normalizeRegularGrade(raw);
   } catch {
     return blankRegularGrade();
   }
@@ -1681,7 +1655,6 @@ async function loadRegularGradesFromSession(session) {
     const data = await speakingApiJson(url.toString());
     const items = Array.isArray(data.items) ? data.items : [];
     const serverByStudent = new Map(items.map(item => [Number(item.studentNumber), item]));
-    const subtype = sessionRegularSubmode(session);
 
     klass.students.forEach(student => {
       const item = serverByStudent.get(student.n);
@@ -1692,13 +1665,21 @@ async function loadRegularGradesFromSession(session) {
 
       if (Number(item.markedCriteria || 0) <= 0) {
         regularGrades.set(student.n, blankRegularGrade());
-      } else if (subtype === "checklist") {
-        regularGrades.set(
-          student.n,
-          Number(item.scoreTotal) === 10
-            ? { kind: "check", value: 10 }
-            : { kind: "x", value: 0 }
-        );
+        return;
+      }
+
+      let rows = [];
+      try {
+        rows = Array.isArray(item.rows) ? item.rows : JSON.parse(item.criteriaJson || "[]");
+      } catch {
+        rows = [];
+      }
+      const level = String(rows[0]?.level || "");
+
+      if (level.startsWith("✓") || (session.activity === REGULAR_CHECKLIST_ACTIVITY && Number(item.scoreTotal) === 10)) {
+        regularGrades.set(student.n, { kind: "check", value: 10 });
+      } else if (level === "X" || (session.activity === REGULAR_CHECKLIST_ACTIVITY && Number(item.scoreTotal) === 0)) {
+        regularGrades.set(student.n, { kind: "x", value: 0 });
       } else {
         regularGrades.set(student.n, {
           kind: "number",
@@ -1724,7 +1705,6 @@ function openRegularGrading(session = activeSpeakingSession) {
   }
 
   currentAppMode = "regular";
-  regularSubmode = sessionRegularSubmode(session);
   state.classId = klass.id;
 
   modeScreen?.classList.remove("screen-active");
@@ -1732,22 +1712,16 @@ function openRegularGrading(session = activeSpeakingSession) {
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.add("screen-active");
 
-  if ($("#regularAssessmentEyebrow")) {
-    $("#regularAssessmentEyebrow").textContent =
-      regularSubmode === "checklist" ? "Regular grading · Checklist" : "Regular grading · Number";
-  }
+  if ($("#regularAssessmentEyebrow")) $("#regularAssessmentEyebrow").textContent = "Regular grading";
   if ($("#regularAssessmentTitle")) $("#regularAssessmentTitle").textContent = session.title || klass.label;
   if ($("#regularClassMeta")) {
     $("#regularClassMeta").textContent = `${klass.label} · ${klass.course} · Tutor(a): ${klass.tutor}`;
   }
   if ($("#regularStudentCount")) $("#regularStudentCount").textContent = `${klass.students.length} students`;
-  if ($("#regularRosterEyebrow")) {
-    $("#regularRosterEyebrow").textContent = regularSubmode === "checklist" ? "Checklist" : "Number";
-  }
+  if ($("#regularRosterEyebrow")) $("#regularRosterEyebrow").textContent = "Regular grading";
   if ($("#regularInstructions")) {
-    $("#regularInstructions").textContent = regularSubmode === "checklist"
-      ? "✓ gives 10, X gives 0, and leaving both unselected means blank."
-      : "Enter a score from 0 to 10. Leave the field empty for a blank grade.";
+    $("#regularInstructions").textContent =
+      "✓ gives 10, X gives 0, or type any score from 0 to 10. Clear the number field and leave both buttons unselected for a blank grade.";
   }
 
   refreshSharedSessionUI();
@@ -1772,28 +1746,7 @@ function renderRegularRoster() {
 
   host.innerHTML = klass.students.map(student => {
     const grade = regularGrades.get(student.n) || blankRegularGrade();
-
-    const control = regularSubmode === "checklist"
-      ? `
-        <div class="regular-check-controls">
-          <button class="regular-mark-button check ${grade.kind === "check" ? "selected" : ""}"
-                  type="button" data-student="${student.n}" data-mark="check" ${closed ? "disabled" : ""}>✓</button>
-          <button class="regular-mark-button x ${grade.kind === "x" ? "selected" : ""}"
-                  type="button" data-student="${student.n}" data-mark="x" ${closed ? "disabled" : ""}>×</button>
-        </div>
-      `
-      : `
-        <input class="regular-number-input"
-               type="number"
-               min="0"
-               max="10"
-               step="0.01"
-               inputmode="decimal"
-               data-student="${student.n}"
-               placeholder="—"
-               value="${grade.kind === "number" ? escapeAttribute(grade.value) : ""}"
-               ${closed ? "disabled" : ""} />
-      `;
+    const inputValue = grade.kind === "blank" ? "" : grade.value;
 
     return `
       <article class="regular-student-row" data-student-row="${student.n}">
@@ -1801,7 +1754,24 @@ function renderRegularRoster() {
           <span class="regular-student-number">${student.n}</span>
           <strong>${escapeHtml(student.name)}</strong>
         </div>
-        <div class="regular-grade-control">${control}</div>
+        <div class="regular-grade-control combined">
+          <div class="regular-check-controls">
+            <button class="regular-mark-button check ${grade.kind === "check" ? "selected" : ""}"
+                    type="button" data-student="${student.n}" data-mark="check" ${closed ? "disabled" : ""}>✓</button>
+            <button class="regular-mark-button x ${grade.kind === "x" ? "selected" : ""}"
+                    type="button" data-student="${student.n}" data-mark="x" ${closed ? "disabled" : ""}>×</button>
+          </div>
+          <input class="regular-number-input"
+                 type="number"
+                 min="0"
+                 max="10"
+                 step="0.01"
+                 inputmode="decimal"
+                 data-student="${student.n}"
+                 placeholder="—"
+                 value="${escapeAttribute(inputValue)}"
+                 ${closed ? "disabled" : ""} />
+        </div>
         <div class="regular-grade-value" id="regular-grade-value-${student.n}">${escapeHtml(regularGradeDisplay(grade))}</div>
       </article>
     `;
@@ -1846,6 +1816,10 @@ function renderRegularRoster() {
         });
       }
 
+      const row = input.closest(".regular-student-row");
+      row?.querySelector(".regular-mark-button.check")?.classList.remove("selected");
+      row?.querySelector(".regular-mark-button.x")?.classList.remove("selected");
+
       const display = document.getElementById(`regular-grade-value-${studentNumber}`);
       if (display) display.textContent = regularGradeDisplay(regularGrades.get(studentNumber));
       saveRegularGradeLocal(studentNumber);
@@ -1865,22 +1839,25 @@ function buildRegularSnapshot(studentNumber) {
   if (!session || sessionAppMode(session) !== "regular" || !klass || !student) return null;
   if (String(session.status || "").toLowerCase() === "closed") return null;
 
-  const grade = normalizeRegularGrade(regularGrades.get(student.n), regularSubmode);
+  const grade = normalizeRegularGrade(regularGrades.get(student.n));
   const blank = grade.kind === "blank";
   const score = blank ? 0 : Number(grade.value);
-  const checklist = regularSubmode === "checklist";
 
   const level = blank
     ? "Not marked"
-    : checklist
-      ? (grade.kind === "check" ? "✓ Checked" : "X")
-      : "Numerical grade";
+    : grade.kind === "check"
+      ? "✓ Checked"
+      : grade.kind === "x"
+        ? "X"
+        : "Numerical grade";
 
   const observation = blank
     ? ""
-    : checklist
-      ? (grade.kind === "check" ? "Checklist marked as complete." : "Checklist marked with X.")
-      : "Direct numerical grade.";
+    : grade.kind === "check"
+      ? "Set to 10 with the check button."
+      : grade.kind === "x"
+        ? "Set to 0 with the X button."
+        : "Entered manually in the numerical field.";
 
   return {
     sessionId: session.sessionId,
@@ -1900,14 +1877,14 @@ function buildRegularSnapshot(studentNumber) {
       total: score,
       markedCriteria: blank ? 0 : 1,
       rows: [{
-        criterion: checklist ? "Checklist grade" : "Regular numerical grade",
+        criterion: "Regular grade",
         max: 10,
         level,
         points: blank ? null : score,
         observation
       }],
       comment: "",
-      source: checklist ? "Lev Vigotsky Regular Checklist" : "Lev Vigotsky Regular Number",
+      source: "Lev Vigotsky Regular Grading",
       createdAt: new Date().toISOString(),
       submittedAt: new Date().toISOString()
     }
@@ -1973,7 +1950,6 @@ async function continueActiveSession() {
   }
 
   if (currentAppMode === "regular") {
-    regularSubmode = sessionRegularSubmode(session);
     await loadRegularGradesFromSession(session);
     openRegularGrading(session);
   } else {
@@ -1996,9 +1972,6 @@ function initSharedSessions() {
   $("#sessionClassSelect")?.addEventListener("change", updateGeneratedSessionId);
   $("#createModeButton")?.addEventListener("click", () => setSessionMode("create"));
   $("#joinModeButton")?.addEventListener("click", () => setSessionMode("join"));
-  $("#checklistVariantButton")?.addEventListener("click", () => setRegularSubmode("checklist"));
-  $("#numberVariantButton")?.addEventListener("click", () => setRegularSubmode("number"));
-
   $("#createSessionButton")?.addEventListener("click", createSpeakingSession);
   $("#joinSessionButton")?.addEventListener("click", joinSpeakingSession);
   $("#refreshSessionsButton")?.addEventListener("click", loadAvailableSpeakingSessions);
