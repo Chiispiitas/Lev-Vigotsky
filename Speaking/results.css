@@ -69,20 +69,7 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .summary-grid span{display:block;color:var(--muted);font-size:.72rem;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
 .summary-grid strong{display:block;margin-top:5px;font-size:1.6rem}
 .toolbar{display:flex;gap:8px;margin-top:14px;padding:10px;border-radius:18px}
-.tabs{display:flex;gap:8px;margin-top:16px}
-.tab{padding:11px 16px;border-radius:14px;background:#dfeaff;color:var(--blue-dark);font-weight:900}
-.tab.active{color:#fff;background:var(--blue)}
-.tab-panel{display:none;margin-top:10px;padding:18px;border-radius:20px}
-.tab-panel.active{display:block}
 .panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.ranking-grid{display:grid;gap:9px}
-.rank-card{
-  display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:12px;
-  padding:12px;border:1px solid var(--line);border-radius:16px;background:#fff
-}
-.rank-number{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:#eaf4ff;color:var(--blue-dark);font-weight:1000}
-.rank-name strong{display:block}.rank-name span{display:block;margin-top:3px;color:var(--muted);font-size:.78rem;font-weight:700}
-.rank-score{font-size:1.35rem;font-weight:1000}
 .empty-card{padding:18px;border:2px dashed var(--line);border-radius:16px;color:var(--muted);text-align:center;font-weight:800}
 .entries-head #entrySearch{width:min(320px,100%)}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
@@ -106,8 +93,7 @@ td.score{font-weight:1000}
 @media(max-width:480px){
   .loader-row{grid-template-columns:1fr}
   .summary-grid{grid-template-columns:1fr 1fr}
-  .rank-card{grid-template-columns:42px 1fr auto}
-}
+  }
 
 
 /* Expandable entry details */
@@ -237,4 +223,10 @@ td.score{font-weight:1000}
 .toolbar .danger-button:disabled {
   opacity: .45;
   cursor: not-allowed;
+}
+
+
+/* Single Results view */
+.entries-panel {
+  margin-top: 14px;
 }
