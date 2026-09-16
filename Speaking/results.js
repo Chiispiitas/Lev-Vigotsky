@@ -25,6 +25,7 @@ const els = {
   toggleSessionButton: $("#toggleSessionButton"),
   copySessionButton: $("#copySessionButton"),
   copyGradesButton: $("#copyGradesButton"),
+  deleteSessionButton: $("#deleteSessionButton"),
   detailColumnHeader: $("#detailColumnHeader"),
   rankingGrid: $("#rankingGrid"),
   entrySearch: $("#entrySearch"),
@@ -143,6 +144,7 @@ function renderSession() {
     els.toggleSessionButton.disabled = true;
     els.copySessionButton.disabled = true;
     els.copyGradesButton.disabled = true;
+    els.deleteSessionButton.disabled = true;
     return;
   }
 
@@ -156,6 +158,7 @@ function renderSession() {
   els.toggleSessionButton.disabled = false;
   els.copySessionButton.disabled = false;
   els.copyGradesButton.disabled = false;
+  els.deleteSessionButton.disabled = false;
   if (els.detailColumnHeader) {
     els.detailColumnHeader.textContent = regular ? "Input" : "Rubric";
   }
@@ -367,6 +370,72 @@ async function toggleSessionStatus() {
   }
 }
 
+async function deleteActiveSession() {
+  if (!activeSession?.sessionId) {
+    showToast("Load a session first");
+    return;
+  }
+
+  const sessionId = activeSession.sessionId;
+  const confirmed = window.confirm(
+    `Delete session ${sessionId}?\n\nThis should permanently delete the session and its saved submissions. This action cannot be undone.`
+  );
+  if (!confirmed) return;
+
+  const oldText = els.deleteSessionButton.textContent;
+  els.deleteSessionButton.disabled = true;
+  els.deleteSessionButton.textContent = "Deleting…";
+  setStatus(`Deleting ${sessionId}…`);
+
+  try {
+    await fetchJson(SPEAKING_SESSION_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({
+        action: "delete",
+        sessionId,
+        deleteSubmissions: true
+      })
+    });
+
+    try {
+      const stored = JSON.parse(localStorage.getItem(ACTIVE_SESSION_KEY) || "null");
+      if (stored?.sessionId === sessionId) {
+        localStorage.removeItem(ACTIVE_SESSION_KEY);
+      }
+    } catch {
+      localStorage.removeItem(ACTIVE_SESSION_KEY);
+    }
+
+    activeSession = null;
+    entries = [];
+    els.sessionIdInput.value = "";
+
+    const pageUrl = new URL(window.location.href);
+    pageUrl.searchParams.delete("sessionId");
+    history.replaceState(null, "", pageUrl);
+
+    renderAll({});
+    els.rankingGrid.innerHTML = '<div class="empty-card">Session deleted.</div>';
+    els.entryTableBody.innerHTML = '<tr><td colspan="7">Session deleted.</td></tr>';
+    setStatus(`Session ${sessionId} deleted.`, "ok");
+    showToast("Session deleted");
+  } catch (error) {
+    console.error(error);
+    const message = String(error.message || "");
+    setStatus(
+      message.toLowerCase().includes("action") || message.toLowerCase().includes("delete")
+        ? "Delete failed. The Wix speakingSession endpoint must support action: delete."
+        : `Could not delete session: ${message}`,
+      "error"
+    );
+    showToast("Could not delete session");
+  } finally {
+    els.deleteSessionButton.textContent = oldText;
+    els.deleteSessionButton.disabled = !activeSession;
+  }
+}
+
 function gradeClipboardValue(entry) {
   if (!entry || Number(entry.markedCriteria || 0) <= 0) return "0.03";
 
@@ -456,6 +525,7 @@ function init() {
     showToast("Session ID copied");
   });
   els.copyGradesButton.addEventListener("click", copyGradesToClipboard);
+  els.deleteSessionButton.addEventListener("click", deleteActiveSession);
   els.entrySearch.addEventListener("input", renderEntries);
   els.sessionIdInput.addEventListener("keydown", event => {
     if (event.key === "Enter") {
