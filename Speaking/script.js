@@ -1358,7 +1358,9 @@ async function loadAvailableSpeakingSessions() {
   }
 
   try {
-    const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT);
+    const listUrl = new URL(SPEAKING_SESSION_ENDPOINT);
+    listUrl.searchParams.set("list", "1");
+    const data = await speakingApiJson(listUrl.toString());
     const sessions = Array.isArray(data.sessions)
       ? data.sessions
       : Array.isArray(data.items)
@@ -1977,7 +1979,9 @@ async function loadStartResultsSessions() {
   }
 
   try {
-    const data = await speakingApiJson(SPEAKING_SESSION_ENDPOINT);
+    const listUrl = new URL(SPEAKING_SESSION_ENDPOINT);
+    listUrl.searchParams.set("list", "1");
+    const data = await speakingApiJson(listUrl.toString());
     const sessions = (Array.isArray(data.sessions) ? data.sessions : Array.isArray(data.items) ? data.items : [])
       .filter(session => session?.sessionId)
       .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0));
