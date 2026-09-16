@@ -6,7 +6,6 @@
   <meta name="theme-color" content="#1875ff" />
   <title>Lev Grading</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="speaking-fixes.css" />
 </head>
 <body>
   <div class="background-art" aria-hidden="true">
@@ -41,7 +40,7 @@
             <span class="mode-number">01</span>
             <span class="mode-icon" aria-hidden="true">🎤</span>
             <strong>Speaking</strong>
-            <small>7-criterion oral speaking rubric with comments and student tabs.</small>
+            <small>7-criterion oral speaking rubric with comments and automatic shared-session saving.</small>
           </button>
 
           <button class="grading-mode-card regular" id="chooseRegularMode" type="button">
@@ -177,18 +176,6 @@
           <button class="ghost-button" id="openAssessmentResults" type="button">View session results</button>
         </section>
 
-        <section class="panel tabs-panel" id="studentTabsPanel">
-          <div class="panel-head">
-            <div>
-              <p class="eyebrow dark">Multi-student mode</p>
-              <h3>Student tabs</h3>
-            </div>
-            <button class="ghost-button" id="addStudentTab" type="button">+ Add tab</button>
-          </div>
-          <div class="student-tabs" id="studentTabs" role="tablist" aria-label="Open student grading tabs"></div>
-          <p class="tabs-copy">Open another student in a tab and switch between them. Each student starts blank in every new session.</p>
-        </section>
-
         <section class="panel student-panel">
           <div class="panel-head">
             <div>
@@ -293,6 +280,5 @@
 
   <script src="class-data.js"></script>
   <script src="script.js"></script>
-  <script src="speaking-fixes.js"></script>
 </body>
 </html>
