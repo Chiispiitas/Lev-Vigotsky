@@ -208,7 +208,7 @@ function renderClasses() {
   });
 }
 
-function selectClass(classId) {
+function selectClass(classId, { studentNumber = null, updateRoute = true } = {}) {
   if (!activeSpeakingSession || activeSpeakingSession.classId !== classId || sessionAppMode(activeSpeakingSession) !== "speaking") {
     showToast("Create or join a session for this class first");
     return;
@@ -224,6 +224,9 @@ function selectClass(classId) {
   studentSearch.value = "";
   renderStudentOptions();
   clearAssessment(false);
+  if (studentNumber != null) {
+    selectStudentNumber(studentNumber, { clearSearch: true, updateRoute: false });
+  }
 
   currentAppMode = "speaking";
   modeScreen?.classList.remove("screen-active");
@@ -233,6 +236,14 @@ function selectClass(classId) {
   window.scrollTo({ top: 0, behavior: "smooth" });
   updatePreview();
   refreshSharedSessionUI();
+  if (updateRoute) {
+    writeAppRoute({
+      mode: "speaking",
+      view: "grade",
+      sessionId: activeSpeakingSession?.sessionId || "",
+      studentNumber: state.studentNumber
+    });
+  }
 }
 
 function showClassScreen() {
@@ -244,6 +255,13 @@ function showClassScreen() {
   refreshSessionModeUI();
   refreshSharedSessionUI();
   loadAvailableSpeakingSessions();
+  writeAppRoute({
+    mode: currentAppMode,
+    view: "session",
+    sessionId: activeSpeakingSession && sessionAppMode(activeSpeakingSession) === currentAppMode
+      ? activeSpeakingSession.sessionId
+      : ""
+  });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -309,7 +327,7 @@ function renderStudentOptions({ preserveSelection = true } = {}) {
   studentSelect.value = String(state.studentNumber);
 }
 
-function selectStudentNumber(studentNumber, { clearSearch = false, showMessage = false } = {}) {
+function selectStudentNumber(studentNumber, { clearSearch = false, showMessage = false, updateRoute = true } = {}) {
   const klass = getSelectedClass();
   if (!klass) return false;
 
@@ -327,6 +345,15 @@ function selectStudentNumber(studentNumber, { clearSearch = false, showMessage =
   renderStudentOptions({ preserveSelection: true });
   studentSelect.value = String(nextStudent.n);
   updatePreview();
+
+  if (updateRoute && currentAppMode === "speaking" && assessmentScreen?.classList.contains("screen-active")) {
+    writeAppRoute({
+      mode: "speaking",
+      view: "grade",
+      sessionId: activeSpeakingSession?.sessionId || "",
+      studentNumber: nextStudent.n
+    });
+  }
 
   if (showMessage) showToast(`Student locked: ${nextStudent.n}. ${nextStudent.name}`);
   return true;
@@ -368,6 +395,12 @@ function moveStudent(direction) {
   studentSelect.value = String(state.studentNumber);
   loadStudentDraft();
   updatePreview();
+  writeAppRoute({
+    mode: "speaking",
+    view: "grade",
+    sessionId: activeSpeakingSession?.sessionId || "",
+    studentNumber: state.studentNumber
+  });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1130,7 +1163,122 @@ function sessionAppMode(session) {
     : "speaking";
 }
 
-function selectWebsiteMode(mode) {
+function readAppRoute() {
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode");
+  const view = params.get("view");
+  const sessionId = normalizeSpeakingSessionId(params.get("sessionId"));
+  const studentRaw = Number(params.get("student"));
+
+  return {
+    mode: mode === "regular" || mode === "speaking" ? mode : null,
+    view: view === "grade" || view === "session" ? view : null,
+    sessionId,
+    studentNumber: Number.isFinite(studentRaw) && studentRaw > 0 ? studentRaw : null
+  };
+}
+
+function writeAppRoute({
+  mode = currentAppMode,
+  view = null,
+  sessionId = "",
+  studentNumber = null
+} = {}) {
+  const url = new URL(window.location.href);
+  ["mode", "view", "sessionId", "student"].forEach(key => url.searchParams.delete(key));
+
+  if (mode === "speaking" || mode === "regular") url.searchParams.set("mode", mode);
+  if (view === "session" || view === "grade") url.searchParams.set("view", view);
+  if (sessionId) url.searchParams.set("sessionId", normalizeSpeakingSessionId(sessionId));
+  if (mode === "speaking" && view === "grade" && Number.isFinite(Number(studentNumber))) {
+    url.searchParams.set("student", String(Number(studentNumber)));
+  }
+
+  history.replaceState(null, "", url);
+}
+
+async function restoreAppRoute() {
+  const route = readAppRoute();
+  if (!route.mode) {
+    currentAppMode = null;
+    refreshSharedSessionUI();
+    showModeSelection({ updateRoute: false });
+    return;
+  }
+
+  currentAppMode = route.mode;
+  modeScreen?.classList.remove("screen-active");
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  classScreen?.classList.add("screen-active");
+  setSessionMode("create");
+  refreshSessionModeUI();
+  refreshSharedSessionUI();
+
+  if (!route.sessionId) {
+    writeAppRoute({ mode: route.mode, view: "session" });
+    loadAvailableSpeakingSessions();
+    return;
+  }
+
+  try {
+    const url = new URL(SPEAKING_SESSION_ENDPOINT);
+    url.searchParams.set("sessionId", route.sessionId);
+    const data = await speakingApiJson(url.toString());
+    const session = data.session;
+    const klass = CLASS_DATA.find(item => item.id === session?.classId);
+
+    if (!session || !klass) throw new Error("Session or class not found.");
+    if (sessionAppMode(session) !== route.mode) {
+      throw new Error("This session belongs to another grading mode.");
+    }
+
+    saveActiveSpeakingSession(session);
+
+    if (route.view !== "grade") {
+      refreshSessionModeUI();
+      refreshSharedSessionUI();
+      loadAvailableSpeakingSessions();
+      writeAppRoute({
+        mode: route.mode,
+        view: "session",
+        sessionId: session.sessionId
+      });
+      return;
+    }
+
+    if (route.mode === "regular") {
+      await loadRegularGradesFromSession(session);
+      openRegularGrading(session, { updateRoute: false });
+      writeAppRoute({
+        mode: "regular",
+        view: "grade",
+        sessionId: session.sessionId
+      });
+      return;
+    }
+
+    await hydrateDraftsFromSession(session);
+    selectClass(klass.id, {
+      studentNumber: route.studentNumber,
+      updateRoute: false
+    });
+    writeAppRoute({
+      mode: "speaking",
+      view: "grade",
+      sessionId: session.sessionId,
+      studentNumber: state.studentNumber
+    });
+  } catch (error) {
+    console.error("Could not restore grading route", error);
+    setSharedSessionStatus(`Could not restore session: ${error.message}`, true);
+    showToast("Could not restore session");
+    writeAppRoute({ mode: route.mode, view: "session" });
+    loadAvailableSpeakingSessions();
+  }
+}
+
+function selectWebsiteMode(mode, { updateRoute = true } = {}) {
   currentAppMode = mode === "regular" ? "regular" : "speaking";
   modeScreen?.classList.remove("screen-active");
   assessmentScreen?.classList.remove("screen-active");
@@ -1140,14 +1288,16 @@ function selectWebsiteMode(mode) {
   refreshSessionModeUI();
   refreshSharedSessionUI();
   loadAvailableSpeakingSessions();
+  if (updateRoute) writeAppRoute({ mode: currentAppMode, view: "session" });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function showModeSelection() {
+function showModeSelection({ updateRoute = true } = {}) {
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
   classScreen?.classList.remove("screen-active");
   modeScreen?.classList.add("screen-active");
+  if (updateRoute) writeAppRoute({ mode: null, view: null });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -1525,6 +1675,7 @@ function leaveSpeakingSession() {
 
   setSharedSessionStatus(`Left session ${oldId}. Create or join another session to continue.`);
   refreshSessionModeUI();
+  writeAppRoute({ mode: currentAppMode, view: "session" });
   loadAvailableSpeakingSessions();
 }
 
@@ -1697,7 +1848,7 @@ async function loadRegularGradesFromSession(session) {
   }
 }
 
-function openRegularGrading(session = activeSpeakingSession) {
+function openRegularGrading(session = activeSpeakingSession, { updateRoute = true } = {}) {
   if (!session || sessionAppMode(session) !== "regular") return;
 
   const klass = CLASS_DATA.find(item => item.id === session.classId);
@@ -1728,6 +1879,13 @@ function openRegularGrading(session = activeSpeakingSession) {
 
   refreshSharedSessionUI();
   renderRegularRoster();
+  if (updateRoute) {
+    writeAppRoute({
+      mode: "regular",
+      view: "grade",
+      sessionId: session.sessionId
+    });
+  }
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -2051,9 +2209,7 @@ function initSharedSessions() {
   $("#openRegularResults")?.addEventListener("click", openSpeakingResults);
   $("#leaveHomeSession")?.addEventListener("click", leaveSpeakingSession);
 
-  currentAppMode = null;
-  refreshSharedSessionUI();
-  showModeSelection();
+  restoreAppRoute();
 }
 
 window.addEventListener("beforeunload", saveStudentDraft);
