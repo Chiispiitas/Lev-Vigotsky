@@ -1255,7 +1255,7 @@ async function restoreAppRoute() {
     if (route.view !== "grade") {
       refreshSessionModeUI();
       refreshSharedSessionUI();
-      loadAvailableSpeakingSessions();
+      if (route.mode !== "participation") loadAvailableSpeakingSessions();
       writeAppRoute({
         mode: route.mode,
         view: "session",
