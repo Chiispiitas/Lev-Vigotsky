@@ -32,7 +32,7 @@
             <h2 id="modeTitle">Choose a mode</h2>
             <p class="hero-copy">Choose how you want to grade. Each mode uses shared sessions and saves into the same Results dashboard.</p>
           </div>
-          <div class="phone-chip">2 modes</div>
+          <div class="phone-chip">3 modes</div>
         </div>
 
         <div class="grading-mode-grid">
@@ -48,6 +48,13 @@
             <span class="mode-icon" aria-hidden="true">✓</span>
             <strong>Regular Grading</strong>
             <small>Grade a whole class quickly with ✓, X, or a direct numerical score for each student.</small>
+          </button>
+
+          <button class="grading-mode-card participation" id="chooseParticipationMode" type="button">
+            <span class="mode-number">03</span>
+            <span class="mode-icon" aria-hidden="true">＋</span>
+            <strong>Participation</strong>
+            <small>Persistent class tally counters with an adjustable participation threshold and automatic score out of 10.</small>
           </button>
 
           <button class="grading-mode-card results" id="chooseResultsMode" type="button">
@@ -151,6 +158,30 @@
           </div>
 
           <p class="session-status-text" id="homeSessionStatus">Create or join a session to begin grading.</p>
+        </section>
+
+        <section class="panel participation-launch-panel" id="participationLaunchPanel" hidden>
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Persistent class session</p>
+              <h3>Open participation</h3>
+            </div>
+            <span class="session-state-pill active">One per class</span>
+          </div>
+
+          <p class="session-status-text">Each class has one permanent Participation session. Opening the same class always returns to the same tallies.</p>
+
+          <label class="field-label" for="participationClassSelect">Class</label>
+          <select class="text-input" id="participationClassSelect">
+            <option value="">Choose a class…</option>
+          </select>
+
+          <label class="field-label" for="participationThresholdInput">Participation threshold</label>
+          <input class="text-input participation-threshold-input" id="participationThresholdInput" type="number" min="1" step="1" inputmode="numeric" value="5" />
+          <p class="session-status-text">Score = tallies ÷ threshold × 10, capped at 10.</p>
+
+          <button class="primary-session-button full-width" id="openParticipationClass" type="button">Open participation</button>
+          <p class="session-status-text" id="participationLaunchStatus">Choose a class to open its persistent Participation session.</p>
         </section>
       </section>
 
@@ -273,12 +304,60 @@
           <div class="regular-roster" id="regularRoster"></div>
         </section>
       </section>
+
+      <section class="screen" id="participationAssessmentScreen" aria-labelledby="participationAssessmentTitle">
+        <div class="class-strip">
+          <button class="back-button" id="backParticipationToSession" type="button">← Classes</button>
+          <div>
+            <p class="eyebrow dark">Participation</p>
+            <h2 id="participationAssessmentTitle">Participation</h2>
+            <p id="participationClassMeta" class="small-muted"></p>
+          </div>
+        </div>
+
+        <section class="panel assessment-sync-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Persistent session</p>
+              <h3 id="participationSessionId">No session</h3>
+            </div>
+            <span class="session-state-pill active">Live</span>
+          </div>
+          <p class="session-status-text" id="participationSyncStatus">Tallies are saved automatically.</p>
+          <button class="ghost-button" id="openParticipationResults" type="button">View session results</button>
+        </section>
+
+        <section class="panel participation-threshold-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Scoring</p>
+              <h3>Participation threshold</h3>
+            </div>
+          </div>
+          <div class="participation-threshold-row">
+            <input class="text-input participation-threshold-input" id="activeParticipationThreshold" type="number" min="1" step="1" inputmode="numeric" value="5" />
+            <button class="primary-session-button compact" id="saveParticipationThreshold" type="button">Save threshold</button>
+          </div>
+          <p class="regular-instructions">A student reaches 10/10 at the threshold. Extra tallies remain counted, while the score stays capped at 10.</p>
+        </section>
+
+        <section class="panel regular-roster-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow dark">Tallies</p>
+              <h3>Student participation</h3>
+            </div>
+            <span class="student-count" id="participationStudentCount">0 students</span>
+          </div>
+          <div class="participation-roster" id="participationRoster"></div>
+        </section>
+      </section>
     </main>
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="class-data.js"></script>
-  <script src="script.js?v=20260916-route1"></script>
+  <script src="script.js?v=20260916-participation1"></script>
 </body>
 </html>
