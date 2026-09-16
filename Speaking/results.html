@@ -45,30 +45,11 @@
 
     <section class="toolbar">
       <button id="refreshButton" type="button">Refresh</button>
-      <button id="toggleSessionButton" type="button" disabled>Close session</button>
-      <button id="copySessionButton" type="button" disabled>Copy ID</button>
       <button id="copyGradesButton" type="button" disabled>Copy grades</button>
       <button id="deleteSessionButton" class="danger-button" type="button" disabled>Delete session</button>
     </section>
 
-    <nav class="tabs" aria-label="Results views">
-      <button class="tab active" type="button" data-tab="ranking">Ranking</button>
-      <button class="tab" type="button" data-tab="entries">Entries</button>
-    </nav>
-
-    <section class="tab-panel active" id="rankingPanel">
-      <div class="panel-head">
-        <div>
-          <p class="eyebrow dark">Overview</p>
-          <h3>Student ranking</h3>
-        </div>
-      </div>
-      <div class="ranking-grid" id="rankingGrid">
-        <div class="empty-card">No session loaded.</div>
-      </div>
-    </section>
-
-    <section class="tab-panel" id="entriesPanel">
+    <section class="entries-panel" id="entriesPanel">
       <div class="panel-head entries-head">
         <div>
           <p class="eyebrow dark">All submissions</p>
