@@ -95,7 +95,7 @@ const REGULAR_ACTIVITY = "Regular grading";
 const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist"; // legacy
 const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number"; // legacy
 const PARTICIPATION_ACTIVITY = "Participation";
-const PARTICIPATION_CONFIG_STUDENT = 0;
+const PARTICIPATION_CONFIG_STUDENT = 9999;
 
 let currentAppMode = null;
 let regularGrades = new Map();
@@ -1234,7 +1234,7 @@ async function restoreAppRoute() {
 
   if (!route.sessionId) {
     writeAppRoute({ mode: route.mode, view: "session" });
-    loadAvailableSpeakingSessions();
+    if (route.mode !== "participation") loadAvailableSpeakingSessions();
     return;
   }
 
@@ -1302,7 +1302,7 @@ async function restoreAppRoute() {
     setSharedSessionStatus(`Could not restore session: ${error.message}`, true);
     showToast("Could not restore session");
     writeAppRoute({ mode: route.mode, view: "session" });
-    loadAvailableSpeakingSessions();
+    if (route.mode !== "participation") loadAvailableSpeakingSessions();
   }
 }
 
@@ -1727,9 +1727,13 @@ function leaveSpeakingSession() {
   autoPublishTimers.clear();
   regularPublishTimers.forEach(timer => clearTimeout(timer));
   regularPublishTimers.clear();
+  participationPublishTimers.forEach(timer => clearTimeout(timer));
+  participationPublishTimers.clear();
 
   saveActiveSpeakingSession(null);
   regularGrades = new Map();
+  participationTallies = new Map();
+  participationTouched = new Set();
   state.classId = null;
   state.studentNumber = null;
   state.scores = {};
@@ -2164,6 +2168,462 @@ async function publishRegularSnapshot(snapshot) {
   }
 }
 
+function participationConfigKey(sessionId) {
+  return `lv-participation-threshold-${sessionId}`;
+}
+
+function participationStudentKey(sessionId, studentNumber) {
+  return `lv-participation-tally-${sessionId}-${studentNumber}`;
+}
+
+function participationScore(tallies, threshold = participationThreshold) {
+  const safeTallies = Math.max(0, Number(tallies) || 0);
+  const safeThreshold = Math.max(1, Number(threshold) || 1);
+  return Math.round(Math.min(10, (safeTallies / safeThreshold) * 10) * 100) / 100;
+}
+
+function parseSubmissionRows(item) {
+  if (Array.isArray(item?.rows)) return item.rows;
+  try {
+    const parsed = JSON.parse(item?.criteriaJson || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function readParticipationTally(item) {
+  const row = parseSubmissionRows(item)[0] || {};
+  const levelMatch = String(row.level || "").match(/(\d+(?:\.\d+)?)\s*tall/i);
+  if (levelMatch) return Math.max(0, Math.round(Number(levelMatch[1]) || 0));
+  const points = Number(row.points);
+  if (Number.isFinite(points)) return Math.max(0, Math.round(points));
+  return 0;
+}
+
+function readParticipationThresholdFromConfig(item) {
+  const row = parseSubmissionRows(item)[0] || {};
+  const points = Number(row.points);
+  if (Number.isFinite(points) && points >= 1) return Math.round(points);
+  const match = String(row.observation || "").match(/threshold\s*:?\s*(\d+)/i);
+  return match ? Math.max(1, Number(match[1])) : null;
+}
+
+function saveParticipationLocal(studentNumber) {
+  const sessionId = activeSpeakingSession?.sessionId;
+  if (!sessionId) return;
+  const tallies = Math.max(0, Number(participationTallies.get(Number(studentNumber))) || 0);
+  localStorage.setItem(participationStudentKey(sessionId, studentNumber), String(tallies));
+}
+
+function loadParticipationLocal(sessionId, studentNumber) {
+  const raw = localStorage.getItem(participationStudentKey(sessionId, studentNumber));
+  if (raw === null) return null;
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.max(0, Math.round(value)) : null;
+}
+
+async function loadParticipationData(session) {
+  participationTallies = new Map();
+  participationTouched = new Set();
+
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!session?.sessionId || !klass) return { hasConfig: false };
+
+  const savedThreshold = Number(localStorage.getItem(participationConfigKey(session.sessionId)));
+  if (Number.isFinite(savedThreshold) && savedThreshold >= 1) {
+    participationThreshold = Math.round(savedThreshold);
+  }
+
+  let hasConfig = false;
+  try {
+    const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
+    url.searchParams.set("sessionId", session.sessionId);
+    const data = await speakingApiJson(url.toString());
+    const items = Array.isArray(data.items) ? data.items : [];
+    const config = items.find(item =>
+      Number(item.studentNumber) === PARTICIPATION_CONFIG_STUDENT ||
+      String(item.studentName || "") === "__PARTICIPATION_CONFIG__"
+    );
+
+    if (config) {
+      const serverThreshold = readParticipationThresholdFromConfig(config);
+      if (serverThreshold) {
+        participationThreshold = serverThreshold;
+        localStorage.setItem(participationConfigKey(session.sessionId), String(serverThreshold));
+      }
+      hasConfig = true;
+    }
+
+    const serverByStudent = new Map(
+      items
+        .filter(item => Number(item.studentNumber) !== PARTICIPATION_CONFIG_STUDENT)
+        .map(item => [Number(item.studentNumber), item])
+    );
+
+    klass.students.forEach(student => {
+      const serverItem = serverByStudent.get(student.n);
+      if (serverItem) {
+        const tallies = readParticipationTally(serverItem);
+        participationTallies.set(student.n, tallies);
+        participationTouched.add(student.n);
+        localStorage.setItem(participationStudentKey(session.sessionId, student.n), String(tallies));
+        return;
+      }
+
+      const local = loadParticipationLocal(session.sessionId, student.n);
+      participationTallies.set(student.n, local ?? 0);
+      if (local !== null) participationTouched.add(student.n);
+    });
+  } catch (error) {
+    console.warn("Could not load Participation data from Wix; using local tallies.", error);
+    klass.students.forEach(student => {
+      const local = loadParticipationLocal(session.sessionId, student.n);
+      participationTallies.set(student.n, local ?? 0);
+      if (local !== null) participationTouched.add(student.n);
+    });
+  }
+
+  return { hasConfig };
+}
+
+async function findParticipationSession(klass) {
+  const sessionId = participationSessionIdForClass(klass);
+  const listUrl = new URL(SPEAKING_SESSION_ENDPOINT);
+  listUrl.searchParams.set("list", "1");
+  const data = await speakingApiJson(listUrl.toString());
+  const sessions = Array.isArray(data.sessions) ? data.sessions : Array.isArray(data.items) ? data.items : [];
+  return sessions.find(session => normalizeSpeakingSessionId(session.sessionId) === sessionId) || null;
+}
+
+async function createParticipationSession(klass) {
+  const sessionId = participationSessionIdForClass(klass);
+  return speakingApiJson(SPEAKING_SESSION_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=UTF-8" },
+    body: JSON.stringify({
+      action: "create",
+      sessionId,
+      title: `${klass.label} · Participation`,
+      classId: klass.id,
+      classLabel: klass.label,
+      activity: PARTICIPATION_ACTIVITY,
+      createdBy: "David Santana"
+    })
+  });
+}
+
+async function openParticipationClass() {
+  const classId = $("#participationClassSelect")?.value || "";
+  const klass = CLASS_DATA.find(item => item.id === classId);
+  const thresholdInput = Number($("#participationThresholdInput")?.value);
+  const button = $("#openParticipationClass");
+
+  if (!klass) {
+    showToast("Choose a class first");
+    return;
+  }
+  if (!Number.isFinite(thresholdInput) || thresholdInput < 1) {
+    showToast("Threshold must be at least 1");
+    $("#participationThresholdInput")?.focus();
+    return;
+  }
+
+  const oldText = button?.textContent || "Open participation";
+  try {
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Opening…";
+    }
+    setSharedSessionStatus(`Opening persistent Participation session for ${klass.label}…`);
+
+    let session = await findParticipationSession(klass);
+    let created = false;
+
+    if (session && sessionAppMode(session) !== "participation") {
+      throw new Error("The persistent Participation ID is already used by another session type.");
+    }
+
+    if (!session) {
+      participationThreshold = Math.max(1, Math.round(thresholdInput));
+      try {
+        const createdData = await createParticipationSession(klass);
+        session = createdData.session;
+        created = true;
+      } catch (createError) {
+        // A second device may have created the deterministic session at the same moment.
+        const url = new URL(SPEAKING_SESSION_ENDPOINT);
+        url.searchParams.set("sessionId", participationSessionIdForClass(klass));
+        const retry = await speakingApiJson(url.toString());
+        session = retry.session;
+      }
+    }
+
+    if (!session) throw new Error("Could not resolve the Participation session.");
+
+    saveActiveSpeakingSession(session);
+    const loaded = await loadParticipationData(session);
+
+    if (created || !loaded.hasConfig) {
+      participationThreshold = Math.max(1, Math.round(thresholdInput));
+      await publishParticipationConfig();
+    }
+
+    openParticipationGrading(session);
+    showToast(`${klass.label} participation opened`);
+  } catch (error) {
+    console.error(error);
+    setSharedSessionStatus(`Could not open Participation: ${error.message}`, true);
+    showToast("Could not open Participation");
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.textContent = oldText;
+    }
+  }
+}
+
+function openParticipationGrading(session = activeSpeakingSession, { updateRoute = true } = {}) {
+  if (!session || sessionAppMode(session) !== "participation") return;
+  const klass = CLASS_DATA.find(item => item.id === session.classId);
+  if (!klass) return;
+
+  currentAppMode = "participation";
+  state.classId = klass.id;
+
+  modeScreen?.classList.remove("screen-active");
+  classScreen?.classList.remove("screen-active");
+  assessmentScreen?.classList.remove("screen-active");
+  regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.add("screen-active");
+
+  if ($("#participationAssessmentTitle")) $("#participationAssessmentTitle").textContent = klass.label;
+  if ($("#participationClassMeta")) {
+    $("#participationClassMeta").textContent = `${klass.course} · Tutor(a): ${klass.tutor}`;
+  }
+  if ($("#participationStudentCount")) {
+    $("#participationStudentCount").textContent = `${klass.students.length} students`;
+  }
+  if ($("#activeParticipationThreshold")) {
+    $("#activeParticipationThreshold").value = String(participationThreshold);
+  }
+
+  refreshSharedSessionUI();
+  renderParticipationRoster();
+
+  if (updateRoute) {
+    writeAppRoute({
+      mode: "participation",
+      view: "grade",
+      sessionId: session.sessionId
+    });
+  }
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderParticipationRoster() {
+  const host = $("#participationRoster");
+  const session = activeSpeakingSession;
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!host || !klass) return;
+
+  host.innerHTML = klass.students.map(student => {
+    const tallies = Math.max(0, Number(participationTallies.get(student.n)) || 0);
+    const score = participationScore(tallies);
+    return `
+      <article class="participation-student-row" data-student="${student.n}">
+        <div class="regular-student-identity">
+          <span class="regular-student-number">${student.n}</span>
+          <strong>${escapeHtml(student.name)}</strong>
+        </div>
+        <div class="participation-counter">
+          <button class="participation-step minus" type="button" data-action="minus" data-student="${student.n}" aria-label="Remove participation tally">−</button>
+          <strong class="participation-count">${tallies}</strong>
+          <button class="participation-step plus" type="button" data-action="plus" data-student="${student.n}" aria-label="Add participation tally">+</button>
+        </div>
+        <div class="participation-score">
+          <strong>${escapeHtml(formatScore(score))}</strong>
+          <span>/ 10</span>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  host.querySelectorAll(".participation-step").forEach(button => {
+    button.addEventListener("click", () => {
+      const studentNumber = Number(button.dataset.student);
+      const current = Math.max(0, Number(participationTallies.get(studentNumber)) || 0);
+      const next = button.dataset.action === "plus" ? current + 1 : Math.max(0, current - 1);
+      participationTallies.set(studentNumber, next);
+      participationTouched.add(studentNumber);
+      saveParticipationLocal(studentNumber);
+      renderParticipationRoster();
+      queueParticipationPublish(studentNumber);
+    });
+  });
+}
+
+function buildParticipationSnapshot(studentNumber) {
+  const session = activeSpeakingSession;
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  const student = klass?.students.find(item => item.n === Number(studentNumber));
+  if (!session || sessionAppMode(session) !== "participation" || !klass || !student) return null;
+
+  const tallies = Math.max(0, Number(participationTallies.get(student.n)) || 0);
+  const score = participationScore(tallies);
+
+  return {
+    sessionId: session.sessionId,
+    recordKey: `${session.sessionId}|${student.n}`,
+    deviceId: getSpeakingDeviceId(),
+    contributorName: "David Santana",
+    record: {
+      classId: klass.id,
+      classLabel: klass.label,
+      course: klass.course,
+      section: klass.section,
+      specialty: klass.specialty,
+      tutor: klass.tutor,
+      studentNumber: student.n,
+      studentName: student.name,
+      activity: PARTICIPATION_ACTIVITY,
+      total: score,
+      markedCriteria: 1,
+      rows: [{
+        criterion: "Participation tallies",
+        max: participationThreshold,
+        level: `${tallies} tallies`,
+        points: tallies,
+        observation: `Threshold ${participationThreshold}; calculated score ${formatScore(score)}/10.`
+      }],
+      comment: "",
+      source: "Lev Vigotsky Participation",
+      createdAt: new Date().toISOString(),
+      submittedAt: new Date().toISOString()
+    }
+  };
+}
+
+function queueParticipationPublish(studentNumber) {
+  const snapshot = buildParticipationSnapshot(studentNumber);
+  if (!snapshot) return;
+
+  const existing = participationPublishTimers.get(snapshot.recordKey);
+  if (existing) clearTimeout(existing);
+
+  participationPublishTimers.set(snapshot.recordKey, setTimeout(() => {
+    participationPublishTimers.delete(snapshot.recordKey);
+    publishParticipationSnapshot(snapshot);
+  }, 300));
+
+  if ($("#participationSyncStatus")) {
+    $("#participationSyncStatus").textContent = "Saving tally…";
+    $("#participationSyncStatus").classList.remove("error");
+  }
+}
+
+async function publishParticipationSnapshot(snapshot) {
+  try {
+    await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify({
+        sessionId: snapshot.sessionId,
+        deviceId: snapshot.deviceId,
+        contributorName: snapshot.contributorName,
+        record: snapshot.record
+      })
+    });
+    if ($("#participationSyncStatus")) {
+      $("#participationSyncStatus").textContent = "All tallies saved.";
+      $("#participationSyncStatus").classList.remove("error");
+    }
+  } catch (error) {
+    console.error(error);
+    if ($("#participationSyncStatus")) {
+      $("#participationSyncStatus").textContent = `Auto-save failed: ${error.message}`;
+      $("#participationSyncStatus").classList.add("error");
+    }
+  }
+}
+
+async function publishParticipationConfig() {
+  const session = activeSpeakingSession;
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!session || sessionAppMode(session) !== "participation" || !klass) return;
+
+  localStorage.setItem(participationConfigKey(session.sessionId), String(participationThreshold));
+
+  await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=UTF-8" },
+    body: JSON.stringify({
+      sessionId: session.sessionId,
+      deviceId: getSpeakingDeviceId(),
+      contributorName: "David Santana",
+      record: {
+        classId: klass.id,
+        classLabel: klass.label,
+        course: klass.course,
+        section: klass.section,
+        specialty: klass.specialty,
+        tutor: klass.tutor,
+        studentNumber: PARTICIPATION_CONFIG_STUDENT,
+        studentName: "__PARTICIPATION_CONFIG__",
+        activity: PARTICIPATION_ACTIVITY,
+        total: 0,
+        markedCriteria: 0,
+        rows: [{
+          criterion: "Participation threshold",
+          max: participationThreshold,
+          level: "Configuration",
+          points: participationThreshold,
+          observation: `Threshold: ${participationThreshold}`
+        }],
+        comment: "",
+        source: "Lev Vigotsky Participation Config",
+        createdAt: new Date().toISOString(),
+        submittedAt: new Date().toISOString()
+      }
+    })
+  });
+}
+
+async function saveParticipationThreshold() {
+  const input = $("#activeParticipationThreshold");
+  const value = Number(input?.value);
+  if (!Number.isFinite(value) || value < 1) {
+    showToast("Threshold must be at least 1");
+    input?.focus();
+    return;
+  }
+
+  participationThreshold = Math.max(1, Math.round(value));
+  if (input) input.value = String(participationThreshold);
+
+  try {
+    if ($("#participationSyncStatus")) $("#participationSyncStatus").textContent = "Saving threshold…";
+    await publishParticipationConfig();
+
+    const touchedStudents = [...participationTouched];
+    for (const studentNumber of touchedStudents) {
+      const snapshot = buildParticipationSnapshot(studentNumber);
+      if (snapshot) await publishParticipationSnapshot(snapshot);
+    }
+
+    renderParticipationRoster();
+    if ($("#participationSyncStatus")) $("#participationSyncStatus").textContent = "Threshold and scores saved.";
+    showToast("Participation threshold saved");
+  } catch (error) {
+    console.error(error);
+    if ($("#participationSyncStatus")) {
+      $("#participationSyncStatus").textContent = `Could not save threshold: ${error.message}`;
+      $("#participationSyncStatus").classList.add("error");
+    }
+    showToast("Could not save threshold");
+  }
+}
+
 async function continueActiveSession() {
   const session = activeSpeakingSession;
   if (!session || sessionAppMode(session) !== currentAppMode) {
@@ -2177,7 +2637,10 @@ async function continueActiveSession() {
     return;
   }
 
-  if (currentAppMode === "regular") {
+  if (currentAppMode === "participation") {
+    await loadParticipationData(session);
+    openParticipationGrading(session);
+  } else if (currentAppMode === "regular") {
     await loadRegularGradesFromSession(session);
     openRegularGrading(session);
   } else {
