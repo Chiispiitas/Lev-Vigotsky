@@ -22,12 +22,9 @@ const els = {
   entryValue: $("#entryValue"),
   sessionStatusValue: $("#sessionStatusValue"),
   refreshButton: $("#refreshButton"),
-  toggleSessionButton: $("#toggleSessionButton"),
-  copySessionButton: $("#copySessionButton"),
   copyGradesButton: $("#copyGradesButton"),
   deleteSessionButton: $("#deleteSessionButton"),
   detailColumnHeader: $("#detailColumnHeader"),
-  rankingGrid: $("#rankingGrid"),
   entrySearch: $("#entrySearch"),
   entryTableBody: $("#entryTableBody"),
   toast: $("#toast")
@@ -141,8 +138,6 @@ function renderSummary(stats = {}) {
 function renderSession() {
   if (!activeSession) {
     els.sessionBanner.hidden = true;
-    els.toggleSessionButton.disabled = true;
-    els.copySessionButton.disabled = true;
     els.copyGradesButton.disabled = true;
     els.deleteSessionButton.disabled = true;
     return;
@@ -155,8 +150,6 @@ function renderSession() {
   els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Grading session";
   els.sessionMeta.textContent = `${activeSession.classLabel || activeSession.classId || "Class"} · ${typeLabel}`;
   els.sessionCode.textContent = activeSession.sessionId;
-  els.toggleSessionButton.disabled = false;
-  els.copySessionButton.disabled = false;
   els.copyGradesButton.disabled = false;
   els.deleteSessionButton.disabled = false;
   if (els.detailColumnHeader) {
@@ -164,26 +157,6 @@ function renderSession() {
   }
   document.title = `${typeLabel} Results · Lev Grading`;
 
-  const closed = String(activeSession.status || "").toLowerCase() === "closed";
-  els.toggleSessionButton.textContent = closed ? "Reopen session" : "Close session";
-}
-
-function renderRanking() {
-  const ranked = rankEntries(entries.filter(item => Number(item.markedCriteria || 0) > 0));
-  if (!ranked.length) {
-    els.rankingGrid.innerHTML = '<div class="empty-card">No submissions in this session yet.</div>';
-    return;
-  }
-  els.rankingGrid.innerHTML = ranked.map(item => `
-    <article class="rank-card">
-      <div class="rank-number">${item.rank}</div>
-      <div class="rank-name">
-        <strong>${escapeHtml(item.studentName || "")}</strong>
-        <span>${escapeHtml(rankingSubtitle(item))}</span>
-      </div>
-      <div class="rank-score">${escapeHtml(formatScore(item.scoreTotal))}</div>
-    </article>
-  `).join("");
 }
 
 function parseCriteriaRows(item) {
@@ -294,7 +267,6 @@ function renderEntries() {
 function renderAll(stats = {}) {
   renderSession();
   renderSummary(stats);
-  renderRanking();
   renderEntries();
 }
 
@@ -336,37 +308,6 @@ async function loadSession(sessionId = els.sessionIdInput.value) {
   } finally {
     els.loadSessionButton.disabled = false;
     els.refreshButton.disabled = false;
-  }
-}
-
-async function toggleSessionStatus() {
-  if (!activeSession?.sessionId) return;
-  const currentlyClosed = String(activeSession.status || "").toLowerCase() === "closed";
-  const action = currentlyClosed ? "reopen" : "close";
-
-  els.toggleSessionButton.disabled = true;
-  try {
-    const data = await fetchJson(SPEAKING_SESSION_ENDPOINT, {
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=UTF-8" },
-      body:JSON.stringify({ action, sessionId:activeSession.sessionId })
-    });
-    activeSession = data.session;
-    localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
-    renderSession();
-    const assessedEntries = entries.filter(item => Number(item.markedCriteria || 0) > 0);
-    renderSummary({
-      total: entries.length,
-      assessed: assessedEntries.length,
-      average: assessedEntries.length
-        ? assessedEntries.reduce((sum, item) => sum + Number(item.scoreTotal || 0), 0) / assessedEntries.length
-        : 0
-    });
-    showToast(currentlyClosed ? "Session reopened" : "Session closed");
-  } catch (error) {
-    setStatus(`Could not update session: ${error.message}`, "error");
-  } finally {
-    els.toggleSessionButton.disabled = false;
   }
 }
 
@@ -416,7 +357,6 @@ async function deleteActiveSession() {
     history.replaceState(null, "", pageUrl);
 
     renderAll({});
-    els.rankingGrid.innerHTML = '<div class="empty-card">Session deleted.</div>';
     els.entryTableBody.innerHTML = '<tr><td colspan="7">Session deleted.</td></tr>';
     setStatus(`Session ${sessionId} deleted.`, "ok");
     showToast("Session deleted");
@@ -503,27 +443,9 @@ async function copyGradesToClipboard() {
   }
 }
 
-function bindTabs() {
-  document.querySelectorAll(".tab").forEach(button => {
-    button.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(tab => tab.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
-      button.classList.add("active");
-      $(button.dataset.tab === "entries" ? "#entriesPanel" : "#rankingPanel").classList.add("active");
-    });
-  });
-}
-
 function init() {
-  bindTabs();
   els.loadSessionButton.addEventListener("click", () => loadSession());
   els.refreshButton.addEventListener("click", () => loadSession(activeSession?.sessionId || els.sessionIdInput.value));
-  els.toggleSessionButton.addEventListener("click", toggleSessionStatus);
-  els.copySessionButton.addEventListener("click", async () => {
-    if (!activeSession?.sessionId) return;
-    await copyText(activeSession.sessionId);
-    showToast("Session ID copied");
-  });
   els.copyGradesButton.addEventListener("click", copyGradesToClipboard);
   els.deleteSessionButton.addEventListener("click", deleteActiveSession);
   els.entrySearch.addEventListener("input", renderEntries);
