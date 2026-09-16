@@ -223,3 +223,18 @@ td.score{font-weight:1000}
   color: #fff;
   background: linear-gradient(145deg, #6f48d8, #4f2ca8);
 }
+
+
+/* Destructive session action */
+.toolbar .danger-button {
+  color: #fff;
+  background: linear-gradient(145deg, #cf3048, #9f1730);
+  border-color: #8f142a;
+}
+.toolbar .danger-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+.toolbar .danger-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
