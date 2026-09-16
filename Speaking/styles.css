@@ -1365,3 +1365,8 @@ button {
     grid-template-columns: 40px 44px 40px;
   }
 }
+
+
+.session-gateway[hidden] {
+  display: none !important;
+}
