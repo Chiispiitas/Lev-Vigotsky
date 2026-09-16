@@ -94,10 +94,16 @@ const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSu
 const REGULAR_ACTIVITY = "Regular grading";
 const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist"; // legacy
 const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number"; // legacy
+const PARTICIPATION_ACTIVITY = "Participation";
+const PARTICIPATION_CONFIG_STUDENT = 0;
 
 let currentAppMode = null;
 let regularGrades = new Map();
 const regularPublishTimers = new Map();
+let participationTallies = new Map();
+let participationThreshold = 5;
+let participationTouched = new Set();
+const participationPublishTimers = new Map();
 
 const state = {
   classId: null,
@@ -112,6 +118,7 @@ const modeScreen = $("#modeScreen");
 const classScreen = $("#classScreen");
 const assessmentScreen = $("#assessmentScreen");
 const regularAssessmentScreen = $("#regularAssessmentScreen");
+const participationAssessmentScreen = $("#participationAssessmentScreen");
 const classGrid = $("#classGrid");
 const assessmentTitle = $("#assessmentTitle");
 const classMeta = $("#classMeta");
@@ -137,6 +144,7 @@ function init() {
 function bindEvents() {
   $("#backToClasses").addEventListener("click", showClassScreen);
   $("#backRegularToSession")?.addEventListener("click", showClassScreen);
+  $("#backParticipationToSession")?.addEventListener("click", showClassScreen);
   $("#markExcellent").addEventListener("click", markAllExcellent);
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
 
@@ -232,6 +240,7 @@ function selectClass(classId, { studentNumber = null, updateRoute = true } = {})
   modeScreen?.classList.remove("screen-active");
   classScreen.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   assessmentScreen.classList.add("screen-active");
   window.scrollTo({ top: 0, behavior: "smooth" });
   updatePreview();
@@ -250,11 +259,12 @@ function showClassScreen() {
   if (assessmentScreen?.classList.contains("screen-active")) saveStudentDraft();
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   modeScreen?.classList.remove("screen-active");
   classScreen.classList.add("screen-active");
   refreshSessionModeUI();
   refreshSharedSessionUI();
-  loadAvailableSpeakingSessions();
+  if (currentAppMode !== "participation") loadAvailableSpeakingSessions();
   writeAppRoute({
     mode: currentAppMode,
     view: "session",
@@ -1156,8 +1166,14 @@ function generatedSessionIdForClass(klass) {
   return currentAppMode === "regular" ? `${base}-REG` : base;
 }
 
+function participationSessionIdForClass(klass) {
+  if (!klass) return "";
+  return normalizeSpeakingSessionId(`PART-${klass.id}`);
+}
+
 function sessionAppMode(session) {
   const activity = String(session?.activity || "");
+  if (activity === PARTICIPATION_ACTIVITY) return "participation";
   return [REGULAR_ACTIVITY, REGULAR_CHECKLIST_ACTIVITY, REGULAR_NUMBER_ACTIVITY].includes(activity)
     ? "regular"
     : "speaking";
@@ -1171,7 +1187,7 @@ function readAppRoute() {
   const studentRaw = Number(params.get("student"));
 
   return {
-    mode: mode === "regular" || mode === "speaking" ? mode : null,
+    mode: ["speaking", "regular", "participation"].includes(mode) ? mode : null,
     view: view === "grade" || view === "session" ? view : null,
     sessionId,
     studentNumber: Number.isFinite(studentRaw) && studentRaw > 0 ? studentRaw : null
@@ -1187,7 +1203,7 @@ function writeAppRoute({
   const url = new URL(window.location.href);
   ["mode", "view", "sessionId", "student"].forEach(key => url.searchParams.delete(key));
 
-  if (mode === "speaking" || mode === "regular") url.searchParams.set("mode", mode);
+  if (["speaking", "regular", "participation"].includes(mode)) url.searchParams.set("mode", mode);
   if (view === "session" || view === "grade") url.searchParams.set("view", view);
   if (sessionId) url.searchParams.set("sessionId", normalizeSpeakingSessionId(sessionId));
   if (mode === "speaking" && view === "grade" && Number.isFinite(Number(studentNumber))) {
@@ -1210,6 +1226,7 @@ async function restoreAppRoute() {
   modeScreen?.classList.remove("screen-active");
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   classScreen?.classList.add("screen-active");
   setSessionMode("create");
   refreshSessionModeUI();
@@ -1247,6 +1264,17 @@ async function restoreAppRoute() {
       return;
     }
 
+    if (route.mode === "participation") {
+      await loadParticipationData(session);
+      openParticipationGrading(session, { updateRoute: false });
+      writeAppRoute({
+        mode: "participation",
+        view: "grade",
+        sessionId: session.sessionId
+      });
+      return;
+    }
+
     if (route.mode === "regular") {
       await loadRegularGradesFromSession(session);
       openRegularGrading(session, { updateRoute: false });
@@ -1279,15 +1307,16 @@ async function restoreAppRoute() {
 }
 
 function selectWebsiteMode(mode, { updateRoute = true } = {}) {
-  currentAppMode = mode === "regular" ? "regular" : "speaking";
+  currentAppMode = ["regular", "participation"].includes(mode) ? mode : "speaking";
   modeScreen?.classList.remove("screen-active");
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   classScreen?.classList.add("screen-active");
   setSessionMode("create");
   refreshSessionModeUI();
   refreshSharedSessionUI();
-  loadAvailableSpeakingSessions();
+  if (currentAppMode !== "participation") loadAvailableSpeakingSessions();
   if (updateRoute) writeAppRoute({ mode: currentAppMode, view: "session" });
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -1295,6 +1324,7 @@ function selectWebsiteMode(mode, { updateRoute = true } = {}) {
 function showModeSelection({ updateRoute = true } = {}) {
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   classScreen?.classList.remove("screen-active");
   modeScreen?.classList.add("screen-active");
   if (updateRoute) writeAppRoute({ mode: null, view: null });
@@ -1303,15 +1333,30 @@ function showModeSelection({ updateRoute = true } = {}) {
 
 function refreshSessionModeUI() {
   const regular = currentAppMode === "regular";
+  const participation = currentAppMode === "participation";
   const activeMatches = activeSpeakingSession && sessionAppMode(activeSpeakingSession) === currentAppMode;
+  const gateway = document.querySelector(".session-gateway");
+  const participationPanel = $("#participationLaunchPanel");
 
-  if ($("#sessionModeEyebrow")) $("#sessionModeEyebrow").textContent = regular ? "Regular grading" : "Speaking";
-  if ($("#sessionModeCopy")) {
-    $("#sessionModeCopy").textContent = regular
-      ? "Create or join a shared grading session, then grade the whole class using a checklist or direct numbers."
-      : "A session is required before grading. Create a new one for a class or join an existing shared session.";
+  if (gateway) gateway.hidden = participation;
+  if (participationPanel) participationPanel.hidden = !participation;
+
+  if ($("#sessionModeEyebrow")) {
+    $("#sessionModeEyebrow").textContent = participation ? "Participation" : regular ? "Regular grading" : "Speaking";
   }
-  if ($("#sessionModeChip")) $("#sessionModeChip").textContent = regular ? "Fast grading" : "Shared grading";
+  if ($("#sessionTitle")) {
+    $("#sessionTitle").textContent = participation ? "Participation" : "Session";
+  }
+  if ($("#sessionModeCopy")) {
+    $("#sessionModeCopy").textContent = participation
+      ? "Choose a class to open its one persistent Participation session."
+      : regular
+        ? "Create or join a shared grading session, then grade the whole class using a checklist or direct numbers."
+        : "A session is required before grading. Create a new one for a class or join an existing shared session.";
+  }
+  if ($("#sessionModeChip")) {
+    $("#sessionModeChip").textContent = participation ? "Persistent tallies" : regular ? "Fast grading" : "Shared grading";
+  }
   if ($("#sessionTitleInput")) {
     $("#sessionTitleInput").placeholder = regular
       ? "Example: Homework 3"
@@ -1322,8 +1367,26 @@ function refreshSessionModeUI() {
       ? "Regular sessions use one combined ✓ / X / numerical grading mode."
       : "ID format: course year + CC/TEC + date (DD-MM-YYYY).";
   }
-  if ($("#currentSessionSummary")) $("#currentSessionSummary").hidden = !activeMatches;
+  if ($("#currentSessionSummary")) {
+    $("#currentSessionSummary").hidden = participation || !activeMatches;
+  }
+
+  populateParticipationClassSelect();
   updateGeneratedSessionId();
+}
+
+function populateParticipationClassSelect() {
+  const select = $("#participationClassSelect");
+  if (!select) return;
+  const selected = select.value;
+  select.innerHTML = '<option value="">Choose a class…</option>';
+  CLASS_DATA.forEach(klass => {
+    const option = document.createElement("option");
+    option.value = klass.id;
+    option.textContent = klass.label;
+    select.appendChild(option);
+  });
+  if (CLASS_DATA.some(klass => klass.id === selected)) select.value = selected;
 }
 
 function populateSessionClassSelect() {
@@ -1362,7 +1425,7 @@ function setSessionMode(mode) {
 }
 
 function setSharedSessionStatus(message, isError = false) {
-  ["#homeSessionStatus", "#assessmentSessionStatus", "#regularSyncStatus"].forEach(selector => {
+  ["#homeSessionStatus", "#assessmentSessionStatus", "#regularSyncStatus", "#participationSyncStatus", "#participationLaunchStatus"].forEach(selector => {
     const element = $(selector);
     if (!element) return;
     element.textContent = message;
@@ -1402,6 +1465,10 @@ function refreshSharedSessionUI() {
   if ($("#regularSessionId")) {
     $("#regularSessionId").textContent =
       session && sessionAppMode(session) === "regular" ? session.sessionId : "No session";
+  }
+  if ($("#participationSessionId")) {
+    $("#participationSessionId").textContent =
+      session && sessionAppMode(session) === "participation" ? session.sessionId : "No session";
   }
 
   const closed = String(session?.status || "").toLowerCase() === "closed";
@@ -1670,6 +1737,7 @@ function leaveSpeakingSession() {
 
   assessmentScreen?.classList.remove("screen-active");
   regularAssessmentScreen?.classList.remove("screen-active");
+  participationAssessmentScreen?.classList.remove("screen-active");
   modeScreen?.classList.remove("screen-active");
   classScreen?.classList.add("screen-active");
 
@@ -2119,7 +2187,9 @@ async function continueActiveSession() {
 }
 
 function resultSessionModeLabel(session) {
-  return sessionAppMode(session) === "regular" ? "Regular" : "Speaking";
+  const mode = sessionAppMode(session);
+  if (mode === "participation") return "Participation";
+  return mode === "regular" ? "Regular" : "Speaking";
 }
 
 async function loadStartResultsSessions() {
@@ -2191,6 +2261,7 @@ function initSharedSessions() {
 
   $("#chooseSpeakingMode")?.addEventListener("click", () => selectWebsiteMode("speaking"));
   $("#chooseRegularMode")?.addEventListener("click", () => selectWebsiteMode("regular"));
+  $("#chooseParticipationMode")?.addEventListener("click", () => selectWebsiteMode("participation"));
   $("#chooseResultsMode")?.addEventListener("click", loadStartResultsSessions);
   $("#refreshStartResults")?.addEventListener("click", loadStartResultsSessions);
   $("#openSelectedResults")?.addEventListener("click", openSelectedSessionResults);
@@ -2208,6 +2279,9 @@ function initSharedSessions() {
   $("#openAssessmentResults")?.addEventListener("click", openSpeakingResults);
   $("#openRegularResults")?.addEventListener("click", openSpeakingResults);
   $("#leaveHomeSession")?.addEventListener("click", leaveSpeakingSession);
+  $("#openParticipationClass")?.addEventListener("click", openParticipationClass);
+  $("#saveParticipationThreshold")?.addEventListener("click", saveParticipationThreshold);
+  $("#openParticipationResults")?.addEventListener("click", openSpeakingResults);
 
   restoreAppRoute();
 }
