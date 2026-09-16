@@ -60,11 +60,13 @@ function formatDate(value) {
 }
 
 function setStatus(message, type = "") {
+  if (!els.statusBox) return;
   els.statusBox.textContent = message;
   els.statusBox.className = `status-box ${type}`.trim();
 }
 
 function showToast(message) {
+  if (!els.toast) return;
   els.toast.textContent = message;
   els.toast.classList.add("show");
   clearTimeout(showToast.timer);
@@ -138,8 +140,8 @@ function renderSummary(stats = {}) {
 function renderSession() {
   if (!activeSession) {
     els.sessionBanner.hidden = true;
-    els.copyGradesButton.disabled = true;
-    els.deleteSessionButton.disabled = true;
+    if (els.copyGradesButton) els.copyGradesButton.disabled = true;
+    if (els.deleteSessionButton) els.deleteSessionButton.disabled = true;
     return;
   }
 
@@ -150,8 +152,8 @@ function renderSession() {
   els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Grading session";
   els.sessionMeta.textContent = `${activeSession.classLabel || activeSession.classId || "Class"} · ${typeLabel}`;
   els.sessionCode.textContent = activeSession.sessionId;
-  els.copyGradesButton.disabled = false;
-  els.deleteSessionButton.disabled = false;
+  if (els.copyGradesButton) els.copyGradesButton.disabled = false;
+  if (els.deleteSessionButton) els.deleteSessionButton.disabled = false;
   if (els.detailColumnHeader) {
     els.detailColumnHeader.textContent = regular ? "Input" : "Rubric";
   }
@@ -202,7 +204,7 @@ function renderEntryDetails(item) {
 }
 
 function renderEntries() {
-  const query = normalize(els.entrySearch.value);
+  const query = normalize(els.entrySearch?.value || "");
   const rankingMap = new Map(
     rankEntries(entries.filter(item => Number(item.markedCriteria || 0) > 0))
       .map(item => [String(item.recordKey || `${item.sessionId}|${item.studentNumber}`), item.rank])
@@ -270,16 +272,16 @@ function renderAll(stats = {}) {
   renderEntries();
 }
 
-async function loadSession(sessionId = els.sessionIdInput.value) {
+async function loadSession(sessionId = els.sessionIdInput?.value || "") {
   const normalized = normalizeSessionId(sessionId);
   if (!normalized) {
     setStatus("Enter a session ID.", "error");
     return;
   }
 
-  els.sessionIdInput.value = normalized;
-  els.loadSessionButton.disabled = true;
-  els.refreshButton.disabled = true;
+  if (els.sessionIdInput) els.sessionIdInput.value = normalized;
+  if (els.loadSessionButton) els.loadSessionButton.disabled = true;
+  if (els.refreshButton) els.refreshButton.disabled = true;
   setStatus(`Loading ${normalized}…`);
 
   try {
@@ -306,8 +308,8 @@ async function loadSession(sessionId = els.sessionIdInput.value) {
     renderAll({});
     setStatus(`Could not load session: ${error.message}`, "error");
   } finally {
-    els.loadSessionButton.disabled = false;
-    els.refreshButton.disabled = false;
+    if (els.loadSessionButton) els.loadSessionButton.disabled = false;
+    if (els.refreshButton) els.refreshButton.disabled = false;
   }
 }
 
@@ -324,7 +326,7 @@ async function deleteActiveSession() {
   if (!confirmed) return;
 
   const oldText = els.deleteSessionButton.textContent;
-  els.deleteSessionButton.disabled = true;
+  if (els.deleteSessionButton) els.deleteSessionButton.disabled = true;
   els.deleteSessionButton.textContent = "Deleting…";
   setStatus(`Deleting ${sessionId}…`);
 
@@ -350,7 +352,7 @@ async function deleteActiveSession() {
 
     activeSession = null;
     entries = [];
-    els.sessionIdInput.value = "";
+    if (els.sessionIdInput) els.sessionIdInput.value = "";
 
     const pageUrl = new URL(window.location.href);
     pageUrl.searchParams.delete("sessionId");
@@ -444,12 +446,12 @@ async function copyGradesToClipboard() {
 }
 
 function init() {
-  els.loadSessionButton.addEventListener("click", () => loadSession());
-  els.refreshButton.addEventListener("click", () => loadSession(activeSession?.sessionId || els.sessionIdInput.value));
-  els.copyGradesButton.addEventListener("click", copyGradesToClipboard);
-  els.deleteSessionButton.addEventListener("click", deleteActiveSession);
-  els.entrySearch.addEventListener("input", renderEntries);
-  els.sessionIdInput.addEventListener("keydown", event => {
+  els.loadSessionButton?.addEventListener("click", () => loadSession());
+  els.refreshButton?.addEventListener("click", () => loadSession(activeSession?.sessionId || els.sessionIdInput?.value || ""));
+  els.copyGradesButton?.addEventListener("click", copyGradesToClipboard);
+  els.deleteSessionButton?.addEventListener("click", deleteActiveSession);
+  els.entrySearch?.addEventListener("input", renderEntries);
+  els.sessionIdInput?.addEventListener("keydown", event => {
     if (event.key === "Enter") {
       event.preventDefault();
       loadSession();
