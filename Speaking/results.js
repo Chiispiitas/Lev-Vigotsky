@@ -6,6 +6,8 @@ const SPEAKING_SUBMISSION_ENDPOINT = `${SPEAKING_WIX_BASE}/_functions/speakingSu
 const REGULAR_ACTIVITY = "Regular grading";
 const REGULAR_CHECKLIST_ACTIVITY = "Regular grading · Checklist"; // legacy
 const REGULAR_NUMBER_ACTIVITY = "Regular grading · Number"; // legacy
+const PARTICIPATION_ACTIVITY = "Participation";
+const PARTICIPATION_CONFIG_STUDENT = 9999;
 const ACTIVE_SESSION_KEY = "lv-speaking-active-session-v2";
 
 const $ = selector => document.querySelector(selector);
@@ -32,6 +34,7 @@ const els = {
 
 let activeSession = null;
 let entries = [];
+let participationThreshold = 5;
 
 function normalizeSessionId(value) {
   return String(value || "").trim().toUpperCase().replace(/[^A-Z0-9_-]/g, "").slice(0, 32);
@@ -82,6 +85,7 @@ async function fetchJson(url, options = {}) {
 
 function sessionMode(session = activeSession) {
   const activity = String(session?.activity || "");
+  if (activity === PARTICIPATION_ACTIVITY) return "participation";
   return [REGULAR_ACTIVITY, REGULAR_CHECKLIST_ACTIVITY, REGULAR_NUMBER_ACTIVITY].includes(activity)
     ? "regular"
     : "speaking";
@@ -95,6 +99,12 @@ function regularEntryKind(item) {
   return Number(item?.markedCriteria || 0) > 0 ? "number" : "blank";
 }
 function resultDetailLabel(item) {
+  if (sessionMode() === "participation") {
+    const row = parseCriteriaRows(item)[0] || {};
+    const match = String(row.level || "").match(/(\d+)\s*tall/i);
+    const tallies = match ? Number(match[1]) : Number(row.points || 0);
+    return `${tallies} tallies`;
+  }
   if (Number(item?.markedCriteria || 0) <= 0) return "Pending";
   if (sessionMode() !== "regular") return `${item.markedCriteria}/7`;
 
@@ -145,8 +155,10 @@ function renderSession() {
     return;
   }
 
-  const regular = sessionMode() === "regular";
-  const typeLabel = regular ? "Regular grading" : "Speaking";
+  const mode = sessionMode();
+  const regular = mode === "regular";
+  const participation = mode === "participation";
+  const typeLabel = participation ? "Participation" : regular ? "Regular grading" : "Speaking";
 
   els.sessionBanner.hidden = false;
   els.sessionTitle.textContent = activeSession.title || activeSession.activity || "Grading session";
@@ -155,7 +167,7 @@ function renderSession() {
   if (els.copyGradesButton) els.copyGradesButton.disabled = false;
   if (els.deleteSessionButton) els.deleteSessionButton.disabled = false;
   if (els.detailColumnHeader) {
-    els.detailColumnHeader.textContent = regular ? "Input" : "Rubric";
+    els.detailColumnHeader.textContent = participation ? "Tallies" : regular ? "Input" : "Rubric";
   }
   document.title = `${typeLabel} Results · Lev Grading`;
 
@@ -169,6 +181,94 @@ function parseCriteriaRows(item) {
   } catch {
     return [];
   }
+}
+
+function participationConfigThreshold(item) {
+  const row = parseCriteriaRows(item)[0] || {};
+  const points = Number(row.points);
+  if (Number.isFinite(points) && points >= 1) return Math.round(points);
+  const match = String(row.observation || "").match(/threshold\s*:?\s*(\d+)/i);
+  return match ? Math.max(1, Number(match[1])) : null;
+}
+
+function participationTallyCount(item) {
+  const row = parseCriteriaRows(item)[0] || {};
+  const match = String(row.level || "").match(/(\d+(?:\.\d+)?)\s*tall/i);
+  if (match) return Math.max(0, Math.round(Number(match[1]) || 0));
+  const points = Number(row.points);
+  return Number.isFinite(points) ? Math.max(0, Math.round(points)) : 0;
+}
+
+function participationCalculatedScore(tallies) {
+  const threshold = Math.max(1, Number(participationThreshold) || 1);
+  return Math.round(Math.min(10, (Math.max(0, tallies) / threshold) * 10) * 100) / 100;
+}
+
+function buildParticipationEntries(rawItems) {
+  const config = rawItems.find(item =>
+    Number(item.studentNumber) === PARTICIPATION_CONFIG_STUDENT ||
+    String(item.studentName || "") === "__PARTICIPATION_CONFIG__"
+  );
+  const threshold = config ? participationConfigThreshold(config) : null;
+  participationThreshold = threshold || 5;
+
+  const klass = (window.SPEAKING_CLASS_DATA || []).find(item => item.id === activeSession?.classId);
+  const studentItems = rawItems.filter(item =>
+    Number(item.studentNumber) !== PARTICIPATION_CONFIG_STUDENT &&
+    String(item.studentName || "") !== "__PARTICIPATION_CONFIG__"
+  );
+  const byStudent = new Map(studentItems.map(item => [Number(item.studentNumber), item]));
+
+  if (!klass) {
+    return studentItems.map(item => {
+      const tallies = participationTallyCount(item);
+      const score = participationCalculatedScore(tallies);
+      return {
+        ...item,
+        scoreTotal: score,
+        markedCriteria: 1,
+        rows: [{
+          criterion: "Participation tallies",
+          max: participationThreshold,
+          level: `${tallies} tallies`,
+          points: tallies,
+          observation: `Threshold ${participationThreshold}; calculated score ${formatScore(score)}/10.`
+        }]
+      };
+    });
+  }
+
+  return klass.students.map(student => {
+    const item = byStudent.get(Number(student.n));
+    const tallies = item ? participationTallyCount(item) : 0;
+    const score = participationCalculatedScore(tallies);
+    return {
+      ...(item || {}),
+      sessionId: activeSession.sessionId,
+      recordKey: item?.recordKey || `${activeSession.sessionId}|${student.n}`,
+      classId: activeSession.classId,
+      classLabel: activeSession.classLabel,
+      studentNumber: student.n,
+      studentName: student.name,
+      scoreTotal: score,
+      markedCriteria: 1,
+      rows: [{
+        criterion: "Participation tallies",
+        max: participationThreshold,
+        level: `${tallies} tallies`,
+        points: tallies,
+        observation: `Threshold ${participationThreshold}; calculated score ${formatScore(score)}/10.`
+      }]
+    };
+  });
+}
+
+function participationStats() {
+  const total = entries.length;
+  const average = total
+    ? entries.reduce((sum, item) => sum + Number(item.scoreTotal || 0), 0) / total
+    : 0;
+  return { total, assessed: total, average };
 }
 
 function renderEntryDetails(item) {
@@ -290,7 +390,10 @@ async function loadSession(sessionId = els.sessionIdInput?.value || "") {
     const data = await fetchJson(url.toString());
 
     activeSession = data.session || null;
-    entries = Array.isArray(data.items) ? data.items : [];
+    const rawItems = Array.isArray(data.items) ? data.items : [];
+    entries = activeSession && sessionMode(activeSession) === "participation"
+      ? buildParticipationEntries(rawItems)
+      : rawItems;
 
     if (activeSession) {
       localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
@@ -299,7 +402,7 @@ async function loadSession(sessionId = els.sessionIdInput?.value || "") {
       history.replaceState(null, "", pageUrl);
     }
 
-    renderAll(data.stats || {});
+    renderAll(activeSession && sessionMode(activeSession) === "participation" ? participationStats() : (data.stats || {}));
     setStatus(`${entries.length} submission(s) loaded for ${normalized}.`, "ok");
   } catch (error) {
     console.error(error);
