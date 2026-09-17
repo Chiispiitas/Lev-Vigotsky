@@ -137,4 +137,23 @@
       throw error;
     }
   };
+
+  // script.js initializes immediately before this file is loaded, so its very
+  // first session-list request can begin before the wrapper above exists.
+  // If that initial request fails, automatically run the list request again
+  // through the resilient wrapper instead of leaving the selector dead.
+  [1200, 3500].forEach(delay => {
+    window.setTimeout(() => {
+      const status = document.querySelector("#sessionListStatus");
+      const select = document.querySelector("#availableSessionsSelect");
+      const failed = Boolean(
+        status?.classList.contains("error") ||
+        select?.options?.[0]?.textContent === "Sessions unavailable"
+      );
+
+      if (failed && typeof loadAvailableSpeakingSessions === "function") {
+        loadAvailableSpeakingSessions();
+      }
+    }, delay);
+  });
 })();
