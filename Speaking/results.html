@@ -7,7 +7,9 @@
   <title>Grading Session Results</title>
   <link rel="stylesheet" href="results.css?v=20260916-participation1" />
   <style>
-    #entriesPanel .entry-row > td:first-child {
+    #entriesPanel .entry-row > td:nth-child(1),
+    #entriesPanel .entry-row > td:nth-child(4),
+    #entriesPanel .entry-row > td:nth-child(5) {
       display: none;
     }
   </style>
@@ -68,14 +70,12 @@
             <tr>
               <th>Student</th>
               <th>Score</th>
-              <th id="detailColumnHeader">Details</th>
-              <th>Contributor</th>
               <th>Updated</th>
               <th></th>
             </tr>
           </thead>
           <tbody id="entryTableBody">
-            <tr><td colspan="6">No session loaded.</td></tr>
+            <tr><td colspan="4">No session loaded.</td></tr>
           </tbody>
         </table>
       </div>
