@@ -690,4 +690,32 @@ exit /b 0
 cls
 echo ================================================================
 echo                       MODO CLASE + AI
-echo =================================================
+echo ================================================================
+echo.
+echo Aplicando modo clase y bloqueando AI.
+echo Buscadores como Google siguen permitidos.
+echo.
+call :APPLY_CLASS_RESTRICTIONS
+call :APPLY_AI_RESTRICTIONS
+echo.
+echo [OK] Modo clase + AI aplicado.
+exit /b 0
+
+:EXAM_MODE
+cls
+echo ================================================================
+echo                         MODO EXAMEN
+echo ================================================================
+echo.
+call :APPLY_CLASS_RESTRICTIONS
+call :APPLY_AI_RESTRICTIONS
+call :APPLY_EXAM_RESTRICTIONS
+echo.
+echo [OK] Modo examen aplicado.
+exit /b 0
+
+:UNRESTRICT
+cls
+echo ================================================================
+echo                      QUITAR RESTRICCIONES
+echo ==============
