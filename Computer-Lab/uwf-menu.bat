@@ -830,4 +830,22 @@ attrib -r -s -h "%HOSTS%" >nul 2>&1
 
 set "CLASS_GAMES=friv.com voxiom.io shellshock.io poki.com roblox.com veck.io msn.com games.msn.com zone.msn.com disneyplus.com twitch.tv steamcommunity.com steampowered.com epicgames.com blizzboygames.net krunker.io paper-io.com slither.io agar.io hole-io.com crazygames.com minijuegos.com poki.es badtimesimulator.io jcw87.github.io doodles.google"
 set "CLASS_SOCIAL=facebook.com instagram.com tiktok.com youtube.com twitter.com x.com snapchat.com kwai.com"
-set "CLASS_ADULT=pornhub.com xnxx.com xvideos.com stripchat.com chaturbate.com xhamster.com youporn.com redtube.com spankbang.c
+set "CLASS_ADULT=pornhub.com xnxx.com xvideos.com stripchat.com chaturbate.com xhamster.com youporn.com redtube.com spankbang.com tnaflix.com beeg.com cam4.com bongacams.com rule34.xxx e621.net"
+
+>>"%HOSTS%" echo.
+>>"%HOSTS%" echo # BEGIN LEV_VIGOTSKY_GUARD
+for %%D in (%CLASS_GAMES% %CLASS_SOCIAL% %CLASS_ADULT%) do (
+    >>"%HOSTS%" echo 0.0.0.0 %%D
+    >>"%HOSTS%" echo 0.0.0.0 www.%%D
+)
+>>"%HOSTS%" echo # END LEV_VIGOTSKY_GUARD
+exit /b 0
+
+:APPLY_BROWSER_URL_BLOCKS
+call :ADD_BROWSER_BLOCK 9001 "*://jcw87.github.io/c2-sans-fight/*"
+call :ADD_BROWSER_BLOCK 9002 "*://badtimesimulator.io/*"
+call :ADD_BROWSER_BLOCK 9003 "*://*.badtimesimulator.io/*"
+call :ADD_BROWSER_BLOCK 9004 "*://www.google.com/logos/*"
+call :ADD_BROWSER_BLOCK 9005 "*://google.com/logos/*"
+call :ADD_BROWSER_BLOCK 9006 "*://www.google.com/doodles/*"
+call :ADD_BROWSER_BLOCK 9007 "*://
