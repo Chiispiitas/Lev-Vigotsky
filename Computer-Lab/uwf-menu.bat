@@ -718,4 +718,20 @@ exit /b 0
 cls
 echo ================================================================
 echo                      QUITAR RESTRICCIONES
-echo ==============
+echo =============================================================
+echo.
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTaskMgr" /f >nul 2>&1
+reg delete "HKLM\Software\Policies\Microsoft\Windows\Installer" /v "DisableMSI" /f >nul 2>&1
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "DisallowRun" /f >nul 2>&1
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun" /f >nul 2>&1
+call :REMOVE_HOSTS_BLOCKS
+call :REMOVE_BROWSER_URL_BLOCKS
+ipconfig /flushdns >nul 2>&1
+gpupdate /force >nul 2>&1
+echo [OK] Restricciones quitadas.
+exit /b 0
+
+:KILL_APPS
+cls
+echo ================================================================
+echo                 
