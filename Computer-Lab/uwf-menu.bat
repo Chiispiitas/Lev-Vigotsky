@@ -734,4 +734,14 @@ exit /b 0
 :KILL_APPS
 cls
 echo ================================================================
-echo                 
+echo                    CERRAR APPS DEL USUARIO
+echo ================================================================
+echo.
+for %%P in (chrome.exe msedge.exe firefox.exe iexplore.exe opera.exe brave.exe RobloxPlayerBeta.exe RobloxPlayerLauncher.exe steam.exe EpicGamesLauncher.exe Discord.exe WhatsApp.exe Telegram.exe) do taskkill /f /im "%%P" >nul 2>&1
+echo [OK] Aplicaciones cerradas.
+exit /b 0
+
+:APPLY_CLASS_RESTRICTIONS
+reg add "HKLM\Software\Policies\Microsoft\Windows\Installer" /v "DisableMSI" /t REG_DWORD /d 2 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTaskMgr" /t REG_DWORD /d 1 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "DisallowRun" /t REG_DWORD /d 1 /f >
