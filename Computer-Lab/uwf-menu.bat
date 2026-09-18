@@ -608,4 +608,18 @@ set "USER_PROFILE_PATH=%~1"
 set "PROFILE_NAME=%~nx1"
 
 if /I "%PROFILE_NAME%"=="All Users" exit /b 0
-if /I "%PROFILE_NAME%"=="Default
+if /I "%PROFILE_NAME%"=="Default" exit /b 0
+if /I "%PROFILE_NAME%"=="Default User" exit /b 0
+if /I "%PROFILE_NAME%"=="DefaultAppPool" exit /b 0
+if /I "%PROFILE_NAME%"=="Public" exit /b 0
+if not exist "%USER_PROFILE_PATH%" exit /b 0
+
+echo     Limpiando: %PROFILE_NAME%
+
+for %%F in (Downloads Documents Music Videos Pictures) do call :DELETE_TREE_CONTENTS "%USER_PROFILE_PATH%\%%F"
+
+call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\Google\Chrome\User Data"
+call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\Microsoft\Edge\User Data"
+call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\BraveSoftware\Brave-Browser\User Data"
+call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Roaming\Opera Software\Opera Stable"
+
