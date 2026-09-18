@@ -765,3 +765,22 @@ set "HOSTS=%SystemRoot%\System32\drivers\etc\hosts"
 if not exist "%HOSTS%" exit /b 0
 attrib -r -s -h "%HOSTS%" >nul 2>&1
 >>"%HOSTS%" echo.
+>>"%HOSTS%" echo # BEGIN LEV_VIGOTSKY_CLASS_AI_EXTRA
+
+set "CLASS_PLUS_AI=chat.openai.com chatgpt.com openai.com gemini.google.com bard.google.com copilot.microsoft.com claude.ai poe.com perplexity.ai you.com meta.ai"
+
+for %%D in (%CLASS_PLUS_AI%) do (
+    >>"%HOSTS%" echo 0.0.0.0 %%D
+    >>"%HOSTS%" echo 0.0.0.0 www.%%D
+)
+>>"%HOSTS%" echo # END LEV_VIGOTSKY_CLASS_AI_EXTRA
+exit /b 0
+
+:APPLY_EXAM_RESTRICTIONS
+set "HOSTS=%SystemRoot%\System32\drivers\etc\hosts"
+if not exist "%HOSTS%" exit /b 0
+attrib -r -s -h "%HOSTS%" >nul 2>&1
+>>"%HOSTS%" echo.
+>>"%HOSTS%" echo # BEGIN LEV_VIGOTSKY_EXAM_EXTRA
+
+set "EXAM_AI=chat.openai.com chatgpt.com openai.com gemini.google.com bard.google.com copilot.microsoft.com claude.ai poe.com perp
