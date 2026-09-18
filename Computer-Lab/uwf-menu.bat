@@ -848,4 +848,23 @@ call :ADD_BROWSER_BLOCK 9003 "*://*.badtimesimulator.io/*"
 call :ADD_BROWSER_BLOCK 9004 "*://www.google.com/logos/*"
 call :ADD_BROWSER_BLOCK 9005 "*://google.com/logos/*"
 call :ADD_BROWSER_BLOCK 9006 "*://www.google.com/doodles/*"
-call :ADD_BROWSER_BLOCK 9007 "*://
+call :ADD_BROWSER_BLOCK 9007 "*://google.com/doodles/*"
+call :ADD_BROWSER_BLOCK 9008 "*://doodles.google/*"
+call :ADD_BROWSER_BLOCK 9009 "*://*.doodles.google/*"
+exit /b 0
+
+:ADD_BROWSER_BLOCK
+set "IDX=%~1"
+set "URL=%~2"
+reg add "HKLM\SOFTWARE\Policies\Google\Chrome\URLBlocklist" /v "%IDX%" /t REG_SZ /d "%URL%" /f >nul 2>&1
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge\URLBlocklist" /v "%IDX%" /t REG_SZ /d "%URL%" /f >nul 2>&1
+exit /b 0
+
+:REMOVE_BROWSER_URL_BLOCKS
+for %%K in ("HKLM\SOFTWARE\Policies\Google\Chrome\URLBlocklist" "HKLM\SOFTWARE\Policies\Microsoft\Edge\URLBlocklist") do (
+    for /l %%N in (9001,1,9099) do reg delete %%~K /v %%N /f >nul 2>&1
+)
+exit /b 0
+
+rem ============================================================================
+rem WIND
