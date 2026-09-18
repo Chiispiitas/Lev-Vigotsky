@@ -728,4 +728,10 @@ call :REMOVE_HOSTS_BLOCKS
 call :REMOVE_BROWSER_URL_BLOCKS
 ipconfig /flushdns >nul 2>&1
 gpupdate /force >nul 2>&1
-echo [O
+echo [OK] Restricciones quitadas.
+exit /b 0
+
+:KILL_APPS
+cls
+echo ================================================================
+echo                 
