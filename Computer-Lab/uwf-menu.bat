@@ -636,4 +636,16 @@ exit /b 0
 set "CHROMIUM_ROOT=%~1"
 if not exist "%CHROMIUM_ROOT%" exit /b 0
 call :CLEAN_CHROMIUM_PROFILE "%CHROMIUM_ROOT%"
-for /d %%P in ("%CHROMIUM_ROOT%\*") do cal
+for /d %%P in ("%CHROMIUM_ROOT%\*") do call :CLEAN_CHROMIUM_PROFILE "%%~fP"
+exit /b 0
+
+:CLEAN_CHROMIUM_PROFILE
+set "CHROMIUM_PROFILE=%~1"
+if not exist "%CHROMIUM_PROFILE%" exit /b 0
+for %%F in ("History" "History-journal" "Cookies" "Cookies-journal" "Login Data" "Login Data-journal" "Visited Links" "Top Sites" "Top Sites-journal" "Web Data" "Web Data-journal" "Network\Cookies" "Network\Cookies-journal") do del /f /q "%CHROMIUM_PROFILE%\%%~F" >nul 2>&1
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Cache"
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Code Cache"
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\GPUCache"
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Service Worker\CacheStorage"
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Session Storage"
+call :DELETE_T
