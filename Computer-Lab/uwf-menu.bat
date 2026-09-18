@@ -744,4 +744,24 @@ exit /b 0
 :APPLY_CLASS_RESTRICTIONS
 reg add "HKLM\Software\Policies\Microsoft\Windows\Installer" /v "DisableMSI" /t REG_DWORD /d 2 /f >nul
 reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTaskMgr" /t REG_DWORD /d 1 /f >nul
-reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "DisallowRun" /t REG_DWORD /d 1 /f >
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" /v "DisallowRun" /t REG_DWORD /d 1 /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun" /v "1" /t REG_SZ /d "RobloxPlayerBeta.exe" /f >nul
+reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\DisallowRun" /v "2" /t REG_SZ /d "RobloxPlayerLauncher.exe" /f >nul
+
+taskkill /f /im RobloxPlayerBeta.exe >nul 2>&1
+taskkill /f /im RobloxPlayerLauncher.exe >nul 2>&1
+
+call :REMOVE_HOSTS_BLOCKS
+call :REMOVE_BROWSER_URL_BLOCKS
+call :ADD_CLASS_HOSTS_BLOCKS
+call :APPLY_BROWSER_URL_BLOCKS
+
+ipconfig /flushdns >nul 2>&1
+gpupdate /force >nul 2>&1
+exit /b 0
+
+:APPLY_AI_RESTRICTIONS
+set "HOSTS=%SystemRoot%\System32\drivers\etc\hosts"
+if not exist "%HOSTS%" exit /b 0
+attrib -r -s -h "%HOSTS%" >nul 2>&1
+>>"%HOSTS%" echo.
