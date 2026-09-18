@@ -473,4 +473,102 @@ if defined UWF_EXE "%UWF_EXE%" filter disable >nul 2>&1
 echo [3/6] Reparando servicios UWF en control sets...
 for %%C in (CurrentControlSet ControlSet001 ControlSet002 ControlSet003 ControlSet004) do (
     reg query "HKLM\SYSTEM\%%C" >nul 2>&1
-    if no
+    if not errorlevel 1 (
+        for %%S in (uwfvol uwfs uwfreg) do (
+            reg query "HKLM\SYSTEM\%%C\Services\%%S" >nul 2>&1
+            if not errorlevel 1 (
+                reg add "HKLM\SYSTEM\%%C\Services\%%S" /v Start /t REG_DWORD /d 0 /f >nul 2>&1
+                echo     %%C\Services\%%S revisado
+            )
+        )
+    )
+)
+
+echo [4/6] Reparando LowerFilters para incluir uwfvol...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType MultiString -Value $v -Force | Out-Null; Write-Host '[OK] uwfvol agregado a LowerFilters' } else { Write-Host '[OK] LowerFilters ya contiene uwfvol' } } catch { Write-Host '[!] No se pudo reparar LowerFilters' }"
+
+echo [5/6] Asegurando caracteristica Client-UnifiedWriteFilter...
+dism /online /enable-feature /featurename:Client-UnifiedWriteFilter /all /norestart
+
+echo [6/6] Verificacion rapida...
+call :SET_TOOL_PATHS
+if defined UWF_EXE (
+    "%UWF_EXE%" get-config
+) else (
+    echo [!] uwfmgr.exe aun no aparece. Use RESET UWF etapa 1 y etapa 2.
+)
+
+echo.
+echo [INFO] Reinicie ahora. Luego intente uwf-enable.bat.
+echo [INFO] Si sigue 0x8000FFFF, use RESET UWF ETAPA 1, reinicie, ETAPA 2, reinicie.
+exit /b 0
+
+:UWF_RESET_STAGE1
+cls
+echo ================================================================
+echo        RESET U]QAÄ´M%9MQ1HQUI4)¡¼ôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôô4)¡¼¸4)¡¼UÍÍÑ¼Í¤U]Í¥Õ¹¼ÁààÀÀÁ¸4)¡¼ÍÁÕÌÍÑÑÁ	É¥¹¥¥È¸4)¡¼1Õ¼©ÕÑÕÝµÉÍÐµÍÑÈ¹Ð¸4)¡¼¸4)¡½¥½M8½¸½´½¹Ñ¥¹ÕÈümL½9tè4)¥ÉÉ½É±Ù°Èá¥Ð½Ä4(4)±°éMQ}Q==1}AQ!L4)¥¥¹U]}a 4(U]}a¥±ÑÈ¥Í±ù¹Õ°ÈøÄ4(U]}aÙ½±ÕµÕ¹ÁÉ½ÑÐèù¹Õ°ÈøÄ4(¤4)¥Ð½±ÑÙ±ÕíÕÉÉ¹Ñô½½ÑÍÑÑÕÍÁ½±¥äù¹Õ°ÈøÄ4(4)¡¼¸4)¡¼lÄ¼ÉtÍ¥¹ÍÑ±¹¼±¥¹ÐµU¹¥¥]É¥Ñ¥±ÑÈ¸¸¸4)¥Í´½½¹±¥¹½¥Í±µÑÕÉ½ÑÕÉ¹µé±¥¹ÐµU¹¥¥]É¥Ñ¥±ÑÈ½¹½ÉÍÑÉÐ4(4)¡¼¸4)¡¼lÈ¼Ét%¹Ñ¹Ñ¹¼±¥µ¥¹ÈU]ÍÝÀ¹ÍåÌÍ¤ÍÑÍ±½ÅÕ¼¸¸¸4)±°éQIe}1Q}U]}M]@4(4)¡¼¸4)¡¼m=-tÑÁÄÑÉµ¥¹¸4)¡¼I¥¹¥¥¡½É¸ÍÁÕÌ©ÕÑÕÝµÉÍÐµÍÑÈ¹Ð¸4)á¥Ð½À4(4(éU]}IMQ}MQÈ4)±Ì4)¡¼ôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôô4)¡¼IMPU]QAÈ´I%9MQ1HQUI4)¡¼ôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôôô4)¡¼¸4)¡¼©ÕÑÍÑ¼MAULÉ¥¹¥¥ÈÑÉÌ±ÑÁÄ¸4)¡¼ÍÁÕÌÍÑÑÁEBE reiniciar otra vez.
+echo Luego ejecute uwf-enable.bat.
+echo.
+choice /c SN /n /m "Continuar? [S/N]: "
+if errorlevel 2 exit /b 1
+
+bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
+
+echo.
+echo [1/3] Reinstalando Client-UnifiedWriteFilter...
+dism /online /enable-feature /featurename:Client-UnifiedWriteFilter /all /norestart
+if errorlevel 1 (
+    echo [!] DISM fallo al reinstalar UWF.
+    exit /b 1
+)
+
+echo.
+echo [2/3] Reparando LowerFilters...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType MultiString -Value $v -Force | Out-Null } } catch { }"
+
+echo.
+echo [3/3] Eliminando UWFswap.sys viejo si aun existe...
+call :TRY_DELETE_UWF_SWAP
+
+echo.
+echo [OK] Etapa 2 terminada.
+echo Reinicie ahora. Despues ejecute uwf-enable.bat.
+exit /b 0
+
+rem ============================================================================
+rem CLEANUP - SEPARATE ONLY
+rem ============================================================================
+
+:CLEANUP_ONLY
+cls
+echo ================================================================
+echo          LIMPIEZA DE HISTORIAL, CARPETAS Y PAPELERA
+echo ================================================================
+echo.
+echo [1/3] Cerrando navegadores...
+call :CLOSE_BROWSERS
+echo [2/3] Limpiando perfiles de usuario...
+call :CLEAN_ALL_USER_PROFILES
+echo [3/3] Vaciando papelera de reciclaje...
+call :EMPTY_RECYCLE_BIN
+echo.
+echo [OK] Limpieza terminada.
+echo [INFO] Si UWF esta activo, estos cambios se perderan al reiniciar.
+exit /b 0
+
+:CLOSE_BROWSERS
+for %%P in (chrome.exe msedge.exe firefox.exe iexplore.exe opera.exe brave.exe) do taskkill /f /im "%%P" >nul 2>&1
+exit /b 0
+
+:CLEAN_ALL_USER_PROFILES
+set "USERS_ROOT=%SystemDrive%\Users"
+if not exist "%USERS_ROOT%" exit /b 0
+for /d %%U in ("%USERS_ROOT%\*") do call :CLEAN_ONE_USER_PROFILE "%%~fU"
+exit /b 0
+
+:CLEAN_ONE_USER_PROFILE
+set "USER_PROFILE_PATH=%~1"
+set "PROFILE_NAME=%~nx1"
+
+if /I "%PROFILE_NAME%"=="All Users" exit /b 0
+if /I "%PROFILE_NAME%"=="Default
