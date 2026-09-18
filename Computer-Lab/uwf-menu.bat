@@ -584,4 +584,28 @@ echo ================================================================
 echo.
 echo [1/3] Cerrando navegadores...
 call :CLOSE_BROWSERS
-echo [2/3] Limpian
+echo [2/3] Limpiando perfiles de usuario...
+call :CLEAN_ALL_USER_PROFILES
+echo [3/3] Vaciando papelera de reciclaje...
+call :EMPTY_RECYCLE_BIN
+echo.
+echo [OK] Limpieza terminada.
+echo [INFO] Si UWF esta activo, estos cambios se perderan al reiniciar.
+exit /b 0
+
+:CLOSE_BROWSERS
+for %%P in (chrome.exe msedge.exe firefox.exe iexplore.exe opera.exe brave.exe) do taskkill /f /im "%%P" >nul 2>&1
+exit /b 0
+
+:CLEAN_ALL_USER_PROFILES
+set "USERS_ROOT=%SystemDrive%\Users"
+if not exist "%USERS_ROOT%" exit /b 0
+for /d %%U in ("%USERS_ROOT%\*") do call :CLEAN_ONE_USER_PROFILE "%%~fU"
+exit /b 0
+
+:CLEAN_ONE_USER_PROFILE
+set "USER_PROFILE_PATH=%~1"
+set "PROFILE_NAME=%~nx1"
+
+if /I "%PROFILE_NAME%"=="All Users" exit /b 0
+if /I "%PROFILE_NAME%"=="Default
