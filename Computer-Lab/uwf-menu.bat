@@ -885,4 +885,25 @@ start "" ms-settings:windowsupdate
 echo [OK] Solicitud enviada.
 exit /b 0
 
-:UWF_WI
+:UWF_WINDOWS_UPDATE
+cls
+echo ================================================================
+echo              MANTENIMIENTO UWF PARA WINDOWS UPDATE
+echo ================================================================
+echo.
+call :SET_TOOL_PATHS
+if not defined UWF_EXE (
+    echo [!] uwfmgr.exe no encontrado.
+    exit /b 1
+)
+call :RUN_UWF servicing enable
+if errorlevel 1 (
+    echo [!] No se pudo activar mantenimiento UWF.
+    exit /b 1
+)
+echo [OK] Mantenimiento UWF activado para el proximo reinicio.
+if "%DIRECT_MODE%"=="1" (
+    echo Reiniciando en 10 segundos...
+    shutdown /r /t 10 /c "Lev Vigotsky: Mantenimiento UWF para Windows Update"
+)
+exit /b 0
