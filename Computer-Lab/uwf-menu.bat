@@ -138,4 +138,178 @@ exit /b 0
 :RUN_UWF
 set "UWF_TMP=%TEMP%\uwf_cmd_%RANDOM%_%RANDOM%.txt"
 set "UWF_BAD="
-"%UWF_EXE%" 
+"%UWF_EXE%" %* > "%UWF_TMP%" 2>&1
+set "UWF_RET=%ERRORLEVEL%"
+type "%UWF_TMP%"
+findstr /i /c:"Error:" /c:"Acceso denegado" /c:"Access is denied" /c:"Access denied" /c:"denied" /c:"ha fallado" /c:"failed" /c:"0x8000FFFF" "%UWF_TMP%" >nul 2>&1
+if not errorlevel 1 set "UWF_BAD=1"
+del /q "%UWF_TMP%" >nul 2>&1
+if not "%UWF_RET%"=="0" exit /b %UWF_RET%
+if defined UWF_BAD exit /b 1
+exit /b 0
+
+:GET_C_FREE_MB
+set "FREE_MB="
+for /f %%A in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "[math]::Floor((Get-PSDrive -Name C).Free/1MB)"') do set "FREE_MB=%%A"
+if not defined FREE_MB exit /b 1
+exit /b 0
+
+:GET_FILE_SIZE_MB
+set "FILE_TO_CHECK=%~1"
+set "FILE_SIZE_MB=0"
+if not exist "%FILE_TO_CHECK%" exit /b 0
+for /f %%A in ('powershell -NoProfile -ExecutionPolicy Bypass -Command "if(Test-Path '%FILE_TO_CHECK%'){[math]::Ceiling((Get-Item '%FILE_TO_CHECK%' -Force).Length/1MB)}else{0}"') do set "FILE_SIZE_MB=%%A"
+if not defined FILE_SIZE_MB set "FILE_SIZE_MB=0"
+exit /b 0
+
+:DELETE_TREE_CONTENTS
+set "TARGET_PATH=%~1"
+if "%TARGET_PATH%"=="" exit /b 0
+if not exist "%TARGET_PATH%" exit /b 0
+del /f /q "%TARGET_PATH%\*" >nul 2>&1
+for /d %%D in ("%TARGET_PATH%\*") do rd /s /q "%%~fD" >nul 2>&1
+exit /b 0
+
+rem ============================================================================
+rem UWF ACTIONS
+rem ============================================================================
+
+:ENABLE_UWF
+cls
+echo ================================================================
+echo                    ACTIVAR UWF - 64 GB
+echo ================================================================
+echo.
+echo [INFO] Esta accion NO ejecuta limpieza.
+echo [INFO] Limpieza separada: uwf-cleanup.bat o menu opcion 4.
+echo.
+
+call :SET_TOOL_PATHS
+
+if not defined UWF_EXE (
+    echo [!] uwfmgr.exe no encontrado.
+    echo [INFO] Intentando instalar la caracteristica UWF...
+    dism /online /enable-feature /featurename:Client-UnifiedWriteFilter /all /norestart
+    echo.
+    echo Reinicie y vuelva a ejecutar uwf-enable.bat.
+    exit /b 1
+)
+
+echo [1/4] Revisando UWFswap.sys viejo...
+call :CHECK_OLD_SWAP_BEFORE_ENABLE
+if errorlevel 1 exit /b 1
+
+echo.
+echo [2/4] Configurando overlay DISK de 64 GB...
+call :CONFIGURE_64GB_OVERLAY
+if errorlevel 1 (
+    echo.
+    echo [!] No se pudo configurar overlay de 64 GB.
+    echo.
+    echo SOLUCION RECOMENDADA:
+    echo 1. Ejecutar uwf-disable.bat
+    echo 2. Reiniciar
+    echo 3. Ejecutar uwf-purge-swap.bat
+    echo 4. Ejecutar uwf-enable.bat
+    echo 5. Reiniciar
+    exit /b 1
+)
+
+echo.
+echo [3/4] Protegiendo volumen C:...
+call :RUN_UWF volume protect C:
+if errorlevel 1 (
+    echo.
+    echo [!] Fallo: uwfmgr volume protect C:
+    echo     Si aparece 0x8000FFFF, use RESET UWF etapa 1 y etapa 2.
+    exit /b 1
+)
+
+echo.
+echo [4/4] Activando filtro UWF para el proximo reinicio...
+call :RUN_UWF filter enable
+if errorlevel 1 (
+    echo.
+    echo [!] Fallo: uwfmgr filter enable
+    echo     Si aparece 0x8000FFFF, use RESET UWF etapa 1 y etapa 2.
+    exit /b 1
+)
+
+echo.
+echo [OK] UWF 64 GB configurado. Reinicie para aplicar.
+exit /b 0
+
+:CHECK_OLD_SWAP_BEFORE_ENABLE
+set "SWAP_FILE=%SystemDrive%\uwfswap.sys"
+call :GET_FILE_SIZE_MB "%SWAP_FILE%"
+if not exist "%SWAP_FILE%" (
+    echo [OK] No existe %SWAP_FILE%
+    exit /b 0
+)
+
+echo [INFO] Existe %SWAP_FILE% con tamano aproximado: %FILE_SIZE_MB% MB
+
+if %FILE_SIZE_MB% GTR 80000 (
+    echo [!] El swap actual es mas grande que 80 GB.
+    echo     Esto parece venir del overlay viejo exagerado.
+    echo     Intentando eliminarlo antes de configurar 64 GB...
+    call :TRY_DELETE_UWF_SWAP
+    if errorlevel 1 (
+        echo.
+        echo [!] No se pudo eliminar %SWAP_FILE%.
+        echo     Probablemente UWF sigue activo en la sesion actual o el archivo esta bloqueado.
+        echo.
+        echo HAGA ESTO:
+        echo 1. Ejecutar uwf-disable.bat
+        echo 2. Reiniciar
+        echo 3. Ejecutar uwf-purge-swap.bat
+        echo 4. Ejecutar uwf-enable.bat
+        exit /b 1
+    )
+    exit /b 0
+)
+
+echo [OK] El swap no parece estar sobredimensionado.
+exit /b 0
+
+:CONFIGURE_64GB_OVERLAY
+set "OVERLAY_MB=65536"
+set "WARN_MB=49152"
+set "CRIT_MB=61440"
+set "MIN_FREE_MB=81920"
+
+echo [INFO] Tamano solicitado: %OVERLAY_MB% MB / 64 GB
+echo [INFO] Warning: %WARN_MB% MB / 48 GB
+echo [INFO] Critical: %CRIT_MB% MB / 60 GB
+echo [INFO] Minimo libre requerido en C:: %MIN_FREE_MB% MB / 80 GB
+echo.
+
+call :GET_C_FREE_MB
+if errorlevel 1 (
+    echo [!] No se pudo detectar el espacio libre de C:.
+    exit /b 1
+)
+
+echo [INFO] Espacio libre detectado en C:: %FREE_MB% MB
+
+if %FREE_MB% LSS %MIN_FREE_MB% (
+    echo.
+    echo [!] ESPACIO INSUFICIENTE.
+    echo     Para overlay 64 GB se requieren al menos %MIN_FREE_MB% MB libres.
+    echo     Detectado: %FREE_MB% MB
+    exit /b 1
+)
+
+call :RUN_UWF overlay set-type DISK
+if errorlevel 1 exit /b 1
+
+call :RUN_UWF overlay set-size %OVERLAY_MB%
+if errorlevel 1 (
+    echo.
+    echo [!] set-size %OVERLAY_MB% fallo.
+    echo     Si ve Acceso denegado, UWF probablemente esta activo en esta sesion.
+    exit /b 1
+)
+
+call :RUN_UWF overlay set-warningthreshold %WARN_MB%
+if errorlevel 1 
