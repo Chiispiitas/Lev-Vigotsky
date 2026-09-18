@@ -561,4 +561,27 @@ if errorlevel 1 (
 
 echo.
 echo [2/3] Reparando LowerFilters...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType Mult
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType MultiString -Value $v -Force | Out-Null } } catch { }"
+
+echo.
+echo [3/3] Eliminando UWFswap.sys viejo si aun existe...
+call :TRY_DELETE_UWF_SWAP
+
+echo.
+echo [OK] Etapa 2 terminada.
+echo Reinicie ahora. Despues ejecute uwf-enable.bat.
+exit /b 0
+
+rem ============================================================================
+rem CLEANUP - SEPARATE ONLY
+rem ============================================================================
+
+:CLEANUP_ONLY
+cls
+echo ================================================================
+echo          LIMPIEZA DE HISTORIAL, CARPETAS Y PAPELERA
+echo ================================================================
+echo.
+echo [1/3] Cerrando navegadores...
+call :CLOSE_BROWSERS
+echo [2/3] Limpian
