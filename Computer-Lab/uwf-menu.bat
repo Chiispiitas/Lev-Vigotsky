@@ -720,4 +720,6 @@ echo ================================================================
 echo                      QUITAR RESTRICCIONES
 echo ================================================================
 echo.
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTask
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTaskMgr" /f >nul 2>&1
+reg delete "HKLM\Software\Policies\Microsoft\Windows\Installer" /v "DisableMSI" /f >nul 2>&1
+reg delete "HKCU\Software\Microsoft\W
