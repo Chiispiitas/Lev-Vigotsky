@@ -561,4 +561,44 @@ if errorlevel 1 (
 
 echo.
 echo [2/3] Reparando LowerFilters...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType Mult
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType MultiString -Value $v -Force | Out-Null; Write-Host '[OK] uwfvol agregado a LowerFilters' } else { Write-Host '[OK] LowerFilters ya contiene uwfvol' } } catch { Write-Host '[!] No se pudo reparar LowerFilters' }"
+
+echo [5/6] Asegurando caracteristica Client-UnifiedWriteFilter...
+dism /online /enable-feature /featurename:Client-UnifiedWriteFilter /all /norestart
+
+echo [6/6] Verificacion rapida...
+call :SET_TOOL_PATHS
+if defined UWF_EXE (
+    "%UWF_EXE%" get-config
+) else (
+    echo [!] uwfmgr.exe aun no aparece. Use RESET UWF etapa 1 y etapa 2.
+)
+
+echo.
+echo [INFO] Reinicie ahora. Luego intente uwf-enable.bat.
+echo [INFO] Si sigue 0x8000FFFF, use RESET UWF ETAPA 1, reinicie, ETAPA 2, reinicie.
+exit /b 0
+
+:UWF_RESET_STAGE1
+cls
+echo ================================================================
+echo        RESET UWF ETAPA 1 - DESINSTALAR FEATURE
+echo ================================================================
+echo.
+echo Use esto si UWF sigue dando 0x8000FFFF.
+echo Despues de esta etapa DEBE reiniciar.
+echo Luego ejecute uwf-reset-stage2.bat.
+echo.
+choice /c SN /n /m "Continuar? [S/N]: "
+if errorlevel 2 exit /b 1
+
+call :SET_TOOL_PATHS
+if defined UWF_EXE (
+    "%UWF_EXE%" filter disable >nul 2>&1
+    "%UWF_EXE%" volume unprotect C: >nul 2>&1
+)
+bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
+
+echo.
+echo [1/2] Desinstalando Client-UnifiedWriteFilter...
+d
