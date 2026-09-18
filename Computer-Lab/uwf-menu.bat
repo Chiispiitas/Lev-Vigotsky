@@ -867,4 +867,22 @@ for %%K in ("HKLM\SOFTWARE\Policies\Google\Chrome\URLBlocklist" "HKLM\SOFTWARE\P
 exit /b 0
 
 rem ============================================================================
-rem WIND
+rem WINDOWS UPDATE
+rem ============================================================================
+
+:WINDOWS_UPDATE_NORMAL
+cls
+echo ================================================================
+echo                  BUSCAR ACTUALIZACIONES DE WINDOWS
+echo ================================================================
+echo.
+for %%S in (cryptsvc bits wuauserv UsoSvc WaaSMedicSvc) do net start %%S >nul 2>&1
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { (New-Object -ComObject Microsoft.Update.AutoUpdate).DetectNow() } catch {}" >nul 2>&1
+usoclient StartScan >nul 2>&1
+usoclient StartDownload >nul 2>&1
+usoclient StartInstall >nul 2>&1
+start "" ms-settings:windowsupdate
+echo [OK] Solicitud enviada.
+exit /b 0
+
+:UWF_WI
