@@ -473,4 +473,16 @@ if defined UWF_EXE "%UWF_EXE%" filter disable >nul 2>&1
 echo [3/6] Reparando servicios UWF en control sets...
 for %%C in (CurrentControlSet ControlSet001 ControlSet002 ControlSet003 ControlSet004) do (
     reg query "HKLM\SYSTEM\%%C" >nul 2>&1
-    if no
+    if not errorlevel 1 (
+        for %%S in (uwfvol uwfs uwfreg) do (
+            reg query "HKLM\SYSTEM\%%C\Services\%%S" >nul 2>&1
+            if not errorlevel 1 (
+                reg add "HKLM\SYSTEM\%%C\Services\%%S" /v Start /t REG_DWORD /d 0 /f >nul 2>&1
+                echo     %%C\Services\%%S revisado
+            )
+        )
+    )
+)
+
+echo [4/6] Reparando LowerFilters para incluir uwfvol...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v
