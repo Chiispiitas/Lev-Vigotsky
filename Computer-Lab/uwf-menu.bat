@@ -525,4 +525,40 @@ bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
 
 echo.
 echo [1/2] Desinstalando Client-UnifiedWriteFilter...
-d
+dism /online /disable-feature /featurename:Client-UnifiedWriteFilter /norestart
+
+echo.
+echo [2/2] Intentando eliminar UWFswap.sys si esta desbloqueado...
+call :TRY_DELETE_UWF_SWAP
+
+echo.
+echo [OK] Etapa 1 terminada.
+echo Reinicie ahora. Despues ejecute uwf-reset-stage2.bat.
+exit /b 0
+
+:UWF_RESET_STAGE2
+cls
+echo ================================================================
+echo        RESET UWF ETAPA 2 - REINSTALAR FEATURE
+echo ================================================================
+echo.
+echo Ejecute esto DESPUES de reiniciar tras la etapa 1.
+echo Despues de esta etapa DEBE reiniciar otra vez.
+echo Luego ejecute uwf-enable.bat.
+echo.
+choice /c SN /n /m "Continuar? [S/N]: "
+if errorlevel 2 exit /b 1
+
+bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
+
+echo.
+echo [1/3] Reinstalando Client-UnifiedWriteFilter...
+dism /online /enable-feature /featurename:Client-UnifiedWriteFilter /all /norestart
+if errorlevel 1 (
+    echo [!] DISM fallo al reinstalar UWF.
+    exit /b 1
+)
+
+echo.
+echo [2/3] Reparando LowerFilters...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$p='HKLM:\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}'; try { $v=(Get-ItemProperty -Path $p -Name LowerFilters -ErrorAction SilentlyContinue).LowerFilters; if($null -eq $v){$v=@()} elseif($v -is [string]){$v=@($v)}; if($v -notcontains 'uwfvol'){ $v=@($v)+@('uwfvol'); New-ItemProperty -Path $p -Name LowerFilters -PropertyType Mult
