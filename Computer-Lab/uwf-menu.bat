@@ -623,3 +623,17 @@ call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\Microsoft\Edge
 call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\BraveSoftware\Brave-Browser\User Data"
 call :CLEAN_CHROMIUM_USER_DATA "%USER_PROFILE_PATH%\AppData\Roaming\Opera Software\Opera Stable"
 
+call :CLEAN_FIREFOX_USER_DATA "%USER_PROFILE_PATH%\AppData\Roaming\Mozilla\Firefox\Profiles"
+call :CLEAN_FIREFOX_USER_DATA "%USER_PROFILE_PATH%\AppData\Local\Mozilla\Firefox\Profiles"
+
+call :DELETE_TREE_CONTENTS "%USER_PROFILE_PATH%\AppData\Local\Microsoft\Windows\INetCache"
+call :DELETE_TREE_CONTENTS "%USER_PROFILE_PATH%\AppData\Local\Microsoft\Windows\History"
+call :DELETE_TREE_CONTENTS "%USER_PROFILE_PATH%\AppData\Roaming\Microsoft\Windows\Cookies"
+call :DELETE_TREE_CONTENTS "%USER_PROFILE_PATH%\AppData\Local\Microsoft\Windows\WebCache"
+exit /b 0
+
+:CLEAN_CHROMIUM_USER_DATA
+set "CHROMIUM_ROOT=%~1"
+if not exist "%CHROMIUM_ROOT%" exit /b 0
+call :CLEAN_CHROMIUM_PROFILE "%CHROMIUM_ROOT%"
+for /d %%P in ("%CHROMIUM_ROOT%\*") do cal
