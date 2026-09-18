@@ -821,4 +821,13 @@ set "INBLOCK=0"
 )
 copy /y "%TMP_HOSTS%" "%HOSTS%" >nul
 del /q "%TMP_HOSTS%" >nul 2>&1
-exi
+exit /b 0
+
+:ADD_CLASS_HOSTS_BLOCKS
+set "HOSTS=%SystemRoot%\System32\drivers\etc\hosts"
+if not exist "%HOSTS%" exit /b 0
+attrib -r -s -h "%HOSTS%" >nul 2>&1
+
+set "CLASS_GAMES=friv.com voxiom.io shellshock.io poki.com roblox.com veck.io msn.com games.msn.com zone.msn.com disneyplus.com twitch.tv steamcommunity.com steampowered.com epicgames.com blizzboygames.net krunker.io paper-io.com slither.io agar.io hole-io.com crazygames.com minijuegos.com poki.es badtimesimulator.io jcw87.github.io doodles.google"
+set "CLASS_SOCIAL=facebook.com instagram.com tiktok.com youtube.com twitter.com x.com snapchat.com kwai.com"
+set "CLASS_ADULT=pornhub.com xnxx.com xvideos.com stripchat.com chaturbate.com xhamster.com youporn.com redtube.com spankbang.c
