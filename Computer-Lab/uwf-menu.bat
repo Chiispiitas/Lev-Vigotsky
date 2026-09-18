@@ -648,4 +648,23 @@ call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Code Cache"
 call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\GPUCache"
 call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Service Worker\CacheStorage"
 call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Session Storage"
-call :DELETE_T
+call :DELETE_TREE_CONTENTS "%CHROMIUM_PROFILE%\Local Storage"
+exit /b 0
+
+:CLEAN_FIREFOX_USER_DATA
+set "FIREFOX_ROOT=%~1"
+if not exist "%FIREFOX_ROOT%" exit /b 0
+for /d %%P in ("%FIREFOX_ROOT%\*") do (
+    del /f /q "%%~fP\cookies.sqlite" >nul 2>&1
+    del /f /q "%%~fP\cookies.sqlite-wal" >nul 2>&1
+    del /f /q "%%~fP\cookies.sqlite-shm" >nul 2>&1
+    del /f /q "%%~fP\places.sqlite" >nul 2>&1
+    del /f /q "%%~fP\places.sqlite-wal" >nul 2>&1
+    del /f /q "%%~fP\formhistory.sqlite" >nul 2>&1
+    call :DELETE_TREE_CONTENTS "%%~fP\cache2"
+    call :DELETE_TREE_CONTENTS "%%~fP\startupCache"
+)
+exit /b 0
+
+:EMPTY_RECYCLE_BIN
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Clear-RecycleBin -Force -ErrorAction SilentlyContinue } 
