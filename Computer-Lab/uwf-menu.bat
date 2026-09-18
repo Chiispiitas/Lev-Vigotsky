@@ -718,4 +718,6 @@ exit /b 0
 cls
 echo ================================================================
 echo                      QUITAR RESTRICCIONES
-echo ==============
+echo ================================================================
+echo.
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\System" /v "DisableTask
