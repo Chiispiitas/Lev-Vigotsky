@@ -312,4 +312,165 @@ if errorlevel 1 (
 )
 
 call :RUN_UWF overlay set-warningthreshold %WARN_MB%
-if errorlevel 1 
+if errorlevel 1 exit /b 1
+
+call :RUN_UWF overlay set-criticalthreshold %CRIT_MB%
+if errorlevel 1 exit /b 1
+
+call :RUN_UWF overlay set-passthrough on
+if errorlevel 1 echo [!] Aviso: set-passthrough no fue aceptado, se continua.
+
+echo.
+echo [OK] Overlay 64 GB solicitado correctamente.
+exit /b 0
+
+:DISABLE_UWF
+cls
+echo ================================================================
+echo                       DESACTIVAR UWF
+echo ================================================================
+echo.
+call :SET_TOOL_PATHS
+
+if not defined UWF_EXE (
+    echo [!] uwfmgr.exe no encontrado.
+    exit /b 1
+)
+
+echo [1/3] Desactivando filtro para el proximo reinicio...
+call :RUN_UWF filter disable
+
+echo.
+echo [2/3] Desprotegiendo C: para el proximo reinicio...
+call :RUN_UWF volume unprotect C:
+
+echo.
+echo [3/3] Restaurando recuperacion normal de Windows...
+bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
+
+echo.
+echo [OK] UWF quedara desactivado/desprotegido despues de reiniciar.
+echo [INFO] Despues del reinicio puede ejecutar uwf-purge-swap.bat.
+exit /b 0
+
+:PURGE_UWF_SWAP
+cls
+echo ================================================================
+echo                  PURGAR UWFswap.sys VIEJO
+echo ================================================================
+echo.
+echo Esto elimina %SystemDrive%\uwfswap.sys si esta desbloqueado.
+echo Use esto despues de uwf-disable.bat + reinicio.
+echo.
+call :GET_FILE_SIZE_MB "%SystemDrive%\uwfswap.sys"
+if not exist "%SystemDrive%\uwfswap.sys" (
+    echo [OK] No existe %SystemDrive%\uwfswap.sys
+    exit /b 0
+)
+echo [INFO] Tamano actual: %FILE_SIZE_MB% MB
+echo.
+choice /c SN /n /m "Eliminar %SystemDrive%\uwfswap.sys ? [S/N]: "
+if errorlevel 2 exit /b 1
+
+call :TRY_DELETE_UWF_SWAP
+if errorlevel 1 (
+    echo.
+    echo [!] No se pudo eliminar. Ejecute uwf-disable.bat, reinicie, y vuelva a intentar.
+    exit /b 1
+)
+
+echo.
+echo [OK] UWFswap.sys eliminado.
+exit /b 0
+
+:TRY_DELETE_UWF_SWAP
+set "SWAP_FILE=%SystemDrive%\uwfswap.sys"
+if not exist "%SWAP_FILE%" exit /b 0
+attrib -s -h -r "%SWAP_FILE%" >nul 2>&1
+takeown /f "%SWAP_FILE%" /a >nul 2>&1
+icacls "%SWAP_FILE%" /grant Administrators:F /c >nul 2>&1
+del /f /q "%SWAP_FILE%" >nul 2>&1
+if exist "%SWAP_FILE%" exit /b 1
+exit /b 0
+
+:UWF_STATUS
+cls
+echo ================================================================
+echo                     ESTADO DEL SISTEMA
+echo ================================================================
+echo.
+echo [1/6] UWF / Unified Write Filter
+echo ---------------------------------------------------------------
+call :SET_TOOL_PATHS
+if defined UWF_EXE (
+    echo uwfmgr usado: %UWF_EXE%
+    echo.
+    "%UWF_EXE%" get-config
+) else (
+    echo [!] uwfmgr.exe no encontrado. UWF puede no estar instalado.
+)
+echo.
+echo [2/6] UWFswap.sys
+echo ---------------------------------------------------------------
+call :GET_FILE_SIZE_MB "%SystemDrive%\uwfswap.sys"
+if exist "%SystemDrive%\uwfswap.sys" (
+    echo %SystemDrive%\uwfswap.sys = %FILE_SIZE_MB% MB
+) else (
+    echo No existe %SystemDrive%\uwfswap.sys
+)
+echo.
+echo [3/6] Servicios UWF
+echo ---------------------------------------------------------------
+for %%S in (uwfvol uwfs uwfreg) do (
+    echo.
+    echo %%S:
+    reg query "HKLM\SYSTEM\CurrentControlSet\Services\%%S" /v Start 2>nul
+    if errorlevel 1 echo     No encontrado
+)
+echo.
+echo [4/6] LowerFilters de volumen
+echo ---------------------------------------------------------------
+reg query "HKLM\SYSTEM\CurrentControlSet\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f}" /v LowerFilters 2>nul
+if errorlevel 1 echo     LowerFilters no encontrado o sin valor.
+echo.
+echo [5/6] Hosts / bloques Lev Vigotsky
+echo ---------------------------------------------------------------
+findstr /i /c:"LEV_VIGOTSKY" "%SystemRoot%\System32\drivers\etc\hosts" 2>nul
+if errorlevel 1 echo     No se encontraron bloques Lev Vigotsky en hosts.
+echo.
+echo [6/6] Chrome/Edge URLBlocklist Lev Vigotsky
+echo ---------------------------------------------------------------
+reg query "HKLM\SOFTWARE\Policies\Google\Chrome\URLBlocklist" 2>nul
+if errorlevel 1 echo     Chrome URLBlocklist no encontrada.
+echo.
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Edge\URLBlocklist" 2>nul
+if errorlevel 1 echo     Edge URLBlocklist no encontrada.
+exit /b 0
+
+:SYSTEM_STATUS
+call :UWF_STATUS
+exit /b %ERRORLEVEL%
+
+:STATUS
+call :UWF_STATUS
+exit /b %ERRORLEVEL%
+
+:UWF_REPAIR_QUICK
+cls
+echo ================================================================
+echo                  REPARAR UWF RAPIDO
+echo ================================================================
+echo.
+echo No activa UWF. Despues de esto reinicie antes de activar UWF.
+echo.
+echo [1/6] Restaurando recuperacion normal de Windows...
+bcdedit /deletevalue {current} bootstatuspolicy >nul 2>&1
+
+echo [2/6] Intentando desactivar estado pendiente de UWF...
+call :SET_TOOL_PATHS
+if defined UWF_EXE "%UWF_EXE%" filter disable >nul 2>&1
+
+echo [3/6] Reparando servicios UWF en control sets...
+for %%C in (CurrentControlSet ControlSet001 ControlSet002 ControlSet003 ControlSet004) do (
+    reg query "HKLM\SYSTEM\%%C" >nul 2>&1
+    if no
