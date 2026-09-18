@@ -667,4 +667,27 @@ for /d %%P in ("%FIREFOX_ROOT%\*") do (
 exit /b 0
 
 :EMPTY_RECYCLE_BIN
-powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Clear-RecycleBin -Force -ErrorAction SilentlyContinue } 
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Clear-RecycleBin -Force -ErrorAction SilentlyContinue } catch { }" >nul 2>&1
+rd /s /q "%SystemDrive%\$Recycle.Bin" >nul 2>&1
+exit /b 0
+
+rem ============================================================================
+rem RESTRICTIONS
+rem ============================================================================
+
+:CLASS_MODE
+cls
+echo ================================================================
+echo                         MODO CLASE
+echo ================================================================
+echo.
+call :APPLY_CLASS_RESTRICTIONS
+echo.
+echo [OK] Modo clase aplicado.
+exit /b 0
+
+:CLASS_AI_MODE
+cls
+echo ================================================================
+echo                       MODO CLASE + AI
+echo =================================================
