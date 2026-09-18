@@ -800,4 +800,25 @@ attrib -r -s -h "%HOSTS%" >nul 2>&1
 set "TMP_HOSTS=%TEMP%\hosts_vigotsky_%RANDOM%.tmp"
 set "INBLOCK=0"
 > "%TMP_HOSTS%" (
-    for /f "usebackq delims=" %%L i
+    for /f "usebackq delims=" %%L in ("%HOSTS%") do (
+        set "LINE=%%L"
+        if "!LINE!"=="# BEGIN LEV_VIGOTSKY_GUARD" (
+            set "INBLOCK=1"
+        ) else if "!LINE!"=="# END LEV_VIGOTSKY_GUARD" (
+            set "INBLOCK=0"
+        ) else if "!LINE!"=="# BEGIN LEV_VIGOTSKY_CLASS_AI_EXTRA" (
+            set "INBLOCK=1"
+        ) else if "!LINE!"=="# END LEV_VIGOTSKY_CLASS_AI_EXTRA" (
+            set "INBLOCK=0"
+        ) else if "!LINE!"=="# BEGIN LEV_VIGOTSKY_EXAM_EXTRA" (
+            set "INBLOCK=1"
+        ) else if "!LINE!"=="# END LEV_VIGOTSKY_EXAM_EXTRA" (
+            set "INBLOCK=0"
+        ) else (
+            if "!INBLOCK!"=="0" echo(!LINE!
+        )
+    )
+)
+copy /y "%TMP_HOSTS%" "%HOSTS%" >nul
+del /q "%TMP_HOSTS%" >nul 2>&1
+exi
