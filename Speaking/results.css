@@ -230,3 +230,11 @@ td.score{font-weight:1000}
 .entries-panel {
   margin-top: 14px;
 }
+
+.assignment-export { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: .82rem; }
+.assignment-export[hidden] { display: none; }
+.assignment-export select { min-height: 44px; max-width: 240px; padding: 8px; border: 2px solid var(--line); border-radius: 12px; font: inherit; background: #fff; color: var(--ink); }
+.toolbar { flex-wrap: wrap; align-items: center; }
+#entryTableHead th { min-width: 110px; overflow-wrap: anywhere; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+@media(max-width:720px) { .assignment-export { grid-column: 1 / -1; } }

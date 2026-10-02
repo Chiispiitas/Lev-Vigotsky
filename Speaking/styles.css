@@ -1370,3 +1370,65 @@ button {
 .session-gateway[hidden] {
   display: none !important;
 }
+
+/* Assignment columns: keep the roster visible while scrolling across grades. */
+.regular-roster {
+  display: block;
+  overflow-x: auto;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+}
+.regular-assignment-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  background: #fff;
+}
+.regular-assignment-table th,
+.regular-assignment-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  text-align: left;
+}
+.regular-assignment-table thead th { background: #eaf4ff; }
+.regular-assignment-table tbody tr:last-child > * { border-bottom: 0; }
+.regular-assignment-table .regular-student-column {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 230px;
+  width: 35%;
+  background: #fff;
+}
+.regular-assignment-table thead .regular-student-column { background: #eaf4ff; }
+.regular-assignment-title {
+  width: 100%;
+  min-width: 210px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 850;
+  color: var(--ink);
+  background: #fff;
+}
+.regular-assignment-title:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+.regular-add-assignment {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 1.6rem;
+  color: #fff;
+  background: var(--blue);
+}
+.regular-assignment-table button:disabled,
+.regular-assignment-table input:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 600px) {
+  .regular-assignment-table .regular-student-column { min-width: 145px; max-width: 145px; }
+  .regular-assignment-table .regular-student-identity { grid-template-columns: 25px minmax(0, 1fr); gap: 5px; }
+  .regular-assignment-table .regular-student-number { width: 25px; height: 28px; }
+  .regular-assignment-table .regular-student-identity strong { font-size: .7rem; }
+}

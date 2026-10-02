@@ -5,14 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1375ff" />
   <title>Grading Session Results</title>
-  <link rel="stylesheet" href="results.css?v=20260916-participation1" />
-  <style>
-    #entriesPanel .entry-row > td:nth-child(1),
-    #entriesPanel .entry-row > td:nth-child(4),
-    #entriesPanel .entry-row > td:nth-child(5) {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="results.css?v=20261002-assignments1" />
 </head>
 <body>
   <div class="page-shell">
@@ -52,6 +45,9 @@
 
     <section class="toolbar">
       <button id="refreshButton" type="button">Refresh</button>
+      <label class="assignment-export" id="assignmentExport" hidden>Assignment
+        <select id="copyAssignmentSelect" aria-label="Assignment to copy"></select>
+      </label>
       <button id="copyGradesButton" type="button" disabled>Copy grades</button>
       <button id="deleteSessionButton" class="danger-button" type="button" disabled>Delete session</button>
     </section>
@@ -66,7 +62,7 @@
       </div>
       <div class="table-wrap">
         <table>
-          <thead>
+          <thead id="entryTableHead">
             <tr>
               <th>Student</th>
               <th>Score</th>
@@ -84,6 +80,7 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="class-data.js"></script>
-  <script src="results.js?v=20260916-participation1"></script>
+  <script src="regular-grades.js?v=20261002-assignments1"></script>
+  <script src="results.js?v=20261002-assignments1"></script>
 </body>
 </html>

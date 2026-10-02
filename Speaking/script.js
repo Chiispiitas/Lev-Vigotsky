@@ -99,7 +99,11 @@ const PARTICIPATION_CONFIG_STUDENT = 9999;
 
 let currentAppMode = null;
 let regularGrades = new Map();
+let regularAssignments = [{ id: LVRegularGrading.DEFAULT_ID, title: "Regular grade" }];
 const regularPublishTimers = new Map();
+const regularPendingSnapshots = new Map();
+let regularPublishInFlight = null;
+let regularSaveFailed = false;
 let participationTallies = new Map();
 let participationThreshold = 5;
 let participationTouched = new Set();
@@ -143,7 +147,9 @@ function init() {
 
 function bindEvents() {
   $("#backToClasses").addEventListener("click", showClassScreen);
-  $("#backRegularToSession")?.addEventListener("click", showClassScreen);
+  $("#backRegularToSession")?.addEventListener("click", async () => {
+    if (await flushRegularPublishes()) showClassScreen();
+  });
   $("#backParticipationToSession")?.addEventListener("click", showClassScreen);
   $("#markExcellent").addEventListener("click", markAllExcellent);
   $("#refreshPreview").addEventListener("click", () => { updatePreview(); showToast("Preview refreshed"); });
@@ -1276,7 +1282,7 @@ async function restoreAppRoute() {
     }
 
     if (route.mode === "regular") {
-      await loadRegularGradesFromSession(session);
+      if (await loadRegularGradesFromSession(session) === false) return;
       openRegularGrading(session, { updateRoute: false });
       writeAppRoute({
         mode: "regular",
@@ -1544,7 +1550,7 @@ async function createSpeakingSession() {
     showToast(`Session ${data.session.sessionId} created`);
 
     if (currentAppMode === "regular") {
-      await loadRegularGradesFromSession(data.session);
+      if (await loadRegularGradesFromSession(data.session) === false) return;
       openRegularGrading(data.session);
     } else {
       await hydrateDraftsFromSession(data.session);
@@ -1651,7 +1657,7 @@ async function joinSpeakingSession() {
     showToast(`Joined ${session.sessionId}`);
 
     if (currentAppMode === "regular") {
-      await loadRegularGradesFromSession(session);
+      if (await loadRegularGradesFromSession(session) === false) return;
       openRegularGrading(session);
     } else {
       await hydrateDraftsFromSession(session);
@@ -1719,8 +1725,9 @@ async function hydrateDraftsFromSession(session) {
   }
 }
 
-function leaveSpeakingSession() {
+async function leaveSpeakingSession() {
   if (!activeSpeakingSession) return;
+  if (currentAppMode === "regular" && !await flushRegularPublishes()) return;
   const oldId = activeSpeakingSession.sessionId;
 
   autoPublishTimers.forEach(timer => clearTimeout(timer));
@@ -1829,94 +1836,85 @@ function regularDraftKey(sessionId, classId, studentNumber) {
 }
 
 function blankRegularGrade() {
-  return { kind: "blank", value: null };
+  return LVRegularGrading.blank();
 }
 
 function normalizeRegularGrade(raw) {
-  if (!raw || raw.kind === "blank" || raw.value === null || raw.value === "") {
-    return blankRegularGrade();
-  }
-
-  if (raw.kind === "check") return { kind: "check", value: 10 };
-  if (raw.kind === "x") return { kind: "x", value: 0 };
-
-  const value = Number(raw.value);
-  if (!Number.isFinite(value) || value < 0 || value > 10) return blankRegularGrade();
-  return { kind: "number", value: Math.round(value * 100) / 100 };
+  return LVRegularGrading.normalize(raw);
 }
+
+function regularAssignmentsKey(sessionId) {
+  return `lv-regular-assignments-${sessionId}`;
+}
+
+function saveRegularAssignmentsLocal() {
+  if (!activeSpeakingSession?.sessionId) return;
+  localStorage.setItem(regularAssignmentsKey(activeSpeakingSession.sessionId), JSON.stringify(regularAssignments));
+}
+
+function getRegularGrade(studentNumber, assignmentId) {
+  return normalizeRegularGrade(regularGrades.get(Number(studentNumber))?.[assignmentId]);
+}
+
+function setRegularGrade(studentNumber, assignmentId, grade) {
+  const grades = regularGrades.get(Number(studentNumber)) || {};
+  grades[assignmentId] = normalizeRegularGrade(grade);
+  regularGrades.set(Number(studentNumber), grades);
+}
+
 function saveRegularGradeLocal(studentNumber) {
   const session = activeSpeakingSession;
   if (!session?.sessionId || !session?.classId) return;
-  const grade = regularGrades.get(Number(studentNumber)) || blankRegularGrade();
   localStorage.setItem(
     regularDraftKey(session.sessionId, session.classId, studentNumber),
-    JSON.stringify({ ...grade, updatedAt: new Date().toISOString() })
+    JSON.stringify({ grades: regularGrades.get(Number(studentNumber)) || {}, updatedAt: new Date().toISOString() })
   );
 }
 
 function readRegularGradeLocal(session, studentNumber) {
   try {
-    const raw = JSON.parse(
-      localStorage.getItem(regularDraftKey(session.sessionId, session.classId, studentNumber)) || "null"
-    );
-    return normalizeRegularGrade(raw);
-  } catch {
-    return blankRegularGrade();
-  }
+    const raw = JSON.parse(localStorage.getItem(regularDraftKey(session.sessionId, session.classId, studentNumber)) || "null");
+    // Migrate the original single-grade draft in place.
+    if (raw?.grades) return Object.fromEntries(Object.entries(raw.grades).map(([id, grade]) => [id, normalizeRegularGrade(grade)]));
+    return { [LVRegularGrading.DEFAULT_ID]: normalizeRegularGrade(raw) };
+  } catch { return {}; }
 }
 
 async function loadRegularGradesFromSession(session) {
+  restoreRegularPendingSnapshots(session.sessionId);
+  const pendingChangesSaved = await flushRegularPublishes();
   regularGrades = new Map();
   const klass = CLASS_DATA.find(item => item.id === session?.classId);
   if (!session?.sessionId || !klass) return;
 
-  const localByStudent = new Map(
-    klass.students.map(student => [student.n, readRegularGradeLocal(session, student.n)])
-  );
+  let localAssignments = [];
+  try {
+    localAssignments = LVRegularGrading.cleanAssignments(JSON.parse(localStorage.getItem(regularAssignmentsKey(session.sessionId)) || "[]"));
+  } catch {}
+  regularAssignments = localAssignments.length ? localAssignments : LVRegularGrading.assignments([]);
+  const localByStudent = new Map(klass.students.map(student => [student.n, readRegularGradeLocal(session, student.n)]));
+  if (!pendingChangesSaved) {
+    // Keep unsaved local edits visible when the server still cannot accept them.
+    regularGrades = localByStudent;
+    return;
+  }
 
   try {
     const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
     url.searchParams.set("sessionId", session.sessionId);
     const data = await speakingApiJson(url.toString());
     const items = Array.isArray(data.items) ? data.items : [];
-    const serverByStudent = new Map(items.map(item => [Number(item.studentNumber), item]));
-
+    if (items.length) regularAssignments = LVRegularGrading.assignments(items);
+    const serverByStudent = new Map(items.filter(item => !LVRegularGrading.isConfig(item)).map(item => [Number(item.studentNumber), item]));
     klass.students.forEach(student => {
       const item = serverByStudent.get(student.n);
-      if (!item) {
-        regularGrades.set(student.n, localByStudent.get(student.n) || blankRegularGrade());
-        return;
-      }
-
-      if (Number(item.markedCriteria || 0) <= 0) {
-        regularGrades.set(student.n, blankRegularGrade());
-        return;
-      }
-
-      let rows = [];
-      try {
-        rows = Array.isArray(item.rows) ? item.rows : JSON.parse(item.criteriaJson || "[]");
-      } catch {
-        rows = [];
-      }
-      const level = String(rows[0]?.level || "");
-
-      if (level.startsWith("✓") || (session.activity === REGULAR_CHECKLIST_ACTIVITY && Number(item.scoreTotal) === 10)) {
-        regularGrades.set(student.n, { kind: "check", value: 10 });
-      } else if (level === "X" || (session.activity === REGULAR_CHECKLIST_ACTIVITY && Number(item.scoreTotal) === 0)) {
-        regularGrades.set(student.n, { kind: "x", value: 0 });
-      } else {
-        regularGrades.set(student.n, {
-          kind: "number",
-          value: Math.round(Number(item.scoreTotal || 0) * 100) / 100
-        });
-      }
+      regularGrades.set(student.n, item ? LVRegularGrading.grades(item, session.activity) : localByStudent.get(student.n) || {});
+      saveRegularGradeLocal(student.n);
     });
+    saveRegularAssignmentsLocal();
   } catch (error) {
     console.warn("Could not load regular grades from Wix; using local drafts.", error);
-    klass.students.forEach(student => {
-      regularGrades.set(student.n, localByStudent.get(student.n) || blankRegularGrade());
-    });
+    regularGrades = localByStudent;
   }
 }
 
@@ -1946,7 +1944,7 @@ function openRegularGrading(session = activeSpeakingSession, { updateRoute = tru
   if ($("#regularRosterEyebrow")) $("#regularRosterEyebrow").textContent = "Regular grading";
   if ($("#regularInstructions")) {
     $("#regularInstructions").textContent =
-      "✓ gives 10, X gives 0, or type any score from 0 to 10. Clear the number field and leave both buttons unselected for a blank grade.";
+      "Use + to add an assignment and name its column. Each assignment accepts ✓ for 10, × for 0, or a number from 0 to 10. Leave the controls empty for a blank grade.";
   }
 
   refreshSharedSessionUI();
@@ -1961,211 +1959,248 @@ function openRegularGrading(session = activeSpeakingSession, { updateRoute = tru
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function regularGradeDisplay(grade) {
-  if (!grade || grade.kind === "blank") return "—";
-  if (grade.kind === "check") return "10";
-  if (grade.kind === "x") return "0";
-  return formatScore(grade.value);
-}
-
 function renderRegularRoster() {
   const host = $("#regularRoster");
   const session = activeSpeakingSession;
   const klass = CLASS_DATA.find(item => item.id === session?.classId);
   if (!host || !session || !klass) return;
-
   const closed = String(session.status || "").toLowerCase() === "closed";
 
-  host.innerHTML = klass.students.map(student => {
-    const grade = regularGrades.get(student.n) || blankRegularGrade();
-    const inputValue = grade.kind === "blank" ? "" : grade.value;
+  host.innerHTML = `
+    <table class="regular-assignment-table">
+      <thead><tr>
+        <th scope="col" class="regular-student-column">Student</th>
+        ${regularAssignments.map((assignment, index) => `<th scope="col">
+          <input class="regular-assignment-title" type="text" maxlength="120"
+            data-assignment="${escapeAttribute(assignment.id)}" value="${escapeAttribute(assignment.title)}"
+            aria-label="Assignment ${index + 1} title" placeholder="Assignment ${index + 1}" ${closed ? "disabled" : ""} />
+        </th>`).join("")}
+        <th scope="col" class="regular-add-column"><button id="addRegularAssignment" class="regular-add-assignment" type="button"
+          aria-label="Add assignment" title="Add assignment" ${closed ? "disabled" : ""}>+</button></th>
+      </tr></thead>
+      <tbody>${klass.students.map(student => `<tr data-student-row="${student.n}">
+        <th scope="row" class="regular-student-column"><div class="regular-student-identity">
+          <span class="regular-student-number">${student.n}</span><strong>${escapeHtml(student.name)}</strong>
+        </div></th>
+        ${regularAssignments.map((assignment, index) => {
+          const grade = getRegularGrade(student.n, assignment.id);
+          return `<td class="regular-assignment-cell" data-assignment="${escapeAttribute(assignment.id)}">
+            <div class="regular-grade-control combined">
+              <div class="regular-check-controls">
+                <button class="regular-mark-button check ${grade.kind === "check" ? "selected" : ""}" type="button"
+                  data-student="${student.n}" data-assignment="${escapeAttribute(assignment.id)}" data-mark="check"
+                  aria-label="Give ${escapeAttribute(student.name)} 10 for ${escapeAttribute(LVRegularGrading.title(assignment, index))}"
+                  aria-pressed="${grade.kind === "check"}" ${closed ? "disabled" : ""}>✓</button>
+                <button class="regular-mark-button x ${grade.kind === "x" ? "selected" : ""}" type="button"
+                  data-student="${student.n}" data-assignment="${escapeAttribute(assignment.id)}" data-mark="x"
+                  aria-label="Give ${escapeAttribute(student.name)} 0 for ${escapeAttribute(LVRegularGrading.title(assignment, index))}"
+                  aria-pressed="${grade.kind === "x"}" ${closed ? "disabled" : ""}>×</button>
+              </div>
+              <input class="regular-number-input" type="number" min="0" max="10" step="0.01" inputmode="decimal"
+                data-student="${student.n}" data-assignment="${escapeAttribute(assignment.id)}" placeholder="—"
+                aria-label="Grade for ${escapeAttribute(student.name)}, ${escapeAttribute(LVRegularGrading.title(assignment, index))}"
+                value="${grade.kind === "blank" ? "" : grade.value}" ${closed ? "disabled" : ""} />
+            </div>
+          </td>`;
+        }).join("")}
+        <td></td>
+      </tr>`).join("")}</tbody>
+    </table>`;
 
-    return `
-      <article class="regular-student-row" data-student-row="${student.n}">
-        <div class="regular-student-identity">
-          <span class="regular-student-number">${student.n}</span>
-          <strong>${escapeHtml(student.name)}</strong>
-        </div>
-        <div class="regular-grade-control combined">
-          <div class="regular-check-controls">
-            <button class="regular-mark-button check ${grade.kind === "check" ? "selected" : ""}"
-                    type="button" data-student="${student.n}" data-mark="check" ${closed ? "disabled" : ""}>✓</button>
-            <button class="regular-mark-button x ${grade.kind === "x" ? "selected" : ""}"
-                    type="button" data-student="${student.n}" data-mark="x" ${closed ? "disabled" : ""}>×</button>
-          </div>
-          <input class="regular-number-input"
-                 type="number"
-                 min="0"
-                 max="10"
-                 step="0.01"
-                 inputmode="decimal"
-                 data-student="${student.n}"
-                 placeholder="—"
-                 value="${escapeAttribute(inputValue)}"
-                 ${closed ? "disabled" : ""} />
-        </div>
-        <div class="regular-grade-value" id="regular-grade-value-${student.n}">${escapeHtml(regularGradeDisplay(grade))}</div>
-      </article>
-    `;
-  }).join("");
-
+  $("#addRegularAssignment")?.addEventListener("click", addRegularAssignment);
+  host.querySelectorAll(".regular-assignment-title").forEach(input => {
+    input.addEventListener("input", () => {
+      const assignment = regularAssignments.find(item => item.id === input.dataset.assignment);
+      if (!assignment || closed) return;
+      assignment.title = input.value;
+      saveRegularAssignmentsLocal();
+      queueRegularSnapshot(buildRegularConfigSnapshot());
+    });
+  });
   host.querySelectorAll(".regular-mark-button").forEach(button => {
     button.addEventListener("click", () => {
       const studentNumber = Number(button.dataset.student);
+      const assignmentId = button.dataset.assignment;
+      const current = getRegularGrade(studentNumber, assignmentId);
       const mark = button.dataset.mark;
-      const current = regularGrades.get(studentNumber) || blankRegularGrade();
-      const next = current.kind === mark
-        ? blankRegularGrade()
-        : mark === "check"
-          ? { kind: "check", value: 10 }
-          : { kind: "x", value: 0 };
-
-      regularGrades.set(studentNumber, next);
+      setRegularGrade(studentNumber, assignmentId, current.kind === mark ? blankRegularGrade()
+        : { kind: mark, value: mark === "check" ? 10 : 0 });
+      updateRegularCell(button.closest(".regular-assignment-cell"), getRegularGrade(studentNumber, assignmentId), true);
       saveRegularGradeLocal(studentNumber);
-      renderRegularRoster();
       queueRegularPublish(studentNumber);
     });
   });
-
   host.querySelectorAll(".regular-number-input").forEach(input => {
     input.addEventListener("input", () => {
       const studentNumber = Number(input.dataset.student);
+      const assignmentId = input.dataset.assignment;
       const raw = input.value.trim();
       input.classList.remove("invalid");
-
-      if (raw === "") {
-        regularGrades.set(studentNumber, blankRegularGrade());
-      } else {
-        const value = Number(raw);
-        if (!Number.isFinite(value) || value < 0 || value > 10) {
-          input.classList.add("invalid");
-          $("#regularSyncStatus").textContent = "Grades must be between 0 and 10.";
-          return;
-        }
-        regularGrades.set(studentNumber, {
-          kind: "number",
-          value: Math.round(value * 100) / 100
-        });
+      if (input.validity.badInput || (raw !== "" && (!Number.isFinite(Number(raw)) || Number(raw) < 0 || Number(raw) > 10))) {
+        input.classList.add("invalid");
+        $("#regularSyncStatus").textContent = "Grades must be between 0 and 10.";
+        return;
       }
-
-      const row = input.closest(".regular-student-row");
-      row?.querySelector(".regular-mark-button.check")?.classList.remove("selected");
-      row?.querySelector(".regular-mark-button.x")?.classList.remove("selected");
-
-      const display = document.getElementById(`regular-grade-value-${studentNumber}`);
-      if (display) display.textContent = regularGradeDisplay(regularGrades.get(studentNumber));
+      setRegularGrade(studentNumber, assignmentId, raw === "" ? blankRegularGrade() : { kind: "number", value: Number(raw) });
+      updateRegularCell(input.closest(".regular-assignment-cell"), getRegularGrade(studentNumber, assignmentId));
       saveRegularGradeLocal(studentNumber);
       queueRegularPublish(studentNumber);
     });
   });
+  if (closed && $("#regularSyncStatus")) $("#regularSyncStatus").textContent = "This session is closed. Grades are read-only.";
+}
 
-  if (closed && $("#regularSyncStatus")) {
-    $("#regularSyncStatus").textContent = "This session is closed. Grades are read-only.";
+function updateRegularCell(cell, grade, updateInput = false) {
+  cell?.querySelectorAll(".regular-mark-button").forEach(button => {
+    const selected = button.dataset.mark === grade.kind;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
+  if (updateInput) {
+    const input = cell?.querySelector(".regular-number-input");
+    if (input) {
+      input.value = grade.kind === "blank" ? "" : grade.value;
+      input.classList.remove("invalid");
+    }
   }
 }
 
-function buildRegularSnapshot(studentNumber) {
+function addRegularAssignment() {
+  if (!activeSpeakingSession || String(activeSpeakingSession.status || "").toLowerCase() === "closed") return;
+  const id = `assignment-${crypto.randomUUID()}`;
+  regularAssignments.push({ id, title: "" });
+  saveRegularAssignmentsLocal();
+  queueRegularSnapshot(buildRegularConfigSnapshot());
+  renderRegularRoster();
+  const input = [...$("#regularRoster").querySelectorAll(".regular-assignment-title")].find(item => item.dataset.assignment === id);
+  input?.focus();
+}
+
+function buildRegularSnapshot(studentNumber, { config = false } = {}) {
   const session = activeSpeakingSession;
   const klass = CLASS_DATA.find(item => item.id === session?.classId);
-  const student = klass?.students.find(item => item.n === Number(studentNumber));
+  const student = config ? { n: LVRegularGrading.CONFIG_STUDENT, name: LVRegularGrading.CONFIG_NAME }
+    : klass?.students.find(item => item.n === Number(studentNumber));
   if (!session || sessionAppMode(session) !== "regular" || !klass || !student) return null;
   if (String(session.status || "").toLowerCase() === "closed") return null;
-
-  const grade = normalizeRegularGrade(regularGrades.get(student.n));
-  const blank = grade.kind === "blank";
-  const score = blank ? 0 : Number(grade.value);
-
-  const level = blank
-    ? "Not marked"
-    : grade.kind === "check"
-      ? "✓ Checked"
-      : grade.kind === "x"
-        ? "X"
-        : "Numerical grade";
-
-  const observation = blank
-    ? ""
-    : grade.kind === "check"
-      ? "Set to 10 with the check button."
-      : grade.kind === "x"
-        ? "Set to 0 with the X button."
-        : "Entered manually in the numerical field.";
-
+  const grades = regularGrades.get(student.n) || {};
+  const summary = config ? { total: 0, markedCriteria: 0 } : LVRegularGrading.summary(grades, regularAssignments);
   return {
     sessionId: session.sessionId,
     recordKey: `${session.sessionId}|${student.n}`,
     deviceId: getSpeakingDeviceId(),
     contributorName: "David Santana",
     record: {
-      classId: klass.id,
-      classLabel: klass.label,
-      course: klass.course,
-      section: klass.section,
-      specialty: klass.specialty,
-      tutor: klass.tutor,
-      studentNumber: student.n,
-      studentName: student.name,
+      classId: klass.id, classLabel: klass.label, course: klass.course,
+      section: klass.section, specialty: klass.specialty, tutor: klass.tutor,
+      studentNumber: student.n, studentName: student.name,
       activity: session.title || session.activity,
-      total: score,
-      markedCriteria: blank ? 0 : 1,
-      rows: [{
-        criterion: "Regular grade",
-        max: 10,
-        level,
-        points: blank ? null : score,
-        observation
-      }],
-      comment: "",
-      source: "Lev Vigotsky Regular Grading",
-      createdAt: new Date().toISOString(),
-      submittedAt: new Date().toISOString()
+      ...summary,
+      rows: regularAssignments.map((assignment, index) => config
+        ? { criterion: LVRegularGrading.title(assignment, index), max: 10, level: "Configuration", points: null, observation: `Assignment ID: ${assignment.id}` }
+        : LVRegularGrading.toRow(assignment, grades[assignment.id], index)),
+      comment: "", source: "Lev Vigotsky Regular Grading",
+      createdAt: new Date().toISOString(), submittedAt: new Date().toISOString()
     }
   };
 }
 
-function queueRegularPublish(studentNumber) {
-  const snapshot = buildRegularSnapshot(studentNumber);
-  if (!snapshot) return;
+function buildRegularConfigSnapshot() {
+  return buildRegularSnapshot(LVRegularGrading.CONFIG_STUDENT, { config: true });
+}
 
+function queueRegularPublish(studentNumber) {
+  queueRegularSnapshot(buildRegularSnapshot(studentNumber));
+}
+
+function regularOutboxKey(sessionId) {
+  return `lv-regular-pending-${sessionId}`;
+}
+
+function readRegularOutbox(sessionId) {
+  try { return JSON.parse(localStorage.getItem(regularOutboxKey(sessionId)) || "{}"); }
+  catch { return {}; }
+}
+
+function restoreRegularPendingSnapshots(sessionId) {
+  const outbox = readRegularOutbox(sessionId);
+  Object.values(outbox).forEach(snapshot => {
+    if (snapshot?.sessionId === sessionId && snapshot.recordKey && snapshot.record && !regularPendingSnapshots.has(snapshot.recordKey)) {
+      regularPendingSnapshots.set(snapshot.recordKey, snapshot);
+    }
+  });
+}
+
+function saveRegularPendingSnapshot(snapshot) {
+  const outbox = readRegularOutbox(snapshot.sessionId);
+  outbox[snapshot.recordKey] = snapshot;
+  localStorage.setItem(regularOutboxKey(snapshot.sessionId), JSON.stringify(outbox));
+}
+
+function removeRegularPendingSnapshot(snapshot) {
+  const outbox = readRegularOutbox(snapshot.sessionId);
+  if (JSON.stringify(outbox[snapshot.recordKey]) !== JSON.stringify(snapshot)) return;
+  delete outbox[snapshot.recordKey];
+  if (Object.keys(outbox).length) localStorage.setItem(regularOutboxKey(snapshot.sessionId), JSON.stringify(outbox));
+  else localStorage.removeItem(regularOutboxKey(snapshot.sessionId));
+}
+
+function queueRegularSnapshot(snapshot) {
+  if (!snapshot) return;
   const key = snapshot.recordKey;
   const existing = regularPublishTimers.get(key);
   if (existing) clearTimeout(existing);
-
+  regularPendingSnapshots.set(key, snapshot);
+  saveRegularPendingSnapshot(snapshot);
   regularPublishTimers.set(key, setTimeout(() => {
     regularPublishTimers.delete(key);
-    publishRegularSnapshot(snapshot);
+    flushRegularPublishes();
   }, 350));
+  setRegularSyncStatus("Saving changes…");
+}
 
-  if ($("#regularSyncStatus")) {
-    $("#regularSyncStatus").textContent = "Saving changes…";
-    $("#regularSyncStatus").classList.remove("error");
-  }
+function setRegularSyncStatus(message, error = false) {
+  const status = $("#regularSyncStatus");
+  if (!status) return;
+  status.textContent = message;
+  status.classList.toggle("error", error);
+}
+
+async function flushRegularPublishes() {
+  regularPublishTimers.forEach(timer => clearTimeout(timer));
+  regularPublishTimers.clear();
+  if (regularPublishInFlight) return regularPublishInFlight;
+  if (!regularPendingSnapshots.size) return !regularSaveFailed;
+  // Serialize writes, retaining only the newest queued snapshot for each student.
+  // This prevents a slower earlier request from overwriting a newer grade.
+  regularPublishInFlight = (async () => {
+    regularSaveFailed = false;
+    while (regularPendingSnapshots.size) {
+      const [key, snapshot] = regularPendingSnapshots.entries().next().value;
+      regularPendingSnapshots.delete(key);
+      try {
+        await publishRegularSnapshot(snapshot);
+        removeRegularPendingSnapshot(snapshot);
+      } catch (error) {
+        if (!regularPendingSnapshots.has(key)) regularPendingSnapshots.set(key, snapshot);
+        regularSaveFailed = true;
+        setRegularSyncStatus(`Auto-save failed: ${error.message}. Changes are kept on this device. Edit again or open Results to retry.`, true);
+        return false;
+      }
+    }
+    setRegularSyncStatus("All changes saved to Results.");
+    return true;
+  })();
+  try { return await regularPublishInFlight; }
+  finally { regularPublishInFlight = null; }
 }
 
 async function publishRegularSnapshot(snapshot) {
-  try {
-    await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=UTF-8" },
-      body: JSON.stringify({
-        sessionId: snapshot.sessionId,
-        deviceId: snapshot.deviceId,
-        contributorName: snapshot.contributorName,
-        record: snapshot.record
-      })
-    });
-
-    if (activeSpeakingSession?.sessionId === snapshot.sessionId && $("#regularSyncStatus")) {
-      $("#regularSyncStatus").textContent = "All changes saved to Results.";
-      $("#regularSyncStatus").classList.remove("error");
-    }
-  } catch (error) {
-    console.error(error);
-    if (activeSpeakingSession?.sessionId === snapshot.sessionId && $("#regularSyncStatus")) {
-      $("#regularSyncStatus").textContent = `Auto-save failed: ${error.message}`;
-      $("#regularSyncStatus").classList.add("error");
-    }
-  }
+  await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
+    method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" },
+    body: JSON.stringify({ sessionId: snapshot.sessionId, deviceId: snapshot.deviceId,
+      contributorName: snapshot.contributorName, record: snapshot.record })
+  });
 }
 
 function participationConfigKey(sessionId) {
@@ -2641,7 +2676,7 @@ async function continueActiveSession() {
     await loadParticipationData(session);
     openParticipationGrading(session);
   } else if (currentAppMode === "regular") {
-    await loadRegularGradesFromSession(session);
+    if (await loadRegularGradesFromSession(session) === false) return;
     openRegularGrading(session);
   } else {
     await hydrateDraftsFromSession(session);
@@ -2715,7 +2750,8 @@ function openSelectedSessionResults() {
   window.location.href = sessionResultsUrl(sessionId);
 }
 
-function openSpeakingResults() {
+async function openSpeakingResults() {
+  if (currentAppMode === "regular" && !await flushRegularPublishes()) return;
   window.location.href = sessionResultsUrl(activeSpeakingSession?.sessionId || "");
 }
 

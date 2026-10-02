@@ -29,11 +29,15 @@ const els = {
   detailColumnHeader: $("#detailColumnHeader"),
   entrySearch: $("#entrySearch"),
   entryTableBody: $("#entryTableBody"),
+  entryTableHead: $("#entryTableHead"),
+  assignmentExport: $("#assignmentExport"),
+  copyAssignmentSelect: $("#copyAssignmentSelect"),
   toast: $("#toast")
 };
 
 let activeSession = null;
 let entries = [];
+let regularAssignments = [];
 let participationThreshold = 5;
 
 function normalizeSessionId(value) {
@@ -272,9 +276,10 @@ function participationStats() {
 }
 
 function renderEntryDetails(item) {
-  const rows = parseCriteriaRows(item);
-  const markedRows = rows.filter(row => row && row.level !== "Not marked");
-
+  const regular = sessionMode() === "regular";
+  const grades = regular ? LVRegularGrading.grades(item, activeSession?.activity) : {};
+  const rows = regular ? regularAssignments.map((assignment, index) => LVRegularGrading.toRow(assignment, grades[assignment.id], index)) : parseCriteriaRows(item);
+  const markedRows = regular ? rows : rows.filter(row => row && row.level !== "Not marked");
   const criteriaHtml = markedRows.length
     ? markedRows.map(row => `
         <div class="criteria-detail-card">
@@ -283,63 +288,63 @@ function renderEntryDetails(item) {
             <span>${row.points == null ? "—" : `${escapeHtml(formatScore(row.points))} / ${escapeHtml(formatScore(row.max || 0))}`}</span>
           </div>
           <div class="criteria-detail-level">${escapeHtml(row.level || "—")}</div>
-          ${row.observation ? `<p>${escapeHtml(row.observation)}</p>` : ""}
+          ${!regular && row.observation ? `<p>${escapeHtml(row.observation)}</p>` : ""}
         </div>
       `).join("")
     : '<div class="empty-detail">No grade has been entered for this student yet.</div>';
-
   const comment = String(item?.comment || "").trim();
-
   return `
-    <div class="entry-detail-wrap">
-      <div class="entry-detail-grid">
-        ${criteriaHtml}
-      </div>
-      <div class="entry-comment-block">
-        <span>Teacher comment</span>
-        <p>${comment ? escapeHtml(comment) : "No comment."}</p>
-      </div>
-    </div>
-  `;
+    <div class="entry-detail-wrap"><div class="entry-detail-grid">${criteriaHtml}</div>
+      ${regular ? "" : `<div class="entry-comment-block"><span>Teacher comment</span>
+        <p>${comment ? escapeHtml(comment) : "No comment."}</p></div>`}
+    </div>`;
+}
+
+function renderAssignmentExport() {
+  const regular = Boolean(activeSession && sessionMode() === "regular");
+  if (els.assignmentExport) els.assignmentExport.hidden = !regular;
+  if (!els.copyAssignmentSelect) return;
+  const selected = els.copyAssignmentSelect.value;
+  els.copyAssignmentSelect.innerHTML = regular ? regularAssignments.map((assignment, index) =>
+    `<option value="${escapeHtml(assignment.id)}">${escapeHtml(LVRegularGrading.title(assignment, index))}</option>`
+  ).join("") : "";
+  if (regularAssignments.some(assignment => assignment.id === selected)) els.copyAssignmentSelect.value = selected;
 }
 
 function renderEntries() {
+  const regular = Boolean(activeSession && sessionMode() === "regular");
+  const multiple = regular && regularAssignments.length > 1;
+  const columns = regular ? regularAssignments.length + (multiple ? 1 : 0) + 3 : 4;
+  if (els.entryTableHead) els.entryTableHead.innerHTML = `<tr>
+    <th scope="col">Student</th>
+    ${regular ? regularAssignments.map((assignment, index) => `<th scope="col">${escapeHtml(LVRegularGrading.title(assignment, index))}</th>`).join("") : '<th scope="col">Score</th>'}
+    ${multiple ? '<th scope="col" title="Average of this student’s marked assignments">Average</th>' : ''}
+    <th scope="col">Updated</th><th scope="col"><span class="sr-only">Details</span></th></tr>`;
   const query = normalize(els.entrySearch?.value || "");
-  const rankingMap = new Map(
-    rankEntries(entries.filter(item => Number(item.markedCriteria || 0) > 0))
-      .map(item => [String(item.recordKey || `${item.sessionId}|${item.studentNumber}`), item.rank])
-  );
-
   const visible = entries
     .filter(item => !query || normalize(`${item.studentNumber} ${item.studentName} ${item.contributorName}`).includes(query))
     .sort((a, b) => Number(a.studentNumber || 0) - Number(b.studentNumber || 0));
-
   if (!visible.length) {
-    els.entryTableBody.innerHTML = '<tr><td colspan="7">No matching entries.</td></tr>';
+    els.entryTableBody.innerHTML = `<tr><td colspan="${columns}">No matching entries.</td></tr>`;
     return;
   }
-
   els.entryTableBody.innerHTML = visible.map((item, index) => {
-    const key = String(item.recordKey || `${item.sessionId}|${item.studentNumber}`);
-    const rank = rankingMap.get(key);
     const detailId = `entry-detail-${index}`;
-
+    const grades = regular ? LVRegularGrading.grades(item, activeSession?.activity) : {};
+    const scoreCell = `<td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>`;
     return `
       <tr class="entry-row" data-detail-id="${detailId}" tabindex="0" aria-expanded="false">
-        <td>${rank || "—"}</td>
         <td><strong>${escapeHtml(item.studentName || "")}</strong><br><small>#${escapeHtml(item.studentNumber || "")}</small></td>
-        <td class="score">${Number(item.markedCriteria || 0) > 0 ? `${escapeHtml(formatScore(item.scoreTotal))} / 10` : "—"}</td>
-        <td>${escapeHtml(resultDetailLabel(item))}</td>
-        <td>${escapeHtml(item.contributorName || item.deviceId || "—")}</td>
+        ${regular ? regularAssignments.map(assignment => {
+          const grade = LVRegularGrading.normalize(grades[assignment.id]);
+          return `<td class="score">${grade.kind === "blank" ? "—" : `${escapeHtml(formatScore(grade.value))} / 10`}</td>`;
+        }).join("") : scoreCell}
+        ${multiple ? scoreCell : ""}
         <td>${escapeHtml(formatDate(item.updatedAt || item.submittedAt || item.evaluatedAt))}</td>
         <td class="expand-cell"><button type="button" class="expand-entry-button" aria-label="Expand entry">⌄</button></td>
       </tr>
-      <tr class="entry-detail-row" id="${detailId}" hidden>
-        <td colspan="7">${renderEntryDetails(item)}</td>
-      </tr>
-    `;
+      <tr class="entry-detail-row" id="${detailId}" hidden><td colspan="${columns}">${renderEntryDetails(item)}</td></tr>`;
   }).join("");
-
   els.entryTableBody.querySelectorAll(".entry-row").forEach(row => {
     const toggle = () => {
       const detail = document.getElementById(row.dataset.detailId);
@@ -351,23 +356,33 @@ function renderEntries() {
       const button = row.querySelector(".expand-entry-button");
       if (button) button.textContent = opening ? "⌃" : "⌄";
     };
-
-    row.addEventListener("click", event => {
-      if (event.target.closest("a")) return;
-      toggle();
-    });
-
+    row.addEventListener("click", event => { if (!event.target.closest("a")) toggle(); });
     row.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        toggle();
-      }
+      // The button has its own native keyboard click; avoid toggling it twice.
+      if (event.target !== row) return;
+      if (event.key === "Enter" || event.key === " ") { event.preventDefault(); toggle(); }
     });
   });
 }
 
+function buildRegularEntries(rawItems) {
+  regularAssignments = LVRegularGrading.assignments(rawItems);
+  return rawItems.filter(item => !LVRegularGrading.isConfig(item)).map(item => {
+    const grades = LVRegularGrading.grades(item, activeSession?.activity);
+    const summary = LVRegularGrading.summary(grades, regularAssignments);
+    return { ...item, scoreTotal: summary.total, markedCriteria: summary.markedCriteria };
+  });
+}
+
+function regularStats() {
+  const assessed = entries.filter(item => Number(item.markedCriteria) > 0);
+  return { total: entries.length, assessed: assessed.length,
+    average: assessed.length ? assessed.reduce((sum, item) => sum + item.scoreTotal, 0) / assessed.length : 0 };
+}
+
 function renderAll(stats = {}) {
   renderSession();
+  renderAssignmentExport();
   renderSummary(stats);
   renderEntries();
 }
@@ -391,9 +406,10 @@ async function loadSession(sessionId = els.sessionIdInput?.value || "") {
 
     activeSession = data.session || null;
     const rawItems = Array.isArray(data.items) ? data.items : [];
-    entries = activeSession && sessionMode(activeSession) === "participation"
-      ? buildParticipationEntries(rawItems)
-      : rawItems;
+    regularAssignments = [];
+    const mode = sessionMode(activeSession);
+    entries = activeSession && mode === "participation" ? buildParticipationEntries(rawItems)
+      : activeSession && mode === "regular" ? buildRegularEntries(rawItems) : rawItems;
 
     if (activeSession) {
       localStorage.setItem(ACTIVE_SESSION_KEY, JSON.stringify(activeSession));
@@ -402,7 +418,8 @@ async function loadSession(sessionId = els.sessionIdInput?.value || "") {
       history.replaceState(null, "", pageUrl);
     }
 
-    renderAll(activeSession && sessionMode(activeSession) === "participation" ? participationStats() : (data.stats || {}));
+    renderAll(activeSession && mode === "participation" ? participationStats()
+      : activeSession && mode === "regular" ? regularStats() : (data.stats || {}));
     setStatus(`${entries.length} submission(s) loaded for ${normalized}.`, "ok");
   } catch (error) {
     console.error(error);
@@ -462,7 +479,7 @@ async function deleteActiveSession() {
     history.replaceState(null, "", pageUrl);
 
     renderAll({});
-    els.entryTableBody.innerHTML = '<tr><td colspan="7">Session deleted.</td></tr>';
+    els.entryTableBody.innerHTML = '<tr><td colspan="4">Session deleted.</td></tr>';
     setStatus(`Session ${sessionId} deleted.`, "ok");
     showToast("Session deleted");
   } catch (error) {
@@ -511,7 +528,13 @@ function buildGradesClipboardText() {
 
   return [...klass.students]
     .sort((a, b) => Number(a.n) - Number(b.n))
-    .map(student => gradeClipboardValue(entryByStudent.get(Number(student.n))))
+    .map(student => {
+      const entry = entryByStudent.get(Number(student.n));
+      if (sessionMode() !== "regular") return gradeClipboardValue(entry);
+      const assignmentId = els.copyAssignmentSelect?.value || regularAssignments[0]?.id;
+      const grade = LVRegularGrading.normalize(LVRegularGrading.grades(entry, activeSession?.activity)[assignmentId]);
+      return gradeClipboardValue({ markedCriteria: grade.kind === "blank" ? 0 : 1, scoreTotal: grade.value });
+    })
     .join("\n");
 }
 
