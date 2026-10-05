@@ -1411,6 +1411,12 @@ button {
   z-index: 3;
   background: #eaf4ff;
 }
+.regular-assignment-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  gap: 6px;
+  align-items: center;
+}
 .regular-assignment-title {
   width: 100%;
   min-width: 210px;
@@ -1424,6 +1430,20 @@ button {
   background: #fff;
 }
 .regular-assignment-title:focus { outline: 2px solid var(--blue); outline-offset: 1px; }
+.regular-remove-assignment {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 10px;
+  color: #a7192e;
+  background: #fff;
+  font-size: 1.25rem;
+  font-weight: 1000;
+  line-height: 1;
+}
+.regular-remove-assignment:hover:not(:disabled) {
+  background: #ffe7eb;
+}
 .regular-add-assignment {
   width: 44px;
   height: 44px;
