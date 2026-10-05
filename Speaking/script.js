@@ -2297,9 +2297,16 @@ function renderRegularRoster() {
       <thead><tr>
         <th scope="col" class="regular-student-column">Student</th>
         ${regularAssignments.map((assignment, index) => `<th scope="col">
-          <input class="regular-assignment-title" type="text" maxlength="120"
-            data-assignment="${escapeAttribute(assignment.id)}" value="${escapeAttribute(assignment.title)}"
-            aria-label="Assignment ${index + 1} title" placeholder="Assignment ${index + 1}" ${closed ? "disabled" : ""} />
+          <div class="regular-assignment-header">
+            <input class="regular-assignment-title" type="text" maxlength="120"
+              data-assignment="${escapeAttribute(assignment.id)}" value="${escapeAttribute(assignment.title)}"
+              aria-label="Assignment ${index + 1} title" placeholder="Assignment ${index + 1}" ${closed ? "disabled" : ""} />
+            <button class="regular-remove-assignment" type="button"
+              data-assignment="${escapeAttribute(assignment.id)}"
+              aria-label="Remove ${escapeAttribute(LVRegularGrading.title(assignment, index))}"
+              title="Remove assignment"
+              ${closed || regularAssignments.length <= 1 ? "disabled" : ""}>×</button>
+          </div>
         </th>`).join("")}
         <th scope="col" class="regular-add-column"><button id="addRegularAssignment" class="regular-add-assignment" type="button"
           aria-label="Add assignment" title="Add assignment" ${closed ? "disabled" : ""}>+</button></th>
@@ -2334,6 +2341,9 @@ function renderRegularRoster() {
     </table>`;
 
   $("#addRegularAssignment")?.addEventListener("click", addRegularAssignment);
+  host.querySelectorAll(".regular-remove-assignment").forEach(button => {
+    button.addEventListener("click", () => removeRegularAssignment(button.dataset.assignment));
+  });
   host.querySelectorAll(".regular-assignment-title").forEach(input => {
     input.addEventListener("input", () => {
       const assignment = regularAssignments.find(item => item.id === input.dataset.assignment);
@@ -2400,6 +2410,34 @@ function addRegularAssignment() {
   renderRegularRoster();
   const input = [...$("#regularRoster").querySelectorAll(".regular-assignment-title")].find(item => item.dataset.assignment === id);
   input?.focus();
+}
+
+function removeRegularAssignment(assignmentId) {
+  if (!activeSpeakingSession || String(activeSpeakingSession.status || "").toLowerCase() === "closed") return;
+  if (regularAssignments.length <= 1) {
+    showToast("At least one assignment is required");
+    return;
+  }
+
+  const assignmentIndex = regularAssignments.findIndex(item => item.id === assignmentId);
+  if (assignmentIndex < 0) return;
+
+  const [removed] = regularAssignments.splice(assignmentIndex, 1);
+  const affectedStudents = [];
+
+  regularGrades.forEach((grades, studentNumber) => {
+    if (!grades || !Object.prototype.hasOwnProperty.call(grades, assignmentId)) return;
+    delete grades[assignmentId];
+    regularGrades.set(Number(studentNumber), grades);
+    saveRegularGradeLocal(Number(studentNumber));
+    affectedStudents.push(Number(studentNumber));
+  });
+
+  saveRegularAssignmentsLocal();
+  queueRegularSnapshot(buildRegularConfigSnapshot());
+  affectedStudents.forEach(studentNumber => queueRegularPublish(studentNumber));
+  renderRegularRoster();
+  showToast(`${LVRegularGrading.title(removed, assignmentIndex)} removed`);
 }
 
 function buildRegularSnapshot(studentNumber, { config = false } = {}) {
