@@ -1374,7 +1374,8 @@ button {
 /* Assignment columns: keep the roster visible while scrolling across grades. */
 .regular-roster {
   display: block;
-  overflow-x: auto;
+  max-height: min(70vh, 720px);
+  overflow: auto;
   border: 2px solid var(--line);
   border-radius: 16px;
 }
@@ -1391,7 +1392,12 @@ button {
   border-right: 1px solid var(--line);
   text-align: left;
 }
-.regular-assignment-table thead th { background: #eaf4ff; }
+.regular-assignment-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #eaf4ff;
+}
 .regular-assignment-table tbody tr:last-child > * { border-bottom: 0; }
 .regular-assignment-table .regular-student-column {
   position: sticky;
@@ -1401,7 +1407,10 @@ button {
   width: 35%;
   background: #fff;
 }
-.regular-assignment-table thead .regular-student-column { background: #eaf4ff; }
+.regular-assignment-table thead .regular-student-column {
+  z-index: 3;
+  background: #eaf4ff;
+}
 .regular-assignment-title {
   width: 100%;
   min-width: 210px;
