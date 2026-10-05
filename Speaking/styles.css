@@ -1432,3 +1432,22 @@ button {
   .regular-assignment-table .regular-student-number { width: 25px; height: 28px; }
   .regular-assignment-table .regular-student-identity strong { font-size: .7rem; }
 }
+
+
+/* Cross-device live refresh feedback. */
+@keyframes liveSyncHighlight {
+  0% {
+    outline: 4px solid rgba(255, 190, 45, .72);
+    outline-offset: -2px;
+    box-shadow: inset 0 0 0 999px rgba(255, 233, 120, .22);
+  }
+  100% {
+    outline: 0 solid rgba(255, 190, 45, 0);
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 999px rgba(255, 233, 120, 0);
+  }
+}
+
+.live-sync-highlight {
+  animation: liveSyncHighlight 1s ease-out;
+}
