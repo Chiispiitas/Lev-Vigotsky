@@ -69,6 +69,7 @@ const cell = (w, student, column) => w.document.querySelectorAll(`#regularRoster
 const number = (w, student, column) => cell(w, student, column).querySelector('.regular-number-input');
 const mark = (w, student, column, kind) => cell(w, student, column).querySelector(`[data-mark="${kind}"]`).click();
 const add = w => w.document.querySelector('#addRegularAssignment').click();
+const remove = (w, column) => w.document.querySelectorAll('.regular-remove-assignment')[column].click();
 
 test('multiple assignments persist independently, including duplicate titles, zeros, and blanks', async t => {
   const { w, api, storage, load } = await app(t);
@@ -111,6 +112,38 @@ test('multiple assignments persist independently, including duplicate titles, ze
   assert.deepEqual(results.buildGradesClipboardText().split('\n').slice(0, 4), ['10', '0.02', '0.03', '0.03']);
   results.document.querySelector('#copyAssignmentSelect').selectedIndex = 1;
   assert.deepEqual(results.buildGradesClipboardText().split('\n').slice(0, 4), ['7.50', '0.02', '0.03', '0.03']);
+});
+
+test('assignments can be removed and disappear from grading and Results', async t => {
+  const { w, api, load } = await app(t);
+  input(w, titles(w)[0], 'Homework');
+  input(w, number(w, 1, 0), '8');
+  add(w);
+  input(w, titles(w)[1], 'Quiz');
+  input(w, number(w, 1, 1), '6');
+  await w.flushRegularPublishes();
+
+  assert.equal(w.document.querySelectorAll('.regular-remove-assignment').length, 2);
+  remove(w, 1);
+  assert.equal(titles(w).length, 1);
+  assert.equal(titles(w)[0].value, 'Homework');
+  assert.equal(w.document.querySelector('.regular-remove-assignment').disabled, true);
+  assert.equal(number(w, 1, 0).value, '8');
+
+  await w.flushRegularPublishes();
+  const storedRows = JSON.parse(api.items.get(1).criteriaJson);
+  assert.equal(storedRows.length, 1);
+  assert.equal(storedRows[0].criterion, 'Homework');
+
+  const results = await load(true);
+  assert.deepEqual(
+    [...results.document.querySelectorAll('#entryTableHead th')].map(el => el.textContent),
+    ['Student', 'Homework', 'Updated', 'Details']
+  );
+  assert.deepEqual(
+    [...results.document.querySelectorAll('.entry-row:first-child td.score')].map(el => el.textContent),
+    ['8 / 10']
+  );
 });
 
 test('legacy drafts migrate; legacy server sessions retain marks, and blank columns persist', async t => {
