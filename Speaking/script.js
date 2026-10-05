@@ -109,6 +109,14 @@ let participationThreshold = 5;
 let participationTouched = new Set();
 const participationPublishTimers = new Map();
 
+const SESSION_LIVE_SYNC_MS = 1400;
+let sessionLiveSyncTimer = null;
+let sessionLiveSyncBusy = false;
+const liveSyncSubmissionSignatures = new Map();
+const speakingPublishesInFlight = new Set();
+const regularPublishesInFlight = new Set();
+const participationPublishesInFlight = new Set();
+
 const state = {
   classId: null,
   studentNumber: null,
@@ -1118,6 +1126,7 @@ function loadActiveSpeakingSession() {
 }
 
 function saveActiveSpeakingSession(session) {
+  const previousSessionId = activeSpeakingSession?.sessionId || "";
   activeSpeakingSession = session || null;
   if (activeSpeakingSession) {
     localStorage.setItem(SPEAKING_SESSION_STORAGE_KEY, JSON.stringify(activeSpeakingSession));
@@ -1125,6 +1134,17 @@ function saveActiveSpeakingSession(session) {
     localStorage.removeItem(SPEAKING_SESSION_STORAGE_KEY);
   }
   refreshSharedSessionUI();
+
+  if (!activeSpeakingSession) {
+    stopSessionLiveSync();
+    liveSyncSubmissionSignatures.clear();
+    return;
+  }
+
+  if (previousSessionId !== activeSpeakingSession.sessionId) {
+    liveSyncSubmissionSignatures.clear();
+  }
+  startSessionLiveSync();
 }
 
 function getSpeakingDeviceId() {
@@ -1499,6 +1519,307 @@ async function speakingApiJson(url, options = {}) {
   return data;
 }
 
+
+function liveSyncRecordKey(sessionId, studentNumber) {
+  return `${sessionId}|${Number(studentNumber)}`;
+}
+
+function liveSyncSubmissionSignature(item) {
+  return JSON.stringify({
+    studentNumber: Number(item?.studentNumber) || 0,
+    studentName: String(item?.studentName || ""),
+    activity: String(item?.activity || ""),
+    scoreTotal: item?.scoreTotal ?? item?.total ?? null,
+    markedCriteria: item?.markedCriteria ?? null,
+    rows: parseSubmissionRows(item),
+    comment: String(item?.comment || "")
+  });
+}
+
+function rememberLiveSyncSubmissions(session, items) {
+  if (!session?.sessionId) return;
+  const prefix = `${session.sessionId}|`;
+  [...liveSyncSubmissionSignatures.keys()]
+    .filter(key => key.startsWith(prefix))
+    .forEach(key => liveSyncSubmissionSignatures.delete(key));
+
+  (Array.isArray(items) ? items : []).forEach(item => {
+    if (item?.studentNumber == null) return;
+    liveSyncSubmissionSignatures.set(
+      liveSyncRecordKey(session.sessionId, item.studentNumber),
+      liveSyncSubmissionSignature(item)
+    );
+  });
+}
+
+function flashLiveSync(element) {
+  if (!element) return;
+  element.classList.remove("live-sync-highlight");
+  void element.offsetWidth;
+  element.classList.add("live-sync-highlight");
+  window.setTimeout(() => element.classList.remove("live-sync-highlight"), 1050);
+}
+
+function speakingDraftFromSubmission(item, session) {
+  const scores = {};
+  parseSubmissionRows(item).forEach(row => {
+    if (!row || row.level === "Not marked") return;
+    const criterion = RUBRIC.find(entry => entry.title === row.criterion);
+    if (!criterion) return;
+    const optionIndex = criterion.options.findIndex(option =>
+      option.label === row.level || Number(option.points) === Number(row.points)
+    );
+    if (optionIndex >= 0) {
+      scores[criterion.id] = {
+        optionIndex,
+        points: criterion.options[optionIndex].points
+      };
+    }
+  });
+
+  return {
+    scores,
+    comment: item?.comment || "",
+    activity: item?.activity || session?.activity || "Oral speaking assessment",
+    updatedAt: item?.updatedAt || item?.submittedAt || item?.createdAt || new Date().toISOString()
+  };
+}
+
+function comparableSpeakingDraft(draft) {
+  return JSON.stringify({
+    scores: draft?.scores || {},
+    comment: String(draft?.comment || ""),
+    activity: String(draft?.activity || "")
+  });
+}
+
+function applySpeakingLiveItems(session, changedItems) {
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!klass) return false;
+
+  let visibleChange = false;
+
+  changedItems.forEach(item => {
+    const studentNumber = Number(item?.studentNumber);
+    if (!klass.students.some(student => student.n === studentNumber)) return;
+
+    const recordKey = liveSyncRecordKey(session.sessionId, studentNumber);
+    if (autoPublishTimers.has(recordKey) || speakingPublishesInFlight.has(recordKey)) return;
+
+    const draftKey = getStudentDraftKey(session.classId, studentNumber, session.sessionId);
+    if (!draftKey) return;
+
+    let currentDraft = null;
+    try { currentDraft = JSON.parse(localStorage.getItem(draftKey) || "null"); } catch {}
+
+    const nextDraft = speakingDraftFromSubmission(item, session);
+    const localTime = Date.parse(currentDraft?.updatedAt || 0) || 0;
+    const remoteTime = Date.parse(nextDraft.updatedAt || 0) || 0;
+    if (currentDraft && localTime && remoteTime && remoteTime < localTime) return;
+    if (comparableSpeakingDraft(currentDraft) === comparableSpeakingDraft(nextDraft)) return;
+
+    const scoresChanged = JSON.stringify(currentDraft?.scores || {}) !== JSON.stringify(nextDraft.scores || {});
+    const commentChanged = String(currentDraft?.comment || "") !== String(nextDraft.comment || "");
+    const activityChanged = String(currentDraft?.activity || "") !== String(nextDraft.activity || "");
+
+    localStorage.setItem(draftKey, JSON.stringify(nextDraft));
+
+    if (
+      currentAppMode === "speaking" &&
+      assessmentScreen?.classList.contains("screen-active") &&
+      state.classId === session.classId &&
+      Number(state.studentNumber) === studentNumber
+    ) {
+      loadStudentDraft();
+      updatePreview();
+      if (scoresChanged) flashLiveSync(rubricList?.closest(".panel"));
+      if (commentChanged) flashLiveSync(teacherComment?.closest(".panel"));
+      if (activityChanged) flashLiveSync(document.querySelector("#assessmentScreen .student-panel"));
+      visibleChange = true;
+    }
+  });
+
+  return visibleChange;
+}
+
+function regularRecordIsPending(sessionId, studentNumber) {
+  const key = liveSyncRecordKey(sessionId, studentNumber);
+  return regularPublishTimers.has(key) || regularPendingSnapshots.has(key) || regularPublishesInFlight.has(key);
+}
+
+function applyRegularLiveItems(session, changedItems, allItems) {
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!klass) return false;
+
+  let visibleChange = false;
+  const configPending = regularRecordIsPending(session.sessionId, LVRegularGrading.CONFIG_STUDENT);
+  const remoteAssignments = LVRegularGrading.assignments(allItems);
+
+  if (!configPending && JSON.stringify(remoteAssignments) !== JSON.stringify(regularAssignments)) {
+    regularAssignments = remoteAssignments;
+    saveRegularAssignmentsLocal();
+    if (regularAssessmentScreen?.classList.contains("screen-active")) {
+      renderRegularRoster();
+      flashLiveSync($("#regularRoster"));
+      visibleChange = true;
+    }
+  }
+
+  changedItems.forEach(item => {
+    if (LVRegularGrading.isConfig(item)) return;
+    const studentNumber = Number(item?.studentNumber);
+    if (!klass.students.some(student => student.n === studentNumber)) return;
+    if (regularRecordIsPending(session.sessionId, studentNumber)) return;
+
+    const previous = regularGrades.get(studentNumber) || {};
+    const next = LVRegularGrading.grades(item, session.activity);
+    if (JSON.stringify(previous) === JSON.stringify(next)) return;
+
+    regularGrades.set(studentNumber, next);
+    saveRegularGradeLocal(studentNumber);
+
+    if (regularAssessmentScreen?.classList.contains("screen-active")) {
+      const row = $("[data-student-row=\"" + studentNumber + "\"]");
+      const assignmentIds = new Set([
+        ...Object.keys(previous),
+        ...Object.keys(next),
+        ...regularAssignments.map(assignment => assignment.id)
+      ]);
+      assignmentIds.forEach(assignmentId => {
+        const before = normalizeRegularGrade(previous[assignmentId]);
+        const after = normalizeRegularGrade(next[assignmentId]);
+        if (JSON.stringify(before) === JSON.stringify(after)) return;
+        const cell = row
+          ? [...row.querySelectorAll(".regular-assignment-cell")]
+              .find(element => element.dataset.assignment === assignmentId)
+          : null;
+        updateRegularCell(cell, after, true);
+        flashLiveSync(cell);
+      });
+      visibleChange = true;
+    }
+  });
+
+  return visibleChange;
+}
+
+function participationRecordIsPending(sessionId, studentNumber) {
+  const key = liveSyncRecordKey(sessionId, studentNumber);
+  return participationPublishTimers.has(key) || participationPublishesInFlight.has(key);
+}
+
+function applyParticipationLiveItems(session, changedItems) {
+  const klass = CLASS_DATA.find(item => item.id === session?.classId);
+  if (!klass) return false;
+
+  let visibleChange = false;
+  let rosterNeedsRender = false;
+  const changedStudents = [];
+
+  changedItems.forEach(item => {
+    const studentNumber = Number(item?.studentNumber);
+    if (studentNumber === PARTICIPATION_CONFIG_STUDENT || String(item?.studentName || "") === "__PARTICIPATION_CONFIG__") {
+      if (participationRecordIsPending(session.sessionId, PARTICIPATION_CONFIG_STUDENT)) return;
+      const nextThreshold = readParticipationThresholdFromConfig(item);
+      if (!nextThreshold || nextThreshold === participationThreshold) return;
+      participationThreshold = nextThreshold;
+      localStorage.setItem(participationConfigKey(session.sessionId), String(nextThreshold));
+      if ($("#activeParticipationThreshold")) $("#activeParticipationThreshold").value = String(nextThreshold);
+      rosterNeedsRender = true;
+      visibleChange = true;
+      return;
+    }
+
+    if (!klass.students.some(student => student.n === studentNumber)) return;
+    if (participationRecordIsPending(session.sessionId, studentNumber)) return;
+
+    const nextTallies = readParticipationTally(item);
+    const previousTallies = Math.max(0, Number(participationTallies.get(studentNumber)) || 0);
+    if (nextTallies === previousTallies) return;
+
+    participationTallies.set(studentNumber, nextTallies);
+    localStorage.setItem(participationStudentKey(session.sessionId, studentNumber), String(nextTallies));
+    changedStudents.push(studentNumber);
+    rosterNeedsRender = true;
+    visibleChange = true;
+  });
+
+  if (rosterNeedsRender && participationAssessmentScreen?.classList.contains("screen-active")) {
+    renderParticipationRoster();
+    changedStudents.forEach(studentNumber => {
+      flashLiveSync($(`.participation-student-row[data-student="${studentNumber}"]`));
+    });
+    if (changedItems.some(item => Number(item?.studentNumber) === PARTICIPATION_CONFIG_STUDENT)) {
+      flashLiveSync($("#activeParticipationThreshold")?.closest(".panel"));
+    }
+  }
+
+  return visibleChange;
+}
+
+async function pollActiveSessionLive() {
+  const session = activeSpeakingSession;
+  if (!session?.sessionId || sessionLiveSyncBusy || document.hidden) return;
+
+  sessionLiveSyncBusy = true;
+  const sessionId = session.sessionId;
+
+  try {
+    const url = new URL(SPEAKING_SUBMISSION_ENDPOINT);
+    url.searchParams.set("sessionId", sessionId);
+    url.searchParams.set("_live", String(Date.now()));
+    const data = await speakingApiJson(url.toString(), { cache: "no-store" });
+    if (activeSpeakingSession?.sessionId !== sessionId) return;
+
+    const items = Array.isArray(data.items) ? data.items : [];
+    const changedItems = items.filter(item => {
+      if (item?.studentNumber == null) return false;
+      const key = liveSyncRecordKey(sessionId, item.studentNumber);
+      return liveSyncSubmissionSignatures.get(key) !== liveSyncSubmissionSignature(item);
+    });
+
+    if (!changedItems.length) return;
+
+    changedItems.forEach(item => {
+      liveSyncSubmissionSignatures.set(
+        liveSyncRecordKey(sessionId, item.studentNumber),
+        liveSyncSubmissionSignature(item)
+      );
+    });
+
+    const mode = sessionAppMode(activeSpeakingSession);
+    let visibleChange = false;
+    if (mode === "regular") {
+      visibleChange = applyRegularLiveItems(activeSpeakingSession, changedItems, items);
+      if (visibleChange) setRegularSyncStatus("Updated from another device.");
+    } else if (mode === "participation") {
+      visibleChange = applyParticipationLiveItems(activeSpeakingSession, changedItems);
+      if (visibleChange && $("#participationSyncStatus")) {
+        $("#participationSyncStatus").textContent = "Updated from another device.";
+        $("#participationSyncStatus").classList.remove("error");
+      }
+    } else {
+      visibleChange = applySpeakingLiveItems(activeSpeakingSession, changedItems);
+      if (visibleChange) setSharedSessionStatus("Updated from another device.");
+    }
+  } catch (error) {
+    console.warn("Live session refresh failed", error);
+  } finally {
+    sessionLiveSyncBusy = false;
+  }
+}
+
+function startSessionLiveSync() {
+  if (sessionLiveSyncTimer || !activeSpeakingSession?.sessionId) return;
+  sessionLiveSyncTimer = window.setInterval(pollActiveSessionLive, SESSION_LIVE_SYNC_MS);
+}
+
+function stopSessionLiveSync() {
+  if (sessionLiveSyncTimer) window.clearInterval(sessionLiveSyncTimer);
+  sessionLiveSyncTimer = null;
+  sessionLiveSyncBusy = false;
+}
+
 async function createSpeakingSession() {
   const classId = $("#sessionClassSelect")?.value || "";
   const klass = CLASS_DATA.find(item => item.id === classId) || null;
@@ -1720,6 +2041,7 @@ async function hydrateDraftsFromSession(session) {
         updatedAt: item.updatedAt || item.submittedAt || new Date().toISOString()
       }));
     });
+    rememberLiveSyncSubmissions(session, items);
   } catch (error) {
     console.warn("Could not hydrate session submissions", error);
   }
@@ -1808,6 +2130,7 @@ function queueAutoPublishCurrentStudent() {
 }
 
 async function publishSpeakingSnapshot(snapshot) {
+  speakingPublishesInFlight.add(snapshot.recordKey);
   try {
     await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
       method: "POST",
@@ -1828,6 +2151,8 @@ async function publishSpeakingSnapshot(snapshot) {
     if (activeSpeakingSession?.sessionId === snapshot.sessionId) {
       setSharedSessionStatus(`Auto-save failed: ${error.message}`, true);
     }
+  } finally {
+    speakingPublishesInFlight.delete(snapshot.recordKey);
   }
 }
 
@@ -1904,6 +2229,7 @@ async function loadRegularGradesFromSession(session) {
     url.searchParams.set("sessionId", session.sessionId);
     const data = await speakingApiJson(url.toString());
     const items = Array.isArray(data.items) ? data.items : [];
+    rememberLiveSyncSubmissions(session, items);
     if (items.length) regularAssignments = LVRegularGrading.assignments(items);
     const serverByStudent = new Map(items.filter(item => !LVRegularGrading.isConfig(item)).map(item => [Number(item.studentNumber), item]));
     klass.students.forEach(student => {
@@ -2178,6 +2504,7 @@ async function flushRegularPublishes() {
     while (regularPendingSnapshots.size) {
       const [key, snapshot] = regularPendingSnapshots.entries().next().value;
       regularPendingSnapshots.delete(key);
+      regularPublishesInFlight.add(key);
       try {
         await publishRegularSnapshot(snapshot);
         removeRegularPendingSnapshot(snapshot);
@@ -2186,6 +2513,8 @@ async function flushRegularPublishes() {
         regularSaveFailed = true;
         setRegularSyncStatus(`Auto-save failed: ${error.message}. Changes are kept on this device. Edit again or open Results to retry.`, true);
         return false;
+      } finally {
+        regularPublishesInFlight.delete(key);
       }
     }
     setRegularSyncStatus("All changes saved to Results.");
@@ -2276,6 +2605,7 @@ async function loadParticipationData(session) {
     url.searchParams.set("sessionId", session.sessionId);
     const data = await speakingApiJson(url.toString());
     const items = Array.isArray(data.items) ? data.items : [];
+    rememberLiveSyncSubmissions(session, items);
     const config = items.find(item =>
       Number(item.studentNumber) === PARTICIPATION_CONFIG_STUDENT ||
       String(item.studentName || "") === "__PARTICIPATION_CONFIG__"
@@ -2558,6 +2888,7 @@ function queueParticipationPublish(studentNumber) {
 }
 
 async function publishParticipationSnapshot(snapshot) {
+  participationPublishesInFlight.add(snapshot.recordKey);
   try {
     await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
       method: "POST",
@@ -2579,6 +2910,8 @@ async function publishParticipationSnapshot(snapshot) {
       $("#participationSyncStatus").textContent = `Auto-save failed: ${error.message}`;
       $("#participationSyncStatus").classList.add("error");
     }
+  } finally {
+    participationPublishesInFlight.delete(snapshot.recordKey);
   }
 }
 
@@ -2589,7 +2922,10 @@ async function publishParticipationConfig() {
 
   localStorage.setItem(participationConfigKey(session.sessionId), String(participationThreshold));
 
-  await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
+  const recordKey = liveSyncRecordKey(session.sessionId, PARTICIPATION_CONFIG_STUDENT);
+  participationPublishesInFlight.add(recordKey);
+  try {
+    await speakingApiJson(SPEAKING_SUBMISSION_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "text/plain;charset=UTF-8" },
     body: JSON.stringify({
@@ -2621,7 +2957,10 @@ async function publishParticipationConfig() {
         submittedAt: new Date().toISOString()
       }
     })
-  });
+    });
+  } finally {
+    participationPublishesInFlight.delete(recordKey);
+  }
 }
 
 async function saveParticipationThreshold() {
@@ -2781,6 +3120,11 @@ function initSharedSessions() {
   $("#openParticipationClass")?.addEventListener("click", openParticipationClass);
   $("#saveParticipationThreshold")?.addEventListener("click", saveParticipationThreshold);
   $("#openParticipationResults")?.addEventListener("click", openSpeakingResults);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) pollActiveSessionLive();
+  });
+  window.addEventListener("focus", pollActiveSessionLive);
 
   restoreAppRoute();
 }
