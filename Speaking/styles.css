@@ -1480,3 +1480,25 @@ button {
 .live-sync-highlight {
   animation: liveSyncHighlight 1s ease-out;
 }
+
+/* Allow regular-grading assignments to use the full desktop viewport. */
+@media (min-width: 900px) {
+  .app-shell:has(#regularAssessmentScreen.screen-active) {
+    width: 100%;
+    max-width: none;
+  }
+
+  #regularAssessmentScreen .regular-assignment-table {
+    width: 100%;
+    min-width: max-content;
+  }
+
+  #regularAssessmentScreen .regular-assignment-table .regular-student-column {
+    width: 24%;
+    min-width: 230px;
+  }
+
+  #regularAssessmentScreen .regular-assignment-table .regular-add-column {
+    width: 64px;
+  }
+}
