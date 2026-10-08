@@ -1494,8 +1494,8 @@ button {
   }
 
   #regularAssessmentScreen .regular-assignment-table .regular-student-column {
-    width: 24%;
-    min-width: 230px;
+    width: 12%;
+    min-width: 115px;
   }
 
   #regularAssessmentScreen .regular-assignment-table .regular-add-column {
