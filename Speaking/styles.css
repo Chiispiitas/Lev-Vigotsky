@@ -1490,16 +1490,31 @@ button {
 
   /* Keep short assignment lists compact; expand naturally for larger lists. */
   #regularAssessmentScreen .regular-roster-panel:has(.regular-assignment-table thead th:last-child:nth-child(3)) {
-    max-width: 580px;
+    max-width: 460px;
     margin-inline: auto;
   }
   #regularAssessmentScreen .regular-roster-panel:has(.regular-assignment-table thead th:last-child:nth-child(4)) {
-    max-width: 850px;
+    max-width: 640px;
     margin-inline: auto;
   }
   #regularAssessmentScreen .regular-roster-panel:has(.regular-assignment-table thead th:last-child:nth-child(5)) {
-    max-width: 1120px;
+    max-width: 830px;
     margin-inline: auto;
+  }
+
+  #regularAssessmentScreen .regular-assignment-title {
+    min-width: 130px;
+  }
+  #regularAssessmentScreen .regular-assignment-table th,
+  #regularAssessmentScreen .regular-assignment-table td {
+    padding: 7px;
+  }
+  #regularAssessmentScreen .regular-grade-control.combined {
+    grid-template-columns: auto 72px;
+    gap: 5px;
+  }
+  #regularAssessmentScreen .regular-grade-control.combined .regular-number-input {
+    width: 72px;
   }
 
   #regularAssessmentScreen .regular-assignment-table {
