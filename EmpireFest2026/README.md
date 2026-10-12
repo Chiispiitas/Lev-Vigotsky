@@ -12,7 +12,7 @@ URL: https://chiispiitas.github.io/Lev-Vigotsky/EmpireFest2026/
 4. Organización: actualiza el consolidado para recibir las últimas evaluaciones. El total aparece únicamente cuando existen las tres rúbricas. Miss y Míster se clasifican por separado; los empates mantienen la misma posición y no se aplica un desempate automático.
 5. Descarga el CSV o elige **Imprimir / guardar PDF**, seleccionando Guardar como PDF en el diálogo del navegador.
 
-Los borradores se guardan en este dispositivo y por rúbrica/participante. Mantén tu dispositivo protegido. Los códigos se conservan solo en la memoria de la página y se eliminan al salir. **Explorar demostración** utiliza datos ficticios guardados exclusivamente en el navegador y nunca escribe en Wix.
+Los borradores se guardan en este dispositivo y por rúbrica/participante. Mantén tu dispositivo protegido. Los códigos se conservan solo en la memoria de la página y se eliminan al salir.
 
 ## Rúbricas
 
@@ -56,4 +56,4 @@ Documentación usada: [HTTP functions](https://dev.wix.com/docs/velo/articles/ge
 
 Ejecutar `node --test EmpireFest2026/empire.test.mjs` desde la raíz del repositorio. Cubre pesos oficiales, criterios incompletos, cero, límites/decimales, totales, revisiones, aislamiento entre jurados, registro de participantes, fechas y reintentos.
 
-Es una aplicación estática sin compilación ni dependencias de JavaScript. Para una vista local, servir esta carpeta con cualquier servidor estático. La comunicación real con Wix se verifica desde GitHub Pages; para pruebas locales, utilizar la demostración.
+Es una aplicación estática sin compilación ni dependencias de JavaScript. Para una vista local, servir esta carpeta con cualquier servidor estático. La comunicación real con Wix se verifica desde GitHub Pages con un código de acceso autorizado.
