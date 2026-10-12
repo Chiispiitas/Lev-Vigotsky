@@ -60,3 +60,7 @@
 .audience-standby h1{font-size:clamp(42px,6vw,94px)}
 @media(max-width:1100px){.content{padding:0 24px 20px}.home-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.shell{grid-template-columns:1fr}.rail{width:100%;height:65px;padding:6px 10px}.content{grid-column:1;padding:0 16px 90px}.topbar{height:76px}.brand img{width:42px;height:42px}.brand-title{font-size:17px}.brand-sub{font-size:10px}.home-intro{padding:18px;margin-top:14px;min-height:180px}.home-intro h1{font-size:48px}.home-mascot{min-width:72px}.home-mascot img{width:95px;height:110px}.home-actions{gap:8px}.home-actions .button{padding:10px 12px;font-size:11px}.home-grid{grid-template-columns:1fr;gap:8px}.section-title{margin:18px 0 10px}.song-feature{flex-wrap:wrap}.song-feature .button{width:auto}.page-head h2{font-size:29px}.footer{gap:4px}}
+
+/* Leave only live pitch feedback below the chart; stars render inside its canvas. */
+.pitch-legend{justify-content:flex-end;min-height:34px;padding:10px 6px}
+.pitch-legend .feedback{margin-left:0}
