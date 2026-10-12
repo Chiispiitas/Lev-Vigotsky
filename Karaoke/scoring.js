@@ -3,7 +3,7 @@ export function pitchCredit(singerMidi,targetMidi,octave=true){
  let difference=Math.abs(singerMidi-targetMidi);
  if(octave)difference=Math.abs(((difference+6)%12)-6);
  const cents=Math.round(difference*100*1e8)/1e8;
- return cents<=55?1:cents>=180?0:1-(cents-55)/125;
+ return cents<=75?1:cents>=200?0:1-(cents-75)/125;
 }
 export function closestFrameIndex(frames,time){
  let lo=0,hi=frames.length;
