@@ -26,5 +26,16 @@ export class PitchSmoother {
 }
 export class PitchRegister {
  constructor(){this.shift=0;this.last=-Infinity}
- map(midi,target,time,octave=true){if(!Number.isFinite(midi))return null;if(!octave)this.shift=0;else if(time-this.last>.25)this.shift=12*Math.round((target-midi)/12);this.last=time;return midi+this.shift}
+ map(midi,target,time,octave=true){
+  if(!Number.isFinite(midi))return null;
+  if(!octave||!Number.isFinite(target)){this.shift=0;this.last=time;return midi}
+  const desired=12*Math.round((target-midi)/12);
+  const previousError=Math.abs(midi+this.shift-target);
+  const correctedError=Math.abs(midi+desired-target);
+  // Re-align a full octave jump even while the singer is sustaining a phrase.
+  // Ignore smaller target changes to avoid visual hopping near octave boundaries.
+  if(time-this.last>.25||previousError-correctedError>=7)this.shift=desired;
+  this.last=time;
+  return midi+this.shift;
+ }
 }
