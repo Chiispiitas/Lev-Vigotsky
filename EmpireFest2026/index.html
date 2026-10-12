@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142b2b"><title>Empire Fest 2026 · Jurado</title><link rel="stylesheet" href="styles.css?v=20261012-nodemo"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#142b2b"><title>Empire Fest 2026 · Jurado</title><link rel="stylesheet" href="styles.css?v=20261012-simple"></head>
 <body>
-<header class="topbar"><a class="brand" href="./"><img src="logo-ueplv.svg" alt="Unidad Educativa Particular Lev Vigotsky"><span>LEV VIGOTSKY<small>MISS & MÍSTER COMERCIO</small></span></a><div class="year">EMPIRE FEST <b>2026</b></div><button id="logout" class="quiet" hidden>Salir</button></header>
+<header class="topbar"><span>Empire Fest 2026</span><button id="logout" class="quiet" hidden>Salir</button></header>
 <main>
-<section id="login" class="login-layout"><div class="intro"><p class="eyebrow">UN ENCUENTRO ENTRE CULTURAS</p><h1>La historia<br>sale a <em>escena.</em></h1><p class="lead">Tres miradas. Un legado.<br>La plataforma de evaluación de Empire Fest 2026.</p><div class="pillars"><span>01 · Cultura</span><span>02 · Comercio</span><span>03 · Pasarela</span></div><p class="institution">Unidad Educativa Particular Lev Vigotsky</p></div><div class="login-card"><img class="festival-logo" src="empire-logo.png" alt="Empire Fest"><p class="eyebrow">PORTAL DE EVALUACIÓN</p><h2>Bienvenido al jurado</h2><p>Ingresa tu código personal para acceder a tu rúbrica.</p><form id="loginForm"><label for="code">Código de acceso</label><input id="code" type="password" autocomplete="off" required placeholder="Tu código personal"><button class="primary" type="submit">Entrar al evento <span>→</span></button></form><p id="loginStatus" role="status"></p></div></section>
-<section id="workspace" hidden><div class="page-heading"><div><p class="eyebrow" id="modeLabel"></p><h1 id="welcome"></h1><p id="specialty"></p></div><div class="connection" id="connection">Wix conectado</div></div><nav id="navigation"></nav><div id="view"></div></section>
+<section id="login" class="login-layout"><div class="login-card"><h1>Acceso</h1><p>Ingresa tu código de jurado u organización.</p><form id="loginForm"><label for="code">Código de acceso</label><input id="code" type="password" autocomplete="off" required><button class="primary" type="submit">Entrar</button></form><p id="loginStatus" role="status"></p></div></section>
+<section id="workspace" hidden><div class="page-heading"><div><p class="eyebrow" id="modeLabel"></p><h1 id="welcome"></h1><p id="specialty"></p></div><div class="connection" id="connection">Conectado</div></div><nav id="navigation"></nav><div id="view"></div></section>
 </main>
-<footer><span>EMPIRE FEST 2026</span><span>Identidad · Legado · Expresión</span></footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <dialog id="confirm"><h2 id="confirmTitle">Publicar evaluación</h2><p id="confirmText"></p><div class="actions"><button id="cancelConfirm" class="outline">Cancelar</button><button id="acceptConfirm" class="primary">Confirmar publicación</button></div></dialog>
-<script type="module" src="app.js?v=20261012-nodemo"></script>
+<script type="module" src="app.js?v=20261012-simple"></script>
 </body></html>
