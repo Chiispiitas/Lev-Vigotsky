@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import librosa
 from scipy.ndimage import median_filter
+from song_sync import align_vocal_activity
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--source', required=True)
@@ -64,6 +65,7 @@ for line in lrc.read_text(encoding='utf-8-sig').splitlines():
 for i, line in enumerate(lyrics):
     line['end'] = min(lyrics[i+1]['start'] if i+1<len(lyrics) else duration, line['start']+7)
 song={'id':'its-been-so-long','title':"It's Been So Long",'artist':'The Living Tombstone','language':'English','duration':round(duration,3),'instrumental':'assets/instrumental.mp3','lyrics':lyrics,'timing':{'lyricsOffset':.65,'melodyOffset':0},'reference':{'method':'librosa-pyin-smoothed','version':2,'hopSeconds':.01,'reviewed':False,'frames':[f for f in frames if not f['interpolated']],'contour':frames,'notes':notes,'bridgedFrames':int(bridged)},'lyricPrecision':'line'}
+song=align_vocal_activity(song,y,sr)
 shutil.copy2(instrumental, out/'instrumental.mp3')
 shutil.copy2(lrc, out/'lyrics.lrc')
 (out/'song.json').write_text(json.dumps(song,separators=(',',':')),encoding='utf-8')
