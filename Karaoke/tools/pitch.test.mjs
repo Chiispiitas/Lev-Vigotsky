@@ -10,4 +10,11 @@ test('quiet harmonic singing remains detectable',()=>{const samples=new Float32A
 test('smoothing bridges a brief dropout but releases silence',()=>{const s=new PitchSmoother();s.push(60,0);assert.equal(s.push(null,.04),60);assert.equal(s.push(null,.12),null)});
 test('visual smoothing does not lag a new phrase',()=>{const s=new PitchSmoother();s.push(60,0);s.push(null,.2);assert.equal(s.push(72,.21),72)});
 test('a continuous voice cannot jump octaves when the target changes',()=>{const r=new PitchRegister();assert.equal(r.map(69,65,0),69);assert.equal(r.map(69,61,.01),69);assert.equal(r.map(69,65,.02),69)});
+test('a continuous singer can switch octaves without misleading the display',()=>{
+ const r=new PitchRegister();
+ assert.equal(r.map(53,65,0),65);
+ assert.equal(r.map(65,65,.02),65);
+ assert.equal(r.map(53,65,.04),65);
+ assert.equal(r.map(77,65,.06),65);
+});
 test('a new phrase can use a different register',()=>{const r=new PitchRegister();assert.equal(r.map(53,65,0),65);assert.equal(r.map(77,65,.5),65)});
