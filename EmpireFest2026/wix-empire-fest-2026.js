@@ -59,11 +59,11 @@ export async function post_empireFest2026(request){
       const participant=await wixData.query(EF_PARTICIPANTS).eq('_id',participantId).limit(1).find(EF_OPTIONS);if(!participant.items.length)efError('Participante no encontrado.');
       const record={_id:raw._id,title:`${participant.items[0].number}. ${participant.items[0].name} · ${rubric.short}`,participantId,rubricId:user.rubricId,judgeName:user.title,scores,total,comment,evaluationDate:raw.evaluationDate};
       const existing=await wixData.query(EF_SCORES).eq('_id',raw._id).limit(1).find(EF_OPTIONS);
-      if(existing.items.length){const old=existing.items[0];if(old.participantId!==record.participantId||old.rubricId!==record.rubricId||JSON.stringify(old.scores)!==JSON.stringify(record.scores)||old.comment!==record.comment||old.evaluationDate!==record.evaluationDate)efError('La publicación ya existe con otros datos.',409);return efResponse(200,{ok:true,record:efRecord(old)});}
+      if(existing.items.length){const old=existing.items[0];if(old.participantId!==record.participantId||old.rubricId!==record.rubricId||rubric.criteria.some(c=>old.scores?.[c.id]!==record.scores[c.id])||old.comment!==record.comment||old.evaluationDate!==record.evaluationDate)efError('La publicación ya existe con otros datos.',409);return efResponse(200,{ok:true,record:efRecord(old)});}
       // New revisions are insert-only: preserve all history and never overwrite another judge.
       let saved;try{saved=await wixData.insert(EF_SCORES,record,EF_OPTIONS);}catch{
         const retry=await wixData.query(EF_SCORES).eq('_id',raw._id).limit(1).find(EF_OPTIONS);if(!retry.items.length)throw new Error('Insert failed');
-        const old=retry.items[0];if(old.participantId!==record.participantId||old.rubricId!==record.rubricId||JSON.stringify(old.scores)!==JSON.stringify(record.scores)||old.comment!==record.comment||old.evaluationDate!==record.evaluationDate)efError('Conflicto de publicación.',409);saved=old;
+        const old=retry.items[0];if(old.participantId!==record.participantId||old.rubricId!==record.rubricId||rubric.criteria.some(c=>old.scores?.[c.id]!==record.scores[c.id])||old.comment!==record.comment||old.evaluationDate!==record.evaluationDate)efError('Conflicto de publicación.',409);saved=old;
       }
       return efResponse(200,{ok:true,record:efRecord(saved)});
     }
