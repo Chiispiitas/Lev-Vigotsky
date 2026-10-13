@@ -1,4 +1,4 @@
-# Ten-song integration validation
+# Contest and expanded catalog validation
 
 2026-10-13
 
@@ -14,3 +14,16 @@ Still required before a school event: test all ten videos on the deployed HTTPS 
 
 - A dedicated browser playback check succeeded for Color esperanza, Vivir mi vida, Me enamora, No se habla de Bruno, Count On Me, Firework, Shake It Off, Believer, and Happy on localhost.
 - Qué hay más allá failed with YouTube error 150 and was replaced by A Dios le pido. The replacement chart passes validation; its browser playback check could not finish because YouTube temporarily blocked the test network for automated queries. Recheck this video on the deployed HTTPS origin.
+
+## Expanded catalog and contest highlighting
+
+- The catalog now contains 35 unique online songs, including 25 additions (13 Spanish and 12 English); combined totals are 18 Spanish and 17 English.
+- All 25 new chart URLs returned HTTP 200. All 35 charts pass conversion/scoring validation in the existing 40-test suite.
+- The original local contest song remains first/default; the library total is 36. Home, library, ready and performance views identify it with the CONTEST label.
+- Browser playback evidence above applies to the original ten selections. The additional videos require final playback/alignment rehearsal on the deployed origin; metadata results alone do not establish playback availability.
+
+- All 25 added video IDs passed YouTube oEmbed metadata lookups. This confirms metadata availability only.
+- Browser UI inspection confirmed 36 library cards, one designated contest card, the gold home-page contest feature, and search results for the new entries.
+- Dancing Queen played successfully in practice mode with advancing lyrics and simulated pitch scoring (observed at 0:33).
+
+- Sofia also played successfully with advancing lyrics and simulated pitch scoring (observed at 0:45). Other new videos still need playback/alignment checks on the deployed HTTPS origin.

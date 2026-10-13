@@ -5,9 +5,9 @@ import {parseChart,loadCatalog} from '../song-catalog.js';
 import {scoreFrame} from '../scoring.js';
 const root=new URL('../',import.meta.url);
 const entries=JSON.parse(fs.readFileSync(new URL('assets/catalog.json',root),'utf8').replace(/^\uFEFF/,''));
-test('catalog contains five Spanish and five English charts with playable metadata',()=>{
- assert.equal(entries.length,10);assert.equal(new Set(entries.map(e=>e.id)).size,10);
- for(const language of ['Spanish','English'])assert.equal(entries.filter(e=>e.language===language).length,5);
+test('catalog contains 35 unique songs with valid Spanish and English charts',()=>{
+ assert.equal(entries.length,35);assert.equal(new Set(entries.map(e=>e.id)).size,35);
+ assert.equal(entries.filter(e=>e.language==='Spanish').length,18);assert.equal(entries.filter(e=>e.language==='English').length,17);
  for(const entry of entries){
   const song=parseChart(fs.readFileSync(new URL(entry.chart,root),'utf8'),entry);
   assert.match(song.video,/^[\w-]{11}$/);assert.ok(song.lyrics.length>20);assert.ok(song.reference.frames.length>1000);
@@ -26,5 +26,5 @@ test('decimal BPM, millisecond gap, syllables and freestyle convert correctly',(
 });
 test('one failed chart does not remove the rest of the catalog',async()=>{
  const result=await loadCatalog(async path=>path.startsWith('assets/catalog')?{ok:true,json:async()=>entries}:path===entries[0].chart?{ok:false}:{ok:true,text:async()=>fs.readFileSync(new URL(path,root),'utf8')});
- assert.equal(result.songs.length,9);assert.deepEqual(result.failed,[entries[0].title]);
+ assert.equal(result.songs.length,34);assert.deepEqual(result.failed,[entries[0].title]);
 });

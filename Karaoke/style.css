@@ -66,3 +66,10 @@
 .pitch-legend .feedback{margin-left:0}
 
 #youtube-host{width:min(480px,100%);margin:20px auto;padding-bottom:20px;background:#07152c}#youtube-host[hidden]{display:none}#youtube-host iframe{display:block;width:100%;height:270px;border:0}.has-youtube .stage{min-height:calc(100vh - 310px)}@media(max-width:520px){#youtube-host iframe{height:220px}.has-youtube .stage{min-height:calc(100vh - 260px)}}
+
+.contest-badge{display:inline-flex;align-items:center;padding:6px 10px;border-radius:6px;background:var(--yellow);color:#08162f;font-size:10px;font-weight:800;letter-spacing:1px;line-height:1.4;text-transform:uppercase;margin-bottom:10px}
+.song-card.contest-song,.panel.contest-selected{border:2px solid var(--yellow);background:linear-gradient(140deg,#293548,#172742);box-shadow:0 0 0 3px #ffd45d12}
+.song-card.contest-song .cover{background:linear-gradient(140deg,#685327,#2c3850);color:var(--yellow)}
+.contest-feature{display:flex;align-items:center;gap:22px;border:2px solid var(--yellow);border-radius:14px;background:linear-gradient(115deg,#2d3446,#13233c);padding:22px 24px;margin:0 0 26px}
+.contest-emblem{display:grid;place-items:center;flex-shrink:0;width:66px;height:66px;border-radius:16px;background:#ffd45d20;color:var(--yellow)}.contest-emblem .icon{width:34px;height:34px}.contest-copy{flex:1}.contest-copy h2{font-size:34px}.contest-copy p{font-size:12px}.contest-copy .contest-badge{margin-bottom:7px}.ready>.contest-badge{margin-top:12px}.stage-title .contest-badge{margin:0 0 4px;font-size:9px}
+@media(max-width:800px){.contest-feature{flex-wrap:wrap;padding:18px}.contest-feature>.flex{width:100%;flex-wrap:wrap}.contest-copy h2{font-size:30px}}
