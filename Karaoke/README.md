@@ -186,9 +186,9 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 ## Album artwork
 
-All 86 bundled songs have album or single artwork in `assets/covers.json`. Artwork links to the matching Apple Music release, with an official store badge beside each image. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 86 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover opens that song’s practice playback screen. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
-Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. The official badge comes from Apple Music Marketing Tools. Artwork and branding remain the property of their respective owners.
+Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
 ## YouTube connection troubleshooting
 

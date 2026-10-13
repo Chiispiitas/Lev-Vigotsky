@@ -17,8 +17,7 @@ const contestBadge=s=>isContestSong(s)?'<span class="contest-badge">CONTEST · C
 let coverArtwork={};
 function songCover(song,compact=false){
   const art=coverArtwork[song.id],fallback=icon(isContestSong(song)?'trophy':'music');
-  if(!art)return `<div class="cover">${fallback}</div>`;
-  return `<div class="release-art ${compact?'compact-art':''}"><a class="cover" href="${esc(art.storeUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Ver ${esc(art.album)} en Apple Music"><span class="cover-fallback">${fallback}</span><img class="album-cover" src="${esc(art.url)}" alt="Portada de ${esc(art.album)} · ${esc(song.artist)}" width="600" height="600" loading="${compact?'eager':'lazy'}" decoding="async"></a><a class="music-store-badge" href="${esc(art.storeUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Escuchar ${esc(song.title)} en Apple Music"><img src="assets/apple-music-badge.svg" alt="Escuchar en Apple Music" width="120" height="40" loading="lazy"></a></div>`;
+  return `<div class="release-art ${compact?'compact-art':''}"><button type="button" class="cover" data-action="preview-song:${esc(song.id)}" aria-label="Reproducir ${esc(song.title)}"><span class="cover-fallback">${fallback}</span>${art?`<img class="album-cover" src="${esc(art.url)}" alt="Portada de ${esc(art.album)} · ${esc(song.artist)}" width="600" height="600" loading="${compact?'eager':'lazy'}" decoding="async">`:''}<span class="cover-play" aria-hidden="true">${icon('play')}</span></button></div>`;
 }
 // Image errors do not bubble; capture them so unavailable artwork keeps its icon.
 app.addEventListener('error',event=>{if(event.target.matches?.('.album-cover'))event.target.hidden=true},true);
