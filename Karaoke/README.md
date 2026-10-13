@@ -207,3 +207,9 @@ The microphone now confirms a consistent pitch for about 30 ms at the beginning 
 Validation: 54 tests passed, including isolated high/low readings, brief static bursts, real octave changes, quiet singing, silence/scoring behavior, and a loud 20 ms interference burst processed through the actual detector. Live microphone behavior in the event room remains to be checked. Persistent background music at a stable pitch can still be detected; environmental-noise calibration and microphone placement remain useful.
 
 Molinos de viento was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/mago-de-oz-molinos-de-viento.txt). The chart keeps its original metadata. Its YouTube metadata and cover URL were checked; full playback/alignment on the deployed origin still needs rehearsal.
+
+## Wider pitch targets and octave guides
+
+When accepting different octaves is enabled, the chart now shows the original melody plus one octave above and below. Each note has a solid full-credit band and a softer partial-credit band; chart bounds include all three lanes. The voice trace keeps its actual octave within those lanes, and octave jumps start a new trace segment. Projection windows receive the same octave setting. Turning octave acceptance off shows only the original lane and scores its original register.
+
+School scoring now gives full pitch credit within one semitone (previously 0.75) and fades to zero at 2.5 semitones (previously 2). Octave-equivalent notes retain the same pitch allowance; silence, rejected microphone spikes, and distant off-key notes still receive no credit. New results record scoring version `school-v3` and their pitch margins; existing recorded scores are preserved. All 55 tests passed, including symmetric upper/lower octave tolerance boundaries.

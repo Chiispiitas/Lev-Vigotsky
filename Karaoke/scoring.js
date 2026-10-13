@@ -1,9 +1,13 @@
+export const FULL_PITCH_TOLERANCE=1;
+export const PARTIAL_PITCH_TOLERANCE=2.5;
+export function referenceOctaves(octave=true){return octave?[-12,0,12]:[0]}
 export function pitchCredit(singerMidi,targetMidi,octave=true){
  if(!Number.isFinite(singerMidi)||!Number.isFinite(targetMidi))return 0;
  let difference=Math.abs(singerMidi-targetMidi);
  if(octave)difference=Math.abs(((difference+6)%12)-6);
  const cents=Math.round(difference*100*1e8)/1e8;
- return cents<=75?1:cents>=200?0:1-(cents-75)/125;
+ const full=FULL_PITCH_TOLERANCE*100,partial=PARTIAL_PITCH_TOLERANCE*100;
+ return cents<=full?1:cents>=partial?0:1-(cents-full)/(partial-full);
 }
 export function closestFrameIndex(frames,time){
  let lo=0,hi=frames.length;

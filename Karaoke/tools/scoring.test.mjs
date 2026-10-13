@@ -1,8 +1,17 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {pitchCredit,scoreFrame,finalScore,parseLrc} from '../scoring.js';
+import {pitchCredit,scoreFrame,finalScore,parseLrc,referenceOctaves,FULL_PITCH_TOLERANCE,PARTIAL_PITCH_TOLERANCE} from '../scoring.js';
 test('octave equivalence is optional',()=>{assert.equal(pitchCredit(72,60),1);assert.equal(pitchCredit(72,60,false),0)});
 test('silence and off-key audio earn no credit',()=>{assert.equal(pitchCredit(null,60),0);assert.equal(pitchCredit(65,60),0)});
-test('school tolerance offers partial credit',()=>{assert.equal(pitchCredit(60.7,60),1);assert.ok(pitchCredit(61,60)>0);assert.ok(pitchCredit(61.8,60)>0);assert.equal(pitchCredit(62.1,60),0)});
+test('school tolerance offers partial credit',()=>{assert.equal(pitchCredit(60.7,60),1);assert.equal(pitchCredit(61,60),1);assert.ok(pitchCredit(61.8,60)>0);assert.equal(pitchCredit(62.5,60),0)});
+test('wider reference bands score equally above and below in all three lanes',()=>{
+ assert.deepEqual(referenceOctaves(),[-12,0,12]);assert.deepEqual(referenceOctaves(false),[0]);
+ for(const octave of referenceOctaves())for(const direction of [-1,1]){
+  assert.equal(pitchCredit(60+octave+direction*FULL_PITCH_TOLERANCE,60),1);
+  assert.equal(pitchCredit(60+octave+direction*PARTIAL_PITCH_TOLERANCE,60),0);
+  assert.ok(Math.abs(pitchCredit(60+octave+direction*1.75,60)-.5)<1e-8);
+ }
+ assert.equal(pitchCredit(72.9,60,false),0);assert.equal(pitchCredit(60.9,60,false),1);
+});
 test('a higher or lower octave scores the same even when slightly flat',()=>{assert.equal(pitchCredit(72.65,60),1);assert.equal(pitchCredit(48.65,60),1);assert.equal(pitchCredit(72.65,60,false),0)});
 test('timing allowance helps near a transition but excludes gaps',()=>{const frames=[{t:1,midi:60},{t:1.02,midi:62},{t:1.04,midi:62}];assert.equal(scoreFrame(frames,1,62).credit,1);assert.equal(scoreFrame(frames,2,62).eligible,false)});
 test('score denominator prevents short perfect phrases winning',()=>{assert.equal(finalScore(1,10),1000);assert.equal(finalScore(10,10),10000);assert.equal(finalScore(0,10),0)});
