@@ -73,3 +73,17 @@
 .contest-feature{display:flex;align-items:center;gap:22px;border:2px solid var(--yellow);border-radius:14px;background:linear-gradient(115deg,#2d3446,#13233c);padding:22px 24px;margin:0 0 26px}
 .contest-emblem{display:grid;place-items:center;flex-shrink:0;width:66px;height:66px;border-radius:16px;background:#ffd45d20;color:var(--yellow)}.contest-emblem .icon{width:34px;height:34px}.contest-copy{flex:1}.contest-copy h2{font-size:34px}.contest-copy p{font-size:12px}.contest-copy .contest-badge{margin-bottom:7px}.ready>.contest-badge{margin-top:12px}.stage-title .contest-badge{margin:0 0 4px;font-size:9px}
 @media(max-width:800px){.contest-feature{flex-wrap:wrap;padding:18px}.contest-feature>.flex{width:100%;flex-wrap:wrap}.contest-copy h2{font-size:30px}}
+
+/* Keep the complete album art visible, with its release link alongside it. */
+.release-art{margin-bottom:18px;min-width:0}
+.release-art .cover{display:block;position:relative;width:100%;height:auto;aspect-ratio:1;margin:0;background:#10213a;color:var(--yellow)}
+.cover-fallback{position:absolute;inset:0;display:grid;place-items:center}
+.album-cover{position:relative;display:block;width:100%;height:100%;object-fit:contain;border-radius:inherit}
+.album-cover[hidden]{display:none}
+.music-store-badge{display:block;width:120px;height:40px;margin:10px auto 0}
+.music-store-badge img{display:block;width:100%;height:100%}
+.compact-art{width:120px;flex-shrink:0;margin-bottom:0}
+.compact-art .cover{width:120px;height:120px}
+.compact-art .music-store-badge{margin-top:8px}
+.cover:focus-visible,.music-store-badge:focus-visible{outline:3px solid var(--yellow);outline-offset:4px}
+@media(max-width:760px){.song-feature .compact-art{width:100px}.song-feature .compact-art .cover{width:100px;height:100px}.song-feature .music-store-badge{width:100px;height:34px;margin-left:0}}

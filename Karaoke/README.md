@@ -183,3 +183,9 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 `song-catalog.js` converts chart beats and GAP into video seconds, assembles line lyrics, normalizes pitch display octaves, and samples pitched notes on a 20 ms grid. Freestyle/rap syllables appear in lyrics but are excluded from pitch scoring; golden notes currently use the same weight as normal notes. Chart quality and individual video synchronization are unreviewed; adjust per-song lyric/melody delays after rehearsal.
 
 `youtube-transport.js` keeps one visible player outside the app's changing screen markup. Local songs retain their decoded audio transport; YouTube songs follow video time. Pausing/buffering stops scoring and audience interpolation. Unavailable videos display an error instead of starting a round. Embedded-video restrictions can vary by origin or region; a successful metadata lookup is not a playback test. Test on the deployed HTTPS origin before an event.
+
+## Album artwork
+
+All 86 bundled songs have album or single artwork in `assets/covers.json`. Artwork links to the matching Apple Music release, with an official store badge beside each image. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+
+Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. The official badge comes from Apple Music Marketing Tools. Artwork and branding remain the property of their respective owners.
