@@ -27,3 +27,19 @@ test('retrying the same failed video clears the old error and creates a fresh pl
  const {transport}=setup();transport._src='video-id';transport.error=new Error('network');transport.loadPromise=Promise.resolve();
  transport.src='video-id';assert.equal(transport.error,null);assert.equal(transport.player,null);assert.equal(transport.loadPromise,null);
 });
+test('player embeds on the privacy domain with origin and manual playback controls',async t=>{
+ const host={hidden:true,replaceChildren(){},append(slot){this.slot=slot}};
+ const oldDoc=Object.getOwnPropertyDescriptor(globalThis,'document'),oldLocation=Object.getOwnPropertyDescriptor(globalThis,'location');
+ Object.defineProperty(globalThis,'document',{configurable:true,value:{querySelector:()=>host,createElement:tag=>({tag})}});
+ Object.defineProperty(globalThis,'location',{configurable:true,value:{origin:'https://chiispiitas.github.io'}});
+ t.after(()=>{if(oldDoc)Object.defineProperty(globalThis,'document',oldDoc);else delete globalThis.document;if(oldLocation)Object.defineProperty(globalThis,'location',oldLocation);else delete globalThis.location});
+ let config;
+ const transport=new YouTubeTransport(async()=>({Player:class{constructor(slot,options){config=options;queueMicrotask(()=>options.events.onReady())}setVolume(){}destroy(){}}}));
+ transport.src='video-id';await transport.load();
+ const url=new URL(host.slot.src);
+ assert.equal(host.slot.tag,'iframe');assert.equal(url.origin,'https://www.youtube-nocookie.com');
+ assert.equal(url.pathname,'/embed/video-id');assert.equal(url.searchParams.get('origin'),'https://chiispiitas.github.io');
+ assert.equal(url.searchParams.get('enablejsapi'),'1');assert.equal(url.searchParams.get('controls'),'1');
+ assert.ok(host.slot.allow.includes('autoplay'));assert.equal(transport.readyState,4);
+ assert.equal(typeof config.events.onAutoplayBlocked,'function');
+});

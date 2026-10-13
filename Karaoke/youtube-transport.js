@@ -1,15 +1,6 @@
-let apiPromise;
-function loadApi(){
- if(globalThis.YT?.Player)return Promise.resolve(globalThis.YT);
- if(!apiPromise)apiPromise=new Promise((resolve,reject)=>{
-  const timer=setTimeout(()=>{apiPromise=null;reject(new Error('YouTube no respondió. Comprueba la conexión e inténtalo otra vez.'))},15000);
-  const previous=globalThis.onYouTubeIframeAPIReady;
-  globalThis.onYouTubeIframeAPIReady=()=>{clearTimeout(timer);previous?.();resolve(globalThis.YT)};
-  const script=document.createElement('script');script.src='https://www.youtube.com/iframe_api';script.onerror=()=>{clearTimeout(timer);apiPromise=null;reject(new Error('No se pudo conectar con YouTube.'))};document.head.append(script);
- });return apiPromise;
-}
+import {loadYouTubeApi} from './youtube-api.js?v=1';
 export class YouTubeTransport extends EventTarget {
- constructor(apiLoader=loadApi){super();this.apiLoader=apiLoader;this.player=null;this.status=-1;this._volume=.8;this._src='';this.error=null;this.offset=0;this.ended=false;this.readyState=0;this.playbackRate=1;this.seeking=false}
+ constructor(apiLoader=loadYouTubeApi){super();this.apiLoader=apiLoader;this.player=null;this.status=-1;this._volume=.8;this._src='';this.error=null;this.offset=0;this.ended=false;this.readyState=0;this.playbackRate=1;this.seeking=false}
  get src(){return this._src}
  set src(value){if(this._src===value&&!this.error&&this.player){this.pause();this.currentTime=0;return}this.pause();this.player?.destroy();this.player=null;this.loadPromise=null;this._src=value;this.error=null;this.offset=0;this.status=-1;this.readyState=0;this.ended=false}
  get duration(){return this.player?.getDuration?.()||0}
@@ -25,10 +16,14 @@ export class YouTubeTransport extends EventTarget {
   this.loadPromise=(async()=>{
    const YT=await this.apiLoader();if(videoId!==this.src)throw new Error('La canción cambió.');
    let host=document.querySelector('#youtube-host');if(!host){host=document.createElement('section');host.id='youtube-host';host.setAttribute('aria-label','Video de la canción');document.body.append(host)}
-   host.hidden=false;host.replaceChildren();const slot=document.createElement('div');host.append(slot);
+   host.hidden=false;host.replaceChildren();const slot=document.createElement('iframe');
+   slot.width='480';slot.height='270';slot.title='Video de la canción';
+   slot.allow='autoplay; encrypted-media; picture-in-picture';slot.allowFullscreen=true;slot.referrerPolicy='strict-origin-when-cross-origin';
+   const params=new URLSearchParams({enablejsapi:'1',playsinline:'1',controls:'1',rel:'0',origin:location.origin});
+   slot.src=`https://www.youtube-nocookie.com/embed/${encodeURIComponent(videoId)}?${params}`;host.append(slot);
    await new Promise((resolve,reject)=>{
     const timeout=setTimeout(()=>reject(new Error('El video no respondió. Inténtalo otra vez.')),15000);
-    this.player=new YT.Player(slot,{width:480,height:270,videoId,playerVars:{playsinline:1,controls:0,disablekb:1,rel:0,origin:location.origin},events:{
+    this.player=new YT.Player(slot,{events:{
      onReady:()=>{clearTimeout(timeout);this.readyState=4;this.volume=this._volume;resolve()},
      onStateChange:e=>this.onState(e.data),
      onError:e=>{clearTimeout(timeout);const error=new Error(`YouTube no puede reproducir este video (${e.data}). Prueba otra canción.`);this.error=error;reject(error);this.dispatchEvent(new Event('error'))},

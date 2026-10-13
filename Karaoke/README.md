@@ -189,3 +189,11 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 All 86 bundled songs have album or single artwork in `assets/covers.json`. Artwork links to the matching Apple Music release, with an official store badge beside each image. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. The official badge comes from Apple Music Marketing Tools. Artwork and branding remain the property of their respective owners.
+
+## YouTube connection troubleshooting
+
+If `www.youtube.com/iframe_api` is refused, the app now falls back to the official widget API on `www.youtube-nocookie.com`. Video iframes also use that privacy domain, retain the app origin/referrer, and show playback controls so users can start a video when autoplay is blocked. The fallback is also tried when the bootstrap loads but its nested player script never responds. Failed attempts are cleaned up so Retry starts a fresh connection.
+
+The release-versioned fallback URL in `youtube-api.js` was checked on 2026-10-13. If YouTube retires that version, refresh the path from its official `iframe_api` response. This fallback cannot repair a browser, extension, proxy, DNS filter, or school network that blocks both YouTube domains or its video delivery servers. Open the GitHub Pages app in a regular browser and try an allowed network; the local contest instrumental remains available without YouTube.
+
+Validation: 46 tests passed, including API refusal, bootstrap timeout, both-domain failure/retry, concurrent loading, and the privacy iframe configuration. Both official fallback script and embed endpoints returned HTTP 200. Playback in the affected user environment remains unverified; this session blocked browser preview testing.
