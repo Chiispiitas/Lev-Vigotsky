@@ -188,7 +188,7 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 ## Album artwork
 
-All 87 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover opens that song’s practice playback screen. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 87 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
@@ -213,3 +213,11 @@ Molinos de viento was added from the [AllKaraoke source chart](https://github.co
 When accepting different octaves is enabled, the chart now shows the original melody plus one octave above and below. Each note has a solid full-credit band and a softer partial-credit band; chart bounds include all three lanes. The voice trace keeps its actual octave within those lanes, and octave jumps start a new trace segment. Projection windows receive the same octave setting. Turning octave acceptance off shows only the original lane and scores its original register.
 
 School scoring now gives full pitch credit within one semitone (previously 0.75) and fades to zero at 2.5 semitones (previously 2). Octave-equivalent notes retain the same pitch allowance; silence, rejected microphone spikes, and distant off-key notes still receive no credit. New results record scoring version `school-v3` and their pitch margins; existing recorded scores are preserved. All 55 tests passed, including symmetric upper/lower octave tolerance boundaries.
+
+## Compact selection and playful mascot
+
+The app title is English Karaoke Contest. Library covers are 74 px (64 px on small screens), alongside titles and artists in compact cards. Clicking a cover or Cantar prepares a real ranked turn; Prueba remains the explicit simulated option. Requested explanatory text, AllKaraoke launch links, and local-storage footer labels were removed. Source metadata and chart attribution remain in the bundled data.
+
+New transparent cheering and encouraging owl poses join the existing mascot. The performance screen includes an owl beside the lyrics that reacts to recent pitch credit, with smoothing and a 600 ms dwell to avoid rapid emotion changes. Instrumental breaks and pauses use a neutral pose. Cards, panels, buttons, scores, and owls use gentle entrance, floating, bouncing, and hover motion. Both the app reduced-motion setting and the operating-system reduced-motion preference disable those effects.
+
+All 60 tests passed, including real ranked selection, explicit practice, missing-participant routing, mascot emotion transitions, and the existing audio/scoring checks. Browser preview remains unavailable in this session, so visual QA on the live site is still needed. See [OWL-ASSETS.md](OWL-ASSETS.md) for image-generation prompts and saved assets.

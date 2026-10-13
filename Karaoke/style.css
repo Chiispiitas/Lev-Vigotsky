@@ -89,3 +89,35 @@
 .cover-play .icon{width:44px;height:44px;padding:10px;border-radius:50%;background:var(--yellow);color:#08162f}
 .cover:hover .cover-play,.cover:focus-visible .cover-play{opacity:1}
 @media(hover:none){.cover-play{opacity:1;background:transparent}.cover-play .icon{position:absolute;right:8px;bottom:8px}}
+
+/* A compact library and a cheerful, unobtrusive companion. */
+.song-grid{grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:14px}
+.song-card{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;padding:14px;align-content:start;animation:card-arrive .35s both;animation-delay:var(--card-delay,0ms);transition:transform .2s,border-color .2s,box-shadow .2s}
+.song-card:hover{transform:translateY(-3px);border-color:#ffd44780;box-shadow:0 8px 25px #0003}
+.song-card .release-art{width:74px;margin:0;align-self:center}
+.song-card .cover{width:74px;height:74px;margin:0}
+.song-copy{min-width:0}.song-copy h3{font-size:15px;margin:0 0 5px;line-height:1.3}.song-copy p{font-size:11px;margin:0}
+.song-copy .pills{gap:5px;margin-top:8px}.song-copy .pill{padding:4px 6px;font-size:9px}.song-copy .contest-badge{font-size:8px;padding:3px 7px;margin-bottom:5px}
+.song-actions{grid-column:1/-1;display:flex;align-items:center;gap:8px;margin-top:2px}.song-actions .button{padding:9px 12px;font-size:11px;min-height:35px}.song-actions .button:first-child{flex:1}.song-actions .icon{width:14px;height:14px}
+.song-card .cover-play .icon{width:30px;height:30px;padding:7px}
+.button,.icon-button{transition:transform .18s,background .18s,box-shadow .18s}.button:hover,.icon-button:hover{transform:translateY(-2px);box-shadow:0 5px 18px #ffd44718}.button:active,.icon-button:active{transform:scale(.96)}
+.panel,.home-intro,.page-head{animation:panel-arrive .4s both}.home-intro{overflow:hidden}.home-intro-copy{max-width:750px}.home-intro h1{font-size:clamp(36px,4.5vw,64px)}
+.owl-mascot{animation:owl-float 3.8s ease-in-out infinite;transform-origin:50% 85%;filter:drop-shadow(0 12px 12px #0002)}
+.ready .owl-mascot{animation:owl-bounce 2s ease-in-out infinite}.result-hero .owl-mascot{animation:owl-cheer 1.8s ease-in-out infinite}
+.lyrics-stage{display:grid;grid-template-columns:minmax(0,1fr) 120px;align-items:center;gap:16px;margin:12px auto;max-width:1400px}.lyrics-stage .lyrics{grid-column:1;grid-row:1;margin:12px 0;min-height:175px;width:100%}
+.stage-companion{grid-column:2;grid-row:1;text-align:center;pointer-events:none;color:#fce48a}.owl-poses{position:relative;width:120px;height:132px;animation:owl-float 3s ease-in-out infinite;transform-origin:50% 90%}
+.owl-pose{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .25s;filter:drop-shadow(0 6px 10px #0003)}
+[data-mood=waiting] .pose-waiting,[data-mood=singing] .pose-singing,[data-mood=cheering] .pose-cheering,[data-mood=encouraging] .pose-encouraging{opacity:1}
+[data-mood=cheering] .owl-poses{animation:owl-cheer .9s ease-in-out infinite}[data-mood=singing] .owl-poses{animation:owl-bounce 1.8s ease-in-out infinite}[data-mood=encouraging] .owl-poses{animation:owl-sway 3s ease-in-out infinite}
+.stage-companion span{display:block;font-size:11px;font-weight:700;margin-top:8px}.footer{justify-content:flex-end}.brand-title{font-size:18px}
+.stage-score .display{animation:score-glow 4s ease-in-out infinite}
+@keyframes card-arrive{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes panel-arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes owl-float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+@keyframes owl-bounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.025)}}
+@keyframes owl-cheer{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@keyframes owl-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes score-glow{0%,100%{text-shadow:0 0 10px #ffd44715}50%{text-shadow:0 0 24px #ffd44745}}
+@media(max-width:760px){.song-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}.brand-title{font-size:14px;max-width:180px}.home-intro h1{font-size:34px}.home-mascot{min-width:65px}}
+@media(max-width:520px){.song-grid{grid-template-columns:1fr}.song-card{grid-template-columns:64px minmax(0,1fr);padding:12px;gap:10px}.song-card .release-art,.song-card .cover{width:64px;height:64px}.lyrics-stage{grid-template-columns:minmax(0,1fr) 68px;gap:8px}.owl-poses{width:68px;height:78px}.stage-companion span{font-size:9px}.lyrics-stage .lyrics{min-height:155px}.home-intro h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
