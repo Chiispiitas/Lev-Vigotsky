@@ -1,0 +1,122 @@
+[
+  {
+    "id": "diego-torres-color-esperanza",
+    "title": "Color esperanza",
+    "artist": "Diego Torres",
+    "language": "Spanish",
+    "video": "Nb1VOQRs-Vs",
+    "duration": 260,
+    "chart": "assets/allkaraoke/diego-torres-color-esperanza.txt",
+    "source": "https://allkaraoke.party/game/?song=diego-torres-color-esperanza",
+    "author": "Hanso",
+    "sourceUrl": null
+  },
+  {
+    "id": "marc-anthony-vivir-mi-vida",
+    "title": "Vivir mi vida",
+    "artist": "Marc Anthony",
+    "language": "Spanish",
+    "video": "YXnjy5YlDwk",
+    "duration": 327,
+    "chart": "assets/allkaraoke/marc-anthony-vivir-mi-vida.txt",
+    "source": "https://allkaraoke.party/game/?song=marc-anthony-vivir-mi-vida",
+    "author": "rook22",
+    "sourceUrl": null
+  },
+  {
+    "id": "juanes-me-enamora",
+    "title": "Me enamora",
+    "artist": "Juanes",
+    "language": "Spanish",
+    "video": "voxgN3Dhjuo",
+    "duration": 193,
+    "chart": "assets/allkaraoke/juanes-me-enamora.txt",
+    "source": "https://allkaraoke.party/game/?song=juanes-me-enamora",
+    "author": null,
+    "sourceUrl": null
+  },
+  {
+    "id": "disneys-encanto-no-se-habla-de-bruno",
+    "title": "No se habla de Bruno",
+    "artist": "Disney’s Encanto",
+    "language": "Spanish",
+    "video": "wTi8yLyHeb8",
+    "duration": 217,
+    "chart": "assets/allkaraoke/disneys-encanto-no-se-habla-de-bruno.txt",
+    "source": "https://allkaraoke.party/game/?song=disneys-encanto-no-se-habla-de-bruno",
+    "author": "Volodia",
+    "sourceUrl": null
+  },
+  {
+    "id": "juanes-a-dios-le-pido",
+    "title": "A Dios le pido",
+    "artist": "Juanes",
+    "language": "Spanish",
+    "video": "kMIaYXxLnUA",
+    "duration": 211,
+    "chart": "assets/allkaraoke/juanes-a-dios-le-pido.txt",
+    "source": "https://allkaraoke.party/game/?song=juanes-a-dios-le-pido",
+    "author": "TeLiXj",
+    "sourceUrl": "https://ultrastar-es.org/pl/canciones?artista=Juanes&cancion=A%20Dios%20le%20pido"
+  },
+  {
+    "id": "bruno-mars-count-on-me",
+    "title": "Count On Me",
+    "artist": "Bruno Mars",
+    "language": "English",
+    "video": "6k8cpUkKK4c",
+    "duration": 193,
+    "chart": "assets/allkaraoke/bruno-mars-count-on-me.txt",
+    "source": "https://allkaraoke.party/game/?song=bruno-mars-count-on-me",
+    "author": "Bruno Mars",
+    "sourceUrl": "https://usdb.animux.de/?link=gettxt&id=14265"
+  },
+  {
+    "id": "katy-perry-firework",
+    "title": "Firework",
+    "artist": "Katy Perry",
+    "language": "English",
+    "video": "QGJuMBdaqIw",
+    "duration": 234,
+    "chart": "assets/allkaraoke/katy-perry-firework.txt",
+    "source": "https://allkaraoke.party/game/?song=katy-perry-firework",
+    "author": "michas17j",
+    "sourceUrl": "http://usdb.animux.de/index.php?link=detail&id=10301"
+  },
+  {
+    "id": "taylor-swift-shake-it-off",
+    "title": "Shake It Off",
+    "artist": "Taylor Swift",
+    "language": "English",
+    "video": "nfWlot6h_JM",
+    "duration": 242,
+    "chart": "assets/allkaraoke/taylor-swift-shake-it-off.txt",
+    "source": "https://allkaraoke.party/game/?song=taylor-swift-shake-it-off",
+    "author": "amro98",
+    "sourceUrl": null
+  },
+  {
+    "id": "imagine-dragons-believer",
+    "title": "Believer",
+    "artist": "Imagine Dragons",
+    "language": "English",
+    "video": "7wtfhZwyrcc",
+    "duration": 217,
+    "chart": "assets/allkaraoke/imagine-dragons-believer.txt",
+    "source": "https://allkaraoke.party/game/?song=imagine-dragons-believer",
+    "author": "mustangfred",
+    "sourceUrl": "https://ultrastar-es.org/pl/canciones?artista=Imagine%20Dragons&cancion=Believer"
+  },
+  {
+    "id": "pharrell-williams-happy",
+    "title": "Happy",
+    "artist": "Pharrell Williams",
+    "language": "English",
+    "video": "ZbZSe6N_BXs",
+    "duration": 241,
+    "chart": "assets/allkaraoke/pharrell-williams-happy.txt",
+    "source": "https://allkaraoke.party/game/?song=pharrell-williams-happy",
+    "author": "gun8",
+    "sourceUrl": "http://usdb.animux.de/index.php?link=detail&id=16651"
+  }
+]

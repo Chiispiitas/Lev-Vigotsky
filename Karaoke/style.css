@@ -64,3 +64,5 @@
 /* Leave only live pitch feedback below the chart; stars render inside its canvas. */
 .pitch-legend{justify-content:flex-end;min-height:34px;padding:10px 6px}
 .pitch-legend .feedback{margin-left:0}
+
+#youtube-host{width:min(480px,100%);margin:20px auto;padding-bottom:20px;background:#07152c}#youtube-host[hidden]{display:none}#youtube-host iframe{display:block;width:100%;height:270px;border:0}.has-youtube .stage{min-height:calc(100vh - 310px)}@media(max-width:520px){#youtube-host iframe{height:220px}.has-youtube .stage{min-height:calc(100vh - 260px)}}

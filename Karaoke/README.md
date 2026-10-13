@@ -61,7 +61,7 @@ The supplied first lyric cue precedes the measured vocal onset by about 660 ms; 
 npm test
 ```
 
-24 automated tests cover pitch detection, timestamps, smoothing, scoring, lyric parsing, and playback lifecycle.
+40 automated tests cover pitch detection, timestamps, smoothing, scoring, lyric parsing, chart conversion, playback lifecycle, and video playback controls.
 
 The preparation tool requires Python with librosa, numpy, scipy, and soundfile. It reads the original files in this folder:
 
@@ -74,3 +74,23 @@ Preparing another song should use a separate source/output folder to preserve th
 ## Present limits
 
 The extracted melody remains unreviewed. Lyric cues are line-timed; within-line highlighting is approximate. Imported songs last until the tab closes. A backup export exists, but an in-app restore interface is not implemented. Use one song/profile per scored final; formal event isolation and difficulty brackets remain future work. Test the actual USB mic, speakers, and projector before an event.
+
+## Ten-song AllKaraoke catalog
+
+The existing instrumental song remains available, with ten additional online songs:
+
+| Spanish | English |
+| --- | --- |
+| Color esperanza — Diego Torres | Count On Me — Bruno Mars |
+| Vivir mi vida — Marc Anthony | Firework — Katy Perry |
+| Me enamora — Juanes | Shake It Off — Taylor Swift |
+| No se habla de Bruno — Disney’s Encanto | Believer — Imagine Dragons |
+| A Dios le pido — Juanes | Happy — Pharrell Williams |
+
+Use **Canciones → Probar canción** to check playback without a microphone or saved result. Select a participant for a scored turn. These videos contain the original vocals; they are not isolated instrumental tracks. Internet access and YouTube embedding are required. Use headphones or keep speaker output away from the microphone so the recording's voice is not scored as the participant.
+
+`assets/catalog.json` lists the selections. The charts in `assets/allkaraoke/` were obtained from `https://allkaraoke.party/songs/<id>.txt` on 2026-10-13. Each retains its original attribution headers; catalog cards link to AllKaraoke and credit the chart creator where available. Recordings are played through the official YouTube iframe API and are not downloaded or hosted in this repository. No repository-wide chart license was found; public access should not be interpreted as a grant of redistribution or performance rights. Confirm chart permissions and relevant song/event rights before public release.
+
+`song-catalog.js` converts chart beats and GAP into video seconds, assembles line lyrics, normalizes pitch display octaves, and samples pitched notes on a 20 ms grid. Freestyle/rap syllables appear in lyrics but are excluded from pitch scoring; golden notes currently use the same weight as normal notes. Chart quality and individual video synchronization are unreviewed; adjust per-song lyric/melody delays after rehearsal.
+
+`youtube-transport.js` keeps one visible player outside the app's changing screen markup. Local songs retain their decoded audio transport; YouTube songs follow video time. Pausing/buffering stops scoring and audience interpolation. Unavailable videos display an error instead of starting a round. Embedded-video restrictions can vary by origin or region; a successful metadata lookup is not a playback test. Test on the deployed HTTPS origin before an event.
