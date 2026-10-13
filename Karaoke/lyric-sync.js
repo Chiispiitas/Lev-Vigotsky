@@ -6,7 +6,7 @@ export function lyricSegments(line,time){
  const segments=line.syllables?.length?line.syllables:[line];
  return segments.map(s=>({text:s.text,fill:100*fraction(time,s.start,s.end)}));
 }
-export function lyricAtTime(lines,time,leadSeconds=2){
+export function lyricAtTime(lines,time,leadSeconds=0){
  let lo=0,hi=lines.length;
  while(lo<hi){const mid=(lo+hi)>>1;if(lines[mid].start<=time)lo=mid+1;else hi=mid}
  const current=lo-1;

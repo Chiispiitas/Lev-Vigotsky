@@ -267,6 +267,15 @@ Online lyric highlighting uses the chart’s actual syllable intervals, rests, a
 
 The video clock retains valid zero timestamps on restart instead of falling back to an old seek position. Playback-rate changes update the microphone timeline in practice; ranked turns require normal speed. Worker packets captured before a start/resume/buffering recovery are excluded from the new timeline. Paused presentation time freezes and follows the confirmed YouTube pause position.
 
-To correct a recording-specific chart offset, use Prueba, pause on the first word of a phrase, choose that phrase under Frase que se escucha ahora, and press Alinear inicio de esta frase aquí. The offset is saved per song; online lyrics and melody shift together. This calibration is unavailable in ranked turns. Manual offsets now allow ten seconds in either direction.
+To correct a recording-specific chart offset, use Prueba, pause on the first word of a phrase, choose that phrase under Frase que se escucha ahora, and press Alinear esta canción. The offset is saved per song; online lyrics and melody shift together. This calibration is unavailable in ranked turns. Manual offsets now allow ten seconds in either direction.
 
 Validation: all 188 charts converted successfully, all 189 cover image URLs were verified, all 100 new YouTube video IDs returned metadata, and all 68 tests passed. This verifies data, conversion, and timing behavior; it does not certify alignment of every recording. Charts remain unreviewed until rehearsed with their linked recording. See [SYNC-VALIDATION.md](SYNC-VALIDATION.md).
+
+
+### Shared playback alignment and melody appearance
+
+The main lyric starts at its timestamp; the smaller secondary line previews the next phrase. YouTube and local audio now use the same output-compensated timeline for visible cues and captured microphone samples. The browser-reported output delay is an estimate. If the same audible delay remains across songs, use Prueba, pause when the first word is heard, select that phrase, and choose Alinear todas las canciones. This saves one common lyrics/melody/scoring correction for the device without replacing song-specific corrections. The common delay is also adjustable in Audio y ajustes.
+
+The yellow guide is a single opaque 16 px stroke with rounded joins, including large pitch changes. It bridges short articulation gaps and breaks for longer rests; translucent tolerance rectangles and duplicate drawing layers are removed. Existing pitch forgiveness still applies to scoring.
+
+76 automated tests pass. Actual acoustic alignment on the event playback device and browser visual QA remain unverified.

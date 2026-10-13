@@ -18,13 +18,20 @@ test('UltraStar millisecond gap and beat conversion preserve syllable and held-n
 test('preview appears before the first word, stays unfilled, and re-enters repeated choruses at the correct time',()=>{
  const lines=[{start:4,end:6,text:'Hello'},{start:10,end:12,text:'Hello'}];
  assert.equal(lyricAtTime(lines,1).line,null);
- const preview=lyricAtTime(lines,2);assert.equal(preview.index,0);assert.equal(preview.active,false);assert.equal(lyricSegments(preview.line,2)[0].fill,0);
+ const preview=lyricAtTime(lines,2,2);assert.equal(preview.index,0);assert.equal(preview.active,false);assert.equal(lyricSegments(preview.line,2)[0].fill,0);
  assert.equal(lyricAtTime(lines,4).active,true);assert.equal(lyricAtTime(lines,6).line,null);
- assert.equal(lyricAtTime(lines,8).index,1);assert.equal(lyricAtTime(lines,10.5).index,1);
+ assert.equal(lyricAtTime(lines,8,2).index,1);assert.equal(lyricAtTime(lines,10.5).index,1);
  assert.equal(lyricSegments(lyricAtTime(lines,10.5).line,10.5)[0].fill,25);
 });
 test('local line-timed lyrics retain their actual precision and seek or pause recomputes highlight without drift',()=>{
  const line={start:1,end:3,text:'Local LRC'};
  assert.equal(lyricSegments(line,2)[0].fill,50);assert.equal(lyricSegments(line,2)[0].fill,50);
  assert.equal(lyricSegments(line,.5)[0].fill,0);assert.equal(lyricSegments(line,5)[0].fill,100);
+});
+
+test('main lyrics never become current ahead of the first syllable by default',()=>{
+ const lines=[{start:4,end:6,text:'First'},{start:10,end:12,text:'Next'}];
+ assert.equal(lyricAtTime(lines,2).line,null);assert.equal(lyricAtTime(lines,3.99).active,false);
+ assert.equal(lyricAtTime(lines,4).line.text,'First');assert.equal(lyricAtTime(lines,8).line,null);
+ assert.equal(lyricAtTime(lines,10).line.text,'Next');
 });
