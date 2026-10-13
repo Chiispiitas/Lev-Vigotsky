@@ -5,3 +5,4 @@ export class AudioTimeline {
  captureAt(time,inputDelay=0){return this.atContext(time)-inputDelay/1000}
 }
 export function projectedTime(time,sentAt,now,running){return time+(running?Math.min(.2,Math.max(0,(now-sentAt)/1000)):0)}
+export function currentCapture(time,notBefore,now){return Number.isFinite(time)&&time>=notBefore&&time<=now+.01}

@@ -621,5 +621,705 @@
     "storeUrl": "https://music.apple.com/us/album/uptown-funk-feat-bruno-mars/943946661?i=943946671&uo=4",
     "matchedArtist": "Mark Ronson",
     "matchedTitle": "Uptown Funk (feat. Bruno Mars)"
+  },
+  "bruno-mars-grenade": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/b1/45/52b1452b-229e-78db-231b-7b43fa0077cc/075679956491.jpg/600x600bb.jpg",
+    "album": "Doo-Wops & Hooligans",
+    "storeUrl": "https://music.apple.com/us/album/grenade/576654788?i=576655094&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Grenade"
+  },
+  "bruno-mars-locked-out-of-heaven": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e0/a4/7c/e0a47c6f-005a-9f9f-ce29-8e858e2bcfcb/075679957283.jpg/600x600bb.jpg",
+    "album": "Unorthodox Jukebox",
+    "storeUrl": "https://music.apple.com/us/album/locked-out-of-heaven/573962245?i=573962551&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Locked Out of Heaven"
+  },
+  "bruno-mars-marry-you": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/b1/45/52b1452b-229e-78db-231b-7b43fa0077cc/075679956491.jpg/600x600bb.jpg",
+    "album": "Doo-Wops & Hooligans",
+    "storeUrl": "https://music.apple.com/us/album/marry-you/576654788?i=576655099&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Marry You"
+  },
+  "bruno-mars-talking-to-the-moon": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/b1/45/52b1452b-229e-78db-231b-7b43fa0077cc/075679956491.jpg/600x600bb.jpg",
+    "album": "Doo-Wops & Hooligans",
+    "storeUrl": "https://music.apple.com/us/album/talking-to-the-moon/576654788?i=576655100&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Talking to the Moon"
+  },
+  "bruno-mars-thats-what-i-like": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e3/47/a0/e347a0cc-87ce-5d05-d560-176c7d48f66e/075679904119.jpg/600x600bb.jpg",
+    "album": "24K Magic",
+    "storeUrl": "https://music.apple.com/us/album/thats-what-i-like/1161503945?i=1161504043&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "That's What I Like"
+  },
+  "bruno-mars-the-lazy-song": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/b1/45/52b1452b-229e-78db-231b-7b43fa0077cc/075679956491.jpg/600x600bb.jpg",
+    "album": "Doo-Wops & Hooligans",
+    "storeUrl": "https://music.apple.com/us/album/the-lazy-song/576654788?i=576655098&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "The Lazy Song"
+  },
+  "bruno-mars-treasure": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/15/63/53/156353b8-d45b-a17d-f553-2d125aeb3cb3/075679957474.jpg/600x600bb.jpg",
+    "album": "Unorthodox Jukebox",
+    "storeUrl": "https://music.apple.com/us/album/treasure/581806371?i=581806439&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Treasure"
+  },
+  "bruno-mars-when-i-was-your-man": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e0/a4/7c/e0a47c6f-005a-9f9f-ce29-8e858e2bcfcb/075679957283.jpg/600x600bb.jpg",
+    "album": "Unorthodox Jukebox",
+    "storeUrl": "https://music.apple.com/us/album/when-i-was-your-man/573962245?i=573962555&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "When I Was Your Man"
+  },
+  "bruno-mars-runaway-baby": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/52/b1/45/52b1452b-229e-78db-231b-7b43fa0077cc/075679956491.jpg/600x600bb.jpg",
+    "album": "Doo-Wops & Hooligans",
+    "storeUrl": "https://music.apple.com/us/album/runaway-baby/576654788?i=576655097&uo=4",
+    "matchedArtist": "Bruno Mars",
+    "matchedTitle": "Runaway Baby"
+  },
+  "taylor-swift-blank-space": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/89/4a/4a/894a4ab9-b0b0-9ea5-ca41-8da0b9b79453/14UMDIM03405.rgb.jpg/600x600bb.jpg",
+    "album": "1989",
+    "storeUrl": "https://music.apple.com/us/album/blank-space/1440935467?i=1440935808&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Blank Space"
+  },
+  "taylor-swift-cruel-summer": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/49/3d/ab/493dab54-f920-9043-6181-80993b8116c9/19UMGIM53909.rgb.jpg/600x600bb.jpg",
+    "album": "Lover",
+    "storeUrl": "https://music.apple.com/us/album/cruel-summer/1468058165?i=1468058171&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Cruel Summer"
+  },
+  "taylor-swift-anti-hero": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/59/13/5c/59135ccc-8425-415c-7f89-8aeada60088e/22UM1IM22440.rgb.jpg/600x600bb.jpg",
+    "album": "Midnights (3am Edition)",
+    "storeUrl": "https://music.apple.com/us/album/anti-hero/1650841512?i=1650841515&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Anti-Hero"
+  },
+  "taylor-swift-lover": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/49/3d/ab/493dab54-f920-9043-6181-80993b8116c9/19UMGIM53909.rgb.jpg/600x600bb.jpg",
+    "album": "Lover",
+    "storeUrl": "https://music.apple.com/us/album/lover/1468058165?i=1468058173&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Lover"
+  },
+  "taylor-swift-22": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/25/0d/7e/250d7e42-3a2f-19ac-f865-f1e04a4a1f97/12UMDIM01007.rgb.jpg/600x600bb.jpg",
+    "album": "Red",
+    "storeUrl": "https://music.apple.com/us/album/22/1440935340?i=1440935562&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "22"
+  },
+  "taylor-swift-style": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/89/4a/4a/894a4ab9-b0b0-9ea5-ca41-8da0b9b79453/14UMDIM03405.rgb.jpg/600x600bb.jpg",
+    "album": "1989",
+    "storeUrl": "https://music.apple.com/us/album/style/1440935467?i=1440935812&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Style"
+  },
+  "taylor-swift-i-knew-you-were-trouble": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/25/0d/7e/250d7e42-3a2f-19ac-f865-f1e04a4a1f97/12UMDIM01007.rgb.jpg/600x600bb.jpg",
+    "album": "Red",
+    "storeUrl": "https://music.apple.com/us/album/i-knew-you-were-trouble/1440935340?i=1440935349&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "I Knew You Were Trouble"
+  },
+  "taylor-swift-wildest-dreams": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a7/98/d8/a798d867-344d-2bf2-fbfe-d2d1412dcef8/14UMDIM03793.rgb.jpg/600x600bb.jpg",
+    "album": "1989 (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/wildest-dreams/1440933512?i=1440933656&uo=4",
+    "matchedArtist": "Taylor Swift",
+    "matchedTitle": "Wildest Dreams"
+  },
+  "katy-perry-roar": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/36/21/81/36218129-51b4-df22-cafb-8e9503b53147/13UAAIM70445.rgb.jpg/600x600bb.jpg",
+    "album": "PRISM (Deluxe Version)",
+    "storeUrl": "https://music.apple.com/us/album/roar/1440818542?i=1440818897&uo=4",
+    "matchedArtist": "Katy Perry",
+    "matchedTitle": "Roar"
+  },
+  "katy-perry-hot-n-cold": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/57/dc/18/57dc1854-4483-52b2-fe7c-8a221edf9e88/13UABIM48773.rgb.jpg/600x600bb.jpg",
+    "album": "One of the Boys",
+    "storeUrl": "https://music.apple.com/us/album/hot-n-cold/715891425?i=715891658&uo=4",
+    "matchedArtist": "Katy Perry",
+    "matchedTitle": "Hot n Cold"
+  },
+  "katy-perry-i-kissed-a-girl": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/57/dc/18/57dc1854-4483-52b2-fe7c-8a221edf9e88/13UABIM48773.rgb.jpg/600x600bb.jpg",
+    "album": "One of the Boys",
+    "storeUrl": "https://music.apple.com/us/album/i-kissed-a-girl/715891425?i=715891620&uo=4",
+    "matchedArtist": "Katy Perry",
+    "matchedTitle": "I Kissed a Girl"
+  },
+  "katy-perry-last-friday-night-tgif": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/c8/d3/42/c8d342af-26d9-3ec2-c511-e1eaf860e299/13UABIM57787.rgb.jpg/600x600bb.jpg",
+    "album": "Teenage Dream",
+    "storeUrl": "https://music.apple.com/us/album/last-friday-night-t-g-i-f/716192216?i=716192614&uo=4",
+    "matchedArtist": "Katy Perry",
+    "matchedTitle": "Last Friday Night (T.G.I.F.)"
+  },
+  "katy-perry-wide-awake": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/31/57/b3/3157b3d9-6551-e44e-46c0-488686998a05/13UABIM58339.rgb.jpg/600x600bb.jpg",
+    "album": "Teenage Dream: The Complete Confection",
+    "storeUrl": "https://music.apple.com/us/album/wide-awake/716084282?i=716085504&uo=4",
+    "matchedArtist": "Katy Perry",
+    "matchedTitle": "Wide Awake"
+  },
+  "imagine-dragons-demons": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/1f/fa/09/1ffa092f-f52f-4a66-7d10-4cc5982dc747/12UMGIM46901.rgb.jpg/600x600bb.jpg",
+    "album": "Night Visions",
+    "storeUrl": "https://music.apple.com/us/album/demons/1440873107?i=1440873339&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Demons"
+  },
+  "imagine-dragons-radioactive": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/1f/fa/09/1ffa092f-f52f-4a66-7d10-4cc5982dc747/12UMGIM46901.rgb.jpg/600x600bb.jpg",
+    "album": "Night Visions",
+    "storeUrl": "https://music.apple.com/us/album/radioactive/1440873107?i=1440873126&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Radioactive"
+  },
+  "imagine-dragons-natural": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3f/80/a8/3f80a8ef-5409-42ac-c126-c7354698c7fc/18UMGIM65849.rgb.jpg/600x600bb.jpg",
+    "album": "Origins (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/natural/1437948883?i=1437948973&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Natural"
+  },
+  "imagine-dragons-bad-liar": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/3f/80/a8/3f80a8ef-5409-42ac-c126-c7354698c7fc/18UMGIM65849.rgb.jpg/600x600bb.jpg",
+    "album": "Origins (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/bad-liar/1437948883?i=1437948987&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Bad Liar"
+  },
+  "imagine-dragons-bones": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/33/87/c8/3387c827-adaa-681d-bd10-ce7d8e888b9c/22UMGIM21054.rgb.jpg/600x600bb.jpg",
+    "album": "Bones - Single",
+    "storeUrl": "https://music.apple.com/us/album/bones/1612321587?i=1612321591&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Bones"
+  },
+  "imagine-dragons-whatever-it-takes": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/11/7a/b8/117ab805-6811-8929-18b9-0fad7baf0c25/17UMGIM98210.rgb.jpg/600x600bb.jpg",
+    "album": "Evolve",
+    "storeUrl": "https://music.apple.com/us/album/whatever-it-takes/1411625594?i=1411628148&uo=4",
+    "matchedArtist": "Imagine Dragons",
+    "matchedTitle": "Whatever It Takes"
+  },
+  "coldplay-fix-you": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/0c/82/48/0c8248a8-4a5b-d30d-8056-f32d650d2fc9/190295978068.jpg/600x600bb.jpg",
+    "album": "X&Y",
+    "storeUrl": "https://music.apple.com/us/album/fix-you/1123076757?i=1123076826&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "Fix You"
+  },
+  "coldplay-the-scientist": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b9/b4/2a/b9b42ad1-1e25-5096-da43-497a247e69a3/190295978051.jpg/600x600bb.jpg",
+    "album": "A Rush of Blood to the Head",
+    "storeUrl": "https://music.apple.com/us/album/the-scientist/1122775993?i=1122776155&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "The Scientist"
+  },
+  "coldplay-clocks": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b9/b4/2a/b9b42ad1-1e25-5096-da43-497a247e69a3/190295978051.jpg/600x600bb.jpg",
+    "album": "A Rush of Blood to the Head",
+    "storeUrl": "https://music.apple.com/us/album/clocks/1122775993?i=1122776156&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "Clocks"
+  },
+  "coldplay-paradise": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/fa/41/1c/fa411c37-7a65-8a3e-71c9-4b566c49617c/5099967983858_1562x1562_300dpi.jpg/600x600bb.jpg",
+    "album": "Mylo Xyloto",
+    "storeUrl": "https://music.apple.com/us/album/paradise/726372830?i=726373148&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "Paradise"
+  },
+  "coldplay-a-sky-full-of-stars": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Features125/v4/60/90/ad/6090adc3-8863-861d-afcc-23c55c6fe5da/dj.vmtulfyu.jpg/600x600bb.jpg",
+    "album": "Ghost Stories",
+    "storeUrl": "https://music.apple.com/us/album/a-sky-full-of-stars/829909653?i=829910927&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "A Sky Full of Stars"
+  },
+  "coldplay-adventure-of-a-lifetime": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/c8/0a/6d/c80a6df9-e55a-fb83-0311-f4776984ac67/mzm.lasidxkv.jpg/600x600bb.jpg",
+    "album": "A Head Full of Dreams",
+    "storeUrl": "https://music.apple.com/us/album/adventure-of-a-lifetime/1053933969?i=1053934846&uo=4",
+    "matchedArtist": "Coldplay",
+    "matchedTitle": "Adventure of a Lifetime"
+  },
+  "queen-we-are-the-champions": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/3a/25/81/3a258183-09c1-e6ee-b517-258288ca3d03/602527717487.jpg/600x600bb.jpg",
+    "album": "News Of The World (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/we-are-the-champions/6781080679?i=6781080744&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "We Are The Champions"
+  },
+  "queen-somebody-to-love": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/54/7c/fb/547cfbf0-1df2-9907-20a9-b486d3e832c4/602527644202.jpg/600x600bb.jpg",
+    "album": "A Day At The Races (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/somebody-to-love/6781024048?i=6781024333&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "Somebody To Love"
+  },
+  "queen-i-want-to-break-free": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/34/38/5c/34385cb8-81bf-5c7f-993d-103bcf4a7cfa/602527717661.jpg/600x600bb.jpg",
+    "album": "The Works (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/i-want-to-break-free/6781461206?i=6781461224&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "I Want To Break Free"
+  },
+  "queen-another-one-bites-the-dust": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/08/ee/da/08eeda1f-d44d-aec1-ec9d-0c5b9f8c8536/602527717524.jpg/600x600bb.jpg",
+    "album": "The Game (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/another-one-bites-the-dust/6781076388?i=6781076397&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "Another One Bites The Dust"
+  },
+  "queen-killer-queen": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/0f/7d/c2/0f7dc2da-f5c1-3252-a8bc-55b541451a52/602527644141.jpg/600x600bb.jpg",
+    "album": "Sheer Heart Attack (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/killer-queen/6781078345?i=6781078353&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "Killer Queen"
+  },
+  "queen-the-show-must-go-on": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/15/c7/55/15c755bc-7603-3ce3-e243-e59f1f9863ea/602527724171.jpg/600x600bb.jpg",
+    "album": "The Platinum Collection",
+    "storeUrl": "https://music.apple.com/us/album/the-show-must-go-on/6781080933?i=6781081188&uo=4",
+    "matchedArtist": "Queen",
+    "matchedTitle": "The Show Must Go On"
+  },
+  "abba-waterloo": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/ab/86/f0/ab86f0fe-0d40-db93-ab3a-73daa28efa4a/14UMGIM06318.rgb.jpg/600x600bb.jpg",
+    "album": "Waterloo (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/waterloo-english-version/1440861218?i=1440861750&uo=4",
+    "matchedArtist": "ABBA",
+    "matchedTitle": "Waterloo (English Version)"
+  },
+  "abba-gimme-gimme-gimme-a-man-after-midnight": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/9d/47/d2/9d47d24b-c35d-5db2-0fe7-3a07670adc44/14UMGIM07612.rgb.jpg/600x600bb.jpg",
+    "album": "Voulez-Vous (Bonus Track Version)",
+    "storeUrl": "https://music.apple.com/us/album/gimme-gimme-gimme-a-man-after-midnight/1440816296?i=1440817183&uo=4",
+    "matchedArtist": "ABBA",
+    "matchedTitle": "Gimme! Gimme! Gimme! (A Man After Midnight)"
+  },
+  "abba-money-money-money": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/69/4d/b4/694db440-1fdd-0112-16a0-ae501501cb32/14UMGIM07610.rgb.jpg/600x600bb.jpg",
+    "album": "Arrival (Bonus Track Version)",
+    "storeUrl": "https://music.apple.com/us/album/money-money-money/1440820126?i=1440820532&uo=4",
+    "matchedArtist": "ABBA",
+    "matchedTitle": "Money, Money, Money"
+  },
+  "abba-the-winner-takes-it-all": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/03/bb/30/03bb30c3-e87f-d935-3906-2c44d6cc440e/14UMGIM07613.rgb.jpg/600x600bb.jpg",
+    "album": "Super Trouper (Bonus Track Version)",
+    "storeUrl": "https://music.apple.com/us/album/the-winner-takes-it-all/1440823811?i=1440823959&uo=4",
+    "matchedArtist": "ABBA",
+    "matchedTitle": "The Winner Takes It All"
+  },
+  "abba-super-trouper": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/03/bb/30/03bb30c3-e87f-d935-3906-2c44d6cc440e/14UMGIM07613.rgb.jpg/600x600bb.jpg",
+    "album": "Super Trouper (Bonus Track Version)",
+    "storeUrl": "https://music.apple.com/us/album/super-trouper/1440823811?i=1440823933&uo=4",
+    "matchedArtist": "ABBA",
+    "matchedTitle": "Super Trouper"
+  },
+  "adele-set-fire-to-the-rain": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/eb/ca/25/ebca2596-cd1e-b295-91a3-771c868d0a79/191404113868.png/600x600bb.jpg",
+    "album": "21",
+    "storeUrl": "https://music.apple.com/us/album/set-fire-to-the-rain/1544491232?i=1544491988&uo=4",
+    "matchedArtist": "Adele",
+    "matchedTitle": "Set Fire to the Rain"
+  },
+  "adele-skyfall": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/b3/fe/cf/b3fecf76-0359-8e14-0651-4b101fc68a3f/886443673632.jpg/600x600bb.jpg",
+    "album": "Skyfall - Single",
+    "storeUrl": "https://music.apple.com/us/album/skyfall/566322358?i=566322365&uo=4",
+    "matchedArtist": "Adele",
+    "matchedTitle": "Skyfall"
+  },
+  "adele-make-you-feel-my-love": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/93/3b/dd/933bddde-bd73-0fd2-70f5-f4cf683c34f7/191404093863.png/600x600bb.jpg",
+    "album": "19",
+    "storeUrl": "https://music.apple.com/us/album/make-you-feel-my-love/1545382283?i=1545382976&uo=4",
+    "matchedArtist": "Adele",
+    "matchedTitle": "Make You Feel My Love"
+  },
+  "adele-when-we-were-young": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/08/8c/24/088c2405-2e33-801b-5c38-e967f2c01e69/191404113974.png/600x600bb.jpg",
+    "album": "25",
+    "storeUrl": "https://music.apple.com/us/album/when-we-were-young/1544494115?i=1544494407&uo=4",
+    "matchedArtist": "Adele",
+    "matchedTitle": "When We Were Young"
+  },
+  "adele-rumour-has-it": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/eb/ca/25/ebca2596-cd1e-b295-91a3-771c868d0a79/191404113868.png/600x600bb.jpg",
+    "album": "21",
+    "storeUrl": "https://music.apple.com/us/album/rumour-has-it/1544491232?i=1544491234&uo=4",
+    "matchedArtist": "Adele",
+    "matchedTitle": "Rumour Has It"
+  },
+  "ed-sheeran-bad-habits": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/63/45/cc/6345cc98-aa83-ad6e-e3c9-1a36ff9838a4/190296614316.jpg/600x600bb.jpg",
+    "album": "Bad Habits - Single",
+    "storeUrl": "https://music.apple.com/us/album/bad-habits/1571330207?i=1571330212&uo=4",
+    "matchedArtist": "Ed Sheeran",
+    "matchedTitle": "Bad Habits"
+  },
+  "ed-sheeran-shivers": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/c5/d8/c6/c5d8c675-63e3-6632-33db-2401eabe574d/190296491412.jpg/600x600bb.jpg",
+    "album": "=",
+    "storeUrl": "https://music.apple.com/us/album/shivers/1581087024?i=1581087034&uo=4",
+    "matchedArtist": "Ed Sheeran",
+    "matchedTitle": "Shivers"
+  },
+  "ed-sheeran-castle-on-the-hill": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/15/e6/e8/15e6e8a4-4190-6a8b-86c3-ab4a51b88288/190295851286.jpg/600x600bb.jpg",
+    "album": "÷ (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/castle-on-the-hill/1193701079?i=1193701328&uo=4",
+    "matchedArtist": "Ed Sheeran",
+    "matchedTitle": "Castle on the Hill"
+  },
+  "ed-sheeran-the-a-team": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Features115/v4/65/fb/84/65fb8432-f539-d67d-0670-b1358d16e5af/contsched.zkbwdtfj.jpg/600x600bb.jpg",
+    "album": "+ (Deluxe Version)",
+    "storeUrl": "https://music.apple.com/us/album/the-a-team/448213992?i=448213995&uo=4",
+    "matchedArtist": "Ed Sheeran",
+    "matchedTitle": "The A Team"
+  },
+  "rihanna-diamonds": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/a0/1a/10/a01a1080-7b1d-e475-a03c-394e5cbba66c/12UMGIM53876.rgb.jpg/600x600bb.jpg",
+    "album": "Diamonds - Single",
+    "storeUrl": "https://music.apple.com/us/album/diamonds/1444320940?i=1444321282&uo=4",
+    "matchedArtist": "Rihanna",
+    "matchedTitle": "Diamonds"
+  },
+  "rihanna-umbrella": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2b/c0/81/2bc081c8-25f0-ba43-d451-587a54613778/16UMGIM59202.rgb.jpg/600x600bb.jpg",
+    "album": "Good Girl Gone Bad: Reloaded",
+    "storeUrl": "https://music.apple.com/us/album/umbrella-feat-ja%C3%BF-z/1441154435?i=1441154437&uo=4",
+    "matchedArtist": "Rihanna",
+    "matchedTitle": "Umbrella (feat. JAŸ-Z)"
+  },
+  "rihanna-feat-calvin-harris-we-found-love": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/74/23/7b/74237b93-8346-5fe1-b1eb-938808910c5d/11UMGIM38936.rgb.jpg/600x600bb.jpg",
+    "album": "Talk That Talk",
+    "storeUrl": "https://music.apple.com/us/album/we-found-love-feat-calvin-harris/1440758930?i=1440758945&uo=4",
+    "matchedArtist": "Rihanna",
+    "matchedTitle": "We Found Love (feat. Calvin Harris)"
+  },
+  "rihanna-only-girl-in-the-world": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/c6/b1/6c/c6b16cd1-5580-a214-8745-c4f6faa490d6/16UMGIM59220.rgb.jpg/600x600bb.jpg",
+    "album": "Loud (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/only-girl-in-the-world/1440895867?i=1440896009&uo=4",
+    "matchedArtist": "Rihanna",
+    "matchedTitle": "Only Girl (In The World)"
+  },
+  "rihanna-dont-stop-the-music": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2b/c0/81/2bc081c8-25f0-ba43-d451-587a54613778/16UMGIM59202.rgb.jpg/600x600bb.jpg",
+    "album": "Good Girl Gone Bad: Reloaded",
+    "storeUrl": "https://music.apple.com/us/album/dont-stop-the-music/1441154435?i=1441154439&uo=4",
+    "matchedArtist": "Rihanna",
+    "matchedTitle": "Don't Stop The Music"
+  },
+  "lady-gaga-born-this-way": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/42/9f/0f/429f0fd2-30bd-b64e-27fc-76d8fbbd0988/11UMGIM12476.rgb.jpg/600x600bb.jpg",
+    "album": "Born This Way (Special Edition)",
+    "storeUrl": "https://music.apple.com/us/album/born-this-way/1440857161?i=1440857424&uo=4",
+    "matchedArtist": "Lady Gaga",
+    "matchedTitle": "Born This Way"
+  },
+  "lady-gaga-paparazzi": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a6/68/28/a66828c0-3fe3-5419-374d-ad98739f3166/08UMGIM13954.rgb.jpg/600x600bb.jpg",
+    "album": "The Fame",
+    "storeUrl": "https://music.apple.com/us/album/just-dance-feat-colby-odonis/1440818588",
+    "matchedArtist": "Lady Gaga",
+    "matchType": "album"
+  },
+  "lady-gaga-feat-colby-odonis-just-dance": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/a6/68/28/a66828c0-3fe3-5419-374d-ad98739f3166/08UMGIM13954.rgb.jpg/600x600bb.jpg",
+    "album": "The Fame",
+    "storeUrl": "https://music.apple.com/us/album/just-dance-feat-colby-odonis/1440818588?i=1440818653&uo=4",
+    "matchedArtist": "Lady Gaga",
+    "matchedTitle": "Just Dance (feat. Colby O'Donis)"
+  },
+  "lady-gaga-bradley-cooper-shallow": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ff/cd/fa/ffcdfabe-cf1a-c7b1-0992-c56ad2439481/18UMGIM53753.rgb.jpg/600x600bb.jpg",
+    "album": "A Star Is Born Soundtrack",
+    "storeUrl": "https://music.apple.com/us/album/shallow/1434367877?i=1434367891&uo=4",
+    "matchedArtist": "Lady Gaga & Bradley Cooper",
+    "matchedTitle": "Shallow"
+  },
+  "billie-eilish-bad-guy": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/1a/37/d1/1a37d1b1-8508-54f2-f541-bf4e437dda76/19UMGIM05028.rgb.jpg/600x600bb.jpg",
+    "album": "WHEN WE ALL FALL ASLEEP, WHERE DO WE GO?",
+    "storeUrl": "https://music.apple.com/us/album/bad-guy/1450695723?i=1450695739&uo=4",
+    "matchedArtist": "Billie Eilish",
+    "matchedTitle": "bad guy"
+  },
+  "billie-eilish-birds-of-a-feather": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/92/9f/69/929f69f1-9977-3a44-d674-11f70c852d1b/24UMGIM36186.rgb.jpg/600x600bb.jpg",
+    "album": "HIT ME HARD AND SOFT",
+    "storeUrl": "https://music.apple.com/us/album/birds-of-a-feather/1739659134?i=1739659142&uo=4",
+    "matchedArtist": "Billie Eilish",
+    "matchedTitle": "BIRDS OF A FEATHER"
+  },
+  "billie-eilish-what-was-i-made-for": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/7d/64/76/7d64761e-a9b3-6754-8ae1-b457338beead/23UMGIM77779.rgb.jpg/600x600bb.jpg",
+    "album": "What Was I Made For? (From The Motion Picture \"Barbie\") - Single",
+    "storeUrl": "https://music.apple.com/us/album/what-was-i-made-for-from-the-motion-picture-barbie/1696819852?i=1696819855&uo=4",
+    "matchedArtist": "Billie Eilish",
+    "matchedTitle": "What Was I Made For? (From The Motion Picture \"Barbie\")"
+  },
+  "shawn-mendes-stitches": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/e3/d4/de/e3d4def5-886e-da47-e1cf-568566510b53/15UMGIM62454.rgb.jpg/600x600bb.jpg",
+    "album": "Handwritten (Revisited)",
+    "storeUrl": "https://music.apple.com/us/album/stitches/1440843842?i=1440843848&uo=4",
+    "matchedArtist": "Shawn Mendes",
+    "matchedTitle": "Stitches"
+  },
+  "shawn-mendes-treat-you-better": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/bb/dd/91/bbdd9170-6506-7879-ccb4-8d6a106edc03/26UM1IM18325.rgb.jpg/600x600bb.jpg",
+    "album": "Illuminate (10th Anniversary Edition)",
+    "storeUrl": "https://music.apple.com/us/album/treat-you-better/6812063228?i=6812063232&uo=4",
+    "matchedArtist": "Shawn Mendes",
+    "matchedTitle": "Treat You Better"
+  },
+  "shawn-mendes-theres-nothing-holdin-me-back": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/bb/dd/91/bbdd9170-6506-7879-ccb4-8d6a106edc03/26UM1IM18325.rgb.jpg/600x600bb.jpg",
+    "album": "Illuminate (10th Anniversary Edition)",
+    "storeUrl": "https://music.apple.com/us/album/theres-nothing-holdin-me-back/6812063228?i=6812063229&uo=4",
+    "matchedArtist": "Shawn Mendes",
+    "matchedTitle": "There's Nothing Holdin' Me Back"
+  },
+  "justin-bieber-love-yourself": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/75/11/84/751184b0-77df-1eff-bb20-dac03247425d/15UMGIM59808.rgb.jpg/600x600bb.jpg",
+    "album": "Purpose (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/love-yourself/1440829460?i=1440829613&uo=4",
+    "matchedArtist": "Justin Bieber",
+    "matchedTitle": "Love Yourself"
+  },
+  "justin-bieber-ghost": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/25/64/b3/2564b343-943a-68b2-4c55-ee2e14464cf0/21UMGIM83128.rgb.jpg/600x600bb.jpg",
+    "album": "Justice (The Complete Edition)",
+    "storeUrl": "https://music.apple.com/us/album/ghost/1588043759?i=1588044258&uo=4",
+    "matchedArtist": "Justin Bieber",
+    "matchedTitle": "Ghost"
+  },
+  "justin-bieber-what-do-you-mean": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/75/11/84/751184b0-77df-1eff-bb20-dac03247425d/15UMGIM59808.rgb.jpg/600x600bb.jpg",
+    "album": "Purpose (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/what-do-you-mean/1440829460?i=1440829606&uo=4",
+    "matchedArtist": "Justin Bieber",
+    "matchedTitle": "What Do You Mean?"
+  },
+  "justin-bieber-boyfriend": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/73/08/1a/73081a96-0f7c-b5f8-2757-5c17fb714323/12UMGIM31899.rgb.jpg/600x600bb.jpg",
+    "album": "Believe (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/boyfriend/1440650852?i=1440650857&uo=4",
+    "matchedArtist": "Justin Bieber",
+    "matchedTitle": "Boyfriend"
+  },
+  "elvis-presley-cant-help-falling-in-love": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/dc/79/4c/dc794ce3-b5e3-5cbe-ccf8-c10e695a38e8/886445009798.jpg/600x600bb.jpg",
+    "album": "Blue Hawaii (Original Soundtrack)",
+    "storeUrl": "https://music.apple.com/us/album/cant-help-falling-in-love/949550016?i=949550091&uo=4",
+    "matchedArtist": "Elvis Presley",
+    "matchedTitle": "Can't Help Falling In Love"
+  },
+  "elvis-presley-suspicious-minds": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/10/53/1d/10531d93-d6d2-996d-516f-5ea58bc4dbfa/884977724691.jpg/600x600bb.jpg",
+    "album": "Elv1s: 30 #1 Hits",
+    "storeUrl": "https://music.apple.com/us/album/suspicious-minds/388127843?i=388128567&uo=4",
+    "matchedArtist": "Elvis Presley",
+    "matchedTitle": "Suspicious Minds"
+  },
+  "the-weeknd-cant-feel-my-face": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/30/05/1e/30051e57-a63a-3acc-4b30-42568293f5f7/15UMGIM36514.rgb.jpg/600x600bb.jpg",
+    "album": "Beauty Behind the Madness",
+    "storeUrl": "https://music.apple.com/us/album/cant-feel-my-face/1440858094?i=1440858500&uo=4",
+    "matchedArtist": "The Weeknd",
+    "matchedTitle": "Can't Feel My Face"
+  },
+  "the-weeknd-feat-daft-punk-starboy": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/b5/92/bb/b592bb72-52e3-e756-9b26-9f56d08f47ab/16UMGIM67864.rgb.jpg/600x600bb.jpg",
+    "album": "Starboy",
+    "storeUrl": "https://music.apple.com/us/album/starboy-feat-daft-punk/1440870373?i=1440870375&uo=4",
+    "matchedArtist": "The Weeknd",
+    "matchedTitle": "Starboy (feat. Daft Punk)"
+  },
+  "the-weeknd-save-your-tears": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/2b/b9/fe/2bb9fef5-d7f3-8345-25a9-db0e79fde4e4/20UMGIM11048.rgb.jpg/600x600bb.jpg",
+    "album": "After Hours",
+    "storeUrl": "https://music.apple.com/us/album/save-your-tears/1499385848?i=1499386369&uo=4",
+    "matchedArtist": "The Weeknd",
+    "matchedTitle": "Save Your Tears"
+  },
+  "the-weeknd-the-hills": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/30/05/1e/30051e57-a63a-3acc-4b30-42568293f5f7/15UMGIM36514.rgb.jpg/600x600bb.jpg",
+    "album": "Beauty Behind the Madness",
+    "storeUrl": "https://music.apple.com/us/album/the-hills/1440858094?i=1440858495&uo=4",
+    "matchedArtist": "The Weeknd",
+    "matchedTitle": "The Hills"
+  },
+  "ariana-grande-no-tears-left-to-cry": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/70/53/76/705376dc-d0dc-6945-7fb2-415038e3aafa/18UMGIM36925.rgb.jpg/600x600bb.jpg",
+    "album": "Sweetener",
+    "storeUrl": "https://music.apple.com/us/album/no-tears-left-to-cry/1399202900?i=1399204228&uo=4",
+    "matchedArtist": "Ariana Grande",
+    "matchedTitle": "no tears left to cry"
+  },
+  "ariana-grande-one-last-time": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/a5/39/86/a5398609-ad90-50d3-57ad-0f87a4df5ac4/14UMGIM28138.rgb.jpg/600x600bb.jpg",
+    "album": "My Everything (Bonus Tracks Edition)",
+    "storeUrl": "https://music.apple.com/us/album/one-last-time/1440852353?i=1440852679&uo=4",
+    "matchedArtist": "Ariana Grande",
+    "matchedTitle": "One Last Time"
+  },
+  "ariana-grande-into-you": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/12/5d/63/125d6389-2205-c77c-702c-8128e9020bd6/16UMGIM12432.rgb.jpg/600x600bb.jpg",
+    "album": "Dangerous Woman",
+    "storeUrl": "https://music.apple.com/us/album/into-you/1440835631?i=1440835646&uo=4",
+    "matchedArtist": "Ariana Grande",
+    "matchedTitle": "Into You"
+  },
+  "maroon-5-memories": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/69/20/10/692010ef-8e2d-0137-b060-ff4fa420062a/21UMGIM44927.rgb.jpg/600x600bb.jpg",
+    "album": "JORDI (Deluxe Edition)",
+    "storeUrl": "https://music.apple.com/us/album/memories/1571175274?i=1571176664&uo=4",
+    "matchedArtist": "Maroon 5",
+    "matchedTitle": "Memories"
+  },
+  "maroon-5-this-love": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d0/3e/25/d03e255d-e205-0e66-20f6-01e251896c25/14UMGIM27076.rgb.jpg/600x600bb.jpg",
+    "album": "Songs About Jane",
+    "storeUrl": "https://music.apple.com/us/album/this-love/1440851650?i=1440851719&uo=4",
+    "matchedArtist": "Maroon 5",
+    "matchedTitle": "This Love"
+  },
+  "maroon-5-she-will-be-loved": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/d0/3e/25/d03e255d-e205-0e66-20f6-01e251896c25/14UMGIM27076.rgb.jpg/600x600bb.jpg",
+    "album": "Songs About Jane",
+    "storeUrl": "https://music.apple.com/us/album/she-will-be-loved/1440851650?i=1440851722&uo=4",
+    "matchedArtist": "Maroon 5",
+    "matchedTitle": "She Will Be Loved"
+  },
+  "maroon-5-maps": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/0d/f0/8b/0df08b64-3743-4ae0-f3cc-1314716d841d/14UMGIM31675.rgb.jpg/600x600bb.jpg",
+    "album": "V",
+    "storeUrl": "https://music.apple.com/us/album/maps/1440842492?i=1440842752&uo=4",
+    "matchedArtist": "Maroon 5",
+    "matchedTitle": "Maps"
+  },
+  "green-day-basket-case": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/88/83/e7/8883e74b-1b7c-0725-09de-21e4e00d54b5/093624915713.jpg/600x600bb.jpg",
+    "album": "Dookie",
+    "storeUrl": "https://music.apple.com/us/album/basket-case/1160081985?i=1160082180&uo=4",
+    "matchedArtist": "Green Day",
+    "matchedTitle": "Basket Case"
+  },
+  "nirvana-smells-like-teen-spirit": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/95/fd/b9/95fdb9b2-6d2b-92a6-97f2-51c1a6d77f1a/00602527874609.rgb.jpg/600x600bb.jpg",
+    "album": "Nevermind",
+    "storeUrl": "https://music.apple.com/us/album/smells-like-teen-spirit/1440783617?i=1440783625&uo=4",
+    "matchedArtist": "Nirvana",
+    "matchedTitle": "Smells Like Teen Spirit"
+  },
+  "nirvana-come-as-you-are": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/95/fd/b9/95fdb9b2-6d2b-92a6-97f2-51c1a6d77f1a/00602527874609.rgb.jpg/600x600bb.jpg",
+    "album": "Nevermind",
+    "storeUrl": "https://music.apple.com/us/album/come-as-you-are/1440783617?i=1440783636&uo=4",
+    "matchedArtist": "Nirvana",
+    "matchedTitle": "Come As You Are"
+  },
+  "the-killers-mr-brightside": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/1a/5a/071a5aee-6e42-060c-35b9-6a6e45b9ea59/06UMGIM10441.rgb.jpg/600x600bb.jpg",
+    "album": "Hot Fuss",
+    "storeUrl": "https://music.apple.com/us/album/mr-brightside/1526194184?i=1526194192&uo=4",
+    "matchedArtist": "The Killers",
+    "matchedTitle": "Mr. Brightside"
+  },
+  "the-killers-somebody-told-me": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/07/1a/5a/071a5aee-6e42-060c-35b9-6a6e45b9ea59/06UMGIM10441.rgb.jpg/600x600bb.jpg",
+    "album": "Hot Fuss",
+    "storeUrl": "https://music.apple.com/us/album/somebody-told-me/1526194184?i=1526194195&uo=4",
+    "matchedArtist": "The Killers",
+    "matchedTitle": "Somebody Told Me"
+  },
+  "britney-spears-toxic": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/38/8b/7a/388b7a8f-10ff-a4e0-7624-65e29ac6a793/828765374828.jpg/600x600bb.jpg",
+    "album": "In the Zone",
+    "storeUrl": "https://music.apple.com/us/album/toxic/251947909?i=251948354&uo=4",
+    "matchedArtist": "Britney Spears",
+    "matchedTitle": "Toxic"
+  },
+  "britney-spears-oops-i-did-it-again": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d5/9d/97/d59d9769-1369-854f-1681-4901a6d8361b/012414170422.jpg/600x600bb.jpg",
+    "album": "Oops!...I Did It Again",
+    "storeUrl": "https://music.apple.com/us/album/oops-i-did-it-again/267954486?i=267954487&uo=4",
+    "matchedArtist": "Britney Spears",
+    "matchedTitle": "Oops!…I Did It Again"
+  },
+  "britney-spears-baby-one-more-time": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a3/78/83/a3788355-9932-b0b0-8314-f0717a13b8a6/888880333476.jpg/600x600bb.jpg",
+    "album": "...Baby One More Time",
+    "storeUrl": "https://music.apple.com/us/album/baby-one-more-time/268284599?i=268284600&uo=4",
+    "matchedArtist": "Britney Spears",
+    "matchedTitle": "...Baby One More Time"
+  },
+  "dua-lipa-new-rules": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/c1/54/2d/c1542d45-c6c2-12ca-7308-6eacd762c562/190295807870.jpg/600x600bb.jpg",
+    "album": "Dua Lipa (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/new-rules/1228739599?i=1228739609&uo=4",
+    "matchedArtist": "Dua Lipa",
+    "matchedTitle": "New Rules"
+  },
+  "dua-lipa-physical": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/25/cd/d4/25cdd423-4a23-1913-04ed-921a58cccb7d/190295000639.jpg/600x600bb.jpg",
+    "album": "Future Nostalgia (The Moonlight Edition)",
+    "storeUrl": "https://music.apple.com/us/album/physical/1552269067?i=1552269072&uo=4",
+    "matchedArtist": "Dua Lipa",
+    "matchedTitle": "Physical"
+  },
+  "dua-lipa-break-my-heart": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/6c/11/d6/6c11d681-aa3a-d59e-4c2e-f77e181026ab/190295092665.jpg/600x600bb.jpg",
+    "album": "Future Nostalgia",
+    "storeUrl": "https://music.apple.com/us/album/break-my-heart/1538003494?i=1538004012&uo=4",
+    "matchedArtist": "Dua Lipa",
+    "matchedTitle": "Break My Heart"
+  },
+  "sabrina-carpenter-espresso": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/3a/09/fa/3a09fabd-7a71-d0d7-3e6a-7f3c4c89014e/24UMGIM32304.rgb.jpg/600x600bb.jpg",
+    "album": "Espresso - Single",
+    "storeUrl": "https://music.apple.com/us/album/espresso/1744253545?i=1744253558&uo=4",
+    "matchedArtist": "Sabrina Carpenter",
+    "matchedTitle": "Espresso"
+  },
+  "sabrina-carpenter-please-please-please": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/c9/a3/e9/c9a3e987-3952-a6ac-7975-680f2033e660/25UMGIM10586.rgb.jpg/600x600bb.jpg",
+    "album": "Short n' Sweet (Deluxe)",
+    "storeUrl": "https://music.apple.com/us/album/please-please-please/1795512297?i=1795513492&uo=4",
+    "matchedArtist": "Sabrina Carpenter & Dolly Parton",
+    "matchedTitle": "Please Please Please"
+  },
+  "green-day-boulevard-of-broken-dreams": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/0e/17/f0/0e17f011-aadf-d4d1-1c7e-b61ce39f968b/093624947301.jpg/600x600bb.jpg",
+    "album": "American Idiot",
+    "storeUrl": "https://music.apple.com/us/album/holiday/1161539183",
+    "matchedArtist": "Green Day",
+    "matchType": "album"
   }
 }

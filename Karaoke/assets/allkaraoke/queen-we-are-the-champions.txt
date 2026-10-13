@@ -1,0 +1,314 @@
+#ARTIST:Queen
+#TITLE:We Are the Champions
+#CREATOR:TeLiXj
+#BPM:189,8
+#YEAR:1977
+#VIDEO:v=04854XqcfCY
+#LANGUAGE:English
+#GAP:2065,6027397260277
+#EDITION:SingStar Queen
+#ALLKARAOKE_ID:queen-we-are-the-champions
+#ALLKARAOKE_SID:3549
+#ALLKARAOKE_LASTUPDATE:2026-07-13T04:21:34.796Z
+#ALLKARAOKE_ARTISTORIGIN:GB
+#ALLKARAOKE_CREATORURL:https://ultrastar-es.org/pl/canciones?creador=telixj
+#ALLKARAOKE_REALBPM:46
+#ALLKARAOKE_SOURCEURL:https://ultrastar-es.org/pl/canciones?artista=Queen&cancion=We%20Are%20the%20Champions
+#ALLKARAOKE_VOLUME:0,75
+#ALLKARAOKE_OLDVOLUME:1
+#ALLKARAOKE_DURATION:185
+: 13 3 55 I've 
+: 17 3 58 paid 
+: 21 4 60 my 
+: 25 18 60 dues
+- 43 48
+- 48
+: 61 3 55 Time 
+: 65 3 58 af
+: 69 3 60 ter 
+* 72 17 60 time
+- 89 97
+- 97
+: 110 3 55 I've 
+: 114 3 58 done 
+: 118 6 60 my 
+: 126 2 60 sen
+: 129 5 55 tence
+- 134 140
+- 140
+: 153 2 55 But 
+: 156 2 55 com
+* 159 2 62 mit
+: 162 2 60 ted 
+: 165 2 58 no
+: 167 2 60 ~
+: 170 14 60 crime
+- 184 194
+- 194
+: 207 3 58 And 
+: 211 3 62 bad 
+: 215 3 63 mis
+: 219 8 63 takes
+- 227 242
+- 242
+: 255 3 58 I've 
+: 259 3 62 made 
+: 262 3 63 a 
+* 265 9 63 few
+: 274 2 60 ~
+: 276 3 58 ~
+- 279 291
+- 291
+: 304 3 58 I've 
+: 308 3 62 had 
+: 312 3 63 my 
+: 316 3 63 share 
+: 319 3 63 of 
+: 323 4 65 sand
+- 327
+: 328 2 65 Kicked 
+: 331 2 65 in 
+: 334 3 67 my 
+: 338 6 67 face
+- 344
+: 349 2 67 But 
+: 352 8 69 I've 
+: 361 6 70 come 
+* 369 20 70 through
+- 389 424
+- 424
+: 437 14 65 We 
+: 453 3 64 are 
+: 457 3 65 the 
+: 461 6 64 cham
+: 469 8 60 pions
+- 477
+: 481 3 57 My 
+: 485 7 62 friends
+: 493 12 57 ~
+- 505 516
+- 516
+: 529 4 60 And 
+: 533 15 65 we'll 
+: 549 3 67 keep 
+: 553 3 69 on 
+: 557 7 72 fight
+: 565 8 69 ing
+- 573
+: 577 2 62 Till 
+: 580 2 64 the 
+: 582 15 62 end
+- 597 615
+- 615
+: 628 11 62 We 
+: 641 8 60 are 
+: 649 3 62 the 
+: 653 9 60 cham
+: 665 6 58 pions
+- 671
+: 677 11 70 We 
+: 689 6 69 are 
+: 697 3 70 the 
+: 701 10 69 cham
+: 713 8 67 pions
+- 721
+: 725 11 69 No 
+: 737 6 65 time 
+: 745 3 70 for 
+: 749 10 69 lo
+: 761 4 65 sers
+- 765
+: 769 3 70 'Cause 
+: 773 11 68 we 
+: 785 6 65 are 
+: 793 3 70 the 
+: 797 9 68 cham
+: 809 12 65 pions
+- 821 823
+- 823
+: 836 3 63 Of 
+: 840 2 60 the 
+* 842 75 65 world
+- 917 958
+- 958
+: 971 3 55 I've 
+: 975 3 55 ta
+: 979 3 58 ken 
+: 983 3 60 my 
+: 988 13 60 bows
+- 1001 1003
+- 1003
+: 1016 3 55 And 
+: 1020 5 55 my 
+: 1027 3 58 cur
+: 1031 3 60 tain 
+: 1035 14 60 calls
+- 1049 1060
+- 1060
+: 1073 3 55 You 
+: 1077 3 58 brought 
+: 1080 3 60 me 
+: 1085 6 60 fame 
+: 1092 2 60 and 
+: 1095 3 60 for
+: 1099 1 60 tune
+- 1100
+: 1101 2 60 And 
+: 1103 1 60 e
+: 1104 2 60 very
+: 1106 2 60 thing 
+: 1109 2 60 that 
+* 1112 5 63 goes 
+: 1118 2 53 with 
+: 1121 2 53 it
+- 1123
+: 1127 3 55 I 
+: 1130 2 58 thank 
+: 1133 2 60 you 
+: 1135 6 60 all
+- 1141 1147
+- 1147
+: 1160 2 58 But 
+: 1162 2 58 it's 
+: 1166 3 58 been 
+: 1170 3 62 no 
+: 1174 2 63 bed 
+: 1177 2 63 of 
+: 1180 3 63 ro
+: 1184 3 63 ses
+: 1187 2 60 ~
+: 1189 4 58 ~
+- 1193 1202
+- 1202
+: 1215 3 58 No 
+: 1220 5 62 plea
+: 1226 3 63 sure 
+* 1230 17 63 cruise
+- 1247
+: 1258 2 58 I 
+: 1261 2 58 con
+: 1264 2 58 si
+: 1266 2 62 der 
+: 1268 1 62 it 
+: 1269 2 62 a 
+: 1275 2 63 chal
+: 1277 3 63 lenge
+- 1280
+: 1281 2 63 Be
+: 1283 3 65 fore 
+: 1287 2 65 the 
+: 1289 3 65 whole 
+: 1293 2 65 hu
+: 1295 3 67 man 
+: 1299 3 67 race
+- 1302
+: 1309 2 67 And 
+: 1311 3 69 I 
+: 1315 2 69 ain't 
+: 1317 2 69 gon
+: 1319 2 69 na 
+: 1321 20 70 lose
+- 1341 1375
+- 1375
+: 1388 4 63 We
+: 1392 3 64 ~
+: 1395 17 65 ~
+: 1412 3 64 are 
+: 1415 4 65 the 
+: 1419 8 64 cham
+: 1427 9 60 pions
+- 1436
+: 1440 3 57 My 
+: 1443 8 62 friends
+: 1451 12 57 ~
+- 1463 1474
+- 1474
+: 1487 3 60 And 
+: 1491 15 65 we'll 
+: 1508 3 67 keep 
+: 1511 3 69 on 
+* 1515 8 72 fight
+: 1523 8 69 ing
+- 1531
+: 1535 5 62 Till 
+: 1541 3 64 the 
+: 1544 18 62 end
+- 1562 1574
+- 1574
+: 1587 11 62 We 
+: 1598 6 60 are 
+: 1607 3 62 the 
+: 1611 9 60 cham
+: 1622 8 58 pions
+- 1630
+* 1634 11 70 We 
+: 1646 8 69 are 
+: 1655 4 70 the 
+: 1659 11 69 cham
+: 1670 8 67 pions
+- 1678
+: 1683 11 69 No 
+: 1694 8 65 time 
+: 1703 3 70 for 
+: 1707 11 69 lo
+: 1718 6 65 sers
+- 1724
+: 1726 3 70 'Cause 
+: 1730 11 68 we 
+: 1742 7 65 are 
+: 1749 3 70 the 
+: 1754 11 68 cham
+: 1766 12 65 pions
+- 1778 1783
+- 1783
+: 1796 2 63 We
+: 1798 2 64 ~
+: 1800 16 65 ~
+: 1817 3 64 are 
+: 1821 3 65 the 
+: 1825 7 64 cham
+: 1833 8 60 pions
+- 1841
+: 1844 3 57 My 
+: 1848 8 62 friends
+: 1856 15 57 ~
+- 1871 1877
+- 1877
+: 1890 3 69 And 
+* 1895 14 69 we'll 
+: 1910 3 69 keep 
+: 1914 2 69 on 
+: 1917 5 69 fight
+: 1922 3 67 ~
+: 1925 14 67 ing
+- 1939
+: 1941 3 62 Till 
+: 1944 3 64 the 
+: 1947 19 62 end
+- 1966
+: 1977 9 63 Oh 
+: 1989 9 62 we 
+: 2000 6 60 are 
+: 2008 3 62 the 
+: 2012 11 60 cham
+: 2024 8 58 pions
+- 2032
+: 2036 11 70 We 
+: 2048 6 69 are 
+: 2055 3 70 the 
+: 2058 11 69 cham
+: 2070 9 67 pions
+- 2079
+: 2082 11 69 No 
+: 2094 6 65 time 
+: 2102 3 70 for 
+: 2106 11 69 lo
+: 2118 5 65 sers
+- 2123
+: 2126 3 70 'Cause 
+: 2130 11 68 we 
+: 2141 6 65 are 
+: 2150 3 70 the 
+: 2153 9 68 cham
+: 2165 12 65 pions
+E

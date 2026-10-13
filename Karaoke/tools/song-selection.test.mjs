@@ -24,3 +24,11 @@ test('ranked cover selection requires a participant and explicit practice remain
  await click({target:{closest:()=>({dataset:{action:'song:test-song'}})}});assert.equal(context.state.screen,'participants');
  await click({target:{closest:()=>({dataset:{action:'preview-song:test-song'}})}});assert.equal(context.state.demo,true);assert.equal(context.state.screen,'ready');
 });
+test('phrase sync saves aligned chart offsets in paused practice, but cannot recalibrate a ranked turn',async()=>{
+ const {context,click}=setup();context.state.song={...song,lyrics:[{start:5,end:7,text:'Hello'}]};context.state.time=5.3;context.state.paused=true;context.state.settings={songTiming:{}};
+ context.$=()=>({value:'0'});context.songTiming=()=>({lyrics:0,melody:0});context.persist=()=>{};
+ await click({target:{closest:()=>({dataset:{action:'sync-phrase'}})}});
+ const saved=context.state.settings.songTiming['test-song'];assert.ok(Math.abs(saved.lyrics-.3)<1e-8);assert.equal(saved.lyrics,saved.melody);
+ context.state.demo=false;context.state.time=7;
+ await click({target:{closest:()=>({dataset:{action:'sync-phrase'}})}});assert.equal(context.state.settings.songTiming['test-song'].lyrics,saved.lyrics);
+});

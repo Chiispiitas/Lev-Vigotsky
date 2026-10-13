@@ -79,7 +79,7 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 **It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
 
-The library contains 89 songs: the local contest song plus 88 online AllKaraoke songs (19 Spanish and 69 English). The latest expansion adds 50 English songs to the previous 35 online selections.
+The library contains 189 songs: the local contest song plus 188 online AllKaraoke songs (19 Spanish and 169 English). The latest expansion adds 100 English songs to the previous 88 online selections.
 
 ### Spanish (19)
 
@@ -106,7 +106,7 @@ The library contains 89 songs: the local contest song plus 88 online AllKaraoke 
 | Tú | Shakira |
 | Sofia | Álvaro Soler |
 
-### English (69)
+### English (169)
 
 - Mark Ronson feat. Bruno Mars — Uptown Funk
 
@@ -186,13 +186,13 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 `assets/catalog.json` lists the selections. The charts in `assets/allkaraoke/` were obtained from `https://allkaraoke.party/songs/<id>.txt` on 2026-10-13. Each retains its original attribution headers; catalog cards link to AllKaraoke and credit the chart creator where available. Recordings are played through the official YouTube iframe API and are not downloaded or hosted in this repository. No repository-wide chart license was found; public access should not be interpreted as a grant of redistribution or performance rights. Confirm chart permissions and relevant song/event rights before public release.
 
-`song-catalog.js` converts chart beats and GAP into video seconds, assembles line lyrics, normalizes pitch display octaves, and samples pitched notes on a 20 ms grid. Freestyle/rap syllables appear in lyrics but are excluded from pitch scoring; golden notes currently use the same weight as normal notes. Chart quality and individual video synchronization are unreviewed; adjust per-song lyric/melody delays after rehearsal.
+`song-catalog.js` converts chart beats and GAP into video seconds, assembles syllable-timed lyrics, normalizes pitch display octaves, and samples pitched notes on a 20 ms grid. Freestyle/rap syllables appear in lyrics but are excluded from pitch scoring; golden notes currently use the same weight as normal notes. Chart quality and individual video synchronization are unreviewed; adjust per-song lyric/melody delays after rehearsal.
 
 `youtube-transport.js` keeps one visible player outside the app's changing screen markup. Local songs retain their decoded audio transport; YouTube songs follow video time. Pausing/buffering stops scoring and audience interpolation. Unavailable videos display an error instead of starting a round. Embedded-video restrictions can vary by origin or region; a successful metadata lookup is not a playback test. Test on the deployed HTTPS origin before an event.
 
 ## Album artwork
 
-All 89 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 189 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
@@ -229,3 +229,44 @@ All 60 tests passed, including real ranked selection, explicit practice, missing
 Baby was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/justin-bieber-ludacris-baby.txt), with original creator attribution. Video metadata and the My World 2.0 cover URL were verified; playback/alignment on the deployed origin still needs rehearsal.
 
 Uptown Funk was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/mark-ronson-feat-bruno-mars-uptown-funk.txt), retaining creator attribution. Video metadata and the Uptown Special cover URL were verified; playback/alignment on the deployed origin still needs rehearsal.
+
+## Latest 100 English songs
+
+- Bruno Mars — Grenade, Locked Out Of Heaven, Marry You, Talking To The Moon, That’s What I Like, The Lazy Song, Treasure, When I Was Your Man, Runaway Baby
+- Taylor Swift — Blank Space, Cruel Summer, Anti-Hero, Lover, 22, Style, I Knew You Were Trouble, Wildest Dreams
+- Katy Perry — Roar, Hot N Cold, I Kissed A Girl, Last Friday Night (T.G.I.F.), Wide Awake
+- Imagine Dragons — Demons, Radioactive, Natural, Bad Liar, Bones, Whatever It Takes
+- Coldplay — Fix You, The Scientist, Clocks, Paradise, A Sky Full Of Stars, Adventure Of A Lifetime
+- Queen — We Are the Champions, Somebody To Love, I Want to Break Free, Another One Bites the Dust, Killer Queen, The Show Must Go On
+- ABBA — Waterloo, Gimme! Gimme! Gimme! (A Man After Midnight), Money Money Money, The Winner Takes It All, Super Trouper
+- Adele — Set Fire To The Rain, Skyfall, Make You Feel My Love, When we were young, Rumour Has It
+- Ed Sheeran — Bad Habits, Shivers, Castle On The Hill, The A Team
+- Rihanna — Diamonds, Umbrella, Only Girl (In The World), Don’t Stop The Music
+- Rihanna feat. Calvin Harris — We Found Love
+- Lady Gaga — Born This Way, Paparazzi
+- Lady Gaga feat. Colby O'Donis — Just Dance
+- Lady Gaga, Bradley Cooper — Shallow
+- Billie Eilish — Bad Guy, BIRDS OF A FEATHER, What Was I Made For?
+- Shawn Mendes — Stitches, Treat You Better, There’s Nothing Holdin’ Me Back
+- Justin Bieber — Love Yourself, Ghost, What Do You Mean?, Boyfriend
+- Elvis Presley — Can’t Help Falling In Love, Suspicious minds
+- The Weeknd — Can't Feel My Face, Save your tears, The Hills
+- The Weeknd feat. Daft Punk — Starboy
+- Ariana Grande — No tears left to cry, One Last Time, Into you
+- Maroon 5 — Memories, This Love, She Will Be Loved, Maps
+- Green Day — Basket Case, Boulevard of Broken Dreams
+- Nirvana — Smells Like Teen Spirit, Come As You Are
+- The Killers — Mr. Brightside, Somebody Told Me
+- Britney Spears — Toxic, Oops! I did it again, Baby One More Time
+- Dua Lipa — New Rules, Physical, Break My Heart
+- Sabrina Carpenter — Espresso, Please Please Please
+
+## Synchronization improvements
+
+Online lyric highlighting uses the chart’s actual syllable intervals, rests, and sustained notes, rather than a uniform sweep across each line. Upcoming phrases appear two seconds early, with no premature highlight. Repeated identical choruses use their own timestamps. The local contest track remains line-timed because its LRC does not contain word timestamps.
+
+The video clock retains valid zero timestamps on restart instead of falling back to an old seek position. Playback-rate changes update the microphone timeline in practice; ranked turns require normal speed. Worker packets captured before a start/resume/buffering recovery are excluded from the new timeline. Paused presentation time freezes and follows the confirmed YouTube pause position.
+
+To correct a recording-specific chart offset, use Prueba, pause on the first word of a phrase, choose that phrase under Frase que se escucha ahora, and press Alinear inicio de esta frase aquí. The offset is saved per song; online lyrics and melody shift together. This calibration is unavailable in ranked turns. Manual offsets now allow ten seconds in either direction.
+
+Validation: all 188 charts converted successfully, all 189 cover image URLs were verified, all 100 new YouTube video IDs returned metadata, and all 68 tests passed. This verifies data, conversion, and timing behavior; it does not certify alignment of every recording. Charts remain unreviewed until rehearsed with their linked recording. See [SYNC-VALIDATION.md](SYNC-VALIDATION.md).

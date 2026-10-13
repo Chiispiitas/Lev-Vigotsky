@@ -4,7 +4,7 @@ export class YouTubeTransport extends EventTarget {
  get src(){return this._src}
  set src(value){if(this._src===value&&!this.error&&this.player){this.pause();this.currentTime=0;return}this.pause();this.player?.destroy();this.player=null;this.loadPromise=null;this._src=value;this.error=null;this.offset=0;this.status=-1;this.readyState=0;this.ended=false}
  get duration(){return this.player?.getDuration?.()||0}
- get currentTime(){return this.player?.getCurrentTime?.()||this.offset}
+ get currentTime(){const time=this.player?.getCurrentTime?.();return Number.isFinite(time)?Math.max(0,time):this.offset}
  set currentTime(value){this.offset=Math.max(0,Number(value)||0);this.ended=false;this.player?.seekTo(this.offset,true)}
  get paused(){return this.status!==1}
  get buffering(){return this.status===3}
@@ -26,6 +26,7 @@ export class YouTubeTransport extends EventTarget {
     this.player=new YT.Player(slot,{events:{
      onReady:()=>{clearTimeout(timeout);this.readyState=4;this.volume=this._volume;resolve()},
      onStateChange:e=>this.onState(e.data),
+     onPlaybackRateChange:e=>{this.playbackRate=Number(e.data)||1;this.dispatchEvent(new Event('ratechange'))},
      onError:e=>{clearTimeout(timeout);const error=new Error(`YouTube no puede reproducir este video (${e.data}). Prueba otra canción.`);this.error=error;reject(error);this.dispatchEvent(new Event('error'))},
      onAutoplayBlocked:()=>{this.error=new Error('Pulsa reproducir en el video de YouTube para continuar.');this.dispatchEvent(new Event('blocked'))}
     }});

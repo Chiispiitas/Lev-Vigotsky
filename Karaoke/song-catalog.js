@@ -6,7 +6,11 @@ export function parseChart(text, entry) {
  const bpm=number('BPM'), gap=number('GAP')/1000;
  if(!(bpm>0)||!Number.isFinite(gap)||headers.RELATIVE==='YES')throw new Error('Formato de canción no compatible.');
  const beat=60/bpm/4, notes=[], lyrics=[]; let phrase=[];
- const flush=()=>{if(!phrase.length)return;lyrics.push({start:phrase[0].start,end:phrase.at(-1).end,text:phrase.map(n=>n.text).join('').replace(/\s*-\s*/g,'').replace(/~/g,'').trim()});phrase=[]};
+ const flush=()=>{if(!phrase.length)return;
+  const syllables=[];
+  for(const n of phrase){const text=n.text.replace(/\s*-\s*/g,'').replace(/~/g,'');if(text)syllables.push({start:n.start,end:n.end,text});else if(syllables.length)syllables.at(-1).end=n.end}
+  lyrics.push({start:phrase[0].start,end:phrase.at(-1).end,text:syllables.map(n=>n.text).join('').trim(),syllables});phrase=[];
+ };
  for(const row of text.replace(/^\uFEFF/,'').split(/\r?\n/)){
   if(row.startsWith('-')){flush();continue}
   if(/^P\d/.test(row))throw new Error('Esta canción requiere varias voces.');
@@ -28,10 +32,10 @@ export function parseChart(text, entry) {
   const t=Number((tick*.02).toFixed(6));while(i<notes.length&&notes[i].end<=t)i++;
   if(i<notes.length&&notes[i].start<=t&&t<notes[i].end)frames.push({t,midi:notes[i].midi});
  }
- return {...entry,duration,playback:'youtube',lyrics,reference:{frames,notes,hopSeconds:.02,reviewed:false,version:1},timing:{lyricsOffset:0,melodyOffset:0,revision:1},lyricPrecision:'line',credits:{author:headers.CREATOR||entry.author||'',source:headers.ALLKARAOKE_SOURCEURL||entry.sourceUrl||'',chart:entry.source}};
+ return {...entry,duration,playback:'youtube',lyrics,reference:{frames,notes,hopSeconds:.02,reviewed:false,version:1},timing:{lyricsOffset:0,melodyOffset:0,revision:1},lyricPrecision:'syllable',credits:{author:headers.CREATOR||entry.author||'',source:headers.ALLKARAOKE_SOURCEURL||entry.sourceUrl||'',chart:entry.source}};
 }
 export async function loadCatalog(fetcher=fetch){
- const response=await fetcher('assets/catalog.json?v=6');if(!response.ok)throw new Error('No se pudo cargar el catálogo.');
+ const response=await fetcher('assets/catalog.json?v=7');if(!response.ok)throw new Error('No se pudo cargar el catálogo.');
  const entries=await response.json();
  const loaded=await Promise.allSettled(entries.map(async entry=>{const r=await fetcher(entry.chart);if(!r.ok)throw new Error(entry.title);return parseChart(await r.text(),entry)}));
  return {songs:loaded.filter(r=>r.status==='fulfilled').map(r=>r.value),failed:entries.filter((_,i)=>loaded[i].status==='rejected').map(e=>e.title)};

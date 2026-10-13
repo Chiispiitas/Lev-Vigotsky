@@ -27,6 +27,10 @@ test('retrying the same failed video clears the old error and creates a fresh pl
  const {transport}=setup();transport._src='video-id';transport.error=new Error('network');transport.loadPromise=Promise.resolve();
  transport.src='video-id';assert.equal(transport.error,null);assert.equal(transport.player,null);assert.equal(transport.loadPromise,null);
 });
+test('zero from the YouTube clock never falls back to an old seek position',()=>{
+ const {transport,setTime}=setup();transport.offset=30;setTime(0);assert.equal(transport.currentTime,0);
+ setTime(undefined);assert.equal(transport.currentTime,30);setTime(NaN);assert.equal(transport.currentTime,30);
+});
 test('player embeds on the privacy domain with origin and manual playback controls',async t=>{
  const host={hidden:true,replaceChildren(){},append(slot){this.slot=slot}};
  const oldDoc=Object.getOwnPropertyDescriptor(globalThis,'document'),oldLocation=Object.getOwnPropertyDescriptor(globalThis,'location');
@@ -42,4 +46,5 @@ test('player embeds on the privacy domain with origin and manual playback contro
  assert.equal(url.searchParams.get('enablejsapi'),'1');assert.equal(url.searchParams.get('controls'),'1');
  assert.ok(host.slot.allow.includes('autoplay'));assert.equal(transport.readyState,4);
  assert.equal(typeof config.events.onAutoplayBlocked,'function');
+ config.events.onPlaybackRateChange({data:1.5});assert.equal(transport.playbackRate,1.5);
 });
