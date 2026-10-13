@@ -197,3 +197,9 @@ If `www.youtube.com/iframe_api` is refused, the app now falls back to the offici
 The release-versioned fallback URL in `youtube-api.js` was checked on 2026-10-13. If YouTube retires that version, refresh the path from its official `iframe_api` response. This fallback cannot repair a browser, extension, proxy, DNS filter, or school network that blocks both YouTube domains or its video delivery servers. Open the GitHub Pages app in a regular browser and try an allowed network; the local contest instrumental remains available without YouTube.
 
 Validation: 46 tests passed, including API refusal, bootstrap timeout, both-domain failure/retry, concurrent loading, and the privacy iframe configuration. Both official fallback script and embed endpoints returned HTTP 200. Playback in the affected user environment remains unverified; this session blocked browser preview testing.
+
+## Microphone pitch filtering
+
+The microphone now confirms a consistent pitch for about 30 ms at the beginning of a phrase or a moderate note jump, and about 50 ms for larger jumps. A three-frame median filter reduces small fluctuations, and a 40 ms display smoother softens jitter. Low-confidence or below-threshold input stays unvoiced. Rejected spikes and silence earn no held-note credit; only the visual indicator may bridge a brief dropout. Filtering is independent of the target melody and permits real notes in every previously supported vocal register. Filters reset on reconnection, a new round, and resume.
+
+Validation: 54 tests passed, including isolated high/low readings, brief static bursts, real octave changes, quiet singing, silence/scoring behavior, and a loud 20 ms interference burst processed through the actual detector. Live microphone behavior in the event room remains to be checked. Persistent background music at a stable pitch can still be detected; environmental-noise calibration and microphone placement remain useful.

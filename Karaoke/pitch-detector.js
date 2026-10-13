@@ -15,12 +15,39 @@ export class PitchDetector {
   return {hz:RATE/(lag+correction),rms,confidence:Math.max(0,1-b),captureTime};
  }
 }
+const median=values=>{const sorted=[...values].sort((a,b)=>a-b);return sorted[Math.floor(sorted.length/2)]};
+// Confirm a short run of consistent pitch before admitting an onset or leap.
+// Rejected frames stay unvoiced for scoring; only the display bridges dropouts.
+export class PitchGate {
+ constructor(){this.value=null;this.lastGood=-Infinity;this.lastTime=-Infinity;this.candidate=null;this.samples=[]}
+ push(midi,time,confidence=1,rms=1,noiseFloor=0){
+  if(!Number.isFinite(time)||time<=this.lastTime)return null;
+  this.lastTime=time;
+  if(time-this.lastGood>.12){this.value=null;this.samples=[]}
+  const threshold=this.value===null?.78:.72;
+  if(!Number.isFinite(midi)||!Number.isFinite(confidence)||confidence<threshold||!Number.isFinite(rms)||rms<noiseFloor){
+   this.candidate=null;if(time-this.lastGood>.09){this.value=null;this.samples=[]}return null;
+  }
+  const jump=this.value===null?0:Math.abs(midi-this.value);
+  if(this.value===null||jump>3){
+   let pending=this.candidate;
+   if(!pending||time-pending.last>.03||Math.abs(midi-median(pending.samples))>1){pending={start:time,last:time,samples:[]};this.candidate=pending}
+   pending.last=time;pending.samples.push(midi);if(pending.samples.length>7)pending.samples.shift();
+   const confirmation=jump>=7?.045:.025;
+   if(pending.samples.length<3||time-pending.start<confirmation)return null;
+   this.value=median(pending.samples);this.samples=[this.value,this.value,this.value];this.candidate=null;
+  }else{
+   this.candidate=null;this.samples.push(midi);if(this.samples.length>3)this.samples.shift();this.value=median(this.samples);
+  }
+  this.lastGood=time;return this.value;
+ }
+}
 export class PitchSmoother {
  constructor(){this.value=null;this.lastGood=-Infinity;this.lastTime=null}
  push(midi,time){const dt=this.lastTime===null?.01:Math.max(0,time-this.lastTime);this.lastTime=time;
   if(!Number.isFinite(midi)){if(time-this.lastGood>.09)this.value=null;return this.value}
   if(this.value===null||time-this.lastGood>.12||Math.abs(midi-this.value)>7)this.value=midi;
-  else this.value+=(midi-this.value)*(1-Math.exp(-dt/.025));
+  else this.value+=(midi-this.value)*(1-Math.exp(-dt/.04));
   this.lastGood=time;return this.value;
  }
 }
