@@ -1018,5 +1018,17 @@
     "source": "https://allkaraoke.party/game/?song=lewis-capaldi-someone-you-loved",
     "author": "Achilles",
     "sourceUrl": null
+  },
+  {
+    "id": "mago-de-oz-molinos-de-viento",
+    "title": "Molinos de viento",
+    "artist": "Mägo de Oz",
+    "language": "Spanish",
+    "video": "R7t_woqa_Ts",
+    "duration": 252.0,
+    "chart": "assets/allkaraoke/mago-de-oz-molinos-de-viento.txt",
+    "source": "https://allkaraoke.party/game/?song=mago-de-oz-molinos-de-viento",
+    "author": null,
+    "sourceUrl": null
   }
 ]

@@ -600,5 +600,12 @@
     "storeUrl": "https://music.apple.com/us/album/time-after-time/400603643",
     "matchedArtist": "Cyndi Lauper",
     "matchType": "album"
+  },
+  "mago-de-oz-molinos-de-viento": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/d0/8e/3b/d08e3b88-c720-37e3-87c7-6ab80a235127/885686045596.jpg/600x600bb.jpg",
+    "album": "La Leyenda De La Mancha",
+    "storeUrl": "https://music.apple.com/us/album/molinos-de-viento/368688241?i=368688285&uo=4",
+    "matchedArtist": "Mägo de Oz",
+    "matchedTitle": "Molinos De Viento"
   }
 }

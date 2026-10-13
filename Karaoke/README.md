@@ -79,9 +79,11 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 **It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
 
-The library contains 86 songs: the local contest song plus 85 online AllKaraoke songs (18 Spanish and 67 English). The latest expansion adds 50 English songs to the previous 35 online selections.
+The library contains 87 songs: the local contest song plus 86 online AllKaraoke songs (19 Spanish and 67 English). The latest expansion adds 50 English songs to the previous 35 online selections.
 
-### Spanish (18)
+### Spanish (19)
+
+- Mägo de Oz — Molinos de viento
 
 | Song | Artist |
 | --- | --- |
@@ -186,7 +188,7 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 ## Album artwork
 
-All 86 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover opens that song’s practice playback screen. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 87 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover opens that song’s practice playback screen. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
@@ -203,3 +205,5 @@ Validation: 46 tests passed, including API refusal, bootstrap timeout, both-doma
 The microphone now confirms a consistent pitch for about 30 ms at the beginning of a phrase or a moderate note jump, and about 50 ms for larger jumps. A three-frame median filter reduces small fluctuations, and a 40 ms display smoother softens jitter. Low-confidence or below-threshold input stays unvoiced. Rejected spikes and silence earn no held-note credit; only the visual indicator may bridge a brief dropout. Filtering is independent of the target melody and permits real notes in every previously supported vocal register. Filters reset on reconnection, a new round, and resume.
 
 Validation: 54 tests passed, including isolated high/low readings, brief static bursts, real octave changes, quiet singing, silence/scoring behavior, and a loud 20 ms interference burst processed through the actual detector. Live microphone behavior in the event room remains to be checked. Persistent background music at a stable pitch can still be detected; environmental-noise calibration and microphone placement remain useful.
+
+Molinos de viento was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/mago-de-oz-molinos-de-viento.txt). The chart keeps its original metadata. Its YouTube metadata and cover URL were checked; full playback/alignment on the deployed origin still needs rehearsal.
