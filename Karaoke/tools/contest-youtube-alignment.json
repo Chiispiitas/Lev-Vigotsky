@@ -1,0 +1,97 @@
+{
+  "video": "qt2Ht_Tl9Ic",
+  "youtubeDuration": 174.394625,
+  "referenceDuration": 172.454625,
+  "matches": [
+    {
+      "stem": "Instrumental",
+      "localTime": 5,
+      "youtubeTime": 4.87925,
+      "offset": -0.12075000000000014,
+      "correlation": 0.42178
+    },
+    {
+      "stem": "Instrumental",
+      "localTime": 15,
+      "youtubeTime": 14.87925,
+      "offset": -0.12074999999999925,
+      "correlation": 0.49488
+    },
+    {
+      "stem": "Instrumental",
+      "localTime": 50,
+      "youtubeTime": 49.87925,
+      "offset": -0.12075000000000102,
+      "correlation": 0.85303
+    },
+    {
+      "stem": "Instrumental",
+      "localTime": 90,
+      "youtubeTime": 89.87925,
+      "offset": -0.12075000000000102,
+      "correlation": 0.53264
+    },
+    {
+      "stem": "Instrumental",
+      "localTime": 125,
+      "youtubeTime": 124.87925,
+      "offset": -0.12075000000000102,
+      "correlation": 0.86888
+    },
+    {
+      "stem": "Instrumental",
+      "localTime": 145,
+      "youtubeTime": 144.87925,
+      "offset": -0.12074999999998681,
+      "correlation": 0.9243
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 5,
+      "youtubeTime": 4.913375,
+      "offset": -0.08662499999999973,
+      "correlation": 0.35152
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 15,
+      "youtubeTime": 14.913375,
+      "offset": -0.08662499999999973,
+      "correlation": 0.78794
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 50,
+      "youtubeTime": 49.913375,
+      "offset": -0.08662499999999795,
+      "correlation": 0.45948
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 90,
+      "youtubeTime": 89.913375,
+      "offset": -0.08662499999999795,
+      "correlation": 0.78864
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 125,
+      "youtubeTime": 124.913375,
+      "offset": -0.08662499999999795,
+      "correlation": 0.43685
+    },
+    {
+      "stem": "Vocals",
+      "localTime": 145,
+      "youtubeTime": 144.913375,
+      "offset": -0.08662499999999795,
+      "correlation": 0.32848
+    }
+  ],
+  "selectedOffsetSeconds": -0.086625,
+  "checkedOn": "2026-10-13",
+  "notes": "The reference was extracted from the local vocal stem. Its measured offset is used for both the melody and the pre-existing +0.65 s LRC correction. Instrumental offsets differ slightly because those stems have independent MP3 alignment. No audio is redistributed by this change.",
+  "sourceVocalSha256": "fc1334e7417a902b8bcadc5e2d82950048434899efefbe07efc371971f25615b",
+  "sourceLrcSha256": "64c43995c6612b3c0efbbde67d8e5baa753968c885cf4f42e3fce04d7f99d49e",
+  "analysisAudioSha256": "610f1fefa6f40e41b370310b97f562fb9ca2a1e5244a424245a46d17478e124b"
+}

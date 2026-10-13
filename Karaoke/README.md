@@ -77,7 +77,7 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 ## Contest song and AllKaraoke catalog
 
-**It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
+**It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The contest now plays the official audio-only YouTube release (qt2Ht_Tl9Ic), aligned by waveform comparison to the local vocal reference. The original local instrumental, timed lyrics and reference remain preserved.
 
 The library contains 189 songs: the local contest song plus 188 online AllKaraoke songs (19 Spanish and 169 English). The latest expansion adds 100 English songs to the previous 88 online selections.
 
@@ -200,7 +200,7 @@ Artwork metadata comes from the [Apple Search API](https://performance-partners.
 
 If `www.youtube.com/iframe_api` is refused, the app now falls back to the official widget API on `www.youtube-nocookie.com`. Video iframes also use that privacy domain, retain the app origin/referrer, and show playback controls so users can start a video when autoplay is blocked. The fallback is also tried when the bootstrap loads but its nested player script never responds. Failed attempts are cleaned up so Retry starts a fresh connection.
 
-The release-versioned fallback URL in `youtube-api.js` was checked on 2026-10-13. If YouTube retires that version, refresh the path from its official `iframe_api` response. This fallback cannot repair a browser, extension, proxy, DNS filter, or school network that blocks both YouTube domains or its video delivery servers. Open the GitHub Pages app in a regular browser and try an allowed network; the local contest instrumental remains available without YouTube.
+The release-versioned fallback URL in `youtube-api.js` was checked on 2026-10-13. If YouTube retires that version, refresh the path from its official `iframe_api` response. This fallback cannot repair a browser, extension, proxy, DNS filter, or school network that blocks both YouTube domains or its video delivery servers. Open the GitHub Pages app in a regular browser and try an allowed network; the bundled instrumental is preserved, but the contest playback now requires YouTube.
 
 Validation: 46 tests passed, including API refusal, bootstrap timeout, both-domain failure/retry, concurrent loading, and the privacy iframe configuration. Both official fallback script and embed endpoints returned HTTP 200. Playback in the affected user environment remains unverified; this session blocked browser preview testing.
 
@@ -267,7 +267,7 @@ Online lyric highlighting uses the chart’s actual syllable intervals, rests, a
 
 The video clock retains valid zero timestamps on restart instead of falling back to an old seek position. Playback-rate changes update the microphone timeline in practice; ranked turns require normal speed. Worker packets captured before a start/resume/buffering recovery are excluded from the new timeline. Paused presentation time freezes and follows the confirmed YouTube pause position.
 
-To correct a recording-specific chart offset, use Prueba, pause on the first word of a phrase, choose that phrase under Frase que se escucha ahora, and press Alinear esta canción. The offset is saved per song; online lyrics and melody shift together. This calibration is unavailable in ranked turns. Manual offsets now allow ten seconds in either direction.
+To correct a recording-specific chart offset, use Prueba, pause on the first word of a phrase, choose that phrase under Frase que se escucha ahora, and press Alinear esta canción. The offset is saved per song; YouTube lyrics and melody shift together. This calibration is unavailable in ranked turns. Manual offsets now allow ten seconds in either direction.
 
 Validation: all 188 charts converted successfully, all 189 cover image URLs were verified, all 100 new YouTube video IDs returned metadata, and all 68 tests passed. This verifies data, conversion, and timing behavior; it does not certify alignment of every recording. Charts remain unreviewed until rehearsed with their linked recording. See [SYNC-VALIDATION.md](SYNC-VALIDATION.md).
 
@@ -279,3 +279,12 @@ The main lyric starts at its timestamp; the smaller secondary line previews the 
 The yellow guide is a single opaque 16 px stroke with rounded joins, including large pitch changes. It bridges short articulation gaps and breaks for longer rests; translucent tolerance rectangles and duplicate drawing layers are removed. Existing pitch forgiveness still applies to scoring.
 
 76 automated tests pass. Actual acoustic alignment on the event playback device and browser visual QA remain unverified.
+
+
+### Contest YouTube recording alignment
+
+It's Been So Long now uses the official audio release https://www.youtube.com/watch?v=qt2Ht_Tl9Ic instead of the bundled instrumental. Its decoded duration is 174.395 s. The animated official video is longer and was not used for this mapping.
+
+Normalized waveform cross-correlation at 8 kHz matched the isolated vocal to the YouTube recording in five 8-second windows starting at 15, 50, 90, 125 and 145 s. Every window matched at -0.086625 s, with no measurable anchor drift. Apply that offset to the vocal-derived melody and to the existing +0.65 s LRC correction: lyrics +0.563375 s, melody -0.086625 s. The instrumental has a slightly different MP3 alignment, so its offset was not used for the vocal guide.
+
+Timing revision 4 clears the old contest-specific local calibration once; the saved common device delay is preserved. The preparation tool restores this measured YouTube mapping only when the vocal/LRC hashes match the validated sources. Analysis values and source hashes are in tools/contest-youtube-alignment.json; downloaded analysis audio is not included in the repository. YouTube metadata reported the video playable in embeds. Actual event-device playback and within-line highlighting still require rehearsal; the supplied LRC remains line-timed.

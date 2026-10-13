@@ -29,3 +29,13 @@ No full-audio comparison or event-room microphone rehearsal was performed. Timin
 - The melody guide is one opaque 16 px yellow stroke, with rounded joins, no translucent tolerance bands, and connections across pitch jumps and short articulation gaps. Longer rests break the stroke.
 - New scoring profiles retain common and estimated output delay for review; previous scores are preserved.
 - 76 automated tests passed, including no early lyric activation, one-stroke guide rendering, shared-delay calibration, offset persistence without double application, and a common audible clock for YouTube display and microphone capture. Live audio alignment on the event device and visual browser inspection remain unverified; no arbitrary universal delay was assigned to the catalog.
+
+
+## Contest switched to YouTube
+
+- Selected the official audio-only upload qt2Ht_Tl9Ic, by The Living Tombstone, with runtime duration 174.395 s. Watch metadata reported playableInEmbed true; oEmbed metadata resolved.
+- Waveform matching of existing isolated vocal against this recording produced -0.086625 s at all five 8-second anchor windows (local times 15, 50, 90, 125 and 145 s). This checks the recording mapping across the song, rather than inferring sync from equal lengths.
+- Melody offset is -0.086625 s. The existing +0.65 s lyric onset correction becomes +0.563375 s. Source timestamps remain intact; revision 4 invalidates the previous contest-only saved calibration while retaining the common device correction.
+- Instrumental and vocal MP3 stems have different alignment. The guide was extracted from the vocal, so the vocal mapping determines the correction.
+- Numerical alignment evidence and source hashes are saved in tools/contest-youtube-alignment.json. No downloaded YouTube audio is published. The original supplied files are preserved.
+- The source LRC is still line-timed. Waveform alignment establishes the recording offset and absence of measured drift, not word-level timing accuracy or measured room playback latency.
