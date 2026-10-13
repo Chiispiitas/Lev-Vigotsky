@@ -79,7 +79,7 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 **It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
 
-The library contains 88 songs: the local contest song plus 87 online AllKaraoke songs (19 Spanish and 68 English). The latest expansion adds 50 English songs to the previous 35 online selections.
+The library contains 89 songs: the local contest song plus 88 online AllKaraoke songs (19 Spanish and 69 English). The latest expansion adds 50 English songs to the previous 35 online selections.
 
 ### Spanish (19)
 
@@ -106,7 +106,9 @@ The library contains 88 songs: the local contest song plus 87 online AllKaraoke 
 | Tú | Shakira |
 | Sofia | Álvaro Soler |
 
-### English (68)
+### English (69)
+
+- Mark Ronson feat. Bruno Mars — Uptown Funk
 
 - Justin Bieber & Ludacris — Baby
 
@@ -190,7 +192,7 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 ## Album artwork
 
-All 88 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 89 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
@@ -225,3 +227,5 @@ New transparent cheering and encouraging owl poses join the existing mascot. The
 All 60 tests passed, including real ranked selection, explicit practice, missing-participant routing, mascot emotion transitions, and the existing audio/scoring checks. Browser preview remains unavailable in this session, so visual QA on the live site is still needed. See [OWL-ASSETS.md](OWL-ASSETS.md) for image-generation prompts and saved assets.
 
 Baby was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/justin-bieber-ludacris-baby.txt), with original creator attribution. Video metadata and the My World 2.0 cover URL were verified; playback/alignment on the deployed origin still needs rehearsal.
+
+Uptown Funk was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/mark-ronson-feat-bruno-mars-uptown-funk.txt), retaining creator attribution. Video metadata and the Uptown Special cover URL were verified; playback/alignment on the deployed origin still needs rehearsal.

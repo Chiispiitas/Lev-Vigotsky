@@ -614,5 +614,12 @@
     "storeUrl": "https://music.apple.com/us/album/baby-feat-ludacris/1440661543?i=1440661545&uo=4",
     "matchedArtist": "Justin Bieber",
     "matchedTitle": "Baby (feat. Ludacris)"
+  },
+  "mark-ronson-feat-bruno-mars-uptown-funk": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/7e/30/c5/7e30c572-aa47-5f7b-c6fd-42d50cd2c56d/886444959797.jpg/600x600bb.jpg",
+    "album": "Uptown Special",
+    "storeUrl": "https://music.apple.com/us/album/uptown-funk-feat-bruno-mars/943946661?i=943946671&uo=4",
+    "matchedArtist": "Mark Ronson",
+    "matchedTitle": "Uptown Funk (feat. Bruno Mars)"
   }
 }

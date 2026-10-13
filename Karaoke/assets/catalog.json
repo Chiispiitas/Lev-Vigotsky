@@ -1042,5 +1042,17 @@
     "source": "https://allkaraoke.party/game/?song=justin-bieber-ludacris-baby",
     "author": "vicktoben",
     "sourceUrl": "https://ultrastar-es.org/pt/canciones?artista=Justin%20Bieber%20&%20Ludacris&cancion=Baby"
+  },
+  {
+    "id": "mark-ronson-feat-bruno-mars-uptown-funk",
+    "title": "Uptown Funk",
+    "artist": "Mark Ronson feat. Bruno Mars",
+    "language": "English",
+    "video": "OPf0YbXqDm0",
+    "duration": 271.0,
+    "chart": "assets/allkaraoke/mark-ronson-feat-bruno-mars-uptown-funk.txt",
+    "source": "https://allkaraoke.party/game/?song=mark-ronson-feat-bruno-mars-uptown-funk",
+    "author": "OmarWeichafe*Coppo",
+    "sourceUrl": "https://ultrastar-es.org/pl/canciones?artista=Bruno+Mars"
   }
 ]
