@@ -1030,5 +1030,17 @@
     "source": "https://allkaraoke.party/game/?song=mago-de-oz-molinos-de-viento",
     "author": null,
     "sourceUrl": null
+  },
+  {
+    "id": "justin-bieber-ludacris-baby",
+    "title": "Baby",
+    "artist": "Justin Bieber & Ludacris",
+    "language": "English",
+    "video": "kffacxfA7G4",
+    "duration": 220.0,
+    "chart": "assets/allkaraoke/justin-bieber-ludacris-baby.txt",
+    "source": "https://allkaraoke.party/game/?song=justin-bieber-ludacris-baby",
+    "author": "vicktoben",
+    "sourceUrl": "https://ultrastar-es.org/pt/canciones?artista=Justin%20Bieber%20&%20Ludacris&cancion=Baby"
   }
 ]

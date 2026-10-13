@@ -79,7 +79,7 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 **It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
 
-The library contains 87 songs: the local contest song plus 86 online AllKaraoke songs (19 Spanish and 67 English). The latest expansion adds 50 English songs to the previous 35 online selections.
+The library contains 88 songs: the local contest song plus 87 online AllKaraoke songs (19 Spanish and 68 English). The latest expansion adds 50 English songs to the previous 35 online selections.
 
 ### Spanish (19)
 
@@ -106,7 +106,9 @@ The library contains 87 songs: the local contest song plus 86 online AllKaraoke 
 | Tú | Shakira |
 | Sofia | Álvaro Soler |
 
-### English (67)
+### English (68)
+
+- Justin Bieber & Ludacris — Baby
 
 | Song | Artist |
 | --- | --- |
@@ -188,7 +190,7 @@ Use **Canciones → Probar canción** to check playback without a microphone or 
 
 ## Album artwork
 
-All 87 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
+All 88 bundled songs have album or single artwork in `assets/covers.json`. Clicking a cover prepares a real ranked turn and requires a participant. The separate Prueba action opens simulated practice. Covers are keyboard-accessible buttons with a play indicator; there are no Apple Music buttons or outbound cover links. The library uses lazy loading; the contest and selected-song panels load their covers eagerly. Unavailable images fall back to the existing music/trophy icon without blocking karaoke. Cover images require internet access.
 
 Artwork metadata comes from the [Apple Search API](https://performance-partners.apple.com/search-api). Its API is only used during catalog preparation, never on each app visit. Artwork and branding remain the property of their respective owners.
 
@@ -221,3 +223,5 @@ The app title is English Karaoke Contest. Library covers are 74 px (64 px on sma
 New transparent cheering and encouraging owl poses join the existing mascot. The performance screen includes an owl beside the lyrics that reacts to recent pitch credit, with smoothing and a 600 ms dwell to avoid rapid emotion changes. Instrumental breaks and pauses use a neutral pose. Cards, panels, buttons, scores, and owls use gentle entrance, floating, bouncing, and hover motion. Both the app reduced-motion setting and the operating-system reduced-motion preference disable those effects.
 
 All 60 tests passed, including real ranked selection, explicit practice, missing-participant routing, mascot emotion transitions, and the existing audio/scoring checks. Browser preview remains unavailable in this session, so visual QA on the live site is still needed. See [OWL-ASSETS.md](OWL-ASSETS.md) for image-generation prompts and saved assets.
+
+Baby was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/justin-bieber-ludacris-baby.txt), with original creator attribution. Video metadata and the My World 2.0 cover URL were verified; playback/alignment on the deployed origin still needs rehearsal.

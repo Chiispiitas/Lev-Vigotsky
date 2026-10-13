@@ -607,5 +607,12 @@
     "storeUrl": "https://music.apple.com/us/album/molinos-de-viento/368688241?i=368688285&uo=4",
     "matchedArtist": "Mägo de Oz",
     "matchedTitle": "Molinos De Viento"
+  },
+  "justin-bieber-ludacris-baby": {
+    "url": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/b9/0a/b4/b90ab45a-07b1-0bcc-331c-c496a21d07e4/10UMGIM01134.rgb.jpg/600x600bb.jpg",
+    "album": "My World 2.0 (Bonus Track Version)",
+    "storeUrl": "https://music.apple.com/us/album/baby-feat-ludacris/1440661543?i=1440661545&uo=4",
+    "matchedArtist": "Justin Bieber",
+    "matchedTitle": "Baby (feat. Ludacris)"
   }
 }
