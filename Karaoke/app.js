@@ -4,7 +4,7 @@ import {MatchSparkles} from './pitch-effects.js?v=1';
 import {AudioTimeline,projectedTime} from './timeline.js';
 import {AudioTransport} from './audio-transport.js';
 import {YouTubeTransport} from './youtube-transport.js';
-import {loadCatalog} from './song-catalog.js?v=2';
+import {loadCatalog} from './song-catalog.js?v=3';
 import {PlaybackGuard} from './playback-guard.js';
 const playbackGuard=new PlaybackGuard();
 const $=s=>document.querySelector(s),app=$('#app');

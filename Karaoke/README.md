@@ -79,28 +79,102 @@ The extracted melody remains unreviewed. Lyric cues are line-timed; within-line 
 
 **It's Been So Long — The Living Tombstone** is the designated contest song. It remains selected by default, has a gold CONTEST badge and highlighted card, and appears in a dedicated home-page panel with a Prepare contest action. The badge also appears on the ready and performance screens, including the audience display. The original local instrumental, timed lyrics and reference are preserved.
 
-The library contains 36 songs: the local contest song plus 35 online AllKaraoke songs (18 Spanish and 17 English). The online catalog includes the original ten selections plus 25 additions:
+The library contains 86 songs: the local contest song plus 85 online AllKaraoke songs (18 Spanish and 67 English). The latest expansion adds 50 English songs to the previous 35 online selections.
 
-| Spanish | English |
+### Spanish (18)
+
+| Song | Artist |
 | --- | --- |
-| Color esperanza — Diego Torres | Count On Me — Bruno Mars |
-| Vivir mi vida — Marc Anthony | Firework — Katy Perry |
-| Me enamora — Juanes | Shake It Off — Taylor Swift |
-| No se habla de Bruno — Disney’s Encanto | Believer — Imagine Dragons |
-| A Dios le pido — Juanes | Happy — Pharrell Williams |
-| Sofia — Álvaro Soler | Dancing Queen — ABBA |
-| La gota fría — Carlos Vives | Mamma Mia — ABBA |
-| La bicicleta — Carlos Vives y Shakira | Don't Stop Me Now — Queen |
-| Torero — Chayanne | We Will Rock You — Queen |
-| Cuidarte el alma — Chayanne | Never gonna give you up — Rick Astley |
-| Un siglo sin ti — Chayanne | Yellow — Coldplay |
-| Rosas — La Oreja de Van Gogh | Viva la vida — Coldplay |
-| Jueves — La Oreja de Van Gogh | Just The Way You Are — Bruno Mars |
-| 20 De Enero — La Oreja De Van Gogh | Love Story — Taylor Swift |
-| Cuéntame al oído — La Oreja de Van Gogh | You Belong With Me — Taylor Swift |
-| Suerte — Shakira | Thunder — Imagine Dragons |
-| Gitana — Shakira | Counting Stars — OneRepublic |
-| Tú — Shakira |  |
+| La gota fría | Carlos Vives |
+| La bicicleta | Carlos Vives y Shakira |
+| Cuidarte el alma | Chayanne |
+| Torero | Chayanne |
+| Un siglo sin ti | Chayanne |
+| Color esperanza | Diego Torres |
+| No se habla de Bruno | Disney’s Encanto |
+| A Dios le pido | Juanes |
+| Me enamora | Juanes |
+| 20 De Enero | La Oreja De Van Gogh |
+| Cuéntame al oído | La Oreja de Van Gogh |
+| Jueves | La Oreja de Van Gogh |
+| Rosas | La Oreja de Van Gogh |
+| Vivir mi vida | Marc Anthony |
+| Gitana | Shakira |
+| Suerte | Shakira |
+| Tú | Shakira |
+| Sofia | Álvaro Soler |
+
+### English (67)
+
+| Song | Artist |
+| --- | --- |
+| Take on me | a-ha |
+| Dancing Queen | ABBA |
+| Mamma Mia | ABBA |
+| Easy On Me | Adele |
+| Hello | Adele |
+| Rolling In The Deep | Adele |
+| Someone Like You | Adele |
+| The Nights | Avicii |
+| Wake Me Up | Avicii |
+| Everybody (Backstreet's Back) | Backstreet Boys |
+| I Want It That Way | Backstreet Boys |
+| Halo | Beyoncé |
+| It's my life | Bon Jovi |
+| Livin' on a Prayer | Bon Jovi |
+| You Give Love A Bad Name | Bon Jovi |
+| Count On Me | Bruno Mars |
+| Just The Way You Are | Bruno Mars |
+| Viva la vida | Coldplay |
+| Yellow | Coldplay |
+| Girls Just Wanna Have Fun | Cyndi Lauper |
+| Time After Time | Cyndi Lauper |
+| Titanium | David Guetta & Sia |
+| Dance The Night | Dua Lipa |
+| Don't Start Now | Dua Lipa |
+| Levitating | Dua Lipa |
+| Perfect | Ed Sheeran |
+| Photograph | Ed Sheeran |
+| Shape of you | Ed Sheeran |
+| Thinking out loud | Ed Sheeran |
+| Rocket Man (I Think It’s Going To Be A Long Long Time) | Elton John |
+| Your Song | Elton John |
+| As It Was | Harry Styles |
+| Watermelon sugar | Harry Styles |
+| Believer | Imagine Dragons |
+| Thunder | Imagine Dragons |
+| Don't Stop Believing | Journey |
+| Firework | Katy Perry |
+| Bad Romance | Lady Gaga |
+| Poker Face | Lady Gaga |
+| Someone You Loved | Lewis Capaldi |
+| Numb | Linkin Park |
+| What I've done | Linkin Park |
+| Sugar | Maroon 5 |
+| Beat It | Michael Jackson |
+| Billie Jean | Michael Jackson |
+| Smooth Criminal (Single Version) | Michael Jackson |
+| Thriller | Michael Jackson |
+| Flowers | Miley Cyrus |
+| Wonderwall | Oasis |
+| Story Of My Life | One Direction |
+| What Makes You Beautiful | One Direction |
+| Counting Stars | OneRepublic |
+| Happy | Pharrell Williams |
+| Don't Stop Me Now | Queen |
+| We Will Rock You | Queen |
+| Never gonna give you up | Rick Astley |
+| Cheap Thrills | Sia |
+| Love Story | Taylor Swift |
+| Shake It Off | Taylor Swift |
+| You Belong With Me | Taylor Swift |
+| Hey Jude | The Beatles |
+| Let It Be | The Beatles |
+| Yesterday | The Beatles |
+| Blinding Lights | The Weeknd |
+| Africa | Toto |
+| I Wanna Dance With Somebody | Whitney Houston |
+| I Will Always Love You | Whitney Houston |
 
 Use **Canciones → Probar canción** to check playback without a microphone or saved result. Select a participant for a scored turn. The online videos contain the original vocals; they are not isolated instrumental tracks. Internet access and YouTube embedding are required. Use headphones or keep speaker output away from the microphone so the recording's voice is not scored as the participant.
 

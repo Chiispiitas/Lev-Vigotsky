@@ -31,7 +31,7 @@ export function parseChart(text, entry) {
  return {...entry,duration,playback:'youtube',lyrics,reference:{frames,notes,hopSeconds:.02,reviewed:false,version:1},timing:{lyricsOffset:0,melodyOffset:0,revision:1},lyricPrecision:'line',credits:{author:headers.CREATOR||entry.author||'',source:headers.ALLKARAOKE_SOURCEURL||entry.sourceUrl||'',chart:entry.source}};
 }
 export async function loadCatalog(fetcher=fetch){
- const response=await fetcher('assets/catalog.json?v=2');if(!response.ok)throw new Error('No se pudo cargar el catálogo.');
+ const response=await fetcher('assets/catalog.json?v=3');if(!response.ok)throw new Error('No se pudo cargar el catálogo.');
  const entries=await response.json();
  const loaded=await Promise.allSettled(entries.map(async entry=>{const r=await fetcher(entry.chart);if(!r.ok)throw new Error(entry.title);return parseChart(await r.text(),entry)}));
  return {songs:loaded.filter(r=>r.status==='fulfilled').map(r=>r.value),failed:entries.filter((_,i)=>loaded[i].status==='rejected').map(e=>e.title)};
