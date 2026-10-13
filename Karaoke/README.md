@@ -208,9 +208,9 @@ Validation: 54 tests passed, including isolated high/low readings, brief static 
 
 Molinos de viento was added from the [AllKaraoke source chart](https://github.com/Asvarox/allkaraoke/blob/master/public/songs/mago-de-oz-molinos-de-viento.txt). The chart keeps its original metadata. Its YouTube metadata and cover URL were checked; full playback/alignment on the deployed origin still needs rehearsal.
 
-## Wider pitch targets and octave guides
+## Thicker pitch reference
 
-When accepting different octaves is enabled, the chart now shows the original melody plus one octave above and below. Each note has a solid full-credit band and a softer partial-credit band; chart bounds include all three lanes. The voice trace keeps its actual octave within those lanes, and octave jumps start a new trace segment. Projection windows receive the same octave setting. Turning octave acceptance off shows only the original lane and scores its original register.
+The chart shows one thick yellow melody reference, with a wider solid band and a soft partial-credit halo. It does not duplicate the melody in other octaves. With octave acceptance enabled, the blue voice trace is aligned to the reference register, while higher and lower octave singing retains the same forgiving scoring.
 
 School scoring now gives full pitch credit within one semitone (previously 0.75) and fades to zero at 2.5 semitones (previously 2). Octave-equivalent notes retain the same pitch allowance; silence, rejected microphone spikes, and distant off-key notes still receive no credit. New results record scoring version `school-v3` and their pitch margins; existing recorded scores are preserved. All 55 tests passed, including symmetric upper/lower octave tolerance boundaries.
 
