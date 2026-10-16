@@ -44,3 +44,13 @@ test('changed or foreign score IDs cannot be deleted by a stale confirmation',as
   for(const scoreIds of [['s1'],['s1','new','other']])assert.equal((await call({code:adminCode,action:'deleteScores',participantId:'participant-1',scoreIds,confirmed:true})).status,409);
   assert.equal(db.EmpireFest2026Scores.length,3);
 });
+
+test('Karla and Santiago share one commerce score; the newest publication wins',()=>{
+  const participants=[{_id:'p1'}],records=[
+    {participantId:'p1',rubricId:'culture',total:8,_createdDate:'2026-10-15T10:00:00Z'},
+    {participantId:'p1',rubricId:'commerce',judgeName:'Karla Moreira',total:6,_createdDate:'2026-10-15T10:01:00Z'},
+    {participantId:'p1',rubricId:'runway',total:7,_createdDate:'2026-10-15T10:02:00Z'},
+    {participantId:'p1',rubricId:'commerce',judgeName:'Santiago Villapol',total:9,_createdDate:'2026-10-15T10:03:00Z'}
+  ];
+  const result=consolidate(participants,records)[0];assert.equal(result.count,3);assert.equal(result.total,24);assert.equal(result.evaluations[1].judgeName,'Santiago Villapol');
+});
