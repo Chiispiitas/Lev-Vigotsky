@@ -43,3 +43,6 @@ export function consolidate(participants,records){
     return {...p,evaluations,complete,total:complete?Math.round(evaluations.reduce((sum,s)=>sum+s.total,0)*100)/100:null,count:evaluations.filter(Boolean).length};
   });
 }
+
+export const CATEGORIES=['Miss','Míster','Mini Miss','Mini Míster'];
+export function rankedRows(rows,category){const sorted=rows.filter(r=>r.category===category).sort((a,b)=>(b.complete-a.complete)||(b.total??-1)-(a.total??-1)||a.number-b.number);let last=null,rank=0;return sorted.map((r,i)=>{if(r.complete&&r.total!==last){rank=i+1;last=r.total;}return {...r,rank:r.complete?rank:'—'};});}

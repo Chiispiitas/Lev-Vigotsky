@@ -20,7 +20,7 @@ URL: https://chiispiitas.github.io/Lev-Vigotsky/EmpireFest2026/
 
 3. Jurados: selecciona un participante, completa todos los criterios y publica la evaluación. Un cero es una calificación válida; un campo vacío queda pendiente. Los botones de medio punto son accesos rápidos; se permiten hasta dos decimales.
 
-4. Organización: actualiza el consolidado para recibir las últimas evaluaciones. El total aparece únicamente cuando existen las tres rúbricas. Miss y Míster se clasifican por separado; los empates mantienen la misma posición y no se aplica un desempate automático.
+4. Organización: actualiza el consolidado para recibir las últimas evaluaciones. El total aparece únicamente cuando existen las tres rúbricas. Miss, Míster, Mini Miss y Mini Míster se clasifican por separado; los empates mantienen la misma posición y no se aplica un desempate automático.
 
 5. Descarga el CSV o elige **Imprimir / guardar PDF**, seleccionando Guardar como PDF en el diálogo del navegador.
 
@@ -122,3 +122,5 @@ Ejecutar `node --test EmpireFest2026/empire.test.mjs` desde la raíz del reposit
 
 Es una aplicación estática sin compilación ni dependencias de JavaScript. Para una vista local, servir esta carpeta con cualquier servidor estático. La comunicación real con Wix se verifica desde GitHub Pages con un código de acceso autorizado.
 
+
+Los participantes MINI del documento `mimi pres 2.pdf` están registrados en Wix con categorías `Mini Miss` y `Mini Míster`, curso, imperio y color. Los filtros, clasificaciones, CSV y reportes impresos los separan de las categorías principales. No se incluyen nombres de estudiantes en este repositorio público.

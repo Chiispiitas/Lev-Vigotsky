@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash,randomUUID} from 'node:crypto';
-import {RUBRICS,validateScores,consolidate} from './rubrics.js';
+import {RUBRICS,validateScores,consolidate,CATEGORIES,rankedRows} from './rubrics.js';
 const code='a'.repeat(24),adminCode='b'.repeat(24);
 function setup(){
   const db={EmpireFest2026Access:[{title:'Carlos Delgado',role:'judge',rubricId:'culture',codeHash:createHash('sha256').update(code).digest('hex')},{title:'Organización',role:'admin',rubricId:'',codeHash:createHash('sha256').update(adminCode).digest('hex')}],EmpireFest2026Participants:[{_id:'participant-1',number:1,name:'Prueba',empire:'Romano',category:'Miss'}],EmpireFest2026Scores:[]};
@@ -53,4 +53,18 @@ test('Karla and Santiago share one commerce score; the newest publication wins',
     {participantId:'p1',rubricId:'commerce',judgeName:'Santiago Villapol',total:9,_createdDate:'2026-10-15T10:03:00Z'}
   ];
   const result=consolidate(participants,records)[0];assert.equal(result.count,3);assert.equal(result.total,24);assert.equal(result.evaluations[1].judgeName,'Santiago Villapol');
+});
+
+test('MINI categories have independent rankings and do not mix with Miss and Míster',()=>{
+  const rows=[
+    {_id:'s',category:'Miss',number:1,complete:true,total:30},
+    {_id:'m',category:'Mini Miss',number:21,complete:true,total:20},
+    {_id:'t',category:'Mini Miss',number:23,complete:true,total:20},
+    {_id:'b',category:'Mini Míster',number:22,complete:true,total:25},
+    {_id:'p',category:'Mini Míster',number:24,complete:false,total:null}
+  ];
+  assert.equal(CATEGORIES.length,4);
+  assert.deepEqual(rankedRows(rows,'Mini Miss').map(r=>[r._id,r.rank]),[['m',1],['t',1]]);
+  assert.deepEqual(rankedRows(rows,'Mini Míster').map(r=>[r._id,r.rank]),[['b',1],['p','—']]);
+  assert.deepEqual(rankedRows(rows,'Miss').map(r=>r._id),['s']);
 });
