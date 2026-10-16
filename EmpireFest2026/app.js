@@ -1,4 +1,4 @@
-import {RUBRICS,validateScores,latestScores,consolidate,CATEGORIES,rankedRows} from './rubrics.js';
+import {RUBRICS,validateScores,latestScores,consolidate,CATEGORIES,rankedRows} from './rubrics.js?v=20261015-mini';
 const ENDPOINT='https://chiispiitas.wixsite.com/mr-david-collection/_functions/empireFest2026';
 const $=s=>document.querySelector(s);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
