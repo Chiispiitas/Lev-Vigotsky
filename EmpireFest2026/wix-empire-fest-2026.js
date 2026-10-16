@@ -34,7 +34,7 @@ export async function post_empireFest2026(request){
         efAll(wixData.query(EF_PARTICIPANTS).ascending('number')),
         efAll(user.role==='admin'?wixData.query(EF_SCORES).descending('_createdDate'):wixData.query(EF_SCORES).eq('rubricId',user.rubricId).descending('_createdDate'))
       ]);
-      return efResponse(200,{ok:true,user:{title:user.title,role:user.role,rubricId:user.rubricId},participants:participants.map(efParticipant),records:records.map(efRecord)});
+      return efResponse(200,{ok:true,user:{title:user.title,role:user.role,rubricId:user.rubricId},participants:participants.map(efParticipant),records:records.map(efRecord),features:{deleteScores:true}});
     }
     if(body.action==='addParticipant'){
       if(user.role!=='admin')efError('Solo la organización puede registrar participantes.',403);
@@ -46,6 +46,25 @@ export async function post_empireFest2026(request){
       const existing=await wixData.query(EF_PARTICIPANTS).eq('_id',participant._id).limit(1).find(EF_OPTIONS);
       if(existing.items.length)efError('Ese número de participante ya está registrado.');
       try{const saved=await wixData.insert(EF_PARTICIPANTS,participant,EF_OPTIONS);return efResponse(200,{ok:true,participant:efParticipant(saved)});}catch{efError('No se pudo registrar. Actualiza la lista antes de reintentar.',409);}
+    }
+    if(body.action==='deleteScores'){
+      if(user.role!=='admin')efError('Solo la organización puede eliminar puntuaciones.',403);
+      if(body.confirmed!==true)efError('Debes confirmar la eliminación.');
+      const participantId=efText(body.participantId,100);
+      if(!Array.isArray(body.scoreIds)||body.scoreIds.some(id=>typeof id!=='string'||!id||id.length>128)||new Set(body.scoreIds).size!==body.scoreIds.length)efError('Selección de puntuaciones inválida.');
+      const participant=await wixData.query(EF_PARTICIPANTS).eq('_id',participantId).limit(1).find(EF_OPTIONS);
+      if(!participant.items.length)efError('Participante no encontrado.');
+      const records=await efAll(wixData.query(EF_SCORES).eq('participantId',participantId));
+      const actual=records.map(r=>r._id).sort(),expected=[...body.scoreIds].sort();
+      if(JSON.stringify(actual)!==JSON.stringify(expected))efError('Las puntuaciones cambiaron. Actualiza el consolidado y confirma nuevamente.',409);
+      let removed=0;
+      for(let i=0;i<actual.length;i+=1000){
+        const result=await wixData.bulkRemove(EF_SCORES,actual.slice(i,i+1000),{suppressAuth:true});
+        removed+=result.removedItemIds.length;
+        if(result.errors&&result.errors.length)efError('La eliminación quedó incompleta. Actualiza el consolidado antes de reintentar.',503);
+      }
+      const remaining=await efAll(wixData.query(EF_SCORES).eq('participantId',participantId));
+      return efResponse(200,{ok:true,participantId,removed,remaining:remaining.length});
     }
     if(body.action==='submit'){
       if(user.role!=='judge')efError('Solo el jurado puede publicar su evaluación.',403);

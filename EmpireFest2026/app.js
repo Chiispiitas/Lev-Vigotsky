@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s);
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=value=>Number(value).toLocaleString('es-EC',{minimumFractionDigits:2,maximumFractionDigits:2});
 const today=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/Bogota',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-let state={user:null,code:'',participants:[],records:[],selected:null,view:'evaluate',category:'all',search:''};
+let state={features:{},user:null,code:'',participants:[],records:[],selected:null,view:'evaluate',category:'all',search:''};
 let draft={},busy=false;
 let storageWarning=false;
 const storage={get(key){try{return JSON.parse(localStorage.getItem(key)||'null');}catch{storageWarning=true;return null;}},set(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch{storageWarning=true;return false;}}};
@@ -28,7 +28,7 @@ function loadDraft(){
 $('#loginForm').addEventListener('submit',async event=>{
   event.preventDefault();const button=event.submitter;button.disabled=true;$('#loginStatus').textContent='Conectando con Wix…';$('#loginStatus').className='';
   state.code=$('#code').value.trim();
-  try{const data=await api('bootstrap');state.user=data.user;state.participants=data.participants;state.records=data.records;state.selected=data.participants[0]?._id;state.view=state.user.role==='admin'?'results':'evaluate';loadDraft();$('#code').value='';showWorkspace();}
+  try{const data=await api('bootstrap');state.user=data.user;state.participants=data.participants;state.records=data.records;state.features=data.features||{};state.selected=data.participants[0]?._id;state.view=state.user.role==='admin'?'results':'evaluate';loadDraft();$('#code').value='';showWorkspace();}
   catch(error){state.code='';$('#loginStatus').textContent=error.message;$('#loginStatus').className='error';}finally{button.disabled=false;}
 });
 $('#logout').onclick=()=>{state.code='';state.user=null;$('#workspace').hidden=true;$('#login').hidden=false;$('#logout').hidden=true;$('#loginStatus').textContent='';};
@@ -73,7 +73,7 @@ function updateScore(updateInputs=true){
   document.querySelectorAll('[data-score]').forEach(button=>{const selected=draft.scores[button.dataset.criterion]===Number(button.dataset.score);button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected));});
   if(updateInputs)document.querySelectorAll('[data-custom]').forEach(input=>input.value=draft.scores[input.dataset.custom]??'');
 }
-async function confirmPublish(total){return new Promise(resolve=>{
+async function confirmPublish(total){$('#confirmTitle').textContent='Publicar evaluación';$('#acceptConfirm').textContent='Confirmar publicación';$('#acceptConfirm').className='primary';return new Promise(resolve=>{
   $('#confirmText').textContent=`${selectedParticipant().name} · ${fmt(total)} / 10. Se guardará tu evaluación en Wix. Si ya publicaste una evaluación, esta será la vigente y se conservará la anterior en el historial.`;
   $('#confirm').showModal();const finish=value=>{$('#confirm').close();resolve(value);};$('#cancelConfirm').onclick=()=>finish(false);$('#acceptConfirm').onclick=()=>finish(true);$('#confirm').oncancel=event=>{event.preventDefault();finish(false);};
 });}
@@ -93,7 +93,7 @@ async function publish(){
   }catch(error){toast(error.message);$('#draftStatus').textContent=error.message;$('#draftStatus').classList.add('error');}finally{busy=false;if($('#publish'))$('#publish').disabled=false;}
 }
 async function refresh(){
-  try{const data=await api('bootstrap');state.participants=data.participants;state.records=data.records;if(!selectedParticipant()){state.selected=state.participants[0]?._id;loadDraft();}renderView();toast('Datos actualizados desde Wix.');}catch(error){toast(error.message);}
+  try{const data=await api('bootstrap');state.participants=data.participants;state.records=data.records;state.features=data.features||{};if(!selectedParticipant()){state.selected=state.participants[0]?._id;loadDraft();}renderView();toast('Datos actualizados desde Wix.');}catch(error){toast(error.message);}
 }
 function renderResults(){
   const rows=consolidate(state.participants,state.records),complete=rows.filter(r=>r.complete),evaluations=latestScores(state.records);
@@ -101,7 +101,32 @@ function renderResults(){
   $('#resultCategory').value=state.category;$('#resultCategory').onchange=event=>{state.category=event.target.value;renderResultsTable(rows);};renderResultsTable(rows);$('#refresh').onclick=refresh;$('#print').onclick=()=>window.print();$('#exportCsv').onclick=()=>exportCsv(rows);
 }
 function rankedRows(rows,category){const sorted=rows.filter(r=>r.category===category).sort((a,b)=>(b.complete-a.complete)||(b.total??-1)-(a.total??-1)||a.number-b.number);let last=null,rank=0;return sorted.map((r,i)=>{if(r.complete&&r.total!==last){rank=i+1;last=r.total;}return {...r,rank:r.complete?rank:'—'};});}
-function renderResultsTable(rows){$('#resultsTable').innerHTML=['Miss','Míster'].filter(c=>state.category==='all'||c===state.category).map(category=>`<h3>${category}</h3><div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Participante</th>${RUBRICS.map(r=>`<th>${esc(r.short)}<br>/ 10</th>`).join('')}<th>Total / 30</th><th>Estado</th></tr></thead><tbody>${rankedRows(rows,category).map(r=>`<tr><td>${r.rank}</td><td>${r.number}. ${esc(r.name)}<small>${esc(r.empire)}</small></td>${r.evaluations.map(s=>`<td>${s?fmt(s.total):'—'}</td>`).join('')}<td class="score-total">${r.complete?fmt(r.total):'—'}</td><td>${r.complete?'Completo':r.count+'/3 · Pendiente'}</td></tr>`).join('')||'<tr><td colspan="7">Sin participantes en esta categoría.</td></tr>'}</tbody></table></div>`).join('');}
+function renderResultsTable(rows){$('#resultsTable').innerHTML=['Miss','Míster'].filter(c=>state.category==='all'||c===state.category).map(category=>`<h3>${category}</h3><div class="table-wrap"><table><thead><tr><th>Pos.</th><th>Participante</th>${RUBRICS.map(r=>`<th>${esc(r.short)}<br>/ 10</th>`).join('')}<th>Total / 30</th><th>Estado</th>${state.features.deleteScores?'<th class="no-print">Acciones</th>':''}</tr></thead><tbody>${rankedRows(rows,category).map(r=>`<tr><td>${r.rank}</td><td>${r.number}. ${esc(r.name)}<small>${esc(r.empire)}</small></td>${r.evaluations.map(s=>`<td>${s?fmt(s.total):'—'}</td>`).join('')}<td class="score-total">${r.complete?fmt(r.total):'—'}</td><td>${r.complete?'Completo':r.count+'/3 · Pendiente'}</td>${state.features.deleteScores?`<td class="no-print"><button type="button" class="outline danger" data-delete-scores="${esc(r._id)}" ${r.count?'':'disabled'} aria-label="Eliminar puntuaciones de ${esc(r.name)}">Eliminar puntuaciones</button></td>`:''}</tr>`).join('')||'<tr><td colspan="8">Sin participantes en esta categoría.</td></tr>'}</tbody></table></div>`).join('');document.querySelectorAll('[data-delete-scores]').forEach(button=>button.onclick=()=>deleteParticipantScores(button.dataset.deleteScores));}
+async function deleteParticipantScores(participantId){
+  if(busy||state.user?.role!=='admin')return;
+  const participant=state.participants.find(p=>p._id===participantId);
+  if(!participant)return;
+  const scoreIds=state.records.filter(r=>r.participantId===participantId).map(r=>r._id);
+  if(!scoreIds.length){toast('Este concursante no tiene puntuaciones publicadas.');return;}
+  $('#confirmTitle').textContent='Eliminar puntuaciones';
+  $('#confirmText').textContent=`¿Eliminar todas las puntuaciones de ${participant.name} (${participant.category} · ${participant.empire})? Se eliminarán las evaluaciones de los tres jurados y sus versiones anteriores (${scoreIds.length} registros). El concursante seguirá inscrito y quedará pendiente de evaluación. Esta acción no se puede deshacer.`;
+  $('#acceptConfirm').textContent='Sí, eliminar puntuaciones';$('#acceptConfirm').className='primary danger';
+  const confirmed=await new Promise(resolve=>{
+    const finish=value=>{$('#confirm').close();resolve(value);};
+    $('#cancelConfirm').onclick=()=>finish(false);$('#acceptConfirm').onclick=()=>finish(true);
+    $('#confirm').oncancel=event=>{event.preventDefault();finish(false);};
+    $('#confirm').showModal();$('#cancelConfirm').focus();
+  });
+  if(!confirmed)return;
+  busy=true;document.querySelectorAll('[data-delete-scores]').forEach(button=>button.disabled=true);
+  try{
+    const result=await api('deleteScores',{participantId,scoreIds,confirmed:true});
+    // Update only the records acknowledged as removed; leave every other participant unchanged.
+    const removedIds=new Set(scoreIds);state.records=state.records.filter(r=>!removedIds.has(r._id));
+    renderView();
+    toast(result.remaining?'Puntuaciones eliminadas. Hay nuevas evaluaciones; actualiza el consolidado.':'Puntuaciones eliminadas. El concursante queda pendiente.');
+  }catch(error){toast(error.message);}finally{busy=false;if(state.user?.role==='admin'&&state.view==='results')renderResults();}
+}
 function download(filename,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function exportCsv(rows){const safe=value=>{let text=String(value??'');if(/^[=+\-@\t\r]/.test(text))text="'"+text;return '"'+text.replace(/"/g,'""')+'"';};const lines=[['Categoría','Posición','Número','Nombre','Imperio',...RUBRICS.map(r=>r.short),'Total / 30','Estado']];for(const category of ['Miss','Míster'].filter(c=>state.category==='all'||c===state.category))for(const r of rankedRows(rows,category))lines.push([r.category,r.rank,r.number,r.name,r.empire,...r.evaluations.map(s=>s?.total??''),r.total??'',r.complete?'Completo':`${r.count}/3 pendiente`]);download(`EmpireFest2026-consolidado.csv`,'\uFEFF'+lines.map(line=>line.map(safe).join(';')).join('\r\n'),'text/csv;charset=utf-8');}
 function renderParticipants(){

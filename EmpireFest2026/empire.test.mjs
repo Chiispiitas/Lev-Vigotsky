@@ -6,7 +6,7 @@ import {RUBRICS,validateScores,consolidate} from './rubrics.js';
 const code='a'.repeat(24),adminCode='b'.repeat(24);
 function setup(){
   const db={EmpireFest2026Access:[{title:'Carlos Delgado',role:'judge',rubricId:'culture',codeHash:createHash('sha256').update(code).digest('hex')},{title:'Organización',role:'admin',rubricId:'',codeHash:createHash('sha256').update(adminCode).digest('hex')}],EmpireFest2026Participants:[{_id:'participant-1',number:1,name:'Prueba',empire:'Romano',category:'Miss'}],EmpireFest2026Scores:[]};
-  const wixData={query(collection){let filters=[],sort=null;const query={eq(k,v){filters.push([k,v]);return query;},ascending(k){sort=[k,1];return query;},descending(k){sort=[k,-1];return query;},limit(){return query;},async find(){let items=db[collection].filter(item=>filters.every(([k,v])=>item[k]===v));if(sort)items.sort((a,b)=>a[sort[0]]>b[sort[0]]?sort[1]:-sort[1]);return {items,hasNext:()=>false};}};return query;},async insert(collection,item){if(db[collection].some(old=>old._id===item._id))throw new Error('Duplicate');const saved={...item,_createdDate:new Date().toISOString()};if(saved.scores)saved.scores=Object.fromEntries(Object.entries(saved.scores).reverse());db[collection].push(saved);return saved;}};
+  const wixData={async bulkRemove(collection,ids){const removedItemIds=db[collection].filter(item=>ids.includes(item._id)).map(item=>item._id);db[collection]=db[collection].filter(item=>!ids.includes(item._id));return {removedItemIds,errors:[]};},query(collection){let filters=[],sort=null;const query={eq(k,v){filters.push([k,v]);return query;},ascending(k){sort=[k,1];return query;},descending(k){sort=[k,-1];return query;},limit(){return query;},async find(){let items=db[collection].filter(item=>filters.every(([k,v])=>item[k]===v));if(sort)items.sort((a,b)=>a[sort[0]]>b[sort[0]]?sort[1]:-sort[1]);return {items,hasNext:()=>false};}};return query;},async insert(collection,item){if(db[collection].some(old=>old._id===item._id))throw new Error('Duplicate');const saved={...item,_createdDate:new Date().toISOString()};if(saved.scores)saved.scores=Object.fromEntries(Object.entries(saved.scores).reverse());db[collection].push(saved);return saved;}};
   const source=readFileSync(new URL('./wix-empire-fest-2026.js',import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replace(/export /g,'');
   const handler=new Function('response','wixData','createHash','RUBRICS','validateScores',source+'\nreturn post_empireFest2026;')(value=>value,wixData,createHash,RUBRICS,validateScores);
   const call=async body=>{const r=await handler({body:{text:async()=>JSON.stringify(body)}});return {status:r.status,...JSON.parse(r.body)};};
@@ -26,4 +26,21 @@ test('backend recomputes scores, rejects malformed dates and preserves idempoten
 });
 test('organizer registration validates category and prevents duplicate numbers',async()=>{const {db,call}=setup();const participant={number:2,name:'Otra persona',empire:'Egipto',category:'Míster'};
   const first=await call({code:adminCode,action:'addParticipant',participant});assert.equal(first.status,200);assert.equal(first.participant._id,'participant-2');assert.equal((await call({code:adminCode,action:'addParticipant',participant})).status,400);assert.equal(db.EmpireFest2026Participants.length,2);assert.equal((await call({code:adminCode,action:'addParticipant',participant:{...participant,number:3,category:'Invalid'}})).status,400);
+});
+
+test('score deletion requires organizer and explicit confirmation',async()=>{
+  const {db,call}=setup();db.EmpireFest2026Scores.push({_id:'s1',participantId:'participant-1',rubricId:'culture',total:8});
+  assert.equal((await call({code,action:'deleteScores',participantId:'participant-1',scoreIds:['s1'],confirmed:true})).status,403);
+  assert.equal((await call({code:adminCode,action:'deleteScores',participantId:'participant-1',scoreIds:['s1']})).status,400);
+  assert.equal(db.EmpireFest2026Scores.length,1);
+});
+test('deletion removes all selected history and preserves other contestants and roster',async()=>{
+  const {db,call}=setup();db.EmpireFest2026Scores.push({_id:'s1',participantId:'participant-1',rubricId:'culture',total:8},{_id:'s2',participantId:'participant-1',rubricId:'culture',total:9},{_id:'s3',participantId:'participant-1',rubricId:'commerce',total:10},{_id:'other',participantId:'participant-2',rubricId:'culture',total:7});
+  const result=await call({code:adminCode,action:'deleteScores',participantId:'participant-1',scoreIds:['s3','s1','s2'],confirmed:true});
+  assert.equal(result.status,200);assert.equal(result.removed,3);assert.equal(result.remaining,0);assert.deepEqual(db.EmpireFest2026Scores.map(r=>r._id),['other']);assert.equal(db.EmpireFest2026Participants.length,1);
+});
+test('changed or foreign score IDs cannot be deleted by a stale confirmation',async()=>{
+  const {db,call}=setup();db.EmpireFest2026Scores.push({_id:'s1',participantId:'participant-1'},{_id:'new',participantId:'participant-1'},{_id:'other',participantId:'participant-2'});
+  for(const scoreIds of [['s1'],['s1','new','other']])assert.equal((await call({code:adminCode,action:'deleteScores',participantId:'participant-1',scoreIds,confirmed:true})).status,409);
+  assert.equal(db.EmpireFest2026Scores.length,3);
 });
