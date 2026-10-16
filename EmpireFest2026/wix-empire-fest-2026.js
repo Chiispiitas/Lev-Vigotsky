@@ -11,7 +11,7 @@ const EF_OPTIONS={suppressAuth:true,consistentRead:true};
 function efResponse(status,body){return response({status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':'https://chiispiitas.github.io','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Cache-Control':'no-store'},body:JSON.stringify(body)});}
 function efError(message,status=400){const error=new Error(message);error.status=status;throw error;}
 function efText(value,max){if(typeof value!=='string'||!value.trim()||value.length>max)efError('Datos de texto inválidos.');return value.trim();}
-function efParticipant(p){return {_id:p._id,number:p.number,name:p.name,empire:p.empire,category:p.category};}
+function efParticipant(p){return {_id:p._id,number:p.number,name:p.name,empire:p.empire,category:p.category,course:p.course||'',color:p.color||''};}
 function efRecord(r){return {_id:r._id,participantId:r.participantId,rubricId:r.rubricId,judgeName:r.judgeName,scores:r.scores,total:r.total,comment:r.comment,evaluationDate:r.evaluationDate,_createdDate:r._createdDate};}
 async function efAll(query){let result=await query.limit(1000).find(EF_OPTIONS);const items=[...result.items];while(result.hasNext()){result=await result.next();items.push(...result.items);if(items.length>20000)efError('El evento excede el límite de consulta. Contacta a la organización.',503);}return items;}
 async function efAuthorize(code){
@@ -40,8 +40,8 @@ export async function post_empireFest2026(request){
       if(user.role!=='admin')efError('Solo la organización puede registrar participantes.',403);
       const p=body.participant||{};
       if(!Number.isInteger(p.number)||p.number<1||p.number>9999)efError('Número de participante inválido.');
-      if(!['Miss','Míster'].includes(p.category))efError('Categoría inválida.');
-      const participant={_id:`participant-${p.number}`,title:`${p.number}. ${efText(p.name,160)}`,number:p.number,name:efText(p.name,160),empire:efText(p.empire,120),category:p.category};
+      if(!['Miss','Míster','Mini Miss','Mini Míster'].includes(p.category))efError('Categoría inválida.');
+      const participant={_id:`participant-${p.number}`,title:`${p.number}. ${efText(p.name,160)}`,number:p.number,name:efText(p.name,160),empire:efText(p.empire,120),category:p.category,course:p.course?efText(p.course,120):''};
       // A stable ID makes duplicate numbers fail atomically, even with concurrent organizers.
       const existing=await wixData.query(EF_PARTICIPANTS).eq('_id',participant._id).limit(1).find(EF_OPTIONS);
       if(existing.items.length)efError('Ese número de participante ya está registrado.');

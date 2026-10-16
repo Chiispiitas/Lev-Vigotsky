@@ -68,3 +68,10 @@ test('MINI categories have independent rankings and do not mix with Miss and Mí
   assert.deepEqual(rankedRows(rows,'Mini Míster').map(r=>[r._id,r.rank]),[['b',1],['p','—']]);
   assert.deepEqual(rankedRows(rows,'Miss').map(r=>r._id),['s']);
 });
+
+test('backend returns courses and accepts a MINI participant with course',async()=>{
+  const {db,call}=setup();db.EmpireFest2026Participants[0].course='8vo Justos';
+  assert.equal((await call({code,action:'bootstrap'})).participants[0].course,'8vo Justos');
+  const result=await call({code:adminCode,action:'addParticipant',participant:{number:41,name:'Prueba MINI',empire:'Imperio maya',category:'Mini Miss',course:'Primero A'}});
+  assert.equal(result.status,200);assert.equal(result.participant.course,'Primero A');assert.equal(result.participant.category,'Mini Miss');
+});

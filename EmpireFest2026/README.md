@@ -26,7 +26,7 @@ URL: https://chiispiitas.github.io/Lev-Vigotsky/EmpireFest2026/
 
 
 
-Los borradores se guardan en este dispositivo y por rúbrica/participante. Mantén tu dispositivo protegido. Los códigos se conservan solo en la memoria de la página y se eliminan al salir.
+Los borradores se guardan en este dispositivo y por rúbrica/participante. Mantén tu dispositivo protegido. La sesión se conserva en `sessionStorage` de la pestaña para sobrevivir a una recarga; el código se vuelve a validar con Wix al restaurarla. **Salir** elimina la sesión guardada. No se usa almacenamiento permanente para los códigos. Los cursos aparecen en las listas, evaluaciones, consolidado y CSV. Organización dispone de **Recargar** para consultar los datos actuales sin salir.
 
 
 
