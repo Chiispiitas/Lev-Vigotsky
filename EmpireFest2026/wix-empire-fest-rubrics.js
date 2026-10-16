@@ -46,3 +46,5 @@ export function consolidate(participants,records){
 
 export const CATEGORIES=['Miss','Míster','Mini Miss','Mini Míster'];
 export function rankedRows(rows,category){const sorted=rows.filter(r=>r.category===category).sort((a,b)=>(b.complete-a.complete)||(b.total??-1)-(a.total??-1)||a.number-b.number);let last=null,rank=0;return sorted.map((r,i)=>{if(r.complete&&r.total!==last){rank=i+1;last=r.total;}return {...r,rank:r.complete?rank:'—'};});}
+
+export function organizerRows(rows,category='all'){return category==='all'?CATEGORIES.flatMap(c=>rankedRows(rows,c)).sort((a,b)=>a.number-b.number):rankedRows(rows,category);}

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {createHash,randomUUID} from 'node:crypto';
-import {RUBRICS,validateScores,consolidate,CATEGORIES,rankedRows} from './rubrics.js';
+import {RUBRICS,validateScores,consolidate,CATEGORIES,rankedRows,organizerRows} from './rubrics.js';
 const code='a'.repeat(24),adminCode='b'.repeat(24);
 function setup(){
   const db={EmpireFest2026Access:[{title:'Carlos Delgado',role:'judge',rubricId:'culture',codeHash:createHash('sha256').update(code).digest('hex')},{title:'Organización',role:'admin',rubricId:'',codeHash:createHash('sha256').update(adminCode).digest('hex')}],EmpireFest2026Participants:[{_id:'participant-1',number:1,name:'Prueba',empire:'Romano',category:'Miss'}],EmpireFest2026Scores:[]};
@@ -74,4 +74,11 @@ test('backend returns courses and accepts a MINI participant with course',async(
   assert.equal((await call({code,action:'bootstrap'})).participants[0].course,'8vo Justos');
   const result=await call({code:adminCode,action:'addParticipant',participant:{number:41,name:'Prueba MINI',empire:'Imperio maya',category:'Mini Miss',course:'Primero A'}});
   assert.equal(result.status,200);assert.equal(result.participant.course,'Primero A');assert.equal(result.participant.category,'Mini Miss');
+});
+
+test('all organizer categories interleave by participant number and retain category ranks',()=>{
+ const rows=[{number:4,category:'Miss',complete:true,total:30},{number:1,category:'Míster',complete:true,total:20},{number:3,category:'Míster',complete:true,total:25},{number:2,category:'Miss',complete:false,total:null},{number:22,category:'Mini Míster',complete:true,total:29},{number:21,category:'Mini Miss',complete:true,total:28}];
+ assert.deepEqual(organizerRows(rows).map(r=>[r.number,r.rank]),[[1,2],[2,'—'],[3,1],[4,1],[21,1],[22,1]]);
+ assert.deepEqual(organizerRows(rows,'Míster').map(r=>r.number),[3,1]);
+ assert.deepEqual(organizerRows(rows,'Miss').map(r=>r.number),[4,2]);
 });
