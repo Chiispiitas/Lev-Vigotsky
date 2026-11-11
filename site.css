@@ -176,3 +176,5 @@
 .hero-dot:hover span{opacity:.85}
 .hero-carousel-controls .hero-pause-accessible:not(:focus){position:absolute;width:1px;height:1px;min-height:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 .hero-carousel-controls .hero-pause-accessible:focus{position:absolute;right:0;top:0;background:#fff;padding:8px;z-index:3}
+.hero-photo figcaption{min-height:0;padding:16px 155px 16px 24px}
+@media(max-width:620px){.hero-photo figcaption{min-height:0;padding:14px 110px 14px 19px}}
