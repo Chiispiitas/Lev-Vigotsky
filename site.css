@@ -118,3 +118,5 @@
 .instagram-section .instagram-copy p{max-width:none;margin:0 0 16px}
 .instagram-section .instagram-copy .embed-help{margin-top:15px;font-size:12px}
 @media(max-width:620px){.owl-motifs{inset:12px}.owl-motifs img{width:76px;height:76px}.instagram-section .instagram-frame{min-height:520px}.instagram-section .section-heading{gap:12px}.instagram-section h2{font-size:34px}}
+
+.hero-slogan img{display:block;width:100%;max-width:560px;height:auto;object-fit:contain}.hero-slogan .slogan-tail{display:block;margin-top:16px}
