@@ -1,0 +1,70 @@
+{
+  "checked": "2026-11-11",
+  "primary_identity_source": "https://linktr.ee/UEPLV",
+  "official_social_links": {
+    "instagram": "https://instagram.com/levvigotskyue",
+    "facebook": "https://www.facebook.com/uelvmanta",
+    "tiktok": "https://tiktok.com/@levvigotskyue"
+  },
+  "academic_offer_primary": {
+    "source": "https://linktr.ee/UEPLV",
+    "retrieved_evidence": "linktree.json props.pageProps.account.links, Oferta Académica",
+    "levels": [
+      "Educación Inicial I 3 años",
+      "Educación Inicial II 4 años",
+      "Educación preprimaria 5 años",
+      "Educación General Básica Segundo año a Décimo año",
+      "Bachillerato con especialización en Ciencias y Técnico en Administración de Empresas"
+    ],
+    "confidence": "primary official Linktree currently accessible; no dated period provided"
+  },
+  "official_contacts": [
+    {
+      "label": "Inicial 1 a 7mo de Básica",
+      "link": "https://wa.link/32me8l",
+      "international": "+593963798828",
+      "national_display": "096 379 8828",
+      "evidence": "wa-primary.html current resolved WhatsApp phone query"
+    },
+    {
+      "label": "8vo a 3ro Bachillerato",
+      "link": "https://wa.link/8g05dc",
+      "international": "+593969717983",
+      "national_display": "096 971 7983",
+      "evidence": "wa-secondary.html current resolved WhatsApp phone query"
+    },
+    {
+      "label": "Colecturía",
+      "link": "https://wa.link/6cqetq",
+      "international": "+593963828162",
+      "national_display": "096 382 8162",
+      "evidence": "wa-payments.html current resolved WhatsApp phone query"
+    }
+  ],
+  "address": {
+    "recommended_display": "Calle 309 y avenida 229, Manta, Manabí, Ecuador",
+    "status": "Address including Villas de Circunvalacion and both published contact numbers confirmed by owner David on 2026-11-11",
+    "sources": [
+      "https://www.ecuadortkd.com/tkd_rep_clubes_general.php?men=1",
+      "https://www.infoescuelas.com/index.php/ecuador/manabi/lev-vigotsky-en-manta",
+      "https://www.schoolandcollegelistings.com/EC/Manta/817783591602296/Unidad-Educativa-Lev-Vigotsky"
+    ],
+    "maps_place_id": "ChIJQynuiAjkK5ARl4mW5OQkZCk",
+    "waze_source": "https://www.waze.com/es/live-map/directions/ec/manabi/manta/unidad-educativa-lev-vigotsky-manta?to=place.ChIJQynuiAjkK5ARl4mW5OQkZCk",
+    "plus_code": "27CJ+7G9, Manta, Ecuador"
+  },
+  "avoid": [
+    "Do not use the older phone 0989424496 or Waze phone 0963828948 as current official contacts; Linktree routes to different numbers.",
+    "Do not publish prices from Linktree without current period confirmation.",
+    "Do not treat directories as official mission or pedagogical-model evidence."
+  ],
+  "photos": "photos.json contains the original public Instagram first-image downloads, post links and CDN evidence. social-initial.jpg, social-arts.jpg, social-parade.jpg were visually verified.",
+  "owner_confirmation": {
+    "date": "2026-11-11",
+    "confirmed": [
+      "Avenida 229 y calle 309, Villas de Circunvalacion, Manta",
+      "096 379 8828",
+      "096 971 7983"
+    ]
+  }
+}
