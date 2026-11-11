@@ -162,8 +162,11 @@ function prepareInk() {
         stroke.style.setProperty('--ink-duration',`${duration / strokes.length}s`);
         mask.append(stroke);
       }
-      const finish = svgNode('rect',{x:-100,y:-baseline-100,width:width+200,height:height+200,fill:'white',class:'ink-finish'});
-      finish.style.setProperty('--ink-end',`${clock+duration}s`); mask.append(finish);
+      // Complete the exact glyph by drawing its contour, never by flashing a fill.
+      const contour = svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'none',stroke:'white','stroke-width':(top-bottom)*.4,'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,class:'ink-stroke'});
+      contour.style.setProperty('--ink-delay',`${clock+duration*.55}s`);
+      contour.style.setProperty('--ink-duration',`${duration*.45}s`);
+      mask.append(contour);
       defs.append(mask);svg.append(defs);
       const group = svgNode('g',{mask:`url(#${id})`});
       group.append(svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'#24365F'}));svg.append(group);span.append(svg);
@@ -173,15 +176,43 @@ function prepareInk() {
     if (line === loveWord) { heroTitle.style.setProperty('--paint-delay',`${clock + .3}s`); clock += .85; }
     else clock += .1;
   }
+  // Normalize the complete sequence (including the brush) to four seconds.
+  const inkPaths = [...heroTitle.querySelectorAll('.ink-stroke')];
+  const paintStart = parseFloat(heroTitle.style.getPropertyValue('--paint-delay'));
+  const end = Math.max(paintStart + .65,...inkPaths.map(path => parseFloat(path.style.getPropertyValue('--ink-delay')) + parseFloat(path.style.getPropertyValue('--ink-duration'))));
+  const speed = 4 / end;
+  for (const path of inkPaths) {
+    for (const property of ['--ink-delay','--ink-duration']) path.style.setProperty(property,`${parseFloat(path.style.getPropertyValue(property))*speed}s`);
+  }
+  heroTitle.style.setProperty('--paint-delay',`${paintStart*speed}s`);
+  heroTitle.style.setProperty('--paint-duration',`${.65*speed}s`);
   heroTitle.dataset.inkReady = 'true';
 }
+let inkFrame;
 function writeTitle() {
+  cancelAnimationFrame(inkFrame);
   heroTitle.classList.remove('is-writing');
   if (reducedMotion.matches) return;
   prepareInk();
+  const paths = [...heroTitle.querySelectorAll('.ink-stroke')].map(path=>({path,delay:parseFloat(path.style.getPropertyValue('--ink-delay'))*1000,duration:parseFloat(path.style.getPropertyValue('--ink-duration'))*1000}));
+  for (const {path} of paths) {path.setAttribute('stroke-dasharray','1');path.setAttribute('stroke-dashoffset','1');path.setAttribute('opacity','0');}
   void heroTitle.offsetWidth;
   heroTitle.classList.add('is-writing');
+  let start;
+  function draw(now) {
+    if(start===undefined)start=now;
+    const elapsed=now-start;
+    for(const {path,delay,duration} of paths){
+      const progress=Math.max(0,Math.min(1,(elapsed-delay)/duration));
+      path.setAttribute('opacity',progress>0?'1':'0');
+      path.setAttribute('stroke-dashoffset',String(1-progress));
+    }
+    if(elapsed<4000)inkFrame=requestAnimationFrame(draw);
+  }
+  inkFrame=requestAnimationFrame(draw);
 }
 document.fonts.ready.then(writeTitle);
 loveWord.addEventListener('click',writeTitle);
-reducedMotion.addEventListener('change',()=>{if(reducedMotion.matches)heroTitle.classList.remove('is-writing');});
+reducedMotion.addEventListener('change',()=>{
+ if(reducedMotion.matches){cancelAnimationFrame(inkFrame);heroTitle.classList.remove('is-writing');for(const path of heroTitle.querySelectorAll('.ink-stroke')){path.setAttribute('opacity','1');path.setAttribute('stroke-dashoffset','0');}}
+});
