@@ -142,3 +142,7 @@
 .brand-name{font-weight:800}
 .hero-photo figcaption{position:static;margin:0;padding:20px 155px 22px 24px;background:#fff;box-shadow:none;border-radius:0;min-height:90px}
 @media(max-width:620px){.hero-photo figcaption{padding:17px 110px 19px 19px;font-size:13px;min-height:82px}}
+/* Ignore the emblem's extra transparent space above the visible artwork. */
+.brand{align-items:center}
+.brand img{aspect-ratio:420/324;object-fit:cover;object-position:center bottom}
+.brand-copy{align-self:center}
