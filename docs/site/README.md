@@ -98,7 +98,7 @@ Se incorpora el plugin nativo de página de Facebook con timeline y enlace alter
 
 El head incluye título descriptivo, meta description, canonical, robots, Open Graph completo, tarjeta de imagen grande y datos estructurados School, WebSite y WebPage. La imagen social es una fotografía real optimizada a JPEG con URL absoluta y dimensiones declaradas, disponible sin JavaScript. Sitemap XML enumera únicamente la página institucional. No se añadió robots.txt en este subdirectorio: el control de robots corresponde a la raíz del dominio.
 
-Título: Lev Vigotsky | Colegio en Manta. Al configurar dominio propio, actualizar canonical, og:url, imágenes absolutas, sitemap y todos los identificadores JSON-LD. No se enviaron mensajes de WhatsApp ni se verificó una tarjeta dentro de la aplicación. La plataforma decide presentación y caché de enlaces; Google puede seleccionar otros títulos o fragmentos según la búsqueda.
+Título: U.E.P. Lev Vigotsky Manta. Al configurar dominio propio, actualizar canonical, og:url, imágenes absolutas, sitemap y todos los identificadores JSON-LD. No se enviaron mensajes de WhatsApp ni se verificó una tarjeta dentro de la aplicación. La plataforma decide presentación y caché de enlaces; Google puede seleccionar otros títulos o fragmentos según la búsqueda.
 
 Referencias: https://ogp.me/ y https://developers.google.com/search/docs/appearance/title-link y https://developers.google.com/search/docs/appearance/snippet .
 
