@@ -104,3 +104,6 @@ Referencias: https://ogp.me/ y https://developers.google.com/search/docs/appeara
 
 ## Patrón y superficies sin bordes
 Patrón v4 generado con image_gen integrado, probado en mosaico y corregido tras revisar el resultado. Prompt final: nueve cabezas completas, gris pálido, blanco uniforme, centros equidistantes y márgenes suficientes para no cortar motivos. Recurso: assets/site/patterns/owl-seamless-v4.webp. El fondo ocupa el ancho completo y ajusta la repetición vertical a la sección. Se eliminan contornos decorativos de todos los elementos propios del sitio y se conservan los indicadores de foco por teclado. Encabezado de oferta con radio de 28 px (24 en móvil).
+
+## Ajuste de motivos e Instagram
+Se retira el feed de Facebook, conservando enlace social y fotos de galería. Instagram pasa a una columna centrada y compacta. Se reemplaza el wallpaper escalado por un motivo pequeño completo (owl-motif-v5.webp), generado con image_gen integrado. Prompt final: una única cabeza angular fiel a la referencia, gris claro sobre blanco, detalles blancos nítidos, sin brillo, sombra ni perspectiva. Las celdas mantienen proporciones y adaptan la cantidad de filas y columnas al espacio sin recortar los motivos.

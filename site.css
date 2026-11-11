@@ -104,3 +104,17 @@
 
 .offer-section{position:relative;isolation:isolate;background:#fff}
 .offer-section::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('assets/site/patterns/owl-seamless-v4.webp') left top/100% auto no-repeat round;opacity:.38}
+
+/* Motivos pequeños: cada imagen conserva sus proporciones y su celda completa. */
+.offer-section::before{display:none}
+.owl-motifs{position:absolute;inset:20px;z-index:-1;pointer-events:none;display:grid;grid-template-columns:repeat(var(--motif-cols),minmax(0,1fr));grid-template-rows:repeat(var(--motif-rows),minmax(0,1fr));place-items:center;opacity:.56}
+.owl-motifs img{width:90px;height:90px;object-fit:contain;max-width:100%;max-height:100%}
+.instagram-section .section-heading{display:flex;flex-direction:column;align-items:center;text-align:center;gap:17px;margin-bottom:28px}
+.instagram-section .section-heading .eyebrow{margin-bottom:18px}
+.instagram-section .instagram-layout{display:flex;flex-direction:column;gap:24px;max-width:760px;margin-inline:auto}
+.instagram-section .instagram-frame{order:0;width:100%;min-height:590px}
+.instagram-section .instagram-copy{order:1;text-align:center;max-width:620px}
+.instagram-section .instagram-copy h3{display:none}
+.instagram-section .instagram-copy p{max-width:none;margin:0 0 16px}
+.instagram-section .instagram-copy .embed-help{margin-top:15px;font-size:12px}
+@media(max-width:620px){.owl-motifs{inset:12px}.owl-motifs img{width:76px;height:76px}.instagram-section .instagram-frame{min-height:520px}.instagram-section .section-heading{gap:12px}.instagram-section h2{font-size:34px}}

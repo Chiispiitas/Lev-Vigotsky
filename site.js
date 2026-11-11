@@ -73,3 +73,32 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
     reveal.observe(element);
   });
 }
+
+
+// Keep entire decorative owl motifs inside evenly spaced cells, without stretching a wallpaper.
+const offerSection = document.querySelector('.offer-section');
+const motifGrid = document.createElement('div');
+motifGrid.className = 'owl-motifs';
+motifGrid.setAttribute('aria-hidden', 'true');
+offerSection.prepend(motifGrid);
+let motifLayout = '';
+function fitOwlMotifs() {
+  const columns = Math.max(1, Math.floor((offerSection.clientWidth - 40) / 125));
+  const rows = Math.max(1, Math.floor((offerSection.clientHeight - 40) / 125));
+  const layout = `${columns}:${rows}`;
+  if (layout === motifLayout) return;
+  motifLayout = layout;
+  motifGrid.style.setProperty('--motif-cols', columns);
+  motifGrid.style.setProperty('--motif-rows', rows);
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < columns * rows; i++) {
+    const image = document.createElement('img');
+    image.src = 'assets/site/patterns/owl-motif-v5.webp';
+    image.alt = ''; image.width = 90; image.height = 90;
+    fragment.append(image);
+  }
+  motifGrid.replaceChildren(fragment);
+}
+fitOwlMotifs();
+if ('ResizeObserver' in window) new ResizeObserver(fitOwlMotifs).observe(offerSection);
+else window.addEventListener('resize', fitOwlMotifs);
