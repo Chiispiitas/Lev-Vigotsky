@@ -216,3 +216,36 @@ loveWord.addEventListener('click',writeTitle);
 reducedMotion.addEventListener('change',()=>{
  if(reducedMotion.matches){cancelAnimationFrame(inkFrame);heroTitle.classList.remove('is-writing');for(const path of heroTitle.querySelectorAll('.ink-stroke')){path.setAttribute('opacity','1');path.setAttribute('stroke-dashoffset','0');}}
 });
+// Rotate real school photographs; pause for interaction, hidden tabs and reduced motion.
+const heroCarousel = document.querySelector('.hero-visual');
+const heroSlides = [...heroCarousel.querySelectorAll('.hero-slide')];
+const pausePhotos = heroCarousel.querySelector('[data-hero-pause]');
+let photoIndex = 0, photoTimer, photoPaused = false, photoHovered = false, photoInView = true, photoRequest = 0;
+function schedulePhotos() {
+  clearInterval(photoTimer);
+  if (!photoPaused && !photoHovered && photoInView && !document.hidden && !reducedMotion.matches) photoTimer=setInterval(()=>showHeroPhoto(photoIndex+1),5000);
+}
+async function showHeroPhoto(next) {
+  const requested=++photoRequest;
+  const index=(next+heroSlides.length)%heroSlides.length;
+  const slide=heroSlides[index];
+  slide.loading='eager';
+  try { await slide.decode(); } catch { return; }
+  if(requested!==photoRequest)return;
+  heroSlides.forEach((image,i)=>{image.classList.toggle('is-active',i===index);image.setAttribute('aria-hidden',String(i!==index));});
+  photoIndex=index;
+  heroCarousel.querySelector('#hero-slide-title').textContent=slide.dataset.title;
+  heroCarousel.querySelector('#hero-slide-source').href=slide.dataset.source;
+  heroCarousel.querySelector('.hero-slide-count').textContent=`${index+1} / ${heroSlides.length}`;
+}
+heroCarousel.querySelector('[data-hero-prev]').addEventListener('click',()=>{showHeroPhoto(photoIndex-1);schedulePhotos();});
+heroCarousel.querySelector('[data-hero-next]').addEventListener('click',()=>{showHeroPhoto(photoIndex+1);schedulePhotos();});
+pausePhotos.addEventListener('click',()=>{photoPaused=!photoPaused;pausePhotos.textContent=photoPaused?'Reanudar':'Pausar';schedulePhotos();});
+heroCarousel.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){photoHovered=true;schedulePhotos();}});
+heroCarousel.addEventListener('pointerleave',()=>{photoHovered=false;schedulePhotos();});
+heroCarousel.addEventListener('focusin',()=>clearInterval(photoTimer));
+heroCarousel.addEventListener('focusout',()=>requestAnimationFrame(()=>{if(!heroCarousel.contains(document.activeElement))schedulePhotos();}));
+document.addEventListener('visibilitychange',schedulePhotos);
+reducedMotion.addEventListener('change',schedulePhotos);
+if('IntersectionObserver' in window)new IntersectionObserver(entries=>{photoInView=entries[0].isIntersecting;schedulePhotos();}).observe(heroCarousel);
+schedulePhotos();
