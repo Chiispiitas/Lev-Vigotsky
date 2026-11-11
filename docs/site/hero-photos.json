@@ -1,21 +1,9 @@
 [
   {
-    "source": "https://www.facebook.com/photo/?fbid=1626191579518831&set=pcb.1626191722852150",
-    "src": "assets/site/photos/hero-secondary-1.webp",
-    "title": "Rap por la Ciencia · Básica Superior y Bachillerato",
-    "alt": "Adolescentes de Básica Superior y Bachillerato participan en Rap por la Ciencia en Lev Vigotsky"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1626191562852166&set=pcb.1626191722852150",
-    "src": "assets/site/photos/hero-secondary-2.webp",
-    "title": "Rap por la Ciencia · Básica Superior y Bachillerato",
-    "alt": "Adolescentes de Básica Superior y Bachillerato participan en Rap por la Ciencia en Lev Vigotsky"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1611822240955765&set=pcb.1611822377622418",
-    "src": "assets/site/photos/hero-science-1.webp",
-    "title": "Ciencia y magia en escena",
-    "alt": "Estudiantes de Lev Vigotsky presentan un experimento en Ciencia y magia en escena"
+    "src": "assets/site/photos/hero-contest-speaker.webp",
+    "title": "Concurso intercolegial de Spelling Bee",
+    "alt": "Adolescente con uniforme de Lev Vigotsky participa con un micrófono en el concurso intercolegial de Spelling Bee",
+    "source": "https://www.facebook.com/photo/?fbid=1667707398700582&set=pcb.1667707585367230"
   },
   {
     "source": "https://www.facebook.com/photo/?fbid=1611822204289102&set=pcb.1611822377622418",
@@ -24,33 +12,27 @@
     "alt": "Estudiantes explican un experimento con materiales de laboratorio"
   },
   {
-    "src": "assets/site/photos/arts.webp",
-    "title": "Talento en el concurso artístico intercolegial",
-    "source": "https://www.instagram.com/p/DfCtKFgGeXt/",
-    "alt": "Estudiantes de Lev Vigotsky participan en un concurso artístico intercolegial"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1607017504769572&set=pcb.1607017571436232",
-    "src": "assets/site/photos/hero-science-3.webp",
-    "title": "Miniferia de la ciencia",
-    "alt": "Niños y docente presentan proyectos en la miniferia de ciencias de Vigotskids"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1607017498102906&set=pcb.1607017571436232",
-    "src": "assets/site/photos/hero-science-4.webp",
-    "title": "Descubrimos nuestro planeta",
-    "alt": "Estudiante de Vigotskids presenta su proyecto sobre el planeta Tierra"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1616682093803113&set=pcb.1616682207136435",
-    "src": "assets/site/photos/hero-science-5.webp",
-    "title": "Pequeños científicos",
-    "alt": "Estudiante de Básica Elemental explica un experimento con botellas y globos"
+    "src": "assets/site/photos/hero-contest-oratory.webp",
+    "title": "Encuentros que inspiran · Concurso de oratoria",
+    "alt": "Estudiante uniformado abraza a un participante en el concurso de oratoria sobre Pedro Quijije",
+    "source": "https://www.facebook.com/photo/?fbid=1632913625513293&set=pcb.1632913718846617"
   },
   {
     "source": "https://www.facebook.com/photo/?fbid=1616682107136445&set=pcb.1616682207136435",
     "src": "assets/site/photos/hero-science-6.webp",
     "title": "Experimentos y descubrimientos",
     "alt": "Estudiante realiza un experimento con la guía de su docente"
+  },
+  {
+    "src": "assets/site/photos/hero-contest-spelling.webp",
+    "title": "Talento y preparación · Spelling Bee",
+    "alt": "Estudiantes participantes del Spelling Bee posan juntos frente al escenario",
+    "source": "https://www.facebook.com/photo/?fbid=1667707438700578&set=pcb.1667707585367230"
+  },
+  {
+    "source": "https://www.facebook.com/photo/?fbid=1607017504769572&set=pcb.1607017571436232",
+    "src": "assets/site/photos/hero-science-3.webp",
+    "title": "Miniferia de la ciencia",
+    "alt": "Niños y docente presentan proyectos en la miniferia de ciencias de Vigotskids"
   }
 ]
