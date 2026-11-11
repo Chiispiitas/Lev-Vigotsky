@@ -123,10 +123,20 @@
 .hero h1 button.slogan-love{appearance:none;background:transparent;border:0;font:inherit;letter-spacing:inherit;line-height:inherit;text-align:left;cursor:pointer;touch-action:manipulation}
 .hero h1 .slogan-love::after{background-image:url('assets/site/patterns/brush-gold-curve-v4.png');height:.65em;bottom:-.32em;left:-4%;right:-5%;transform-origin:left center}
 .hero h1 .slogan-tail{width:fit-content;max-width:100%;margin-top:30px}
-.hero h1.is-writing .title-opening{animation:write-title .85s .15s steps(9,end) both}
-.hero h1.is-writing .slogan-love{animation:write-title .55s 1s steps(4,end) both}
-.hero h1.is-writing .slogan-love::after{animation:paint-swoosh .65s 1.55s ease-out both}
-.hero h1.is-writing .slogan-tail{animation:write-title 1.25s 2s steps(24,end) both}
-@keyframes write-title{from{clip-path:inset(-15% 105% -55% -5%)}to{clip-path:inset(-15% -8% -55% -5%)}}
+
+
+.hero h1.is-writing .slogan-love::after{animation:paint-swoosh .65s var(--paint-delay,3s) ease-out both}
+
+
 @keyframes paint-swoosh{from{clip-path:inset(0 100% 0 0);transform:rotate(-2deg) scaleY(.85)}to{clip-path:inset(0 0 0 0);transform:rotate(0) scaleY(1)}}
 @media(prefers-reduced-motion:reduce){.hero h1.is-writing .title-opening,.hero h1.is-writing .slogan-love,.hero h1.is-writing .slogan-tail,.hero h1.is-writing .slogan-love::after{animation:none!important;clip-path:none!important;transform:none!important}}
+.hero h1 .ink-letter{position:relative;display:inline-block;color:transparent;white-space:pre}
+.ink-letter svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.ink-stroke{stroke-dasharray:1;stroke-dashoffset:0}
+.is-writing .ink-stroke{animation:letter-stroke var(--ink-duration) var(--ink-delay) linear both,start-ink .001s var(--ink-delay) step-end both}
+.is-writing .ink-finish{animation:finish-letter .06s var(--ink-end) both}
+@keyframes letter-stroke{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes finish-letter{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.is-writing .ink-stroke{stroke-dashoffset:0;animation:none!important}.is-writing .ink-finish{opacity:1;animation:none!important}}
+
+@keyframes start-ink{from{opacity:0}to{opacity:1}}

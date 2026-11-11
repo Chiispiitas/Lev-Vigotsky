@@ -111,3 +111,6 @@ Se retira el feed de Facebook, conservando enlace social y fotos de galería. In
 ## Título con escritura progresiva
 El título se escribe por líneas sin desplazar el contenido; al activar «amar» con ratón, toque, Enter o espacio se repite. Respeta la preferencia de movimiento reducido. Pincelada generada con image_gen integrado y alpha transparente: assets/site/patterns/brush-gold-curve-v4.png.
 Prompt: single golden yellow #F8BC3C paint brush underline, transparent, wide 3:1 canvas; distinctly asymmetrical shallow smile curve, thin left start, gentle dip, thick tapered feathery right end, one uninterrupted organic stroke, no text or separate marks.
+
+## Escritura por recorridos de letra
+Se sustituye el barrido por máscaras de tinta con 50 recorridos direccionales, recortados a los glifos Poppins originales. Se extraen los contornos de las fuentes locales con scripts/build-title-glyphs.py; los recorridos animan primero astas, arcos y remates de cada letra. El texto sigue disponible para accesibilidad, sin cambiar el espacio del título. Activar «amar» repite la secuencia y se respeta movimiento reducido.
