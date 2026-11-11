@@ -110,7 +110,7 @@ const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const penStrokes = {
   E:['M .12 .02 V .98','M .12 .1 H .95','M .12 .5 H .82','M .12 .9 H .95'],
   d:['M .85 .48 C .15 .2,-.12 1,.5 .9 C 1 .9,1 .35,.5 .35','M .88 .02 V .98'],
-  u:['M .12 .02 V .65 C .12 1.15,.88 1.1,.88 .6 V .02','M .88 .55 V .98'],
+  u:['M .12 .02 V .65 C .12 1.15,.88 1.1,.88 .6 V .02'],
   c:['M .92 .22 C .45 -.18,.08 .12,.1 .55 C .08 1,.65 1.2,.92 .78'],
   a:['M .86 .25 C .48 -.2,.08 .1,.1 .53 C .08 1.08,.88 1.14,.88 .55 C .88 .1,.6 .04,.4 .1','M .89 .02 V .98'],
   r:['M .13 .02 V .98','M .13 .45 Q .35 -.05,.95 .14'],
@@ -144,7 +144,7 @@ function prepareInk() {
     for (const char of line.textContent) {
       if (char === ' ') { fragment.append(document.createTextNode(' ')); clock += .035; continue; }
       const glyph = font.glyphs[char];
-      const strokes = penStrokes[char];
+      const strokes = glyph?.strokes;
       if (!glyph || !strokes) { fragment.append(document.createTextNode(char)); continue; }
       const span = document.createElement('span');
       span.className = 'ink-letter'; span.textContent = char; span.setAttribute('aria-hidden','true');
@@ -155,23 +155,19 @@ function prepareInk() {
       const defs = svgNode('defs', {});
       const mask = svgNode('mask', {id,maskUnits:'userSpaceOnUse',x:-100,y:-baseline-100,width:width+200,height:height+200,style:'mask-type:alpha'});
       const [left,bottom,right,top] = glyph.bounds;
-      const duration = Math.max(strokes.length * .16, line.classList.contains('slogan-tail') ? .42 : .56);
+      const duration = line.classList.contains('slogan-tail') ? .48 : .82;
       for (const [index,path] of strokes.entries()) {
-        const stroke = svgNode('path',{d:path,fill:'none',stroke:'white','stroke-width':Math.max(.32,Math.min(1.2,(top-bottom)/(right-left)*.22)),'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,transform:`translate(${left},${-top}) scale(${right-left},${top-bottom})`,class:'ink-stroke'});
+        const stroke = svgNode('path',{d:path,fill:'none',stroke:'white','stroke-width':Math.max(right-left < 150 ? right-left : 0,(top-bottom)*(line.classList.contains('slogan-tail') ? .12 : .23)),'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,class:'ink-stroke'});
         stroke.style.setProperty('--ink-delay',`${clock + index * duration / strokes.length}s`);
         stroke.style.setProperty('--ink-duration',`${duration / strokes.length}s`);
         mask.append(stroke);
       }
-      const contour = svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'none',stroke:'white','stroke-width':(top-bottom)*.19,'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,class:'ink-stroke'});
-      contour.style.setProperty('--ink-delay',`${clock+duration}s`);
-      contour.style.setProperty('--ink-duration','.38s');
-      mask.append(contour);
       const finish = svgNode('rect',{x:-100,y:-baseline-100,width:width+200,height:height+200,fill:'white',class:'ink-finish'});
-      finish.style.setProperty('--ink-end',`${clock+duration+.38}s`); mask.append(finish);
+      finish.style.setProperty('--ink-end',`${clock+duration}s`); mask.append(finish);
       defs.append(mask);svg.append(defs);
       const group = svgNode('g',{mask:`url(#${id})`});
       group.append(svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'#24365F'}));svg.append(group);span.append(svg);
-      fragment.append(span); clock += duration * .62 + .025;
+      fragment.append(span); clock += duration + .06;
     }
     line.replaceChildren(fragment);
     if (line === loveWord) { heroTitle.style.setProperty('--paint-delay',`${clock + .3}s`); clock += .85; }

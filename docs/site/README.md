@@ -116,3 +116,5 @@ Prompt: single golden yellow #F8BC3C paint brush underline, transparent, wide 3:
 Se sustituye el barrido por máscaras de tinta con 50 recorridos direccionales, recortados a los glifos Poppins originales. Se extraen los contornos de las fuentes locales con scripts/build-title-glyphs.py; los recorridos animan primero astas, arcos y remates de cada letra. El texto sigue disponible para accesibilidad, sin cambiar el espacio del título. Activar «amar» repite la secuencia y se respeta movimiento reducido.
 
 Revisión de percepción: se alargan los trazos, se solapan suavemente las letras y cada glifo incorpora un repaso animado del contorno antes del acabado. Auditoría en navegador mediante eventos reales animationend: 29 letras completadas de 29, ninguna pendiente.
+
+Revisión visual por fotogramas (0/25/50/75/100%): se detectó que escalar los recorridos normalizados también agrandaba los extremos del pincel, revelando gran parte de las letras de golpe. Se hornean las coordenadas en unidades reales de fuente y se mantiene un grosor sin escalado anisotrópico. Se elimina el contorno redundante y se secuencian las letras sin solapamiento.
