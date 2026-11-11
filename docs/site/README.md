@@ -82,3 +82,14 @@ El fondo del afiche aportado se recreó mediante generación de imagen: cabezas 
 | [owl-watermark-v2.webp](../../assets/site/patterns/owl-watermark-v2.webp) | Patrón repetible del acento | [Prompt del patrón](pattern-prompt-v2.txt) |
 
 Se conservaron las transparencias de las ilustraciones. Las copias web solo se optimizaron en tamaño y compresión; no se redibujaron. Se revisó de nuevo el texto exacto del hero, la carga de los seis iconos y la ausencia de desbordamiento horizontal en 320, 390, 767, 1024 y 1440 px.
+
+## Revisión visual y Facebook
+
+Se restauran los botones iniciales de seis píxeles de radio, sin relieve. Se genera un trazo grueso de pincel y un fondo más fiel al afiche, aplicado a toda Oferta académica. Ambos se crearon con image_gen integrado. Recursos finales: `assets/site/patterns/brush-gold-v3.webp` y `assets/site/patterns/owl-background-v3.webp`.
+
+Prompts: trazo horizontal dorado grueso artesanal, bordes de cerdas irregulares, textura de pintura y transparencia, sin texto; recrear únicamente el fondo del afiche con cabezas angulares de búho en gris muy pálido, disposición diagonal irregular y tamaños e inclinaciones variables, sin contenido de primer plano. Referencia: afiche institucional aportado por David.
+
+Se incorpora el plugin nativo de página de Facebook con timeline y enlace alternativo. Facebook puede condicionar la carga a las preferencias del visitante. Tres fotos públicas de su galería amplían la galería local a seis imágenes. Fuentes de los nuevos archivos:
+- `assets/site/photos/facebook-0.webp`: https://www.facebook.com/photo.php?fbid=1679430200861635&set=pb.100063840121139.-2207520000&type=3
+- `assets/site/photos/facebook-1.webp`: https://www.facebook.com/photo.php?fbid=1679430194194969&set=pb.100063840121139.-2207520000&type=3
+- `assets/site/photos/facebook-2.webp`: https://www.facebook.com/photo.php?fbid=1679430190861636&set=pb.100063840121139.-2207520000&type=3
