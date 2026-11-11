@@ -7,11 +7,25 @@
     "event": "DfPeQCOmbYa"
   },
   {
+    "src": "assets/site/photos/hero-music-band.webp",
+    "title": "Música y participación · Banda estudiantil",
+    "alt": "Estudiantes uniformados de Lev Vigotsky tocan tambores durante una presentación de la banda rítmica",
+    "source": "https://www.facebook.com/photo/?fbid=1023384959799499&set=pcb.1023385069799488",
+    "event": "pcb.1023385069799488"
+  },
+  {
     "src": "assets/site/photos/hero-bachillerato-brain.webp",
     "title": "Proyectos científicos · Bachillerato",
     "alt": "Estudiante de Bachillerato con bata presenta un proyecto sobre los hemisferios del cerebro",
     "source": "https://www.facebook.com/photo/?fbid=1612860220851967&set=pcb.1612860327518623",
     "event": "pcb.1612860327518623"
+  },
+  {
+    "src": "assets/site/photos/hero-art-festival.webp",
+    "title": "Expresión y talento · Festival Carpe Diem",
+    "alt": "Estudiantes de Lev Vigotsky realizan una presentación artística en el Festival de Arte Carpe Diem de 2025",
+    "source": "https://www.facebook.com/photo/?fbid=1372626811541977&set=pcb.1372627004875291",
+    "event": "pcb.1372627004875291"
   },
   {
     "src": "assets/site/photos/hero-science-2025-skeleton.webp",
@@ -21,24 +35,10 @@
     "event": "pcb.1277101097761216"
   },
   {
-    "src": "assets/site/photos/hero-bachillerato-blood.webp",
-    "title": "Ciencia en práctica · Bachillerato",
-    "alt": "Estudiantes de Bachillerato con batas realizan una demostración científica sobre grupos sanguíneos",
-    "source": "https://www.facebook.com/photo/?fbid=1612860224185300&set=pcb.1612860327518623",
-    "event": "pcb.1612860327518623"
-  },
-  {
-    "src": "assets/site/photos/hero-science-2025-nutrition.webp",
-    "title": "Investigar y compartir · Feria científica 2025",
-    "alt": "Estudiante con bata explica su proyecto de alimentación en la feria científica de 2025",
-    "source": "https://www.facebook.com/photo/?fbid=1277100971094562&set=pcb.1277101097761216",
-    "event": "pcb.1277101097761216"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1611822204289102&set=pcb.1611822377622418",
-    "src": "assets/site/photos/hero-science-2.webp",
-    "title": "Experimentos en acción",
-    "alt": "Estudiantes explican un experimento con materiales de laboratorio",
-    "event": "pcb.1611822377622418"
+    "src": "assets/site/photos/hero-art-performance.webp",
+    "title": "Arte en escena · Olimpiadas 2024",
+    "alt": "Estudiante participa en una representación artística con vestuario escénico durante la inauguración de las Olimpiadas de 2024",
+    "source": "https://www.facebook.com/photo/?fbid=996975025773826&set=pcb.996978239106838",
+    "event": "pcb.996978239106838"
   }
 ]
