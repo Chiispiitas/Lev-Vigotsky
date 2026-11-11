@@ -155,22 +155,26 @@ function prepareInk() {
       const defs = svgNode('defs', {});
       const mask = svgNode('mask', {id,maskUnits:'userSpaceOnUse',x:-100,y:-baseline-100,width:width+200,height:height+200,style:'mask-type:alpha'});
       const [left,bottom,right,top] = glyph.bounds;
-      const duration = line === loveWord ? .33 : line.classList.contains('slogan-tail') ? .16 : .24;
+      const duration = Math.max(strokes.length * .16, line.classList.contains('slogan-tail') ? .42 : .56);
       for (const [index,path] of strokes.entries()) {
         const stroke = svgNode('path',{d:path,fill:'none',stroke:'white','stroke-width':Math.max(.32,Math.min(1.2,(top-bottom)/(right-left)*.22)),'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,transform:`translate(${left},${-top}) scale(${right-left},${top-bottom})`,class:'ink-stroke'});
         stroke.style.setProperty('--ink-delay',`${clock + index * duration / strokes.length}s`);
         stroke.style.setProperty('--ink-duration',`${duration / strokes.length}s`);
         mask.append(stroke);
       }
+      const contour = svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'none',stroke:'white','stroke-width':(top-bottom)*.19,'stroke-linecap':'round','stroke-linejoin':'round',pathLength:1,class:'ink-stroke'});
+      contour.style.setProperty('--ink-delay',`${clock+duration}s`);
+      contour.style.setProperty('--ink-duration','.38s');
+      mask.append(contour);
       const finish = svgNode('rect',{x:-100,y:-baseline-100,width:width+200,height:height+200,fill:'white',class:'ink-finish'});
-      finish.style.setProperty('--ink-end',`${clock+duration}s`); mask.append(finish);
+      finish.style.setProperty('--ink-end',`${clock+duration+.38}s`); mask.append(finish);
       defs.append(mask);svg.append(defs);
       const group = svgNode('g',{mask:`url(#${id})`});
       group.append(svgNode('path',{d:glyph.path,transform:'scale(1,-1)',fill:'#24365F'}));svg.append(group);span.append(svg);
-      fragment.append(span); clock += duration + .025;
+      fragment.append(span); clock += duration * .62 + .025;
     }
     line.replaceChildren(fragment);
-    if (line === loveWord) { heroTitle.style.setProperty('--paint-delay',`${clock}s`); clock += .6; }
+    if (line === loveWord) { heroTitle.style.setProperty('--paint-delay',`${clock + .3}s`); clock += .85; }
     else clock += .1;
   }
   heroTitle.dataset.inkReady = 'true';
