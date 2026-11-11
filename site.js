@@ -235,7 +235,7 @@ async function showHeroPhoto(next) {
   heroSlides.forEach((image,i)=>{image.classList.toggle('is-active',i===index);image.setAttribute('aria-hidden',String(i!==index));});
   photoIndex=index;
   heroCarousel.querySelector('#hero-slide-title').textContent=slide.dataset.title;
-  heroCarousel.querySelector('#hero-slide-source').href=slide.dataset.source;
+
   heroCarousel.querySelector('.hero-slide-count').textContent=`${index+1} / ${heroSlides.length}`;
 }
 heroCarousel.querySelector('[data-hero-prev]').addEventListener('click',()=>{showHeroPhoto(photoIndex-1);schedulePhotos();});

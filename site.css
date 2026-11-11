@@ -166,3 +166,5 @@
 .hero-carousel-controls button:hover{background:#fce8b4}
 .hero-slide-count{font-size:10px;color:#595959;white-space:nowrap}
 @media(max-width:620px){.hero-carousel-controls{max-width:calc(100% - 100px);gap:2px 5px}.hero-photo figcaption{font-size:13px;min-height:110px}}
+.hero-photo .welcome-mascot{bottom:30px;right:10px}
+@media(max-width:620px){.hero-photo .welcome-mascot{bottom:35px;right:8px}}
