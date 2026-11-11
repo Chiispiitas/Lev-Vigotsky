@@ -1,38 +1,44 @@
 [
   {
-    "src": "assets/site/photos/hero-contest-speaker.webp",
-    "title": "Concurso intercolegial de Spelling Bee",
-    "alt": "Adolescente con uniforme de Lev Vigotsky participa con un micrófono en el concurso intercolegial de Spelling Bee",
-    "source": "https://www.facebook.com/photo/?fbid=1667707398700582&set=pcb.1667707585367230"
+    "source": "https://www.facebook.com/photo/?fbid=1616682107136445&set=pcb.1616682207136435",
+    "src": "assets/site/photos/hero-science-6.webp",
+    "title": "Experimentos y descubrimientos",
+    "alt": "Estudiante realiza un experimento con la guía de su docente",
+    "event": "pcb.1616682207136435"
   },
   {
     "source": "https://www.facebook.com/photo/?fbid=1611822204289102&set=pcb.1611822377622418",
     "src": "assets/site/photos/hero-science-2.webp",
     "title": "Experimentos en acción",
-    "alt": "Estudiantes explican un experimento con materiales de laboratorio"
+    "alt": "Estudiantes explican un experimento con materiales de laboratorio",
+    "event": "pcb.1611822377622418"
+  },
+  {
+    "src": "assets/site/photos/hero-contest-speaker.webp",
+    "title": "Concurso intercolegial de Spelling Bee",
+    "alt": "Adolescente con uniforme de Lev Vigotsky participa con un micrófono en el concurso intercolegial de Spelling Bee",
+    "source": "https://www.facebook.com/photo/?fbid=1667707398700582&set=pcb.1667707585367230",
+    "event": "pcb.1667707585367230"
+  },
+  {
+    "src": "assets/site/photos/hero-science-5.webp",
+    "title": "Experimentos con botellas y globos · Básica Elemental",
+    "alt": "Estudiante de Básica Elemental explica un experimento con botellas y globos",
+    "source": "https://www.facebook.com/photo/?fbid=1616682093803113&set=pcb.1616682207136435",
+    "event": "pcb.1616682207136435"
   },
   {
     "src": "assets/site/photos/hero-contest-oratory.webp",
     "title": "Encuentros que inspiran · Concurso de oratoria",
     "alt": "Estudiante uniformado abraza a un participante en el concurso de oratoria sobre Pedro Quijije",
-    "source": "https://www.facebook.com/photo/?fbid=1632913625513293&set=pcb.1632913718846617"
-  },
-  {
-    "source": "https://www.facebook.com/photo/?fbid=1616682107136445&set=pcb.1616682207136435",
-    "src": "assets/site/photos/hero-science-6.webp",
-    "title": "Experimentos y descubrimientos",
-    "alt": "Estudiante realiza un experimento con la guía de su docente"
-  },
-  {
-    "src": "assets/site/photos/hero-contest-spelling.webp",
-    "title": "Talento y preparación · Spelling Bee",
-    "alt": "Estudiantes participantes del Spelling Bee posan juntos frente al escenario",
-    "source": "https://www.facebook.com/photo/?fbid=1667707438700578&set=pcb.1667707585367230"
+    "source": "https://www.facebook.com/photo/?fbid=1632913625513293&set=pcb.1632913718846617",
+    "event": "pcb.1632913718846617"
   },
   {
     "source": "https://www.facebook.com/photo/?fbid=1607017504769572&set=pcb.1607017571436232",
     "src": "assets/site/photos/hero-science-3.webp",
     "title": "Miniferia de la ciencia",
-    "alt": "Niños y docente presentan proyectos en la miniferia de ciencias de Vigotskids"
+    "alt": "Niños y docente presentan proyectos en la miniferia de ciencias de Vigotskids",
+    "event": "pcb.1607017571436232"
   }
 ]
