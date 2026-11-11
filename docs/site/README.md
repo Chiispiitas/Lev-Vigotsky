@@ -120,3 +120,5 @@ Revisión de percepción: se alargan los trazos, se solapan suavemente las letra
 Revisión visual por fotogramas (0/25/50/75/100%): se detectó que escalar los recorridos normalizados también agrandaba los extremos del pincel, revelando gran parte de las letras de golpe. Se hornean las coordenadas en unidades reales de fuente y se mantiene un grosor sin escalado anisotrópico. Se elimina el contorno redundante y se secuencian las letras sin solapamiento.
 
 Secuencia limitada a 4 segundos. Se retira el relleno rectangular final. La prueba real mostró máscaras SVG que no se repintaban al finalizar animaciones CSS: se actualizan sus atributos de tinta por requestAnimationFrame para invalidar correctamente el dibujo. Verificado al final: 78 recorridos visibles y completos; texto completo en captura.
+
+Iconos sociales generados con image_gen integrado: assets/site/social/instagram-v1.png y facebook-v1.png. Prompt: recognizable social symbol, flat navy #24365F, transparent square background, crisp minimal icon, no labels or decoration. Enlaces del footer con nombres accesibles, área táctil de 44 px y hover suave.

@@ -146,3 +146,7 @@
 .brand{align-items:center}
 .brand img{aspect-ratio:420/324;object-fit:cover;object-position:center bottom}
 .brand-copy{align-self:center}
+.footer-links{align-items:center;flex-wrap:wrap}
+.footer-links .social-icon{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 44px;border-radius:50%;background:#f1f2f4;transition:background .2s,transform .2s}
+.social-icon img{width:28px;height:28px;object-fit:contain}
+.footer-links .social-icon:hover{background:#fce8b4;transform:translateY(-2px)}
