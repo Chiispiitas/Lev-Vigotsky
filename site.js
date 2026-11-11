@@ -220,10 +220,11 @@ reducedMotion.addEventListener('change',()=>{
 const heroCarousel = document.querySelector('.hero-visual');
 const heroSlides = [...heroCarousel.querySelectorAll('.hero-slide')];
 const pausePhotos = heroCarousel.querySelector('[data-hero-pause]');
+const photoDots = [...heroCarousel.querySelectorAll('[data-hero-dot]')];
 let photoIndex = 0, photoTimer, photoPaused = false, photoHovered = false, photoInView = true, photoRequest = 0;
 function schedulePhotos() {
   clearInterval(photoTimer);
-  if (!photoPaused && !photoHovered && photoInView && !document.hidden && !reducedMotion.matches) photoTimer=setInterval(()=>showHeroPhoto(photoIndex+1),5000);
+  if (!photoPaused && !photoHovered && photoInView && !document.hidden && !reducedMotion.matches && !heroCarousel.contains(document.activeElement)) photoTimer=setInterval(()=>showHeroPhoto(photoIndex+1),5000);
 }
 async function showHeroPhoto(next) {
   const requested=++photoRequest;
@@ -236,11 +237,10 @@ async function showHeroPhoto(next) {
   photoIndex=index;
   heroCarousel.querySelector('#hero-slide-title').textContent=slide.dataset.title;
 
-  heroCarousel.querySelector('.hero-slide-count').textContent=`${index+1} / ${heroSlides.length}`;
+  photoDots.forEach((dot,i)=>{if(i===index)dot.setAttribute('aria-current','true');else dot.removeAttribute('aria-current');});
 }
-heroCarousel.querySelector('[data-hero-prev]').addEventListener('click',()=>{showHeroPhoto(photoIndex-1);schedulePhotos();});
-heroCarousel.querySelector('[data-hero-next]').addEventListener('click',()=>{showHeroPhoto(photoIndex+1);schedulePhotos();});
-pausePhotos.addEventListener('click',()=>{photoPaused=!photoPaused;pausePhotos.textContent=photoPaused?'Reanudar':'Pausar';schedulePhotos();});
+photoDots.forEach((dot,i)=>dot.addEventListener('click',()=>{showHeroPhoto(i);schedulePhotos();}));
+pausePhotos.addEventListener('click',()=>{photoPaused=!photoPaused;pausePhotos.textContent=photoPaused?'Reanudar carrusel':'Pausar carrusel';schedulePhotos();});
 heroCarousel.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse'){photoHovered=true;schedulePhotos();}});
 heroCarousel.addEventListener('pointerleave',()=>{photoHovered=false;schedulePhotos();});
 heroCarousel.addEventListener('focusin',()=>clearInterval(photoTimer));

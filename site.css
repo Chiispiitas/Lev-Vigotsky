@@ -168,3 +168,11 @@
 @media(max-width:620px){.hero-carousel-controls{max-width:calc(100% - 100px);gap:2px 5px}.hero-photo figcaption{font-size:13px;min-height:110px}}
 .hero-photo .welcome-mascot{bottom:30px;right:10px}
 @media(max-width:620px){.hero-photo .welcome-mascot{bottom:35px;right:8px}}
+.hero-carousel-controls{position:relative;justify-content:center;max-width:100%;flex-wrap:nowrap;gap:0;padding:8px 0}
+.hero-carousel-controls .hero-dot{display:inline-flex;align-items:center;justify-content:center;width:36px;min-height:44px;padding:0;background:none;border-radius:8px}
+.hero-dot span{display:block;width:9px;height:9px;border-radius:50%;background:var(--gold);opacity:.4;transition:opacity .2s,transform .2s}
+.hero-dot[aria-current="true"] span{opacity:1;transform:scale(1.4)}
+.hero-carousel-controls .hero-dot:hover{background:none}
+.hero-dot:hover span{opacity:.85}
+.hero-carousel-controls .hero-pause-accessible:not(:focus){position:absolute;width:1px;height:1px;min-height:0;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.hero-carousel-controls .hero-pause-accessible:focus{position:absolute;right:0;top:0;background:#fff;padding:8px;z-index:3}
