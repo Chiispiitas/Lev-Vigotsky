@@ -102,3 +102,19 @@ function fitOwlMotifs() {
 fitOwlMotifs();
 if ('ResizeObserver' in window) new ResizeObserver(fitOwlMotifs).observe(offerSection);
 else window.addEventListener('resize', fitOwlMotifs);
+
+// The title stays complete for screen readers and when motion is disabled.
+const heroTitle = document.querySelector('#hero-title');
+const loveWord = heroTitle.querySelector('.slogan-love');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+function writeTitle() {
+  heroTitle.classList.remove('is-writing');
+  if (reducedMotion.matches) return;
+  void heroTitle.offsetWidth;
+  heroTitle.classList.add('is-writing');
+}
+writeTitle();
+loveWord.addEventListener('click', writeTitle);
+reducedMotion.addEventListener('change', () => {
+  if (reducedMotion.matches) heroTitle.classList.remove('is-writing');
+});

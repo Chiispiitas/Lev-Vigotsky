@@ -107,3 +107,7 @@ Patrón v4 generado con image_gen integrado, probado en mosaico y corregido tras
 
 ## Ajuste de motivos e Instagram
 Se retira el feed de Facebook, conservando enlace social y fotos de galería. Instagram pasa a una columna centrada y compacta. Se reemplaza el wallpaper escalado por un motivo pequeño completo (owl-motif-v5.webp), generado con image_gen integrado. Prompt final: una única cabeza angular fiel a la referencia, gris claro sobre blanco, detalles blancos nítidos, sin brillo, sombra ni perspectiva. Las celdas mantienen proporciones y adaptan la cantidad de filas y columnas al espacio sin recortar los motivos.
+
+## Título con escritura progresiva
+El título se escribe por líneas sin desplazar el contenido; al activar «amar» con ratón, toque, Enter o espacio se repite. Respeta la preferencia de movimiento reducido. Pincelada generada con image_gen integrado y alpha transparente: assets/site/patterns/brush-gold-curve-v4.png.
+Prompt: single golden yellow #F8BC3C paint brush underline, transparent, wide 3:1 canvas; distinctly asymmetrical shallow smile curve, thin left start, gentle dip, thick tapered feathery right end, one uninterrupted organic stroke, no text or separate marks.
