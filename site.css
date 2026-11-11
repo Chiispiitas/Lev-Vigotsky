@@ -138,3 +138,7 @@
 @media(prefers-reduced-motion:reduce){.is-writing .ink-stroke{stroke-dashoffset:0;animation:none!important}.is-writing .ink-finish{opacity:1;animation:none!important}}
 
 @keyframes start-ink{from{opacity:0}to{opacity:1}}
+/* Give the photograph's own branding and the caption separate space. */
+.brand-name{font-weight:800}
+.hero-photo figcaption{position:static;margin:0;padding:20px 155px 22px 24px;background:#fff;box-shadow:none;border-radius:0;min-height:90px}
+@media(max-width:620px){.hero-photo figcaption{padding:17px 110px 19px 19px;font-size:13px;min-height:82px}}
