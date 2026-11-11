@@ -1,0 +1,9 @@
+Generator: built-in image_gen; opaque PNG; generated 2026-11-11
+
+Use case: illustration-story
+Asset type: square seamlessly repeatable background watermark tile.
+Input reference is the supplied school poster; use ONLY the pale angular OWL FACE motif from its background, ignore all foreground elements, logo and mascot.
+Create a crisp pure-white square texture containing EXACTLY FOUR identical pale-gray angular owl HEAD motifs in a precise two-by-two grid. Each head is fully visible and NONE touches or is cut by any canvas edge. Centers at 25% and 75% horizontally and vertically. Each head fits in a box about 24% of canvas width. Thus the edge whitespace is exactly half the space between motifs and repeated copies give an uninterrupted even lattice. Gentle alternating head rotation around -10 and +10 degrees. Full white space around all canvas edges; absolutely no cropped motifs crossing edges.
+Shape: faithful angular shield-shaped owl face from reference, peaked ear/eyebrow outline, sharp inward eyes, diamond beak, interlocking angular face feather shapes. Head only without wings, body, graduation hat or glasses. Flat sharp line-and-fill art, not a cute cartoon.
+Colors: uniform pure white #FFFFFF background and extremely pale neutral gray #E9E9E7 motif. Almost white watermark contrast. No texture, no shadows, no vignette.
+NO letters, words, initials, logos, mascot, banners, rectangles, colored accents, border, footer, foreground scene. Output only a pattern tile with four fully contained owl heads.

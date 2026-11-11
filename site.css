@@ -21,3 +21,47 @@
 @media(max-width:620px){.hero-intro,.about-copy,.principles p,.section-summary,.gallery-heading-aside,.offer-card p,.admissions p,.instagram-copy>p,.address-block address{font-size:15px}.offer-card ul,.learning-note p,.admissions-steps p{font-size:14px}.instagram-copy .embed-help{font-size:12px}.offer-card .text-link,.gallery-heading-aside .text-link,.contact-person>.text-link,.address-block .text-link{font-size:13px}.hero .primary,.hero .text-link{font-size:13px}.mini-label{font-size:11px}.learning-note>div{min-width:180px}.learning-note .button{font-size:12px}}
 
 @media(max-width:620px){.admissions-inner,.instagram-layout,.contact-layout,.about-main,.gallery-grid,.offer-grid{grid-template-columns:minmax(0,1fr)}.admissions-inner>*,.instagram-layout>*,.contact-layout>*{min-width:0}.admissions h2{font-size:clamp(30px,9vw,43px)}}
+
+/* Identidad institucional y acentos ilustrados */
+.hero h1 .slogan-love{display:inline-block;color:var(--navy);box-shadow:inset 0 -.16em 0 var(--gold);padding-right:.05em}
+.hero h1 .slogan-tail{display:block;color:var(--navy);font-size:clamp(25px,2.55vw,36px);line-height:1.35;font-weight:400;letter-spacing:-.035em;margin-top:18px}
+.button{border-radius:5px 18px 5px 18px}
+.primary{border:1px solid var(--navy);box-shadow:0 3px 0 var(--navy)}
+.primary:hover{box-shadow:0 5px 0 var(--navy)}
+.classroom{border-bottom:3px solid var(--gold)}
+.about-community{display:grid;grid-template-columns:.8fr 1.65fr;gap:45px;align-items:center;margin-top:47px}
+.about-photo{position:relative;min-width:0;border-radius:12px 45px 12px 12px;overflow:hidden;background:#e7e8e3}
+.about-photo img{width:100%;height:300px;object-fit:cover;object-position:center 57%}
+.about-photo figcaption{position:absolute;bottom:0;left:0;right:0;background:#24365ff0;color:#fff;padding:13px 18px;font-size:11px}
+.about-community .principles{gap:25px;margin-top:0;align-items:start}
+.about-community .principles article{border:0;padding:0}
+.principle-icon{width:78px;height:85px;object-fit:contain;object-position:left center;margin-bottom:21px}
+.about-community .principles h3{font-size:21px;line-height:1.3;margin:10px 0 12px}
+.about-community .principles p{font-size:14px;line-height:1.8}
+.offer-section{background:#f1f1ec}
+.offer-grid{border:0;gap:22px;align-items:stretch}
+.offer-card,.offer-card+article{background:#fff;border:1px solid #dce0dc;border-radius:12px;padding:27px 26px 30px;min-width:0}
+.offer-card-top{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:108px;margin-bottom:22px}
+.offer-card .offer-index{max-width:135px;margin:0;font-size:10px;line-height:1.8;min-height:0}
+.academic-icon{width:104px;height:104px;object-fit:contain;flex-shrink:0}
+.offer-card h3{font-size:28px;line-height:1.25;min-height:70px}
+.offer-card p{font-size:15px;min-height:108px}
+.offer-card ul{font-size:14px;line-height:1.9;margin-bottom:26px}
+.stage-button{background:var(--gold);color:var(--navy);border:1px solid var(--navy);box-shadow:0 3px 0 var(--navy);width:100%;font-size:13px;min-height:50px}
+.stage-button:hover{background:#f4b431;box-shadow:0 5px 0 var(--navy)}
+.offer-basic .stage-button{background:#e8edf3}
+.offer-basic .stage-button:hover{background:#dbe3ed}
+.offer-high .stage-button{background:var(--navy);color:#fff;box-shadow:0 3px 0 var(--gold)}
+.offer-high .stage-button:hover{background:#334c7a;box-shadow:0 5px 0 var(--gold)}
+.learning-note{border:1px solid #dce0dc;border-radius:14px;margin-top:36px;padding:30px 32px;background:#fff url('assets/site/patterns/owl-watermark-v2.webp') repeat;background-size:370px;gap:27px}
+.learning-note img{width:116px}
+.learning-note>div{padding:10px 12px;background:#ffffffc9;border-radius:8px}
+.learning-note h3{color:var(--navy);font-size:21px}
+.learning-note p{color:#595959;font-size:15px}
+.learning-note .button{background:#fff;border-color:var(--navy)}
+@media(min-width:901px) and (max-width:1100px){.about-community{grid-template-columns:.8fr 1.7fr;gap:30px}.about-community .principles{gap:18px}.about-community .principles h3{font-size:18px}.about-community .principles p{font-size:13px}.offer-card,.offer-card+article{padding:24px 20px}.offer-card-top{gap:8px}.academic-icon{width:82px;height:90px}.offer-card .offer-index{font-size:9px}.offer-card h3{font-size:25px}.offer-card p{min-height:140px}}
+@media(max-width:900px){.about-community{grid-template-columns:1fr;gap:33px}.about-photo img{height:280px;object-position:center 55%}.about-community .principles{grid-template-columns:repeat(3,minmax(0,1fr));gap:30px}.offer-grid{grid-template-columns:1fr;max-width:680px;margin-inline:auto}.offer-card,.offer-card+article{padding:25px 30px}.offer-card-top{min-height:90px;margin-bottom:18px}.academic-icon{width:110px;height:100px}.offer-card .offer-index{font-size:11px;max-width:none}.offer-card h3{min-height:0}.offer-card p{min-height:0;max-width:100%;margin-top:15px}.offer-card ul{margin:16px 0 23px}.stage-button{width:auto;min-width:220px}.learning-note{padding:25px;gap:20px}.learning-note .button{margin-left:0}}
+@media(max-width:620px){.hero h1{font-size:clamp(47px,12vw,64px)}.hero h1 .slogan-tail{font-size:clamp(24px,6.5vw,31px);margin-top:17px}.about-community{margin-top:32px;gap:30px}.about-photo img{height:225px;object-position:center 57%}.about-photo figcaption{font-size:10px;padding:12px 15px}.about-community .principles{grid-template-columns:1fr;gap:26px}.about-community .principles article{display:grid;grid-template-columns:66px minmax(0,1fr);gap:22px;align-items:start}.principle-icon{width:66px;height:78px;margin:2px 0 0}.about-community .principles h3{font-size:21px;margin:6px 0 8px}.about-community .principles p{font-size:15px}.offer-grid{gap:21px}.offer-card,.offer-card+article{padding:21px 21px 25px}.offer-card-top{gap:10px;margin-bottom:17px}.offer-card .offer-index{font-size:10px;max-width:135px}.academic-icon{width:91px;height:95px}.offer-card h3{font-size:27px}.offer-card p{font-size:15px}.offer-card ul{font-size:14px}.stage-button{width:100%;min-width:0}.learning-note{margin-top:27px;padding:23px 20px;display:grid;grid-template-columns:66px minmax(0,1fr);gap:17px;background-size:290px}.learning-note img{width:66px;margin-top:12px}.learning-note>div{min-width:0;padding:7px 8px}.learning-note h3{font-size:19px;line-height:1.4}.learning-note p{font-size:14px;line-height:1.8}.learning-note .button{grid-column:1/-1;margin:0;justify-self:start;font-size:13px}}
+
+.admissions :focus-visible{outline-color:#fff}
+.footer-top>p{max-width:360px;font-size:16px;line-height:1.6}

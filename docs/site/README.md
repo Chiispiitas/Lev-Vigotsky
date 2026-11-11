@@ -62,3 +62,23 @@ El contenido y las imágenes son una primera versión revisable. Cambiar el futu
 ## Verificación de esta versión
 
 Se comprobaron sintaxis de JavaScript, referencias de archivos, enlaces internos, IDs únicos, descripciones de imágenes, títulos de iframes y datos estructurados. Revisión en Edge con anchos de contenido CSS de 320, 390, 767, 1024 y 1440 px sin desbordamiento horizontal. Se probó apertura y cierre del menú móvil y del diálogo de fotografías, con devolución del foco. Se observó Instagram con seis publicaciones y el mapa resuelto al establecimiento. El navegador puede registrar mensajes internos de Instagram; el contenido del proveedor no está bajo control del sitio. No se declara certificación integral de accesibilidad ni prueba en dispositivos físicos.
+
+## Mejora de identidad de noviembre de 2026
+
+David confirmó el eslogan oficial **Educar es amar con la Gracia de Dios**, con G mayúscula en Gracia. Esta indicación sustituye el estado pendiente del eslogan en la auditoría inicial. El hero lo presenta como texto accesible y los metadatos sociales también lo incorporan.
+
+Quiénes somos incorpora la fotografía real de la comunidad docente y tres ilustraciones de curiosidad, valores e identidad. Oferta académica añade ilustraciones por etapa y botones diferenciados en amarillo, gris azulado y azul profundo. La referencia de Bali se utiliza para reforzar la relación entre imagen, etapa y acción, manteniendo la identidad de Lev Vigotsky.
+
+El fondo del afiche aportado se recreó mediante generación de imagen: cabezas de búho angulares en gris pálido sobre blanco, con repetición revisada. Se utiliza únicamente en la franja de orientación al final de Oferta académica. Todos los iconos y el patrón se produjeron con **image_gen integrado**; no son dibujos SVG, CSS ni iconos de una biblioteca.
+
+| Recurso final publicado | Uso | Prompt completo |
+| --- | --- | --- |
+| [curiosity.webp](../../assets/site/icons/curiosity.webp) | Curiosidad, libro y lupa | [Prompts de identidad](brand-icon-prompts-v2.txt) |
+| [values.webp](../../assets/site/icons/values.webp) | Valores, manos y corazón | [Prompts de identidad](brand-icon-prompts-v2.txt) |
+| [identity.webp](../../assets/site/icons/identity.webp) | Pertenencia, búho académico | [Prompts de identidad](brand-icon-prompts-v2.txt) |
+| [initial.webp](../../assets/site/icons/initial.webp) | Inicial, bloques y lápiz | [Prompts académicos](academic-icon-prompts-v2.txt) |
+| [basic.webp](../../assets/site/icons/basic.webp) | Básica, cuaderno y útiles | [Prompts académicos](academic-icon-prompts-v2.txt) |
+| [high-school.webp](../../assets/site/icons/high-school.webp) | Bachillerato, birrete y libros | [Prompts académicos](academic-icon-prompts-v2.txt) |
+| [owl-watermark-v2.webp](../../assets/site/patterns/owl-watermark-v2.webp) | Patrón repetible del acento | [Prompt del patrón](pattern-prompt-v2.txt) |
+
+Se conservaron las transparencias de las ilustraciones. Las copias web solo se optimizaron en tamaño y compresión; no se redibujaron. Se revisó de nuevo el texto exacto del hero, la carga de los seis iconos y la ausencia de desbordamiento horizontal en 320, 390, 767, 1024 y 1440 px.
