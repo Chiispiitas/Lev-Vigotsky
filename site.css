@@ -87,3 +87,20 @@
 @media(max-width:620px){.gallery-grid{grid-template-columns:minmax(0,1fr)}.offer-section{background-size:850px auto}.offer-section .section-heading{padding:12px}.footer-links{flex-wrap:wrap}}
 
 .slogan-love:after{height:.30em;bottom:-.055em}
+
+/* Superficies sin contornos; el foco de teclado permanece accesible. */
+*,*::before,*::after{border-width:0!important}
+.footer-bottom::before{display:none}
+.offer-section{background-image:url('assets/site/patterns/owl-seamless-v4.webp');background-size:560px 560px;background-repeat:round;background-position:center}
+.offer-section .section-heading{border-radius:28px;padding:24px;background:#ffffffed}
+.offer-card,.offer-card+article{border:0;box-shadow:none;border-radius:20px}
+@media(max-width:620px){.offer-section{background-size:360px 480px}.offer-section .section-heading{border-radius:24px;padding:20px}}
+
+.offer-section{background-position:left top}
+
+.offer-section .section-heading,.offer-card,.offer-card+article{background:#ffffff55}
+
+.offer-section{background-size:100% auto;background-repeat:no-repeat round;background-position:left top}
+
+.offer-section{position:relative;isolation:isolate;background:#fff}
+.offer-section::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:url('assets/site/patterns/owl-seamless-v4.webp') left top/100% auto no-repeat round;opacity:.38}

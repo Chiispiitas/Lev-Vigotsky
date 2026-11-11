@@ -101,3 +101,6 @@ El head incluye título descriptivo, meta description, canonical, robots, Open G
 Título: Lev Vigotsky | Colegio en Manta. Al configurar dominio propio, actualizar canonical, og:url, imágenes absolutas, sitemap y todos los identificadores JSON-LD. No se enviaron mensajes de WhatsApp ni se verificó una tarjeta dentro de la aplicación. La plataforma decide presentación y caché de enlaces; Google puede seleccionar otros títulos o fragmentos según la búsqueda.
 
 Referencias: https://ogp.me/ y https://developers.google.com/search/docs/appearance/title-link y https://developers.google.com/search/docs/appearance/snippet .
+
+## Patrón y superficies sin bordes
+Patrón v4 generado con image_gen integrado, probado en mosaico y corregido tras revisar el resultado. Prompt final: nueve cabezas completas, gris pálido, blanco uniforme, centros equidistantes y márgenes suficientes para no cortar motivos. Recurso: assets/site/patterns/owl-seamless-v4.webp. El fondo ocupa el ancho completo y ajusta la repetición vertical a la sección. Se eliminan contornos decorativos de todos los elementos propios del sitio y se conservan los indicadores de foco por teclado. Encabezado de oferta con radio de 28 px (24 en móvil).
