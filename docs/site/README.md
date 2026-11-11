@@ -58,3 +58,7 @@ Google Maps se incorpora con búsqueda del nombre exacto de la institución en M
 Actualizar oferta, contactos y redacción en `index.html`. Para reemplazar fotos, actualizar también texto alternativo, leyenda y enlace de origen. Mantener las mascotas en sus dos ubicaciones discretas. Las animaciones respetan movimiento reducido; la información permanece visible si JavaScript está deshabilitado. La galería ampliable requiere JavaScript; los enlaces originales permanecen accesibles sin él.
 
 El contenido y las imágenes son una primera versión revisable. Cambiar el futuro dominio en metadatos y datos estructurados cuando se configure; conservar mientras tanto las rutas relativas para que funcionen en el subdirectorio de GitHub Pages.
+
+## Verificación de esta versión
+
+Se comprobaron sintaxis de JavaScript, referencias de archivos, enlaces internos, IDs únicos, descripciones de imágenes, títulos de iframes y datos estructurados. Revisión en Edge con anchos de contenido CSS de 320, 390, 767, 1024 y 1440 px sin desbordamiento horizontal. Se probó apertura y cierre del menú móvil y del diálogo de fotografías, con devolución del foco. Se observó Instagram con seis publicaciones y el mapa resuelto al establecimiento. El navegador puede registrar mensajes internos de Instagram; el contenido del proveedor no está bajo control del sitio. No se declara certificación integral de accesibilidad ni prueba en dispositivos físicos.
