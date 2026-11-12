@@ -139,3 +139,11 @@ Carrusel equilibrado vigente: guaguas de pan primero; banda estudiantil (2024); 
 Corrección de identificación aportada por el usuario: la persona de la fotografía de Olimpiadas 2024 era una profesora. Se retira del carrusel y se sustituye por una coreografía grupal de Segundo de Bachillerato en el Festival Carpe Diem, cuya propia firma identifica curso y evento. Se mantienen seis fotos, guaguas primero y máximo dos por evento.
 
 Se sustituye Expresión y talento / Carpe Diem por una estudiante realizando un dibujo en el Festival de Dibujo y Pintura del 21 de noviembre de 2024. No se atribuye un grado exacto que la publicación no especifica. Se conserva la actuación grupal de Segundo de Bachillerato; Carpe Diem aparece solo una vez.
+## Dominio propio · 12 de noviembre de 2026
+Dominio principal: https://ueplv.com/. GitHub Pages conserva main y publicación desde la raíz. CNAME contiene ueplv.com. Canonical, Open Graph, Twitter, JSON-LD y sitemap usan el nuevo dominio; robots.txt publica la ubicación del sitemap.
+
+GoDaddy mantiene sus servidores ns71/ns72.domaincontrol.com y los registros ajenos a la web. A de @: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153 (TTL 600). CNAME www: chiispiitas.github.io (TTL 3600). Se sustituyó el aparcamiento y el alias www anterior. No se cambiaron registros de correo ni DMARC.
+
+GitHub confirmó DNS válido para raíz y www; certificado aprobado para ambos, caducidad informada 2027-02-10. HTTPS obligatorio activado. Verificación TLS sin omitir certificados: raíz respondió 200 y www redirigió 301 a https://ueplv.com/. DNS público de Cloudflare ya devolvía los registros nuevos; el resolvedor local aún conservaba temporalmente el aparcamiento. La comprobación HTTP/TLS directa al destino de GitHub usó --resolve, conservando Host, SNI y validación de certificado normales.
+
+Referencia de configuración: https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site .
