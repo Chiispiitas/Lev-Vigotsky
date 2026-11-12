@@ -24,7 +24,7 @@ Se desarrolló un diseño propio con fondos claros, amarillo de acento, azul pro
 
 ## Información real y textos de propuesta
 
-- Oferta y contactos: [Linktree institucional UEPLV](https://linktr.ee/UEPLV), que enlaza el Instagram indicado por el usuario. Inicial I (3), Inicial II (4), preprimaria (5), EGB segundo a décimo y Bachillerato en Ciencias / Técnico en Administración de Empresas. Se usa “Preparatoria” como denominación web del nivel de 5 años.
+- Oferta y contactos: [Linktree institucional UEPLV](https://linktr.ee/UEPLV), que enlaza el Instagram indicado por el usuario. Inicial I (3), Inicial II (4), preprimaria (5), EGB segundo a décimo y Bachillerato en Ciencias / Bachillerato Técnico Polivalente en Contabilidad y Administración (denominación corregida por el usuario). Se usa “Preparatoria” como denominación web del nivel de 5 años.
 - Contactos de Inicial a 7.º: [WhatsApp institucional](https://wa.link/32me8l), 096 379 8828. De 8.º a Bachillerato: [WhatsApp institucional](https://wa.link/8g05dc), 096 971 7983.
 - Dirección y ambos teléfonos confirmados por David en este chat el 11 de noviembre de 2026: avenida 229 y calle 309, Villas de Circunvalación, Manta.
 - Runachay: URL provista directamente por el usuario. El botón se enlaza sin intermediarios. No se requieren credenciales para el sitio informativo.
@@ -160,3 +160,5 @@ Validación pública: HTML, robots.txt y sitemap.xml respondieron 200 por HTTPS,
 Referencia: https://developers.google.com/search/docs/fundamentals/seo-starter-guide .
 
 Foto de pintura revisada el 12 de noviembre de 2026: se retira del hero la participante caracterizada como mimo del festival de 2024. Se sustituye por una estudiante uniformada mostrando su obra en El Cartel de la Paz (publicación institucional del 15 de octubre de 2023, foto 769529881851676). Se conserva el encuadre completo mediante ajuste proporcional con márgenes neutros; no se alteraron la estudiante ni la obra. Se mantienen seis fotografías, guaguas de pan primero y máximo dos por evento.
+
+Especialidad confirmada por el usuario: Bachillerato Técnico Polivalente en Contabilidad y Administración. Se actualizan la oferta visible y el registro de datos institucionales.
