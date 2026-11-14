@@ -7,11 +7,11 @@
   window.labFetch=fetch;
 
   const expectedNames = Array.from({ length: 33 }, (_, i) => `UEPLV-${String(i + 1).padStart(2, '0')}`);
-  const allowedActions = new Set(['class', 'class-ai', 'exam', 'free', 'close-apps', 'cleanup', 'reboot', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
-  const confirmationActions = new Set(['close-apps','cleanup','reboot','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
-  const actionLabels = { class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
+  const allowedActions = new Set(['class', 'class-ai', 'exam', 'free', 'close-apps', 'cleanup', 'reboot', 'shutdown', 'shutdown-warning-test', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
+  const confirmationActions = new Set(['close-apps','cleanup','reboot','shutdown','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
+  const actionLabels = { class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', shutdown:'Apagar', 'shutdown-warning-test':'Probar aviso de apagado', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
   const stageLabels = { Prepare: 'Preparando protección', Updates: 'Actualizando Windows', Readiness: 'Verificando requisitos', ProtectionPending: 'Protección programada', PostBoot: 'Verificando reinicio', Complete: 'Instalación completa', Pending: 'Pendiente', Installed: 'Configuración inicial lista', 'Provisioned-awaiting-protection':'Esperando protección', 'Provisioning-failed':'Revisar instalación' };
-  const stateLabels = { queued: 'Pendiente', pending: 'Pendiente', sent: 'Enviada', running: 'En curso', accepted: 'Recibida', completed: 'Completada', failed: 'Falló', expired: 'Caducó', rejected: 'Rechazada', interrupted:'Interrumpida', 'awaiting-restart': 'Esperando reinicio', 'needs-update-review': 'Revisar actualizaciones' };
+  const stateLabels = { queued: 'Pendiente', pending: 'Pendiente', sent: 'Enviada', running: 'En curso', accepted: 'Recibida', completed: 'Completada', failed: 'Falló', expired: 'Caducó', rejected: 'Rechazada', interrupted:'Interrumpida', 'shutdown-scheduled':'Apagado programado', 'awaiting-restart': 'Esperando reinicio', 'needs-update-review': 'Revisar actualizaciones' };
   const updateLabels = { 'waiting-installation':'En espera', idle:'Al día', 'preparing-restart':'Preparando reinicio', 'awaiting-normal-restart':'Descargada · espera reinicio', 'backing-up':'Guardando copia anterior', 'rolling-back':'Revirtiendo', 'verifying-protection':'Verificando protección', downloaded:'Descargada · espera reinicio', 'awaiting-restart':'Espera reinicio', 'awaiting-unprotected-boot':'Espera reinicio', 'waiting-restart':'Espera reinicio', installing:'Instalando', applying:'Instalando', verifying:'Verificando', 'restoring-protection':'Restaurando protección', 'awaiting-protected-boot':'Verificando protección', complete:'Actualizada', completed:'Actualizada', deferred:'Pospuesta por mantenimiento', failed:'Revisar actualización', rollback:'Revirtiendo', 'rolled-back':'Versión anterior restaurada', 'rollback-failed':'Revisar recuperación' };
   const $ = (id) => document.getElementById(id);
   const ui = Object.fromEntries(['login','dashboard','loading','login-form','access-token','login-error','login-submit','logout-button','connection-status','refresh-button','page-error','stat-total','stat-online','stat-protected','stat-waiting','selected-badge','command-select','send-command','advanced-command-select','send-advanced-command','offline-selection-note','clear-selection','device-rows','search-input','select-visible','empty-filter','visible-summary','filter-all-count','filter-online-count','filter-waiting-count','filter-attention-count','last-refresh-label','confirm-dialog','confirm-title','confirm-message','confirm-targets','confirm-submit','device-dialog','device-dialog-close','device-detail-title','device-detail-content','toast'].map(id => [id, $(id)]));
@@ -88,7 +88,7 @@
     return '<span class="status-muted">—</span>';
   }
   function jobClass(job) {
-    return ['completed'].includes(job.state) ? 'status-positive' : ['failed','rejected','interrupted'].includes(job.state) ? 'status-danger' : ['queued','pending','running','accepted','sent','awaiting-restart','needs-update-review'].includes(job.state) ? 'status-negative' : 'status-muted';
+    return ['completed'].includes(job.state) ? 'status-positive' : ['failed','rejected','interrupted'].includes(job.state) ? 'status-danger' : ['queued','pending','running','accepted','sent','awaiting-restart','shutdown-scheduled','needs-update-review'].includes(job.state) ? 'status-negative' : 'status-muted';
   }
   function stageLabel(device) {
     if (!device.enrolled) return 'Por registrar';
@@ -270,6 +270,7 @@
       'close-apps':'Se perderá el trabajo sin guardar en las aplicaciones de estudiantes.',
       cleanup:'Se eliminarán archivos y datos de estudiantes. No se puede deshacer.',
       reboot:'Reinicio en 60 segundos. Se perderá el trabajo sin guardar.',
+      shutdown:'Apagado en 60 segundos. Se perderá el trabajo sin guardar.',
       maintenance:'Puede reiniciar los equipos varias veces.',
       'uwf-enable':'Requiere reinicio y verificación de la protección.',
       'uwf-disable':'Tras reiniciar, los cambios en disco serán permanentes.',
@@ -282,7 +283,7 @@
     ui['confirm-title'].textContent = `${actionLabels[action] || 'Enviar orden'} · ${count} equipo${count === 1 ? '' : 's'}`;
     ui['confirm-message'].textContent = warnings[action] || '';
     ui['confirm-targets'].innerHTML = targets.map(n => `<span>${n}</span>`).join('');
-    ui['confirm-submit'].textContent = action === 'close-apps' ? 'Cerrar aplicaciones' : action === 'cleanup' ? 'Limpiar perfiles' : action === 'reboot' ? 'Reiniciar' : 'Confirmar acción';
+    ui['confirm-submit'].textContent = action === 'close-apps' ? 'Cerrar aplicaciones' : action === 'cleanup' ? 'Limpiar perfiles' : action === 'reboot' ? 'Reiniciar' : action === 'shutdown' ? 'Apagar' : 'Confirmar acción';
     pendingConfirmation = {action,targets};
     ui['confirm-dialog'].showModal();
   }
