@@ -3,7 +3,7 @@
   const backend='https://headless-fmhdvxksmwz-chiispiitas-140b.wix-site-host.com';
   const readSession=()=>decodeURIComponent((document.cookie.split('; ').find(x=>x.startsWith('ueplv_lab_session='))||'').slice('ueplv_lab_session='.length));
   const saveSession=value=>{document.cookie='ueplv_lab_session='+encodeURIComponent(value)+'; Path=/Computer-Lab/; Secure; SameSite=Strict; Max-Age='+(value?2592000:0);};
-  const fetch=async(url,options={})=>{const token=readSession();const response=await window.fetch(backend+url,{...options,credentials:'omit',headers:{...options.headers,...(token?{Authorization:'Bearer '+token}:{})}});if(url==='/api/admin/session'&&response.ok){const data=await response.clone().json();saveSession(data.sessionToken);}if((url==='/api/admin/logout'&&response.ok)||response.status===401)saveSession('');return response;};
+  const fetch=async(url,options={})=>{const token=readSession();const response=await window.fetch(backend+url,{...options,credentials:'omit',headers:{...Object.fromEntries(Object.entries(options.headers||{}).filter(([k])=>!['x-ueplv-request','if-none-match'].includes(k.toLowerCase()))),...(token?{Authorization:'Bearer '+token}:{})}});if(url==='/api/admin/session'&&response.ok){const data=await response.clone().json();saveSession(data.sessionToken);}if((url==='/api/admin/logout'&&response.ok)||response.status===401)saveSession('');return response;};
   window.labFetch=fetch;
 
   const expectedNames = Array.from({ length: 33 }, (_, i) => `UEPLV-${String(i + 1).padStart(2, '0')}`);
