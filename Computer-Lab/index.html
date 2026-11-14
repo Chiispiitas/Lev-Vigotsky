@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <meta name="color-scheme" content="light">
+  <title>Control del laboratorio · UEPLV</title>
+  <link rel="stylesheet" href="./app.css">
+  <script src="./app.js" defer></script>
+  <script src="./update-ui.js" defer></script>
+<link rel="stylesheet" href="./school.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Ir al contenido</a>
+  <div class="ambient" aria-hidden="true"></div>
+  <section id="login" class="login-view" aria-labelledby="login-heading" hidden>
+    <div class="login-card">
+      <div class="brand-symbol" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="25" rx="5" stroke="currentColor" stroke-width="2"/><path d="M16 40h16M24 33v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m18 20 4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <p class="eyebrow">UNIDAD EDUCATIVA LEV VIGOTSKY</p>
+      <h1 id="login-heading">Control del laboratorio</h1>
+      <p class="login-copy">Acceso del personal</p>
+      <form id="login-form">
+        <label for="access-token">Clave de acceso al panel</label>
+        <input id="access-token" name="token" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" required aria-describedby="login-error">
+        <p id="login-error" class="form-error" role="alert" hidden></p>
+        <button class="button button-primary login-button" id="login-submit" type="submit">Entrar al panel <span aria-hidden="true">↗</span></button>
+      </form>
+      <p class="login-footnote">Tu sesión se conserva durante 30 días en este navegador, hasta que cierres sesión o borres las cookies.</p>
+      <p class="login-footnote"><a href="https://headless-fmhdvxksmwz-chiispiitas-140b.wix-site-host.com/support/UEPLV-Support.zip" download>Descargar herramienta de diagnóstico y reintento</a></p>
+    </div>
+  </section>
+
+  <div id="dashboard" class="app-shell" hidden>
+    <header class="app-header">
+      <a class="brand" href="/" aria-label="UEPLV, control del laboratorio">
+        <span class="brand-symbol compact" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><rect x="6" y="8" width="36" height="25" rx="5" stroke="currentColor" stroke-width="2"/><path d="M16 40h16M24 33v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="m18 20 4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span><strong>UEPLV</strong><span class="brand-caption">Control del laboratorio</span></span>
+      </a>
+      <div class="header-actions"><span class="staff-badge"><span class="small-dot"></span> Personal</span><button class="button button-quiet" id="logout-button" type="button">Cerrar sesión</button></div>
+    </header>
+
+    <main id="main">
+      <div class="page-heading"><div><p class="eyebrow">ÁREA TÉCNICA E INNOVACIÓN</p><h1>Tu laboratorio, en un vistazo.</h1></div><div class="refresh-area"><span id="connection-status" class="connection-status" role="status">Conectando…</span><button class="icon-button" id="refresh-button" type="button" title="Actualizar estado" aria-label="Actualizar estado"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 6a8 8 0 0 1 13 3M18 18a8 8 0 0 1-13-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div></div>
+
+      <div id="page-error" class="page-error" role="alert" hidden></div>
+      <section class="stats" aria-label="Resumen de equipos">
+        <div class="stat"><span>Equipos del laboratorio</span><strong id="stat-total">33</strong><small>UEPLV-01 — UEPLV-33</small></div>
+        <div class="stat"><span><i class="dot online-dot"></i> Conectados</span><strong id="stat-online">0</strong><small id="stat-online-note">Esperando el primer registro</small></div>
+        <div class="stat"><span><i class="dot protected-dot"></i> C: protegido ahora</span><strong id="stat-protected">0</strong><small>Protección confirmada por el equipo</small></div>
+        <div class="stat"><span><i class="dot pending-dot"></i> Por registrar</span><strong id="stat-waiting">33</strong><small>Se registran tras la instalación</small></div>
+      </section>
+
+      <section class="control-panel" aria-labelledby="commands-heading">
+        <div class="control-title"><div><h2 id="commands-heading">Enviar una orden</h2><p id="selected-summary">Selecciona los equipos de la lista.</p></div><span class="selection-badge" id="selected-badge">0 seleccionados</span></div>
+        <div class="quick-actions" role="group" aria-label="Modos y control de clase"><button type="button" class="quick-action" data-quick="class">Modo clase</button><button type="button" class="quick-action" data-quick="class-ai">Clase + bloqueo IA</button><button type="button" class="quick-action" data-quick="exam">Modo examen</button><button type="button" class="quick-action" data-quick="free">Modo libre</button><button type="button" class="quick-action" data-quick="close-apps">Cerrar aplicaciones</button></div><div class="command-form"><div class="command-field"><label for="command-select">Acción</label><select id="command-select"><option value="class">Modo clase</option><option value="class-ai">Clase + bloqueo de IA</option><option value="exam">Modo examen</option><option value="free">Modo libre</option><option value="close-apps">Cerrar aplicaciones de estudiantes</option><option value="cleanup">Limpiar perfil de estudiantes</option><option value="reboot">Reiniciar equipos</option><option value="maintenance">Mantenimiento UWF</option><option value="status">Solicitar estado</option></select></div><div class="command-description"><p id="command-description">Aplica los bloqueos de navegación de la clase.</p><small>Las órdenes suelen recibirse en 5–10 segundos; algunas tareas tardan más en completarse.</small></div><button id="send-command" type="button" class="button button-primary" disabled>Enviar orden <span aria-hidden="true">↗</span></button></div>
+        <details class="advanced-controls"><summary>Mantenimiento y herramientas</summary><div class="advanced-content"><div class="command-field"><label for="advanced-command-select">Acción de mantenimiento</label><select id="advanced-command-select"><option value="uwf-status">Consultar estado UWF</option><option value="uwf-enable">Activar protección UWF</option><option value="uwf-disable">Desactivar protección UWF</option><option value="uwf-purge-swap">Purgar archivo temporal UWF</option><option value="uwf-repair">Reparar configuración UWF</option><option value="uwf-reset-stage1">Restablecer UWF · etapa 1</option><option value="uwf-reset-stage2">Restablecer UWF · etapa 2</option><option value="windows-update">Buscar e instalar actualizaciones</option><option value="maintenance">Mantenimiento de Windows con UWF</option></select></div><div class="command-description"><p id="advanced-command-description">Consulta la protección actual y la del próximo inicio.</p><small>El equipo rechazará las acciones incompatibles con su estado.</small></div><button type="button" class="button button-quiet" id="send-advanced-command" disabled>Enviar acción</button></div></details><div class="command-footer"><span id="offline-selection-note">Las órdenes pendientes caducan en 5 minutos.</span><button id="clear-selection" class="text-button" type="button" disabled>Quitar selección</button></div>
+      </section>
+
+      <section class="control-panel updates-panel" aria-labelledby="updates-heading">
+        <div class="control-title"><div><h2 id="updates-heading">Actualizaciones del servicio</h2><p>Descarga automática e instalación en el próximo reinicio normal.</p></div><span class="selection-badge" id="latest-release-version">Consultando versión…</span></div>
+        <details class="advanced-controls"><summary>Publicar una actualización online</summary><form id="release-form" class="release-form"><div class="command-field"><label for="release-version">Nueva versión</label><input id="release-version" placeholder="1.2.1" pattern="[0-9]+\.[0-9]+\.[0-9]+" autocomplete="off" required></div><div class="command-field"><label for="release-package">Paquete del servicio y sus comandos</label><input id="release-package" type="file" accept=".zip,application/zip" required><small>ZIP de hasta 256 KB, preparado para UEPLV.</small></div><button id="release-submit" type="submit" class="button button-primary">Publicar actualización</button><p id="release-result" class="release-result" role="status"></p></form><p class="dialog-note">La publicación se firma y se distribuye automáticamente. Los equipos verifican el paquete, esperan al próximo reinicio y conservan una copia para revertir una instalación fallida. Con UWF puede requerirse un reinicio adicional para restaurar la protección.</p></details>
+        <p id="release-history" class="cell-note">Todavía no se ha consultado el historial de versiones.</p>
+      </section>
+
+      <section class="fleet-panel" aria-labelledby="fleet-heading">
+        <div class="fleet-heading"><div><h2 id="fleet-heading">Equipos</h2><p id="fleet-description">Estado informado por el servicio de cada computador.</p></div><label class="search"><svg viewBox="0 0 20 20" aria-hidden="true" fill="none"><circle cx="8.5" cy="8.5" r="5.2" stroke="currentColor" stroke-width="1.6"/><path d="m12.4 12.4 4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span class="sr-only">Buscar equipo</span><input type="search" id="search-input" placeholder="Buscar equipo…" autocomplete="off"></label></div>
+        <div class="fleet-filters" role="group" aria-label="Filtrar equipos"><button class="filter-button active" type="button" data-filter="all" aria-pressed="true">Todos <span id="filter-all-count">33</span></button><button class="filter-button" type="button" data-filter="online" aria-pressed="false">Conectados <span id="filter-online-count">0</span></button><button class="filter-button" type="button" data-filter="waiting" aria-pressed="false">Por registrar <span id="filter-waiting-count">33</span></button><button class="filter-button" type="button" data-filter="attention" aria-pressed="false">Por revisar <span id="filter-attention-count">0</span></button></div>
+        <div class="table-wrap"><table><thead><tr><th class="select-column"><input type="checkbox" id="select-visible" aria-label="Seleccionar todos los equipos visibles"></th><th scope="col">Equipo</th><th scope="col">Modo</th><th scope="col">Protección UWF <span class="column-hint">Ahora / Próximo inicio</span></th><th scope="col">Espacio temporal</th><th scope="col">Instalación</th><th scope="col">Última orden</th></tr></thead><tbody id="device-rows"></tbody></table></div>
+        <div id="empty-filter" class="empty-filter" hidden>No hay equipos que coincidan con este filtro.</div>
+        <div class="fleet-footer"><span id="visible-summary">33 equipos</span><span>Selecciona un nombre para ver sus resultados.</span></div>
+      </section>
+      <footer class="app-footer"><span>UEPLV · Administración del laboratorio</span><span id="last-refresh-label">Sin datos recibidos todavía</span></footer>
+  <section class="panel policy-panel" aria-labelledby="policy-heading"><h2 id="policy-heading">Sitios web por modo</h2><p>Cada lista es independiente. Un dominio por línea, sin https:// ni rutas. Guardar actualiza los equipos conectados automáticamente y conserva su modo actual.</p><form id="policy-form"><div class="policy-grid"><label>Clase<textarea id="classDomains" rows="10" spellcheck="false" required></textarea></label><label>Examen<textarea id="examDomains" rows="10" spellcheck="false" required></textarea></label><label>Clase + bloqueo IA<textarea id="aiDomains" rows="10" spellcheck="false" required></textarea></label></div><button class="button button-primary" type="submit">Guardar listas</button><p id="policy-result" role="status"></p></form></section>
+  </main>
+  </div>
+
+  <dialog id="confirm-dialog" class="dialog confirm-dialog" aria-labelledby="confirm-title"><form method="dialog"><button class="dialog-close icon-button" value="cancel" aria-label="Cancelar">×</button><p class="eyebrow">CONFIRMAR ORDEN</p><h2 id="confirm-title"></h2><p id="confirm-message" class="dialog-copy"></p><div id="confirm-targets" class="confirm-targets"></div><p class="dialog-note">Los equipos sin conexión solo recibirán la orden si vuelven antes de que caduque.</p><div class="dialog-actions"><button class="button button-quiet" value="cancel">Cancelar</button><button class="button button-primary" id="confirm-submit" value="confirm">Confirmar</button></div></form></dialog>
+
+  <dialog id="device-dialog" class="dialog device-dialog" aria-labelledby="device-detail-title"><button id="device-dialog-close" type="button" class="dialog-close icon-button" aria-label="Cerrar detalles">×</button><p class="eyebrow">ESTADO Y RESULTADOS</p><h2 id="device-detail-title"></h2><div id="device-detail-content"></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <div id="loading" class="initial-loading" role="status"><span class="loading-ring" aria-hidden="true"></span><span>Abriendo el panel…</span></div>
+<script src="./policy-ui.js" defer></script>
+</body>
+</html>
