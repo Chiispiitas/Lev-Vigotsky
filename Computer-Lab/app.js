@@ -10,12 +10,11 @@
   const allowedActions = new Set(['class', 'class-ai', 'exam', 'free', 'close-apps', 'cleanup', 'reboot', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
   const confirmationActions = new Set(['close-apps','cleanup','reboot','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
   const actionLabels = { class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
-  const descriptions = { class: 'Aplica los bloqueos de navegación de la clase.', 'class-ai':'Aplica los bloqueos de clase y de las páginas de IA configuradas.', exam: 'Aplica los bloqueos de navegación del examen.', free: 'Retira los bloqueos de navegación administrados.', 'close-apps': 'Cierra las aplicaciones de estudiantes y conserva los servicios.', cleanup:'Elimina archivos y datos de los perfiles de estudiantes. Requiere confirmación.', reboot: 'Programa un reinicio con aviso de 60 segundos. Se perderá el trabajo sin guardar.', maintenance: 'Inicia el mantenimiento de Windows en los equipos protegidos con UWF.', status: 'Solicita una actualización del estado informado por cada equipo.', 'uwf-status':'Consulta la protección actual y la del próximo inicio.', 'uwf-enable':'Verifica los requisitos y solicita la activación de UWF.', 'uwf-disable':'Solicita desactivar la protección UWF; revisa el resultado antes de instalar cambios.', 'uwf-purge-swap':'Purga el archivo temporal de UWF únicamente cuando resulte seguro.', 'uwf-repair':'Comprueba y repara la configuración mediante las herramientas admitidas de Windows.', 'uwf-reset-stage1':'Primera etapa del restablecimiento de UWF. Puede requerir reiniciar.', 'uwf-reset-stage2':'Segunda etapa del restablecimiento de UWF, después de completar la etapa 1.', 'windows-update':'Actualiza Windows cuando UWF permite conservar los cambios.' };
   const stageLabels = { Prepare: 'Preparando protección', Updates: 'Actualizando Windows', Readiness: 'Verificando requisitos', ProtectionPending: 'Protección programada', PostBoot: 'Verificando reinicio', Complete: 'Instalación completa', Pending: 'Pendiente', Installed: 'Configuración inicial lista', 'Provisioned-awaiting-protection':'Esperando protección', 'Provisioning-failed':'Revisar instalación' };
   const stateLabels = { queued: 'Pendiente', pending: 'Pendiente', sent: 'Enviada', running: 'En curso', accepted: 'Recibida', completed: 'Completada', failed: 'Falló', expired: 'Caducó', rejected: 'Rechazada', interrupted:'Interrumpida', 'awaiting-restart': 'Esperando reinicio', 'needs-update-review': 'Revisar actualizaciones' };
   const updateLabels = { idle:'Al día', 'preparing-restart':'Preparando reinicio', 'awaiting-normal-restart':'Descargada · espera reinicio', 'backing-up':'Guardando copia anterior', 'rolling-back':'Revirtiendo', 'verifying-protection':'Verificando protección', downloaded:'Descargada · espera reinicio', 'awaiting-restart':'Espera reinicio', 'awaiting-unprotected-boot':'Espera reinicio', 'waiting-restart':'Espera reinicio', installing:'Instalando', applying:'Instalando', verifying:'Verificando', 'restoring-protection':'Restaurando protección', 'awaiting-protected-boot':'Verificando protección', complete:'Actualizada', completed:'Actualizada', deferred:'Pospuesta por mantenimiento', failed:'Revisar actualización', rollback:'Revirtiendo', 'rolled-back':'Versión anterior restaurada', 'rollback-failed':'Revisar recuperación' };
   const $ = (id) => document.getElementById(id);
-  const ui = Object.fromEntries(['login','dashboard','loading','login-form','access-token','login-error','login-submit','logout-button','connection-status','refresh-button','page-error','stat-total','stat-online','stat-online-note','stat-protected','stat-waiting','selected-summary','selected-badge','command-select','command-description','send-command','advanced-command-select','advanced-command-description','send-advanced-command','offline-selection-note','clear-selection','device-rows','search-input','select-visible','empty-filter','visible-summary','filter-all-count','filter-online-count','filter-waiting-count','filter-attention-count','last-refresh-label','confirm-dialog','confirm-title','confirm-message','confirm-targets','confirm-submit','device-dialog','device-dialog-close','device-detail-title','device-detail-content','toast'].map(id => [id, $(id)]));
+  const ui = Object.fromEntries(['login','dashboard','loading','login-form','access-token','login-error','login-submit','logout-button','connection-status','refresh-button','page-error','stat-total','stat-online','stat-protected','stat-waiting','selected-badge','command-select','send-command','advanced-command-select','send-advanced-command','offline-selection-note','clear-selection','device-rows','search-input','select-visible','empty-filter','visible-summary','filter-all-count','filter-online-count','filter-waiting-count','filter-attention-count','last-refresh-label','confirm-dialog','confirm-title','confirm-message','confirm-targets','confirm-submit','device-dialog','device-dialog-close','device-detail-title','device-detail-content','toast'].map(id => [id, $(id)]));
   const state = { authenticated: false, devices: new Map(), selected: new Set(), filter: 'all', query: '', refreshing: false, sending: false, serverOffset: 0, lastRefresh: null, toastTimer: null, detailName: null };
   let pendingConfirmation = null;
   let statusEtag = null;
@@ -76,7 +75,7 @@
     const [label, css] = modes[key] || ['Sin informar','mode-unknown'];
     if (css === 'mode-unknown') return `<span class="mode-badge ${css}">${label}</span>`;
     if (applied !== true) return `<span class="mode-badge ${applied === false ? 'mode-exam' : 'mode-unknown'}">${applied === false ? 'Pendiente' : 'Sin confirmar'}</span><span class="cell-note">Solicitado: ${label}</span>${policyError ? `<span class="cell-note status-negative" title="${escapeHtml(policyError)}">${escapeHtml(policyError)}</span>` : ''}`;
-    return `<span class="mode-badge ${css}" title="Modo confirmado por el equipo">${label}</span>${policyError ? `<span class="cell-note status-negative" title="${escapeHtml(policyError)}">${escapeHtml(policyError)}</span>` : ''}`;
+    return `<span class="mode-badge ${css}" title="Modo activo">${label}</span>${policyError ? `<span class="cell-note status-negative" title="${escapeHtml(policyError)}">${escapeHtml(policyError)}</span>` : ''}`;
   }
   function protectionHtml(device, next) {
     const enabled = next ? device.nextEnabled : device.currentEnabled;
@@ -128,7 +127,6 @@
     ui['stat-online'].textContent = online;
     ui['stat-protected'].textContent = all.filter(d => connectivity(d) === 'online' && protectedNow(d)).length;
     ui['stat-waiting'].textContent = waiting;
-    ui['stat-online-note'].textContent = waiting === 33 ? 'Esperando el primer registro' : 'Con respuesta en los últimos 150 s';
     ui['filter-online-count'].textContent = online;
     ui['filter-waiting-count'].textContent = waiting;
     ui['filter-attention-count'].textContent = attention;
@@ -146,19 +144,18 @@
   function updateSelection() {
     const size = state.selected.size;
     ui['selected-badge'].textContent = `${size} seleccionado${size === 1 ? '' : 's'}`;
-    ui['selected-summary'].textContent = size ? size === 33 ? 'La orden se enviará a todo el laboratorio.' : `La orden se enviará a ${size} equipo${size === 1 ? '' : 's'}.` : 'Selecciona los equipos de la lista.';
     ui['send-command'].disabled = !state.authenticated || !size || state.sending;
     ui['send-advanced-command'].disabled = !state.authenticated || !size || state.sending;
     document.querySelectorAll('[data-quick]').forEach(button => {button.disabled = !state.authenticated || !size || state.sending;});
     ui['clear-selection'].disabled = !size || state.sending;
     const offline = [...state.selected].filter(name => connectivity(deviceFor(name)) !== 'online').length;
-    ui['offline-selection-note'].textContent = offline ? `${offline} seleccionado${offline === 1 ? '' : 's'} sin conexión confirmada. Las órdenes caducan en 5 minutos.` : 'Las órdenes pendientes caducan en 5 minutos.';
+    ui['offline-selection-note'].textContent = offline ? `${offline} sin conexión · caduca en 5 min` : '';
   }
   function renderDetail(name) {
     const device = deviceFor(name);
     ui['device-detail-title'].textContent = name;
     const jobs = [...device.jobs.map(j => ({...j,state:j.state || 'queued'})),...device.results].sort((a,b) => (dateMs(b.utc || b.issuedUtc || b.createdUtc) || 0) - (dateMs(a.utc || a.issuedUtc || a.createdUtc) || 0)).slice(0,20);
-    ui['device-detail-content'].innerHTML = `<div class="detail-summary"><div class="detail-item"><span>Última comunicación</span><strong>${escapeHtml(device.enrolled ? fullTime(device.lastSeenUtc) : 'Esperando registro')}</strong></div><div class="detail-item"><span>Modo informado</span>${modeHtml(device.mode,device.modeApplied,device.policyError)}</div><div class="detail-item"><span>C: protegido ahora / próximo inicio</span><strong class="uwf-pair">${protectionHtml(device,false)}<span class="slash">/</span>${protectionHtml(device,true)}</strong></div><div class="detail-item"><span>Instalación</span><strong>${escapeHtml(stageLabel(device))}</strong></div></div>${device.deploymentDetail ? `<p class="detail-note">${escapeHtml(device.deploymentDetail)}</p>` : ''}${device.policyError ? `<p class="detail-note status-negative">${escapeHtml(device.policyError)}</p>` : ''}${device.uwfError ? `<p class="detail-note status-negative">${escapeHtml(device.uwfError)}</p>` : ''}<section class="detail-section"><h3>Actualización del servicio</h3><p>Versión instalada: ${escapeHtml(device.installedVersion || 'Sin informar')}. ${escapeHtml(updatePhaseLabel(device) || 'Sin estado informado')}${device.availableVersion ? ' · Disponible: '+escapeHtml(device.availableVersion) : ''}</p>${device.updateDownloadedUtc ? `<p>Descarga: ${escapeHtml(fullTime(device.updateDownloadedUtc))}</p>` : ''}${device.updateError ? `<p class="status-negative">${escapeHtml(device.updateError)}</p>` : ''}</section><section class="detail-section"><h3>Órdenes y resultados</h3>${jobs.length ? `<ol class="result-list">${jobs.map(job => `<li><div class="result-heading"><span>${escapeHtml(actionLabels[job.action] || job.action || 'Orden')} · <span class="${jobClass(job)}">${escapeHtml(stateLabels[job.state] || job.state || 'Sin informar')}</span></span><time>${escapeHtml(shortTime(job.utc || job.issuedUtc || job.createdUtc))}</time></div>${job.detail || job.error ? `<p>${escapeHtml(job.detail || job.error)}</p>` : ''}${job.expiresUtc && ['queued','pending','sent'].includes(job.state) ? `<p>Caduca: ${escapeHtml(fullTime(job.expiresUtc))}</p>` : ''}</li>`).join('')}</ol>` : '<p class="detail-note">Este equipo todavía no ha informado resultados de órdenes.</p>'}</section>`;
+    ui['device-detail-content'].innerHTML = `<div class="detail-summary"><div class="detail-item"><span>Última comunicación</span><strong>${escapeHtml(device.enrolled ? fullTime(device.lastSeenUtc) : 'Esperando registro')}</strong></div><div class="detail-item"><span>Modo informado</span>${modeHtml(device.mode,device.modeApplied,device.policyError)}</div><div class="detail-item"><span>C: protegido ahora / próximo inicio</span><strong class="uwf-pair">${protectionHtml(device,false)}<span class="slash">/</span>${protectionHtml(device,true)}</strong></div><div class="detail-item"><span>Instalación</span><strong>${escapeHtml(stageLabel(device))}</strong></div></div>${device.deploymentDetail ? `<details class="result-diagnostics"><summary>Diagnóstico de instalación</summary><p>${escapeHtml(device.deploymentDetail)}</p></details>` : ''}${device.policyError ? `<p class="detail-note status-negative">${escapeHtml(device.policyError)}</p>` : ''}${device.uwfError ? `<p class="detail-note status-negative">${escapeHtml(device.uwfError)}</p>` : ''}<section class="detail-section"><h3>Actualización del servicio</h3><p>Versión instalada: ${escapeHtml(device.installedVersion || 'Sin informar')}. ${escapeHtml(updatePhaseLabel(device) || 'Sin estado informado')}${device.availableVersion ? ' · Disponible: '+escapeHtml(device.availableVersion) : ''}</p>${device.updateDownloadedUtc ? `<p>Descarga: ${escapeHtml(fullTime(device.updateDownloadedUtc))}</p>` : ''}${device.updateError ? `<p class="status-negative">${escapeHtml(device.updateError)}</p>` : ''}</section><section class="detail-section"><h3>Órdenes y resultados</h3>${jobs.length ? `<ol class="result-list">${jobs.map(job => `<li><div class="result-heading"><span>${escapeHtml(actionLabels[job.action] || job.action || 'Orden')} · <span class="${jobClass(job)}">${escapeHtml(stateLabels[job.state] || job.state || 'Sin informar')}</span></span><time>${escapeHtml(shortTime(job.utc || job.issuedUtc || job.createdUtc))}</time></div>${job.error || job.detail ? (job.error || ['failed','rejected','interrupted'].includes(job.state) ? `<p class="status-negative">${escapeHtml(job.error || job.detail)}</p>` : `<details class="result-diagnostics"><summary>Detalles</summary><p>${escapeHtml(job.detail)}</p></details>`) : ''}${job.expiresUtc && ['queued','pending','sent'].includes(job.state) ? `<p>Caduca: ${escapeHtml(fullTime(job.expiresUtc))}</p>` : ''}</li>`).join('')}</ol>` : '<p class="detail-note">Sin resultados.</p>'}</section>`;
   }
   function showLogin(message = '') {
     statusEtag = null;
@@ -218,15 +215,15 @@
       ui['page-error'].hidden = true;
       ui['connection-status'].textContent = 'Panel actualizado';
       ui['connection-status'].className = 'connection-status live';
-      ui['last-refresh-label'].textContent = `Panel actualizado a las ${shortTime(state.lastRefresh)}`;
+      ui['last-refresh-label'].textContent = `Actualizado: ${shortTime(state.lastRefresh)}`;
       render();
     } catch (error) {
       if (error.status === 401 || error.status === 403) {
         showLogin(initial ? '' : error.message);
       } else if (initial && !state.authenticated) {
-        showLogin('No se pudo conectar con el panel. Intenta de nuevo en un momento.');
+        showLogin('No se pudo conectar.');
       } else {
-        ui['page-error'].textContent = `No se pudo actualizar el panel. Se conserva el último estado recibido. ${error.message || 'Revisa la conexión.'}`;
+        ui['page-error'].textContent = `No se pudo actualizar. ${error.message || 'Sin conexión.'}`;
         ui['page-error'].hidden = false;
         ui['connection-status'].textContent = 'Sin actualizar';
         ui['connection-status'].className = 'connection-status failed';
@@ -237,7 +234,7 @@
   }
   async function login(token) {
     ui['login-submit'].disabled = true;
-    ui['login-submit'].textContent = 'Verificando acceso…';
+    ui['login-submit'].textContent = 'Entrando…';
     ui['login-error'].hidden = true;
     try {
       await api('/api/admin/session','POST',{token});
@@ -259,7 +256,7 @@
     try {
       const response = await api('/api/admin/jobs','POST',{targets,action,requestId:requestId()});
       const count = Array.isArray(response.jobs) ? response.jobs.length : targets.length;
-      showToast(`Orden registrada para ${count} equipo${count === 1 ? '' : 's'}. Esperando confirmación.`);
+      showToast(`Orden enviada · ${count} equipo${count === 1 ? '' : 's'}.`);
       await refresh({quiet:true});
     } catch (error) {
       if (error.status === 401 || error.status === 403) showLogin(error.message);
@@ -269,20 +266,20 @@
   function confirmCommand(action,targets) {
     const count = targets.length;
     const warnings = {
-      'close-apps':'Se cerrarán las aplicaciones de las sesiones de estudiantes. El trabajo sin guardar puede perderse. Windows, Veyon y el servicio de control seguirán funcionando.',
-      cleanup:'Se eliminarán archivos y datos de los perfiles de estudiantes. Guarda primero los trabajos que deban conservarse. Los perfiles del personal quedan fuera de esta limpieza. Esta acción no se puede deshacer desde el panel.',
-      reboot:'Los equipos se reiniciarán. Asegúrate de que los estudiantes hayan guardado su trabajo.',
-      maintenance:'El mantenimiento UWF puede reiniciar los equipos varias veces. Úsalo fuera del horario de clases.',
-      'uwf-enable':'El equipo comprobará los requisitos antes de programar la protección. La protección solo estará activa después del reinicio y de su verificación.',
-      'uwf-disable':'Se solicitará desactivar UWF. Después del reinicio, los cambios podrán conservarse en el disco. Usa esta acción solo durante el mantenimiento del laboratorio.',
-      'uwf-purge-swap':'Se solicitará eliminar el archivo temporal de UWF. El equipo rechazará la acción si el archivo está en uso o la protección no permite eliminarlo con seguridad.',
-      'uwf-repair':'Se revisará la configuración de UWF mediante las herramientas admitidas de Windows. Consulta el resultado antes de continuar con otras acciones.',
-      'uwf-reset-stage1':'Se iniciará la primera etapa del restablecimiento de UWF. Espera el resultado y el reinicio indicado antes de ejecutar la segunda etapa.',
-      'uwf-reset-stage2':'Ejecuta esta segunda etapa solo después de completar la primera y su reinicio. La protección debe verificarse nuevamente al finalizar.',
-      'windows-update':'Windows puede necesitar descargar actualizaciones y reiniciar los equipos. El trabajo debe realizarse fuera del horario de clases y con UWF en un estado compatible.'
+      'close-apps':'Se perderá el trabajo sin guardar en las aplicaciones de estudiantes.',
+      cleanup:'Se eliminarán archivos y datos de estudiantes. No se puede deshacer.',
+      reboot:'Reinicio en 60 segundos. Se perderá el trabajo sin guardar.',
+      maintenance:'Puede reiniciar los equipos varias veces.',
+      'uwf-enable':'Requiere reinicio y verificación de la protección.',
+      'uwf-disable':'Tras reiniciar, los cambios en disco serán permanentes.',
+      'uwf-purge-swap':'Eliminar el archivo temporal UWF.',
+      'uwf-repair':'Reparar la configuración UWF.',
+      'uwf-reset-stage1':'Requiere completar el reinicio antes de la etapa 2.',
+      'uwf-reset-stage2':'Requiere haber completado la etapa 1 y su reinicio.',
+      'windows-update':'Puede reiniciar los equipos.'
     };
     ui['confirm-title'].textContent = `${actionLabels[action] || 'Enviar orden'} · ${count} equipo${count === 1 ? '' : 's'}`;
-    ui['confirm-message'].textContent = warnings[action] || descriptions[action] || '';
+    ui['confirm-message'].textContent = warnings[action] || '';
     ui['confirm-targets'].innerHTML = targets.map(n => `<span>${n}</span>`).join('');
     ui['confirm-submit'].textContent = action === 'close-apps' ? 'Cerrar aplicaciones' : action === 'cleanup' ? 'Limpiar perfiles' : action === 'reboot' ? 'Reiniciar' : 'Confirmar acción';
     pendingConfirmation = {action,targets};
@@ -297,8 +294,6 @@
     finally { ui['logout-button'].disabled = false; }
   });
   ui['refresh-button'].addEventListener('click', () => refresh());
-  ui['command-select'].addEventListener('change', () => { ui['command-description'].textContent = descriptions[ui['command-select'].value] || ''; });
-  ui['advanced-command-select'].addEventListener('change', () => { ui['advanced-command-description'].textContent = descriptions[ui['advanced-command-select'].value] || ''; });
   ui['clear-selection'].addEventListener('click', () => { state.selected.clear(); render(); });
   ui['select-visible'].addEventListener('change', () => { for (const d of visibleDevices()) ui['select-visible'].checked ? state.selected.add(d.name) : state.selected.delete(d.name); render(); });
   ui['device-rows'].addEventListener('change', event => { const name = event.target.dataset.select; if (expectedNames.includes(name)) {event.target.checked ? state.selected.add(name) : state.selected.delete(name); render();} });

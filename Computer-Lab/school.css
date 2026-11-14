@@ -31,3 +31,4 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .toast{background:var(--text);color:#fff}
 .initial-loading{background:var(--bg);color:var(--text)}
 @media(max-width:760px){.policy-grid{grid-template-columns:1fr}}
+.result-diagnostics{margin:10px 0;color:var(--muted);font-size:12px}.result-diagnostics summary{cursor:pointer}.result-diagnostics p{margin:8px 0;overflow-wrap:anywhere}
