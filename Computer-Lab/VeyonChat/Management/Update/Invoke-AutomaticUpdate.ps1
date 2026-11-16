@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [switch]$LibraryOnly,
     [string]$StateRoot = (Join-Path $env:ProgramData 'UEPLV\Update'),
@@ -194,6 +194,7 @@ function New-UpdateState([string]$InitialVersion='1.2.0') {
 }
 function Test-UpdateAgentIdle($Agent,[switch]$AllowMaintenanceBlocked) {
     if(-not $Agent) { return $false }
+    if($Agent.PSObject.Properties['freezeLease'] -and $Agent.freezeLease -and $Agent.freezeLease.phase -ne 'complete'){return $false}
     if($Agent.PSObject.Properties['session'] -and $Agent.session -and $Agent.session.phase -ne 'student'){return $false}
     if(-not $AllowMaintenanceBlocked -and $Agent.PSObject.Properties['maintenanceBlocked'] -and $Agent.maintenanceBlocked) { return $false }
     return [bool](-not $Agent.PSObject.Properties['activeAction'] -or -not $Agent.activeAction -or $Agent.activeAction -in @('status','uwf-status'))
@@ -286,6 +287,7 @@ function Invoke-UpdateCycle($State,$Runtime) {
         & $save;return
     }
     if($State.phase -notin @('preparing-restart','awaiting-normal-restart','backing-up')) {
+        if($snapshot.Agent -and $snapshot.Agent.PSObject.Properties['freezeLease'] -and $snapshot.Agent.freezeLease -and $snapshot.Agent.freezeLease.phase -ne 'complete'){ $State.lastError='Update waits for thaw protection restoration.';& $save;return }
         if($snapshot.Agent -and $snapshot.Agent.PSObject.Properties['session'] -and $snapshot.Agent.session -and $snapshot.Agent.session.phase -ne 'student'){ $State.lastError='Update waits for student mode.';& $save;return }
         if($snapshot.CurrentEnabled -ne $snapshot.NextEnabled -or ($snapshot.CurrentEnabled -and (-not $snapshot.CurrentCProtected -or -not $snapshot.NextCProtected))) { $State.lastError='Update waits for consistent current and next UWF protection.';& $save;return }
         $State.pendingVersion=$release.Version;$State.packageSha256=$release.PackageHash;$State.wasProtected=[bool]$snapshot.CurrentEnabled;$State.preparedBootId=$snapshot.BootId;$State.rebootsRemaining=1;$State.rollback=@();$State.lastError=$null;$State.previousInstalledVersion=$State.installedVersion

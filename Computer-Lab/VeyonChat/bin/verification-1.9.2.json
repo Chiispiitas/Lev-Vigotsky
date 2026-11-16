@@ -1,0 +1,13 @@
+{
+  "version": "1.9.2",
+  "nativePluginVersion": "1.8.0",
+  "nativeChecks": 2,
+  "backendChecks": 58,
+  "automaticUpdateChecks": 44,
+  "deploymentChecks": 171,
+  "vmUpdateInstalled": true,
+  "examBrowserBlocked": true,
+  "relaxedClassModePreservedBrowser": true,
+  "timedThawRuntimeVerification": "Stopped at user request; not completed",
+  "publishedToLab": true
+}

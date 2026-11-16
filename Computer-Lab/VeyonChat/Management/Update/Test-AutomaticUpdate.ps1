@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param()
 # Safe regression tests: library definitions, disposable files, and injected in-memory
 # operations only. This file never installs a task or changes a service/UWF/host setting.
@@ -190,6 +190,19 @@ try{
             $f.Snapshot.Agent.session.phase='student'
             Invoke-FixtureCycle
             Assert-Equal $f.State.phase 'awaiting-normal-restart' 'Student return must release the pending update without a deadlock'
+        }
+    }
+    Test-Case 'Timed thaw blocks updater until protection is restored' {
+        foreach($phase in @('waiting-thaw','active','waiting-freeze','error')){
+            $f=New-CycleFixture $true
+            $f.Snapshot.Agent|Add-Member -NotePropertyName freezeLease -NotePropertyValue ([pscustomobject]@{phase=$phase})
+            Invoke-FixtureCycle
+            Assert-Equal $f.State.phase 'idle' 'Timed thaw must keep the updater idle'
+            Assert-Equal (Count-Event 'filter:False') 0 'Updater must preserve the thaw protection schedule'
+            Assert-Equal (Count-Event 'restart') 0 'Updater must not spend thaw boots'
+            $f.Snapshot.Agent.freezeLease.phase='complete'
+            Invoke-FixtureCycle
+            Assert-Equal $f.State.phase 'awaiting-normal-restart' 'Restored protection releases updates'
         }
     }
     Write-Output ('ALL '+$script:passed+' AUTOMATIC UPDATE TESTS PASSED (no host settings changed).')

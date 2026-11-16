@@ -1,8 +1,8 @@
-#Requires -RunAsAdministrator
+﻿#Requires -RunAsAdministrator
 [CmdletBinding()]
 param(
     [string]$PayloadRoot,
-    [string]$InitialVersion='1.7.2'
+    [string]$InitialVersion='1.9.2'
 )
 $ErrorActionPreference='Stop'
 if(-not $PayloadRoot){$PayloadRoot=$PSScriptRoot}

@@ -25,12 +25,13 @@ int main(int argc,char**argv){
         auto item=new QStandardItem(QIcon(thumb),QString("%1").arg(i,2,10,QLatin1Char('0')));item->setData(QString("UEPLV-%1").arg(i,2,10,QLatin1Char('0')),Qt::UserRole);model.appendRow(item);
     }
     s.seen.remove("UEPLV-03");
+    for(int i=1;i<=3;++i){const auto name=QStringLiteral("UEPLV-%1").arg(i,2,10,QLatin1Char('0'));s.commands[name]=QJsonObject{{"action",i==1?"class":i==2?"exam":"close-apps"},{"state",i==1?"pending":i==2?"success":"error"},{"utc",now.toString(Qt::ISODateWithMs)}};}
     view.setModel(&model);auto base=view.itemDelegate();
     view.setItemDelegate(new CloudBadgeDelegate(base,&s,[](const QModelIndex&i){return i.data(Qt::UserRole).toString();},&view));
     view.show();app.processEvents();view.grab().save("cloud-badges-preview.png");
     QJsonObject detail{{"status",QJsonObject{{"mode","class-ai"},{"modeApplied",true},{"currentEnabled",true},{"nextEnabled",false},{"currentCProtected",true},{"nextCProtected",true},{"overlayMB",256},{"availableMB",7936},{"installation",QJsonObject{{"stage","Complete"},{"success",true}}}}},{"lastJob",QJsonObject{{"action","class-ai"},{"state","completed"}}}};
     const auto html=cloudDetailsHtml(detail);check(html.contains("Modo Clase sin IA"));check(html.contains("Próximo inicio: Desactivada"));check(html.contains("256 MB"));check(html.contains("Última orden"));
     check(cloudDetailsHtml(QJsonObject{}).contains("Sin datos"));
-    QLabel tip;tip.setTextFormat(Qt::RichText);tip.setText(QStringLiteral("<b>Hostname could not be resolved</b><br>Name: 27<br>Location: UEPLV LAB<br>Hostname: LEV-VIGOTSKY-27.local<hr>Wix: sin conexión reciente")+html+QStringLiteral("<br>Último informe: 15/11 19:30:00 · datos anteriores"));tip.setStyleSheet("QLabel {background:#198bae;color:white;padding:16px;font:12pt 'Segoe UI';}");tip.adjustSize();tip.show();app.processEvents();tip.grab().save("cloud-tooltip-preview.png");
+    QLabel tip;tip.setTextFormat(Qt::RichText);tip.setText(QStringLiteral("<b>Hostname could not be resolved</b><br>Name: 27<br>Location: UEPLV LAB<br>Hostname: LEV-VIGOTSKY-27.local<hr>Servidor: sin conexión reciente")+html+QStringLiteral("<br>Último informe: 15/11 19:30:00 · datos anteriores"));tip.setStyleSheet("QLabel {background:#198bae;color:white;padding:16px;font:12pt 'Segoe UI';}");tip.adjustSize();tip.show();app.processEvents();tip.grab().save("cloud-tooltip-preview.png");
     std::puts("Cloud presence passed: recent, stale, missing, unavailable, future-clock, expired snapshot, independent-of-Veyon and delegate rendering.");return 0;
 }

@@ -15,6 +15,7 @@ struct CloudSnapshot {
     QDateTime checked;
     QHash<QString,QDateTime> seen;
     QHash<QString,QJsonObject> details;
+    QHash<QString,QJsonObject> commands;
     bool available=false;
     CloudState state(const QString& name,const QDateTime& now=QDateTime::currentDateTimeUtc()) const;
 };

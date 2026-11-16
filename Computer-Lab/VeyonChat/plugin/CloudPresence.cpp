@@ -15,6 +15,7 @@
 #include <QStyle>
 #include <QToolTip>
 #include <QTreeView>
+#include <QIcon>
 #include "NetworkObjectDirectoryManager.h"
 #include "NetworkObjectDirectory.h"
 
@@ -50,10 +51,16 @@ void CloudBadgeDelegate::paint(QPainter* painter,const QStyleOptionViewItem& opt
     if(textRect.width()<20||textRect.height()<9)return;
     painter->save();painter->setRenderHint(QPainter::Antialiasing);
     painter->setPen(QPen(o.palette.base().color(),1.5));painter->setBrush(cloudColor(snapshot->state(target)));
-    painter->drawEllipse(cloudDotRect(o,textRect,o.text));painter->restore();
+    painter->drawEllipse(cloudDotRect(o,textRect,o.text));
+    const auto command=snapshot->commands.value(target);const auto time=QDateTime::fromString(command.value("utc").toString(),Qt::ISODateWithMs);const auto age=time.msecsTo(QDateTime::currentDateTimeUtc());
+    if(!command.isEmpty()&&time.isValid()&&age>=0&&age<180000){auto state=command.value("state").toString();if(state=="pending"&&age>125000)state="error";
+        const auto action=command.value("action").toString();const QHash<QString,QString> icons{{"class","class-ai-allowed"},{"class-ai","class-ai-blocked"},{"exam","exam"},{"free","free"},{"close-apps","close-apps"},{"freeze-reboot","freeze"},{"thaw-reboot","thaw"}};
+        const auto rect=QRect(option.rect.right()-42,textRect.top()-40,34,34);QIcon(QStringLiteral(":/ueplv/")+icons.value(action)+QStringLiteral(".png")).paint(painter,rect);
+        const QRect badge(rect.right()-13,rect.bottom()-11,20,18);painter->setPen(Qt::NoPen);painter->setBrush(state=="success"?QColor("#27865e"):state=="error"?QColor("#bc4141"):QColor("#354766"));painter->drawRoundedRect(badge,6,6);painter->setPen(Qt::white);auto font=o.font;font.setBold(true);font.setPixelSize(12);painter->setFont(font);painter->drawText(badge,Qt::AlignCenter,state=="success"?QString::fromUtf8("✓"):state=="error"?QString::fromUtf8("×"):QStringLiteral("…"));}
+    painter->restore();
 }
 static QString translated(const QString& key){
-    static const QHash<QString,QString> labels{{"class","Modo Clase con IA"},{"class-ai","Modo Clase sin IA"},{"exam","Modo Examen"},{"free","Modo Libre"},{"close-apps","Cerrar aplicaciones"},{"reboot","Reiniciar"},{"shutdown","Apagar"},{"status","Solicitar estado"},{"maintenance","Mantenimiento"},{"maintenance-enter","Entrar a mantenimiento"},{"student-return","Volver a estudiante"},{"cleanup","Limpiar perfil"},{"Prepare","Preparando"},{"Updates","Actualizaciones"},{"Readiness","Verificación"},{"ProtectionPending","Protección pendiente"},{"PostBoot","Verificando reinicio"},{"Complete","Completa"},{"queued","Pendiente"},{"running","En curso"},{"completed","Completada"},{"failed","Falló"},{"rejected","Rechazada"},{"expired","Caducó"},{"awaiting-restart","Esperando reinicio"},{"shutdown-scheduled","Apagado programado"}};
+    static const QHash<QString,QString> labels{{"freeze-reboot","Congelar y Reiniciar"},{"thaw-reboot","Descongelar y Reiniciar"},{"class","Modo Clase con IA"},{"class-ai","Modo Clase sin IA"},{"exam","Modo Examen"},{"free","Modo Libre"},{"close-apps","Cerrar aplicaciones"},{"reboot","Reiniciar"},{"shutdown","Apagar"},{"status","Solicitar estado"},{"maintenance","Mantenimiento"},{"maintenance-enter","Entrar a mantenimiento"},{"student-return","Volver a estudiante"},{"cleanup","Limpiar perfil"},{"Prepare","Preparando"},{"Updates","Actualizaciones"},{"Readiness","Verificación"},{"ProtectionPending","Protección pendiente"},{"PostBoot","Verificando reinicio"},{"Complete","Completa"},{"queued","Pendiente"},{"running","En curso"},{"completed","Completada"},{"failed","Falló"},{"rejected","Rechazada"},{"expired","Caducó"},{"awaiting-restart","Esperando reinicio"},{"shutdown-scheduled","Apagado programado"}};
     return labels.value(key,key.isEmpty()?QStringLiteral("Sin datos"):key);
 }
 QString cloudDetailsHtml(const QJsonObject& device){
@@ -80,8 +87,9 @@ QString cloudDetailsHtml(const QJsonObject& device){
 bool CloudBadgeDelegate::helpEvent(QHelpEvent* event,QAbstractItemView* view,const QStyleOptionViewItem& o,const QModelIndex& index){
     const auto name=resolver(index);if(name.isEmpty())return original ? original->helpEvent(event,view,o,index) : false;
     const auto s=snapshot->state(name);
-    const auto label=s==CloudState::Online ? QStringLiteral("Wix: conectado") : s==CloudState::Offline ? QStringLiteral("Wix: sin conexión reciente") : QStringLiteral("Wix: sin verificar");
+    const auto label=s==CloudState::Online ? QStringLiteral("Servidor: conectado") : s==CloudState::Offline ? QStringLiteral("Servidor: sin conexión reciente") : QStringLiteral("Servidor: sin verificar");
     auto html=index.data(Qt::ToolTipRole).toString()+QStringLiteral("<hr>")+cloudDetailsHtml(snapshot->details.value(name));
+    const auto command=snapshot->commands.value(name);if(!command.isEmpty())html+=QStringLiteral("<br><b>Orden:</b> ")+command.value("detail").toString().toHtmlEscaped();
     const auto seen=snapshot->seen.value(name);
     if(seen.isValid())html+=QStringLiteral("<br>Último informe: ")+seen.toLocalTime().toString(QStringLiteral("dd/MM HH:mm:ss"))+(s!=CloudState::Online?QStringLiteral(" · datos anteriores"):QString{});
     QToolTip::showText(event->globalPos(),html,view);return true;
@@ -114,7 +122,7 @@ CloudPresence::CloudPresence(QWidget* main,QObject* parent):QObject(parent),wind
         repaintViews();
     });
     refreshTimer->setInterval(15000);connect(refreshTimer,&QTimer::timeout,this,&CloudPresence::refresh);refreshTimer->start();
-    ageTimer->setInterval(5000);connect(ageTimer,&QTimer::timeout,this,&CloudPresence::repaintViews);ageTimer->start();
+    ageTimer->setInterval(250);connect(ageTimer,&QTimer::timeout,this,&CloudPresence::repaintViews);ageTimer->start();
     QTimer::singleShot(0,this,&CloudPresence::refresh);
 }
 void CloudPresence::refresh(){
@@ -126,7 +134,7 @@ CloudPresence::~CloudPresence(){
     refreshTimer->stop();ageTimer->stop();deadline->stop();process->disconnect(this);
     if(process->state()!=QProcess::NotRunning){process->kill();process->waitForFinished(1000);}
 }
-void CloudPresence::repaintViews(){for(auto view:views)if(view)view->viewport()->update();report();}
+void CloudPresence::repaintViews(){const auto directory=QDir(qEnvironmentVariable("LOCALAPPDATA")).filePath("UEPLV/VeyonIntegration");for(int n=1;n<=34;++n){const auto name=QStringLiteral("UEPLV-%1").arg(n,2,10,QLatin1Char('0'));QFile file(QDir(directory).filePath("command-"+name+".json"));if(file.open(QIODevice::ReadOnly)&&file.size()<8192)snapshot.commands[name]=QJsonDocument::fromJson(file.readAll()).object();}for(auto view:views)if(view)view->viewport()->update();static QDateTime last;if(!last.isValid()||last.msecsTo(QDateTime::currentDateTimeUtc())>2000){report();last=QDateTime::currentDateTimeUtc();}}
 void CloudPresence::report(){
     QJsonArray rows;
     auto master=VeyonCore::instance()->findChild<VeyonMasterInterface*>();

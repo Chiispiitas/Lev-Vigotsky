@@ -11,11 +11,19 @@
 #include <QDir>
 #include <QDateTime>
 #include <QFile>
+#include <QSaveFile>
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
+#include <QDialog>
+#include <QDialogButtonBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QPushButton>
 #include <QMenu>
 #include <QProcess>
 #include <QSet>
@@ -40,7 +48,9 @@ UeplvLabPlugin::UeplvLabPlugin(QObject* parent) :
         labFeature("class-ai", "13d77d13-17c5-4970-890b-15ea9685ce02", QStringLiteral("Modo Clase sin IA"), ":/ueplv/class-ai-blocked.png"),
         labFeature("exam", "13d77d13-17c5-4970-890b-15ea9685ce03", QStringLiteral("Modo Examen"), ":/ueplv/exam.png"),
         labFeature("free", "13d77d13-17c5-4970-890b-15ea9685ce04", QStringLiteral("Modo Libre"), ":/ueplv/free.png"),
-        labFeature("close-apps", "13d77d13-17c5-4970-890b-15ea9685ce05", QStringLiteral("Cerrar aplicaciones"), ":/ueplv/close-apps.png")
+        labFeature("close-apps", "13d77d13-17c5-4970-890b-15ea9685ce05", QStringLiteral("Cerrar aplicaciones"), ":/ueplv/close-apps.png"),
+        labFeature("freeze-reboot", "13d77d13-17c5-4970-890b-15ea9685ce07", QStringLiteral("Congelar y Reiniciar"), ":/ueplv/freeze.png"),
+        labFeature("thaw-reboot", "13d77d13-17c5-4970-890b-15ea9685ce08", QStringLiteral("Descongelar y Reiniciar"), ":/ueplv/thaw.png")
     })
 {
     connect(VeyonCore::instance(), &VeyonCore::applicationLoaded, this, [this]() {
@@ -84,18 +94,37 @@ bool UeplvLabPlugin::invoke(Feature::Uid uid, const ComputerControlInterfaceList
         if (!targets.contains(target)) targets.append(target);
     }
     if (targets.isEmpty()) return false;
+    int rebootCount=1;
+    if(action==QStringLiteral("thaw-reboot")){
+        QDialog dialog(parent);dialog.setWindowTitle(QStringLiteral("Descongelar y Reiniciar"));
+        auto layout=new QVBoxLayout(&dialog);auto sentence=new QHBoxLayout;auto count=new QSpinBox(&dialog);count->setRange(1,99);count->setValue(1);
+        sentence->addWidget(new QLabel(QStringLiteral("La computadora estará descongelada por"),&dialog));sentence->addWidget(count);sentence->addWidget(new QLabel(QStringLiteral("reinicios."),&dialog));layout->addLayout(sentence);
+        layout->addWidget(new QLabel(QStringLiteral("Recomendado: 1"),&dialog));
+        auto buttons=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);buttons->button(QDialogButtonBox::Ok)->setText(QStringLiteral("Reiniciar"));buttons->button(QDialogButtonBox::Cancel)->setText(QStringLiteral("Cancelar"));layout->addWidget(buttons);
+        QObject::connect(buttons,&QDialogButtonBox::accepted,&dialog,&QDialog::accept);QObject::connect(buttons,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
+        if(dialog.exec()!=QDialog::Accepted)return false;rebootCount=count->value();
+    }
+    if(action==QStringLiteral("freeze-reboot")&&QMessageBox::question(parent,QStringLiteral("Congelar y Reiniciar"),QStringLiteral("¿Congelar y reiniciar los equipos seleccionados? Guarden su trabajo."),QMessageBox::Yes|QMessageBox::No,QMessageBox::No)!=QMessageBox::Yes)return false;
+    const bool quiet=action!=QStringLiteral("chat");
+    const auto id=QUuid::createUuid().toString(QUuid::WithoutBraces);
+    const auto writeStatus=[&](const QString& state,const QString& detail){
+        const auto directory=QDir(qEnvironmentVariable("LOCALAPPDATA")).filePath(QStringLiteral("UEPLV/VeyonIntegration"));QDir().mkpath(directory);
+        for(const auto& target:targets){QSaveFile file(QDir(directory).filePath(QStringLiteral("command-")+target+QStringLiteral(".json")));if(file.open(QIODevice::WriteOnly)){file.write(QJsonDocument(QJsonObject{{"commandId",id},{"action",action},{"state",state},{"detail",detail},{"utc",QDateTime::currentDateTimeUtc().toString(Qt::ISODateWithMs)}}).toJson());file.commit();}}
+    };
     const auto base = qEnvironmentVariable("ProgramData");
     const auto bridge = QDir(base).filePath(QStringLiteral("UEPLV/VeyonIntegration/UEPLV.VeyonBridge.exe"));
     if (base.isEmpty() || !QFileInfo::exists(bridge)) {
-        QMessageBox::warning(parent, QStringLiteral("Laboratorio"), QStringLiteral("No se encontró el controlador del laboratorio."));
+        if(quiet)writeStatus(QStringLiteral("error"),QStringLiteral("No se encontró el controlador del laboratorio."));
+        else QMessageBox::warning(parent, QStringLiteral("Laboratorio"), QStringLiteral("No se encontró el controlador del laboratorio."));
         return false;
     }
     // Pass discrete arguments directly to a fixed executable, with no shell or student-side command files.
-    // The bridge owns authenticated dispatch, acknowledgement, and destructive-action confirmation.
-    const bool started = QProcess::startDetached(bridge,
-        {QStringLiteral("--action"), action, QStringLiteral("--targets"), targets.join(QLatin1Char(','))},
-        QFileInfo(bridge).absolutePath());
-    if (!started) QMessageBox::warning(parent, QStringLiteral("Laboratorio"), QStringLiteral("No se pudo iniciar el controlador del laboratorio."));
+    // The bridge owns authenticated dispatch and acknowledgement. Commands report on thumbnails.
+    QStringList arguments{QStringLiteral("--action"),action,QStringLiteral("--targets"),targets.join(QLatin1Char(','))};
+    if(action==QStringLiteral("thaw-reboot"))arguments<<QStringLiteral("--reboot-count")<<QString::number(rebootCount);
+    if(quiet){arguments<<QStringLiteral("--silent")<<QStringLiteral("--command-id")<<id;writeStatus(QStringLiteral("pending"),QStringLiteral("Enviando"));}
+    const bool started=QProcess::startDetached(bridge,arguments,QFileInfo(bridge).absolutePath());
+    if (!started) {if(quiet)writeStatus(QStringLiteral("error"),QStringLiteral("No se pudo iniciar el controlador del laboratorio."));else QMessageBox::warning(parent, QStringLiteral("Laboratorio"), QStringLiteral("No se pudo iniciar el controlador del laboratorio."));}
     return started;
 }
 

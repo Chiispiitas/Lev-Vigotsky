@@ -4,7 +4,7 @@ import {createChat} from './chat-core.mjs';
 import { createReleaseManager, ReleaseError } from './release-core.mjs';
 export const CONFIG_ID = '2f819598-c169-4736-99d0-6d48cfbd5301';
 export const EXPECTED_NAMES = [...Array.from({ length: 33 }, (_, i) => `UEPLV-${String(i + 1).padStart(2, '0')}`),'UEPLV-34'];
-export const ACTIONS = Object.freeze(['class','class-ai','exam','free','close-apps','cleanup','status','uwf-status','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update','maintenance','reboot','shutdown','shutdown-warning-test','maintenance-enter','student-return']);
+export const ACTIONS = Object.freeze(['class','class-ai','exam','free','close-apps','cleanup','status','uwf-status','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update','maintenance','reboot','shutdown','shutdown-warning-test','maintenance-enter','student-return','freeze-reboot','thaw-reboot']);
 const SESSION_CREDENTIALS_ID='b785ec71-c16e-4c9e-a9cc-5ac27221da61';
 const COOKIE = '__Host-ueplv_staff';
 const SESSION_SECONDS = 30 * 24 * 60 * 60;
@@ -70,9 +70,10 @@ function cleanStatus(input, name) {
   s.installedReleaseVersion=string(input.installedReleaseVersion,24);
   const u=input.update;s.update=u&&typeof u==='object'?{installedVersion:string(u.installedVersion,24),availableVersion:string(u.availableVersion,24),phase:string(u.phase,80),lastError:string(u.lastError,600),downloadedUtc:string(u.downloadedUtc,40)}:null;
   const session=input.session;s.session=session&&typeof session==='object'?{phase:string(session.phase,40),error:string(session.error,600),user:string(session.user,80)}:null;
+  const f=input.freezeLease;s.freezeLease=f&&typeof f==='object'?{phase:string(f.phase,40),remainingBoots:Number.isInteger(f.remainingBoots)?Math.max(0,Math.min(99,f.remainingBoots)):0,requestedBoots:Number.isInteger(f.requestedBoots)?Math.max(0,Math.min(99,f.requestedBoots)):0,error:string(f.error,600)}:null;
   return s;
 }
-function wireJob(item) { return { id: item._id, action: item.action, issuedUtc: item.issuedUtc, expiresUtc: item.expiresUtc }; }
+function wireJob(item) { return { ...(item.action==='thaw-reboot'?{rebootCount:item.rebootCount}:{}), id: item._id, action: item.action, issuedUtc: item.issuedUtc, expiresUtc: item.expiresUtc }; }
 export function createControl(store, options = {}) {
   const now = options.now || Date.now;
   // Wix may route SSR requests through an internal origin. This is deployment-owned,
@@ -245,13 +246,19 @@ export function createControl(store, options = {}) {
         if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405); checkOrigin(request,publicOrigin);
         const body = await readBody(request), targets = [...new Set(Array.isArray(body.targets) ? body.targets : [])].sort();
         if (!GUID.test(body.requestId || '') || !ACTIONS.includes(body.action) || targets.length < 1 || targets.length > 33 || targets.some(n => !EXPECTED_NAMES.includes(n))) fail(400, 'invalid_command', 'Comando o equipos no válidos.');
+        if(body.action==='thaw-reboot'&&(!Number.isInteger(body.rebootCount)||body.rebootCount<1||body.rebootCount>99))fail(400,'invalid_reboot_count','Elige entre 1 y 99 reinicios.');
+        if(['freeze-reboot','thaw-reboot'].includes(body.action)){
+          const polls=await store.listPolls(450),latest=new Map();for(const poll of polls)if(!latest.has(poll.name)||poll.sequence>latest.get(poll.name).sequence)latest.set(poll.name,poll);
+          const unsupported=targets.filter(name=>{const v=latest.get(name)?.payload?.status?.version||'';const n=v.split('.').map(Number);return !/^\d+\.\d+\.\d+$/.test(v)||n[0]<1||(n[0]===1&&n[1]<9);});
+          if(unsupported.length)fail(409,'agent_update_required','Actualice el servicio en: '+unsupported.join(', '));
+        }
         if(['maintenance-enter','student-return'].includes(body.action)){
           const polls=await store.listPolls(450),latest=new Map();for(const poll of polls)if(!latest.has(poll.name)||poll.sequence>latest.get(poll.name).sequence)latest.set(poll.name,poll);
           const unsupported=targets.filter(name=>{const v=latest.get(name)?.payload?.status?.version||'';return !/^\d+\.\d+\.\d+$/.test(v)||Number(v.split('.')[0])<1||(Number(v.split('.')[0])===1&&Number(v.split('.')[1])<6);});
           if(unsupported.length)fail(409,'agent_update_required','Actualice el servicio en: '+unsupported.join(', '));
           if(body.action==='maintenance-enter'){const sources=await credentialSources();if(targets.some(name=>!sources[name]))fail(409,'credential_missing','Falta configurar la credencial de mantenimiento.');}
         }
-        const targetsHash = await sha256Hex(JSON.stringify({ action:body.action,targets }));
+        const targetsHash = await sha256Hex(JSON.stringify({ action:body.action,targets,...(body.action==='thaw-reboot'?{rebootCount:body.rebootCount}:{}) }));
         let existing = await store.jobsByRequest(body.requestId);
         if (existing.some(j => j.action !== body.action || j.targetsHash !== targetsHash || !targets.includes(j.name))) fail(409, 'request_id_conflict', 'El identificador ya corresponde a otro comando.');
         const additional = targets.filter(name => !existing.some(j => j.name === name)).length;
@@ -263,7 +270,7 @@ export function createControl(store, options = {}) {
         }
         if (additional && current.filter(j => j.expiresAt > now()).length + additional > 250) fail(429, 'queue_full', 'Hay demasiados comandos pendientes. Espere a que terminen o caduquen.');
         const issuedAt=now(), expiresAt=issuedAt+300000, issuedUtc = new Date(issuedAt).toISOString(), expiresUtc = new Date(expiresAt).toISOString();
-        const missing = await Promise.all(targets.filter(n => !existing.some(j => j.name === n)).map(async name => ({ _id: await deterministicId(`job:${body.requestId}:${name}`), name, action: body.action, requestId: body.requestId, targetsHash, issuedAt, expiresAt, issuedUtc, expiresUtc })));
+        const missing = await Promise.all(targets.filter(n => !existing.some(j => j.name === n)).map(async name => ({ _id: await deterministicId(`job:${body.requestId}:${name}`), name, action: body.action, ...(body.action==='thaw-reboot'?{rebootCount:body.rebootCount}:{}), requestId: body.requestId, targetsHash, issuedAt, expiresAt, issuedUtc, expiresUtc })));
         if (missing.length) await store.insertJobs(missing);
         existing = await store.jobsByRequest(body.requestId);
         if (existing.length !== targets.length || existing.some(j => j.action !== body.action)) fail(503, 'command_storage_incomplete', 'No se guardaron todos los comandos. Reintente la misma solicitud.');

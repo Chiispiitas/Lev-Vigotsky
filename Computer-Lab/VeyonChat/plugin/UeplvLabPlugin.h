@@ -11,7 +11,7 @@ class UeplvLabPlugin final : public QObject, public PluginInterface, public Feat
 public:
     explicit UeplvLabPlugin(QObject* parent = nullptr);
     Plugin::Uid uid() const override { return Plugin::Uid{QStringLiteral("010d64c4-a30a-4b88-b0b5-582c821990d6")}; }
-    QVersionNumber version() const override { return QVersionNumber(1, 6, 0); }
+    QVersionNumber version() const override { return QVersionNumber(1, 8, 0); }
     QString name() const override { return QStringLiteral("UeplvLab"); }
     QString description() const override { return QStringLiteral("Controles del laboratorio Lev Vigotsky"); }
     QString vendor() const override { return QStringLiteral("UEPLV"); }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,13 +19,16 @@ using System.Windows.Forms;
 [assembly: System.Reflection.AssemblyTitle("UEPLV Veyon Control")]
 namespace UEPLV.VeyonIntegration {
   sealed class Options {
-    public string Action; public string[] Targets; public bool Diagnose; public bool SelfTest; public string Import; public bool TestRun; public string Report;
-    public static readonly string[] Actions={"class","class-ai","exam","free","close-apps","shutdown","reboot","chat"};
+    public int RebootCount=1;public string Action; public string[] Targets; public bool Silent; public string CommandId; public bool Diagnose; public bool SelfTest; public string Import; public bool TestRun; public string Report;
+    public static readonly string[] Actions={"class","class-ai","exam","free","close-apps","shutdown","reboot","chat","freeze-reboot","thaw-reboot"};
     public static Options Parse(string[] args) {
       var o=new Options();
       for(int i=0;i<args.Length;i++) {
         if(args[i]=="--self-test"&&args.Length==1){o.SelfTest=true;return o;}
         if(args[i]=="--import-session"&&args.Length==2){o.Import=args[1];return o;}
+        if(args[i]=="--reboot-count"&&i+1<args.Length){o.RebootCount=int.Parse(args[++i]);if(o.RebootCount<1||o.RebootCount>99)throw new Exception("Elige entre 1 y 99 reinicios.");continue;}
+        if(args[i]=="--silent"){o.Silent=true;continue;}
+        if(args[i]=="--command-id"&&i+1<args.Length){o.CommandId=Guid.Parse(args[++i]).ToString();continue;}
         if(args[i]=="--diagnose"&&!o.Diagnose){o.Diagnose=true;continue;}
         if(args[i]=="--test-run"&&o.Action==null&&i+1<args.Length){o.TestRun=true;o.Action=args[++i];continue;}
         if(args[i]=="--report"&&o.Report==null&&i+1<args.Length){o.Report=Path.GetFullPath(args[++i]);continue;}
@@ -173,27 +176,27 @@ namespace UEPLV.VeyonIntegration {
     readonly Button close=new Button{Text="Cerrar",Dock=DockStyle.Bottom,Height=34};
     readonly Dictionary<string,ListViewItem> rows=new Dictionary<string,ListViewItem>();
     public int ResultCode=1;
-    static readonly Dictionary<string,string> Labels=new Dictionary<string,string>{{"class","Modo Clase con IA"},{"class-ai","Modo Clase sin IA"},{"exam","Modo Examen"},{"free","Modo Libre"},{"close-apps","Cerrar aplicaciones"},{"shutdown","Apagar"},{"reboot","Reiniciar"}};
+    static readonly Dictionary<string,string> Labels=new Dictionary<string,string>{{"class","Modo Clase con IA"},{"class-ai","Modo Clase sin IA"},{"exam","Modo Examen"},{"free","Modo Libre"},{"close-apps","Cerrar aplicaciones"},{"shutdown","Apagar"},{"reboot","Reiniciar"},{"freeze-reboot","Congelar y Reiniciar"},{"thaw-reboot","Descongelar y Reiniciar"}};
     public ControlForm(Options o){
       options=o;Text="Laboratorio · Veyon";ClientSize=new Size(700,370);StartPosition=FormStartPosition.CenterScreen;Font=new Font("Segoe UI",10);Padding=new Padding(15);MinimumSize=new Size(550,300);
       heading.Text=o.Diagnose?"Estado de los equipos":Labels[o.Action];heading.Font=new Font(Font,FontStyle.Bold);
       list.Columns.Add("Equipo",125);list.Columns.Add("Resultado",515);
       foreach(string name in o.Targets){var item=list.Items.Add(name);item.SubItems.Add("Esperando");rows[name]=item;}
-      if(o.TestRun){Opacity=0;ShowInTaskbar=false;}
-      Controls.Add(list);Controls.Add(heading);Controls.Add(close);close.Click+=delegate{Close();};FormClosing+=delegate{closing=true;};Shown+=async delegate{await Execute();if(o.TestRun){WriteReport();Close();}};
+      if(o.TestRun||o.Silent){Opacity=0;ShowInTaskbar=false;}
+      Controls.Add(list);Controls.Add(heading);Controls.Add(close);close.Click+=delegate{Close();};FormClosing+=delegate{closing=true;};Shown+=async delegate{await Execute();if(o.TestRun){WriteReport();Close();}else if(o.Silent)Close();};
     }
-    void Set(string name,string text){if(!closing)rows[name].SubItems[1].Text=text;}
-    bool Login(){if(options.TestRun)return false;using(var form=new LoginForm()){if(form.ShowDialog(this)!=DialogResult.OK)return false;}session=SessionStore.Load();return session!=null;}
+    void Set(string name,string text){if(!closing)rows[name].SubItems[1].Text=text;if(options.Silent&&options.CommandId!=null){try{string path=Path.Combine(SessionStore.DirectoryPath,"command-"+name+".json");var old=Api.Json.Deserialize<Dictionary<string,object>>(File.ReadAllText(path));if(Api.String(old,"commandId")!=options.CommandId)return;string phase=(text=="Completada"||text.StartsWith("Reinicio programado"))?"success":new[]{"Falló","Sin conexión","Sin confirmación","No se confirmó","Sin sesión"}.Any(prefix=>text.StartsWith(prefix))?"error":"pending";string temp=path+"."+Guid.NewGuid()+".tmp";File.WriteAllText(temp,Api.Json.Serialize(new{commandId=options.CommandId,action=options.Action,state=phase,detail=text,utc=DateTime.UtcNow.ToString("o")}));File.Replace(temp,path,null);}catch{}}}
+    bool Login(){if(options.TestRun||options.Silent)return false;using(var form=new LoginForm()){if(form.ShowDialog(this)!=DialogResult.OK)return false;}session=SessionStore.Load();return session!=null;}
     async Task<Dictionary<string,object>> Request(string route,object body=null){
       if(session==null&&!Login())throw new Exception("Sin sesión.");
       bool expired=false;Dictionary<string,object> result=null;
       try{result=await Api.Call(session,route,body);}catch(LoginRequired){expired=true;}
       if(!expired)return result;session=null;if(!Login())throw new Exception("Sin sesión.");return await Api.Call(session,route,body);
     }
-    static bool Fresh(Dictionary<string,object> d){DateTime time;return DateTime.TryParse(Api.String(d,"lastSeenUtc"),null,System.Globalization.DateTimeStyles.RoundtripKind,out time)&&DateTime.UtcNow-time.ToUniversalTime()<TimeSpan.FromMinutes(3)&&time.ToUniversalTime()<DateTime.UtcNow.AddMinutes(2);}
+    static bool Fresh(Dictionary<string,object> d){DateTime time;return DateTime.TryParse(Api.String(d,"lastSeenUtc"),null,System.Globalization.DateTimeStyles.RoundtripKind,out time)&&DateTime.UtcNow-time.ToUniversalTime()<TimeSpan.FromSeconds(150)&&time.ToUniversalTime()<DateTime.UtcNow.AddMinutes(2);}
     async Task Execute(){
       try {
-        if(!options.TestRun&&!options.Diagnose&&new[]{"close-apps","shutdown","reboot"}.Contains(options.Action)){
+        if(!options.Silent&&!options.TestRun&&!options.Diagnose&&new[]{"close-apps","shutdown","reboot"}.Contains(options.Action)){
           string message=options.Action=="close-apps"?"¿Cerrar las aplicaciones de los equipos seleccionados? Puede perderse trabajo sin guardar.":"¿"+Labels[options.Action]+" los equipos seleccionados? Guarden su trabajo.";
           if(MessageBox.Show(this,message,"Laboratorio",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2)!=DialogResult.Yes){Close();return;}
         }
@@ -208,18 +211,18 @@ namespace UEPLV.VeyonIntegration {
         if(options.Diagnose||targets.Count==0)return;
         bool modeChange=new[]{"class","class-ai","exam","free"}.Contains(options.Action);
         var resetTargets=new HashSet<string>();
-        if(modeChange)foreach(string name in targets){
+        if(modeChange&&options.Action!="free")foreach(string name in targets){
           var status=Api.Object(devices[name],"status");var update=Api.Object(status,"update");Version installed;
           if(!Version.TryParse(Api.String(update,"installedVersion"),out installed)||installed<new Version(1,5,5))resetTargets.Add(name);
         }
-        if(modeChange&&!options.TestRun){
+        if(modeChange&&!options.TestRun&&!options.Silent){
           string consequence=resetTargets.Count>0?"Se cerrarán las aplicaciones de estudiantes.":"Se cerrarán los navegadores de estudiantes.";
           if(MessageBox.Show(this,"¿Aplicar "+Labels[options.Action]+"? "+consequence,"Laboratorio",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2)!=DialogResult.Yes){Close();return;}
         }
         var resetSent=new HashSet<string>();
         // The backend accepts at most 33 targets. Reserve VM34 for explicit selection.
         var jobs=new Dictionary<string,string>();
-        for(int offset=0;offset<targets.Count;offset+=33){var chunk=targets.Skip(offset).Take(33).ToArray();string requestId=Guid.NewGuid().ToString();var reply=await Request("jobs",new{action=options.Action,targets=chunk,requestId=requestId});foreach(var job in Api.Objects(reply,"jobs")){string name=Api.String(job,"name");if(chunk.Contains(name)){jobs[name]=Api.String(job,"id");Set(name,"Enviada · esperando confirmación");}}foreach(string name in chunk)if(!jobs.ContainsKey(name))Set(name,"No se confirmó el envío");}
+        for(int offset=0;offset<targets.Count;offset+=33){var chunk=targets.Skip(offset).Take(33).ToArray();string requestId=Guid.NewGuid().ToString();var reply=await Request("jobs",new{action=options.Action,targets=chunk,requestId=requestId,rebootCount=options.RebootCount});foreach(var job in Api.Objects(reply,"jobs")){string name=Api.String(job,"name");if(chunk.Contains(name)){jobs[name]=Api.String(job,"id");Set(name,"Enviada · esperando confirmación");}}foreach(string name in chunk)if(!jobs.ContainsKey(name))Set(name,"No se confirmó el envío");}
         var pending=new HashSet<string>(jobs.Keys);DateTime deadline=DateTime.UtcNow.AddSeconds(110);
         while(pending.Count>0&&!closing&&DateTime.UtcNow<deadline){
           await Task.Delay(2500);if(closing)return;var state=await Request("status");devices=Api.Objects(state,"devices").ToDictionary(x=>Api.String(x,"name"));
@@ -240,14 +243,14 @@ namespace UEPLV.VeyonIntegration {
               }
               Set(name,"Completada");pending.Remove(name);
             }else if(phase=="shutdown-scheduled"){Set(name,"Apagado programado · 60 segundos");pending.Remove(name);}
-            else if(phase=="awaiting-restart"&&options.Action=="reboot"){Set(name,"Reinicio programado · 60 segundos");pending.Remove(name);}
+            else if(phase=="awaiting-restart"&&new[]{"reboot","freeze-reboot","thaw-reboot"}.Contains(options.Action)){Set(name,"Reinicio programado · 60 segundos");pending.Remove(name);}
             else if(new[]{"failed","rejected","expired","interrupted"}.Contains(phase)){string detail=Api.String(job,"detail");Set(name,"Falló"+(detail.Length>0?": "+detail:""));pending.Remove(name);}
             else Set(name,phase=="running"?"En curso":"Esperando confirmación");
           }
         }
         foreach(string name in pending)Set(name,"Sin confirmación · revisar diagnóstico");
       }catch(Exception ex){
-        foreach(string name in options.Targets){string previous=rows[name].SubItems[1].Text;if(previous!="Completada"&&!previous.StartsWith("Apagado programado")&&!previous.StartsWith("Reinicio programado")&&!previous.StartsWith("Falló")&&previous!="Sin conexión"&&!previous.StartsWith("No se confirmó"))Set(name,ex.Message);}
+        foreach(string name in options.Targets){string previous=rows[name].SubItems[1].Text;if(previous!="Completada"&&!previous.StartsWith("Apagado programado")&&!previous.StartsWith("Reinicio programado")&&!previous.StartsWith("Falló")&&previous!="Sin conexión"&&!previous.StartsWith("No se confirmó"))Set(name,"Falló: "+ex.Message);}
         heading.Text="Revisar conexión";
       }
     }
@@ -261,6 +264,7 @@ namespace UEPLV.VeyonIntegration {
     static void Assert(bool result){if(!result)throw new Exception("Self-test failed");}
     static void SelfTest(){
       Api.SelfTestErrorMessages();
+      Assert(Options.Parse(new[]{"--action","thaw-reboot","--targets","UEPLV-34","--silent","--reboot-count","2"}).RebootCount==2);
       foreach(string action in Options.Actions)Assert(Options.Parse(new[]{"--action",action,"--targets","UEPLV-01,UEPLV-34"}).Targets.Length==2);
       Assert(Options.Parse(new[]{"--diagnose","--targets","UEPLV-02"}).Diagnose);
       Assert(Options.Parse(new[]{"--test-run","class","--targets","UEPLV-34","--report",Path.Combine(Path.GetTempPath(),"fixture-report.json")}).TestRun);
@@ -285,7 +289,7 @@ namespace UEPLV.VeyonIntegration {
           Console.WriteLine(Api.Json.Serialize(new{ok=true,checkedUtc=DateTime.UtcNow.ToString("o"),devices=devices}));return 0;
         }catch{Console.WriteLine("{\"ok\":false}");return 2;}
       }var options=Options.Parse(args);if(options.SelfTest){SelfTest();return 0;}if(options.Import!=null){SessionStore.Import(options.Import);return 0;}if(options.Action=="chat"){ChatHost.Run(options.Targets,false);return 0;}var form=new ControlForm(options);Application.Run(form);return options.TestRun?form.ResultCode:0;}
-      catch(Exception){if(!args.Contains("--self-test")&&!args.Contains("--import-session")&&!args.Contains("--test-run"))MessageBox.Show("No se pudo abrir el control del laboratorio.","Laboratorio",MessageBoxButtons.OK,MessageBoxIcon.Error);return 1;}
+      catch(Exception){if(!args.Contains("--self-test")&&!args.Contains("--import-session")&&!args.Contains("--test-run")&&!args.Contains("--silent"))MessageBox.Show("No se pudo abrir el control del laboratorio.","Laboratorio",MessageBoxButtons.OK,MessageBoxIcon.Error);return 1;}
     }
   }
 }
