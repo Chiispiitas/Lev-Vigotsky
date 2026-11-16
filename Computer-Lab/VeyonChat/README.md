@@ -8,7 +8,7 @@ WebView2 chat with the light UEPLV dashboard palette, using the existing Servido
 - Only teachers may send to multiple recipients, enforced by the server. Students select one conversation at a time, even when student-to-student chat is permitted.
 - The teacher receiver remains active while Veyon is open. Students receive a background client and notification-area shortcut automatically.
 - Credentials stay in the native host. The web interface receives message/permission data only, has no general API proxy, and cannot navigate to websites, download files, or access host objects.
-- Signed management update **1.9.2** embeds the student client. It fetches fixed WebView2 SDK dependencies from this repository with pinned SHA256 hashes. A missing WebView2 Runtime is installed silently using Microsoft's signature-verified installer. Installation readiness waits for dependencies before protection restoration.
+- Signed management update **1.9.3** embeds the student client. It fetches fixed WebView2 SDK dependencies from this repository with pinned SHA256 hashes. A missing WebView2 Runtime is installed silently using Microsoft's signature-verified installer. Installation readiness waits for dependencies before protection restoration.
 - The existing automatic updater downloads updates and installs them during a normal restart cycle, preserving device identities and restoring UWF. Pending older updates finish first. No USB refresh is required for deployed PCs.
 - Messages are retained for up to 24 hours, with approximately 200 recent messages across the lab to reserve CMS capacity for device control. Polling is every three seconds; connection errors appear in the chat window.
 

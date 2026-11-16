@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param(
     [string]$PayloadRoot,
-    [string]$InitialVersion='1.9.2'
+    [string]$InitialVersion='1.9.3'
 )
 $ErrorActionPreference='Stop'
 if(-not $PayloadRoot){$PayloadRoot=$PSScriptRoot}

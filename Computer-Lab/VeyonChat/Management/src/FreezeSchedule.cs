@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Management;
@@ -31,7 +31,7 @@ namespace UEPLV {
   internal static void Tick(AgentState state,Status s,Action save,Action<bool> filter,Func<Status> read){
    var t=state.freezeLease;if(!Active(t)||t.phase=="error")return;
    // Unknown early-boot WMI state never consumes a boot or disables protection.
-   if(s.bootTicks<=0||s.currentEnabled==null||s.nextEnabled==null||s.currentCProtected==null||s.nextCProtected==null)return;
+   if(s.bootTicks<=0||s.uwfFeatureEnabled!=true||s.currentEnabled==null||s.nextEnabled==null||s.currentCProtected==null||s.nextCProtected==null||s.currentServicing==null||s.nextServicing==null||!string.IsNullOrEmpty(s.uwfError))return;
    try{
     RequireKnown(s);
     if(s.bootTicks!=t.lastBootTicks){

@@ -1,0 +1,13 @@
+{
+  "version": "1.9.3",
+  "nativePluginVersion": "1.8.0",
+  "nativeChecks": 2,
+  "backendChecks": 58,
+  "automaticUpdateChecks": 44,
+  "deploymentChecks": 171,
+  "vmUpdateInstalled": false,
+  "examBrowserBlocked": true,
+  "relaxedClassModePreservedBrowser": true,
+  "timedThawRuntimeVerification": "Skipped at user request. Early-provider availability guard corrected from observed startup failure.",
+  "publishedToLab": true
+}
