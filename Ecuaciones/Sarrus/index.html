@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f6f3">
-<title>Determinant Lab · Sarrus & Cramer's Rule</title>
+<title>Sarrus</title>
 <meta name="description" content="Practice 3×3 determinants with Sarrus' Rule, signed arithmetic drills, Cramer's Rule, whole-system exercises and a handwriting notepad.">
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222827;background:#f6f6f3;font-synthesis:none}
@@ -136,48 +136,48 @@ body.pad-open{overflow:hidden}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner"><div class="brand"><div class="mark" aria-hidden="true">∑</div><div><h1>Determinant Lab</h1><p class="subtitle">Sarrus · Cramer's Rule · Arithmetic training</p></div></div><a href="../">← Equations</a></div></header>
+<header class="top"><div class="top-inner"><div class="brand"><div><h1>Sarrus</h1></div></div><a href="../">← Equations</a></div></header>
 <main class="shell">
 <div class="switches" role="tablist" aria-label="App sections"><button id="practiceTab" class="active" role="tab" aria-controls="practiceScreen" aria-selected="true">Practice</button><button id="calculatorTab" role="tab" aria-controls="calculatorScreen" aria-selected="false" tabindex="-1">Calculator</button><button id="wholeTab" role="tab" aria-controls="wholeScreen" aria-selected="false" tabindex="-1">Whole Exercises</button></div>
 <div class="workspace">
 <div class="panel">
 <section role="tabpanel" aria-labelledby="practiceTab" id="practiceScreen">
-<div class="header-row"><div><h2>Arithmetic practice</h2><p class="lead">Multiply six diagonals, add the groups, then subtract.</p></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect" aria-label="Practice mode"><option value="single">One determinant</option><option value="cramer">Full Cramer's round</option></select><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard numbers</option><option value="large">Large replacement column (Dx/Dy/Dz)</option></select><button class="btn" id="newRound">New exercise</button></div></div>
-<p id="difficultyNote" class="practice-note" hidden></p>
-<div class="status-strip"><span>Time <strong id="clock">00:00</strong></span><span>Completed <strong id="progress">0 / 1</strong></span><span>Streak <strong id="streak">0</strong></span><span class="spacer">Best <strong id="best">0</strong></span></div>
+<div class="header-row"><div><h2>Practice</h2></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect" aria-label="Practice mode"><option value="single">One determinant</option><option value="cramer">Cramer's Rule</option></select><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard</option><option value="large">Large constants</option></select><button class="btn" id="newRound">New exercise</button></div></div>
+
+<div class="status-strip"><span>Time <strong id="clock">00:00</strong></span><span>Completed <strong id="progress">0 / 1</strong></span></div>
 <div id="systemBlock" class="system" hidden><strong>System of equations</strong><div class="equations" id="equations"></div></div>
 <div id="targetTabs" class="targets" hidden></div>
-<div class="matrix-title"><h3 id="targetHeading">Determinant D</h3><span class="hint">Repeat the first two columns →</span></div>
+<div class="matrix-title"><h3 id="targetHeading">Determinant D</h3></div>
 <div id="matrixView" class="mat-wrap"></div>
 <div class="direction">
-<div class="group down"><div class="group-title">↘ Downward products</div><div class="group-sub">Keep the sign of each product.</div><div id="downProducts"></div></div>
-<div class="group up"><div class="group-title">↗ Upward products</div><div class="group-sub">Keep the signs. Subtract their sum later.</div><div id="upProducts"></div></div>
+<div class="group down"><div class="group-title">↘ Downward products</div><div id="downProducts"></div></div>
+<div class="group up"><div class="group-title">↗ Upward products</div><div id="upProducts"></div></div>
 </div>
-<div class="sum-area"><h3>Combine the products</h3><p class="lead">P = sum of downward products · N = sum of upward products</p><div class="sum-grid">
+<div class="sum-area"><h3>Sums</h3><div class="sum-grid">
 <div><label for="sumP">P <span class="smallhint">↘</span></label><input class="num" inputmode="decimal" id="sumP" placeholder="P"></div>
 <div><label for="sumN">N <span class="smallhint">↗</span></label><input class="num" inputmode="decimal" id="sumN" placeholder="N"></div>
 <div><label for="sumD">D <span class="smallhint">P − N</span></label><input class="num" inputmode="decimal" id="sumD" placeholder="D"></div>
 </div></div>
-<div class="footer-actions"><button class="btn primary" id="checkWork">Check arithmetic</button><button class="btn" id="showWork" aria-expanded="false">Show worked solution</button><button class="btn" id="resetFields">Clear answers</button></div>
+<div class="footer-actions"><button class="btn primary" id="checkWork">Check arithmetic</button><button class="btn" id="showWork" aria-expanded="false">Show calculations</button><button class="btn" id="resetFields">Clear answers</button></div>
 <div id="feedback" role="status" aria-live="polite" hidden></div>
 <div class="worked" id="worked" hidden></div>
-<div id="solutionPanel" class="solution" hidden><h3>Final step: find x, y, z</h3><p class="lead">Use Dₓ / D, Dᵧ / D and D_z / D. Fractions such as 3/2 are accepted.</p><div class="solution-grid"><div><label for="solX">x</label><input class="num" id="solX" inputmode="text"></div><div><label for="solY">y</label><input class="num" id="solY" inputmode="text"></div><div><label for="solZ">z</label><input class="num" id="solZ" inputmode="text"></div></div><button class="btn primary" id="checkSolution">Check solution</button><div id="solutionFeedback" role="status" class="lead"></div></div>
+<div id="solutionPanel" class="solution" hidden><h3>Solution</h3><div class="solution-grid"><div><label for="solX">x</label><input class="num" id="solX" inputmode="text"></div><div><label for="solY">y</label><input class="num" id="solY" inputmode="text"></div><div><label for="solZ">z</label><input class="num" id="solZ" inputmode="text"></div></div><button class="btn primary" id="checkSolution">Check solution</button><div id="solutionFeedback" role="status" class="lead"></div></div>
 </section>
 <section role="tabpanel" aria-labelledby="calculatorTab" id="calculatorScreen" hidden>
-<div class="header-row"><div><h2>Cramer's Rule calculator</h2><p class="lead">Enter the nine coefficients and three constants. Every diagonal is shown so you can audit your arithmetic.</p></div><button class="btn" id="loadExample">Load example</button></div>
+<div class="header-row"><div><h2>Calculator</h2></div><button class="btn" id="loadExample">Load example</button></div>
 <div class="calculator-grid" id="calcInputs"></div>
 <div class="actions"><button class="btn primary" id="calculate">Calculate determinants</button><button class="btn" id="clearCalc">Clear matrix</button></div>
 <div id="calcFeedback" role="status" aria-live="polite"></div>
-<div id="calcResults" class="calc-results" hidden><div class="result-grid" id="resultGrid"></div><div id="calcSolution" class="feedback ok"></div><h3 style="margin:18px 0 10px">Inspect diagonal calculations</h3><div class="targets calc-step-tabs" id="calcSteps"></div><div id="calcDetail" class="calc-details"></div></div>
+<div id="calcResults" class="calc-results" hidden><div class="result-grid" id="resultGrid"></div><div id="calcSolution" class="feedback ok"></div><h3 style="margin:18px 0 10px">Calculations</h3><div class="targets calc-step-tabs" id="calcSteps"></div><div id="calcDetail" class="calc-details"></div></div>
 </section>
 <section id="wholeScreen" role="tabpanel" aria-labelledby="wholeTab" hidden>
-<div class="header-row"><div><h2>Whole Exercises</h2><p class="lead">Solve a complete 3×3 system using Sarrus and Cramer's Rule.</p></div><button type="button" class="btn" id="wholeNew">New exercise</button></div>
-<div class="whole-options"><label for="wholeDifficulty">Difficulty</label><select id="wholeDifficulty"><option value="introductory">Introductory</option><option value="standard">Standard</option><option value="large">Large Constants</option></select><label><input type="checkbox" id="wholeTimer"> Enable timer</label><span id="wholeTimeWrap" hidden>Time <strong id="wholeClock">00:00</strong></span></div>
-<p class="practice-note" id="wholeNote"></p>
+<div class="header-row"><div><h2>Whole Exercises</h2></div><button type="button" class="btn" id="wholeNew">New exercise</button></div>
+<div class="whole-options"><label for="wholeDifficulty">Difficulty</label><select id="wholeDifficulty"><option value="introductory">Introductory</option><option value="standard">Standard</option><option value="large">Large Constants</option></select><label><input type="checkbox" id="wholeTimer"> Timer</label><span id="wholeTimeWrap" hidden>Time <strong id="wholeClock">00:00</strong></span></div>
+
 <div class="system"><strong>System of equations</strong><div class="equations" id="wholeEquations"></div></div>
 <form id="wholeForm" novalidate>
-<fieldset class="whole-answers"><legend>1. Find the four determinants</legend><div class="whole-answer-grid" id="wholeDetAnswers"></div></fieldset>
-<fieldset class="whole-answers"><legend>2. Find x, y and z</legend><p class="lead">Use x = Dx / D, y = Dy / D and z = Dz / D. Integers, decimals and fractions such as 3/2 are accepted.</p><div class="whole-answer-grid variables" id="wholeVarAnswers" style="margin-top:12px"></div></fieldset>
+<fieldset class="whole-answers"><legend>Determinants</legend><div class="whole-answer-grid" id="wholeDetAnswers"></div></fieldset>
+<fieldset class="whole-answers"><legend>Solution</legend><div class="whole-answer-grid variables" id="wholeVarAnswers" style="margin-top:12px"></div></fieldset>
 <div class="footer-actions"><button type="submit" class="btn primary">Check Answers</button><button type="button" class="btn" id="wholeReveal">Reveal Answers</button><button type="button" class="btn" id="wholeShow" aria-expanded="false" aria-controls="wholeCalculations">Show Calculations</button></div>
 </form>
 <div id="wholeFeedback" role="status" aria-live="polite" hidden></div>
@@ -185,7 +185,7 @@ body.pad-open{overflow:hidden}
 </section>
 </div>
 <aside class="panel canvas-panel" id="canvasPanel">
-<div class="canvas-head"><div><h2>Scratchpad</h2><p class="lead">Draw with a finger, stylus or mouse.</p></div><button id="expandPad" class="btn small" aria-label="Expand scratchpad">Expand</button></div>
+<div class="canvas-head"><div><h2>Scratchpad</h2></div><button id="expandPad" class="btn small" aria-label="Expand scratchpad">Expand</button></div>
 <div class="canvas-toolbar">
 <button class="btn small" id="pen" aria-pressed="true">✎ Pen</button>
 <button class="btn small" id="eraser" aria-pressed="false">◻ Eraser</button>
@@ -194,7 +194,7 @@ body.pad-open{overflow:hidden}
 <button class="btn small" id="savePad">Save PNG</button>
 </div>
 <div class="pad" id="pad"><canvas id="board" aria-label="Freehand scratchpad"></canvas></div>
-<p class="pad-caption">The notepad stays when you switch questions and is saved on this device. Use Undo to remove the last stroke.</p>
+
 </aside>
 </div>
 </main>
@@ -272,8 +272,6 @@ function current(){return round.targets[active]}
 function refreshStatus(){
  var done=round.targets.filter(function(t){return t.complete}).length;
  $("progress").textContent=done+" / "+round.targets.length;
- $("streak").textContent=stats.streak;
- $("best").textContent=stats.best;
  var tabs=$("targetTabs");
  tabs.hidden=mode!=="cramer";tabs.innerHTML="";
  round.targets.forEach(function(t,i){
@@ -290,8 +288,6 @@ function startRound(){
  round={system:s,targets:targetsFor(s,mode,difficulty).map(function(t){return Object.assign(t,{values:Array(9).fill(""),checked:null,complete:false,reveal:false,firstCheck:false})})};
  active=0;start=performance.now();end=0;finished=false;
  $("systemBlock").hidden=mode!=="cramer";
- $("difficultyNote").hidden=difficulty!=="large";
- $("difficultyNote").textContent=mode==="cramer"?"Large-column mode: D uses small coefficients; Dx, Dy and Dz replace one column with larger equation constants.":"Large-column mode: practice a randomly selected Dx, Dy or Dz with one column replaced by larger equation constants.";
  $("solutionPanel").hidden=true;$("solutionFeedback").textContent="";
  ["solX","solY","solZ"].forEach(function(id){$(id).value=""});
  $("equations").innerHTML="";
@@ -352,7 +348,7 @@ function renderWorked(t){
  items.push("<div class='rowstep'><strong>"+t.label+" = P − N = "+pretty(d.P)+" − ("+pretty(d.N)+") = "+pretty(d.D)+"</strong></div>");
  $("worked").innerHTML=items.join("");
  $("worked").hidden=!t.reveal;
- $("showWork").textContent=t.reveal?"Hide worked solution":"Show worked solution";
+ $("showWork").textContent=t.reveal?"Hide calculations":"Show calculations";
  $("showWork").setAttribute("aria-expanded",String(t.reveal));
 }
 function renderTarget(){
@@ -377,7 +373,7 @@ function showCheck(t,flags){
  }
  var box=$("feedback");box.hidden=false;
  box.className="feedback "+(correct===9?"ok":"issue");
- box.textContent=correct===9?"9/9 correct. Every product, sum and subtraction checks out.":correct+"/9 correct. Check the highlighted fields. You can correct them and submit again, or open the worked solution.";
+ box.textContent=correct===9?"9/9 correct":correct+"/9 correct";
 }
 function allComplete(){return round.targets.every(function(t){return t.complete})}
 function checkWork(){
@@ -401,7 +397,7 @@ function checkSolution(){
  var trueSol=round.system.solution;
  var vals=["solX","solY","solZ"].map(function(id){return readNum($(id).value)});
  var valid=vals.every(function(v,i){return Number.isFinite(v)&&Math.abs(v-trueSol[i])<1e-7});
- $("solutionFeedback").textContent=valid?"Correct. All three variables match the system.":"Not correct yet. Check your signs or divisions, then try again.";
+ $("solutionFeedback").textContent=valid?"Correct":"Incorrect";
  $("solutionFeedback").className="feedback "+(valid?"ok":"issue");
  if(valid&&!finished){finished=true;end=performance.now();tick()}
 }
@@ -458,7 +454,7 @@ function calculate(){
  var v=Array.from({length:12},function(_,i){return readNum($("calc"+i).value)});
  if(v.some(function(n){return !Number.isFinite(n)||Math.abs(n)>999})){
   $("calcFeedback").className="feedback issue";
-  $("calcFeedback").textContent="Enter 12 valid numbers (up to 999 in magnitude).";
+  $("calcFeedback").textContent="Enter all 12 numbers (−999 to 999).";
   $("calcResults").hidden=true;return;
  }
  $("calcFeedback").textContent="";
@@ -478,7 +474,7 @@ function calculate(){
   tile.append(name,v);$("resultGrid").appendChild(tile);
  });
  var D=calcData[0].detail.D,sol=$("calcSolution");
- if(Math.abs(D)<1e-10){sol.textContent="D = 0. This system has no unique solution, so Cramer's Rule cannot divide by D."}
+ if(Math.abs(D)<1e-10){sol.textContent="D = 0 · No unique solution"}
  else{
   var names=["x","y","z"];
   sol.textContent=names.map(function(k,i){return k+" = "+Number((calcData[i+1].detail.D/D).toPrecision(10))}).join("   ·   ");
@@ -557,7 +553,6 @@ function startWhole(){
  pauseWholeTimer();wholeElapsed=0;wholeFinished=false;
  var level=$("wholeDifficulty").value,s=generateWhole(level);
  wholeRound={system:s,targets:targetsFor(s,"cramer",level)};
- $("wholeNote").textContent={introductory:"Small coefficients (−2 to 2), constants up to 10, and integer solutions.",standard:"Mixed signs, coefficients from −3 to 3, constants up to 24, and integer solutions.",large:"Small coefficients with larger constants: at least two have magnitude 10 or more (up to 45)."}[level];
  $("wholeEquations").innerHTML="";
  s.b.forEach(function(b,r){
   var line=document.createElement("div"),parts=[];
@@ -579,11 +574,11 @@ function checkWhole(){
   var ok=Number.isFinite(value)&&Math.abs(value-expected[i])<1e-8;
   if(ok)correct++;
   input.classList.toggle("correct",ok);input.classList.toggle("wrong",!ok);
-  input.setAttribute("aria-invalid",String(!ok));$("wholeFlag"+key).textContent=ok?"✓ Correct":(input.value.trim()?"✕ Try again":"Enter an answer");
+  input.setAttribute("aria-invalid",String(!ok));$("wholeFlag"+key).textContent=ok?"✓":(input.value.trim()?"✕":"Required");
   $("wholeFlag"+key).className="mark-result "+(ok?"good":"bad");
  });
  var box=$("wholeFeedback");box.hidden=false;box.className="feedback "+(correct===7?"ok":"issue");
- box.textContent=correct===7?"7/7 correct. All determinants and variables satisfy the system.":correct+"/7 correct. Check the marked answers, then try again. Fractions such as 3/2 are accepted.";
+ box.textContent=correct===7?"7/7 correct":correct+"/7 correct";
  if(correct===7)stopWholeTimer();
 }
 function revealWhole(){
@@ -595,7 +590,7 @@ function revealWhole(){
  });
  stopWholeTimer();
  $("wholeFeedback").hidden=false;$("wholeFeedback").className="feedback issue";
- $("wholeFeedback").textContent="Answers revealed. Open Show Calculations to see every diagonal product and Cramer division.";
+ $("wholeFeedback").textContent="Answers revealed";
 }
 function wholeMatrixHTML(A){
  var html='<div class="mat-wrap"><table class="mat" aria-label="Three by three matrix with first two columns repeated"><tbody>';
@@ -611,7 +606,7 @@ function renderWholeCalculations(){
  var html=[];
  wholeRound.targets.forEach(function(t,index){
   var d=details(t.A);
-  html.push('<section class="whole-calculation"><h3>'+t.label+(index?" · replace the "+["x","y","z"][index-1]+" column with the constants":" · coefficient matrix")+"</h3>");
+  html.push('<section class="whole-calculation"><h3>'+t.label+"</h3>");
   html.push(wholeMatrixHTML(t.A));
   html.push('<div class="direction">');
   [0,3].forEach(function(offset){
