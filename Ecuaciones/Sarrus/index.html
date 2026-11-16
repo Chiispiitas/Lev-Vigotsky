@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f6f3">
 <title>Determinant Lab · Sarrus & Cramer's Rule</title>
-<meta name="description" content="Practice 3×3 determinants with Sarrus' Rule, signed arithmetic drills, Cramer's Rule and a handwriting notepad.">
+<meta name="description" content="Practice 3×3 determinants with Sarrus' Rule, signed arithmetic drills, Cramer's Rule, whole-system exercises and a handwriting notepad.">
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222827;background:#f6f6f3;font-synthesis:none}
 *{box-sizing:border-box}
@@ -22,7 +22,7 @@ h1{margin:0;font-size:1.13rem;letter-spacing:-.035em}
 .subtitle{color:#6c736f;font-size:.78rem;margin:4px 0 0}
 .top a{color:#495b51;text-decoration:none;font-size:.83rem}
 .shell{max-width:1320px;margin:0 auto;padding:22px 26px 50px}
-.switches{display:flex;gap:6px;margin-bottom:18px}
+.switches{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
 .switches button{background:transparent;color:#59635c;border:1px solid transparent;padding:10px 18px;border-radius:9px;font-size:.88rem;font-weight:650}
 .switches button.active{background:#e5ede8;color:#1e4534;border-color:#c8d7cc}
 .workspace{display:grid;grid-template-columns:minmax(0,1fr) 365px;gap:18px;align-items:start}
@@ -114,6 +114,20 @@ body.pad-open{overflow:hidden}
 .result-tile strong{font-size:1.15rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .calc-step-tabs{margin-bottom:10px}
 .calc-details{background:#f8faf7;border-radius:10px;padding:13px;font-size:.85rem;line-height:1.8;overflow-wrap:anywhere}
+.whole-options{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.whole-options label{font-size:.84rem;color:#526458}
+.whole-options input{accent-color:#244b38}
+.whole-answers{border:0;padding:0;margin:18px 0}
+.whole-answers legend{font-size:.98rem;font-weight:700;margin-bottom:12px}
+.whole-answer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.whole-answer-grid.variables{grid-template-columns:repeat(3,minmax(0,1fr))}
+.whole-answer-grid label{display:block;font-weight:700;font-size:.88rem;margin-bottom:7px}
+.whole-answer-grid .mark-result{display:block;min-height:1.2em;margin-top:4px;font-size:.74rem}
+.whole-calculation{margin-top:18px;padding-top:18px;border-top:1px solid #e0e6de}
+.whole-calculation .mat{font-size:1rem}
+.whole-calculation .rowstep{overflow-wrap:anywhere}
+.whole-calculation .direction{margin-bottom:12px}
+@media(max-width:480px){.whole-answer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.switches button{padding:10px 12px}.whole-options{align-items:flex-start}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:940px){.workspace{grid-template-columns:minmax(0,1fr) 310px}.shell{padding:16px}.top-inner{padding:14px 16px}.panel{padding:17px}.product{grid-template-columns:minmax(0,1fr) 83px 17px}.product code{font-size:.74rem}.pad{height:335px}}
 @media(max-width:720px){.workspace{grid-template-columns:1fr}.canvas-panel{position:static}.direction{grid-template-columns:1fr}.pad{height:300px}.result-grid{grid-template-columns:repeat(2,1fr)}.subtitle{font-size:.72rem}.top a{font-size:.75rem}.shell{padding:12px}.panel{padding:16px}.status-strip{gap:9px}.status-strip .spacer{margin-left:0}.product{grid-template-columns:minmax(0,1fr) 110px 21px}.product code{font-size:.83rem}}
@@ -124,10 +138,10 @@ body.pad-open{overflow:hidden}
 <body>
 <header class="top"><div class="top-inner"><div class="brand"><div class="mark" aria-hidden="true">∑</div><div><h1>Determinant Lab</h1><p class="subtitle">Sarrus · Cramer's Rule · Arithmetic training</p></div></div><a href="../">← Equations</a></div></header>
 <main class="shell">
-<div class="switches" role="tablist" aria-label="App sections"><button id="practiceTab" class="active" role="tab" aria-selected="true">Practice</button><button id="calculatorTab" role="tab" aria-selected="false">Calculator</button></div>
+<div class="switches" role="tablist" aria-label="App sections"><button id="practiceTab" class="active" role="tab" aria-controls="practiceScreen" aria-selected="true">Practice</button><button id="calculatorTab" role="tab" aria-controls="calculatorScreen" aria-selected="false" tabindex="-1">Calculator</button><button id="wholeTab" role="tab" aria-controls="wholeScreen" aria-selected="false" tabindex="-1">Whole Exercises</button></div>
 <div class="workspace">
 <div class="panel">
-<section id="practiceScreen">
+<section role="tabpanel" aria-labelledby="practiceTab" id="practiceScreen">
 <div class="header-row"><div><h2>Arithmetic practice</h2><p class="lead">Multiply six diagonals, add the groups, then subtract.</p></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect" aria-label="Practice mode"><option value="single">One determinant</option><option value="cramer">Full Cramer's round</option></select><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard numbers</option><option value="large">Large replacement column (Dx/Dy/Dz)</option></select><button class="btn" id="newRound">New exercise</button></div></div>
 <p id="difficultyNote" class="practice-note" hidden></p>
 <div class="status-strip"><span>Time <strong id="clock">00:00</strong></span><span>Completed <strong id="progress">0 / 1</strong></span><span>Streak <strong id="streak">0</strong></span><span class="spacer">Best <strong id="best">0</strong></span></div>
@@ -147,14 +161,27 @@ body.pad-open{overflow:hidden}
 <div class="footer-actions"><button class="btn primary" id="checkWork">Check arithmetic</button><button class="btn" id="showWork" aria-expanded="false">Show worked solution</button><button class="btn" id="resetFields">Clear answers</button></div>
 <div id="feedback" role="status" aria-live="polite" hidden></div>
 <div class="worked" id="worked" hidden></div>
-<div id="solutionPanel" class="solution" hidden><h3>Final step: find x, y, z</h3><p class="lead">Use Dₓ / D, Dᵧ / D and Dᵥ / D. Fractions such as 3/2 are accepted.</p><div class="solution-grid"><div><label for="solX">x</label><input class="num" id="solX" inputmode="text"></div><div><label for="solY">y</label><input class="num" id="solY" inputmode="text"></div><div><label for="solZ">z</label><input class="num" id="solZ" inputmode="text"></div></div><button class="btn primary" id="checkSolution">Check solution</button><div id="solutionFeedback" role="status" class="lead"></div></div>
+<div id="solutionPanel" class="solution" hidden><h3>Final step: find x, y, z</h3><p class="lead">Use Dₓ / D, Dᵧ / D and D_z / D. Fractions such as 3/2 are accepted.</p><div class="solution-grid"><div><label for="solX">x</label><input class="num" id="solX" inputmode="text"></div><div><label for="solY">y</label><input class="num" id="solY" inputmode="text"></div><div><label for="solZ">z</label><input class="num" id="solZ" inputmode="text"></div></div><button class="btn primary" id="checkSolution">Check solution</button><div id="solutionFeedback" role="status" class="lead"></div></div>
 </section>
-<section id="calculatorScreen" hidden>
+<section role="tabpanel" aria-labelledby="calculatorTab" id="calculatorScreen" hidden>
 <div class="header-row"><div><h2>Cramer's Rule calculator</h2><p class="lead">Enter the nine coefficients and three constants. Every diagonal is shown so you can audit your arithmetic.</p></div><button class="btn" id="loadExample">Load example</button></div>
 <div class="calculator-grid" id="calcInputs"></div>
 <div class="actions"><button class="btn primary" id="calculate">Calculate determinants</button><button class="btn" id="clearCalc">Clear matrix</button></div>
 <div id="calcFeedback" role="status" aria-live="polite"></div>
 <div id="calcResults" class="calc-results" hidden><div class="result-grid" id="resultGrid"></div><div id="calcSolution" class="feedback ok"></div><h3 style="margin:18px 0 10px">Inspect diagonal calculations</h3><div class="targets calc-step-tabs" id="calcSteps"></div><div id="calcDetail" class="calc-details"></div></div>
+</section>
+<section id="wholeScreen" role="tabpanel" aria-labelledby="wholeTab" hidden>
+<div class="header-row"><div><h2>Whole Exercises</h2><p class="lead">Solve a complete 3×3 system using Sarrus and Cramer's Rule.</p></div><button type="button" class="btn" id="wholeNew">New exercise</button></div>
+<div class="whole-options"><label for="wholeDifficulty">Difficulty</label><select id="wholeDifficulty"><option value="introductory">Introductory</option><option value="standard">Standard</option><option value="large">Large Constants</option></select><label><input type="checkbox" id="wholeTimer"> Enable timer</label><span id="wholeTimeWrap" hidden>Time <strong id="wholeClock">00:00</strong></span></div>
+<p class="practice-note" id="wholeNote"></p>
+<div class="system"><strong>System of equations</strong><div class="equations" id="wholeEquations"></div></div>
+<form id="wholeForm" novalidate>
+<fieldset class="whole-answers"><legend>1. Find the four determinants</legend><div class="whole-answer-grid" id="wholeDetAnswers"></div></fieldset>
+<fieldset class="whole-answers"><legend>2. Find x, y and z</legend><p class="lead">Use x = Dx / D, y = Dy / D and z = Dz / D. Integers, decimals and fractions such as 3/2 are accepted.</p><div class="whole-answer-grid variables" id="wholeVarAnswers" style="margin-top:12px"></div></fieldset>
+<div class="footer-actions"><button type="submit" class="btn primary">Check Answers</button><button type="button" class="btn" id="wholeReveal">Reveal Answers</button><button type="button" class="btn" id="wholeShow" aria-expanded="false" aria-controls="wholeCalculations">Show Calculations</button></div>
+</form>
+<div id="wholeFeedback" role="status" aria-live="polite" hidden></div>
+<div id="wholeCalculations" class="worked" hidden></div>
 </section>
 </div>
 <aside class="panel canvas-panel" id="canvasPanel">
@@ -378,15 +405,30 @@ function checkSolution(){
  $("solutionFeedback").className="feedback "+(valid?"ok":"issue");
  if(valid&&!finished){finished=true;end=performance.now();tick()}
 }
-$("practiceTab").onclick=function(){setScreen("practice")};
-$("calculatorTab").onclick=function(){setScreen("calculator")};
+var screen="practice",screenNames=["practice","calculator","whole"];
+screenNames.forEach(function(name,index){
+ $(name+"Tab").onclick=function(){setScreen(name)};
+ $(name+"Tab").onkeydown=function(e){
+  var next=index;
+  if(e.key==="ArrowRight")next=(index+1)%screenNames.length;
+  else if(e.key==="ArrowLeft")next=(index+screenNames.length-1)%screenNames.length;
+  else if(e.key==="Home")next=0;
+  else if(e.key==="End")next=screenNames.length-1;
+  else return;
+  e.preventDefault();setScreen(screenNames[next]);$(screenNames[next]+"Tab").focus();
+ };
+});
 function setScreen(which){
- var onPractice=which==="practice";
- $("practiceScreen").hidden=!onPractice;$("calculatorScreen").hidden=onPractice;
- $("practiceTab").classList.toggle("active",onPractice);
- $("calculatorTab").classList.toggle("active",!onPractice);
- $("practiceTab").setAttribute("aria-selected",String(onPractice));
- $("calculatorTab").setAttribute("aria-selected",String(!onPractice));
+ if(screen==="whole")pauseWholeTimer();
+ screen=which;
+ screenNames.forEach(function(name){
+  var selected=name===which;
+  $(name+"Screen").hidden=!selected;
+  $(name+"Tab").classList.toggle("active",selected);
+  $(name+"Tab").setAttribute("aria-selected",String(selected));
+  $(name+"Tab").tabIndex=selected?0:-1;
+ });
+ if(screen==="whole"){if(!wholeRound)startWhole();else resumeWholeTimer()}
 }
 $("modeSelect").onchange=startRound;
 $("difficultySelect").onchange=startRound;
@@ -464,6 +506,141 @@ function renderCalcDetail(){
 $("calculate").onclick=calculate;
 $("loadExample").onclick=setCalcExample;
 $("clearCalc").onclick=function(){for(var i=0;i<12;i++)$("calc"+i).value="";$("calcResults").hidden=true;$("calcFeedback").textContent=""};
+// Whole-system exercises share the same Sarrus arithmetic as the other sections.
+var wholeRound=null,wholeElapsed=0,wholeStarted=null,wholeFinished=false;
+var wholeKeys=["D","Dx","Dy","Dz","x","y","z"];
+function generateWhole(level){
+ if(level!=="introductory")return generate(level);
+ for(var t=0;t<2000;t++){
+  var A=Array.from({length:9},function(){return randomInt(-2,2)}),D=details(A).D;
+  if(!D||Math.abs(D)>16)continue;
+  var solution=Array.from({length:3},function(){return randomInt(-2,2)});
+  if(solution.every(function(n){return n===0}))continue;
+  var b=[0,1,2].map(function(r){return A.slice(r*3,r*3+3).reduce(function(sum,v,c){return sum+v*solution[c]},0)});
+  if(b.some(function(n){return Math.abs(n)>10}))continue;
+  return {A:A,b:b,solution:solution};
+ }
+ return {A:[1,1,1,1,-1,1,1,1,-1],b:[2,4,0],solution:[2,-1,1]};
+}
+function wholeValues(){return wholeRound.targets.map(function(t){return details(t.A).D}).concat(wholeRound.system.solution)}
+function tickWhole(){
+ var elapsed=wholeElapsed+(wholeStarted===null?0:performance.now()-wholeStarted);
+ $("wholeClock").textContent=timerText(elapsed);
+}
+function pauseWholeTimer(){
+ if(wholeStarted!==null){wholeElapsed+=performance.now()-wholeStarted;wholeStarted=null}
+ tickWhole();
+}
+function resumeWholeTimer(){
+ if($("wholeTimer").checked&&screen==="whole"&&!wholeFinished&&!document.hidden&&wholeStarted===null)wholeStarted=performance.now();
+ tickWhole();
+}
+setInterval(tickWhole,250);
+document.addEventListener("visibilitychange",function(){if(document.hidden)pauseWholeTimer();else resumeWholeTimer()});
+function stopWholeTimer(){pauseWholeTimer();wholeFinished=true}
+function renderWholeFields(){
+ $("wholeDetAnswers").innerHTML="";$("wholeVarAnswers").innerHTML="";
+ wholeKeys.forEach(function(key,i){
+  var box=document.createElement("div"),label=document.createElement("label"),input=document.createElement("input"),status=document.createElement("span");
+  label.htmlFor="wholeAnswer"+key;label.textContent=key;
+  input.id=label.htmlFor;input.className="num";input.inputMode="text";input.autocomplete="off";
+  status.id="wholeFlag"+key;status.className="mark-result";
+  input.setAttribute("aria-describedby",status.id);
+  input.oninput=function(){
+   input.classList.remove("correct","wrong");input.removeAttribute("aria-invalid");status.textContent="";
+   $("wholeFeedback").hidden=true;
+  };
+  box.append(label,input,status);$(i<4?"wholeDetAnswers":"wholeVarAnswers").appendChild(box);
+ });
+}
+function startWhole(){
+ pauseWholeTimer();wholeElapsed=0;wholeFinished=false;
+ var level=$("wholeDifficulty").value,s=generateWhole(level);
+ wholeRound={system:s,targets:targetsFor(s,"cramer",level)};
+ $("wholeNote").textContent={introductory:"Small coefficients (−2 to 2), constants up to 10, and integer solutions.",standard:"Mixed signs, coefficients from −3 to 3, constants up to 24, and integer solutions.",large:"Small coefficients with larger constants: at least two have magnitude 10 or more (up to 45)."}[level];
+ $("wholeEquations").innerHTML="";
+ s.b.forEach(function(b,r){
+  var line=document.createElement("div"),parts=[];
+  for(var c=0;c<3;c++){
+   var n=s.A[r*3+c];if(!n)continue;
+   parts.push((parts.length?(n<0?" − ":" + "):(n<0?"−":""))+(Math.abs(n)===1?"":Math.abs(n))+["x","y","z"][c]);
+  }
+  line.textContent=(parts.join("")||"0")+" = "+pretty(b);$("wholeEquations").appendChild(line);
+ });
+ renderWholeFields();$("wholeFeedback").hidden=true;
+ $("wholeCalculations").hidden=true;$("wholeCalculations").innerHTML="";
+ $("wholeShow").textContent="Show Calculations";$("wholeShow").setAttribute("aria-expanded","false");
+ resumeWholeTimer();
+}
+function checkWhole(){
+ var expected=wholeValues(),correct=0;
+ wholeKeys.forEach(function(key,i){
+  var input=$("wholeAnswer"+key),value=readNum(input.value);
+  var ok=Number.isFinite(value)&&Math.abs(value-expected[i])<1e-8;
+  if(ok)correct++;
+  input.classList.toggle("correct",ok);input.classList.toggle("wrong",!ok);
+  input.setAttribute("aria-invalid",String(!ok));$("wholeFlag"+key).textContent=ok?"✓ Correct":(input.value.trim()?"✕ Try again":"Enter an answer");
+  $("wholeFlag"+key).className="mark-result "+(ok?"good":"bad");
+ });
+ var box=$("wholeFeedback");box.hidden=false;box.className="feedback "+(correct===7?"ok":"issue");
+ box.textContent=correct===7?"7/7 correct. All determinants and variables satisfy the system.":correct+"/7 correct. Check the marked answers, then try again. Fractions such as 3/2 are accepted.";
+ if(correct===7)stopWholeTimer();
+}
+function revealWhole(){
+ var values=wholeValues();
+ wholeKeys.forEach(function(key,i){
+  var input=$("wholeAnswer"+key);input.value=String(values[i]);
+  input.classList.remove("correct","wrong");input.removeAttribute("aria-invalid");
+  $("wholeFlag"+key).textContent="Revealed";$("wholeFlag"+key).className="mark-result";
+ });
+ stopWholeTimer();
+ $("wholeFeedback").hidden=false;$("wholeFeedback").className="feedback issue";
+ $("wholeFeedback").textContent="Answers revealed. Open Show Calculations to see every diagonal product and Cramer division.";
+}
+function wholeMatrixHTML(A){
+ var html='<div class="mat-wrap"><table class="mat" aria-label="Three by three matrix with first two columns repeated"><tbody>';
+ for(var r=0;r<3;r++){
+  html+="<tr>";
+  for(var c=0;c<5;c++)html+='<td'+(c>2?' class="repeat"':'')+'>'+pretty(A[r*3+c%3])+"</td>";
+  html+="</tr>";
+ }
+ return html+"</tbody></table></div>";
+}
+function signedSum(values){return values.map(factor).join(" + ")}
+function renderWholeCalculations(){
+ var html=[];
+ wholeRound.targets.forEach(function(t,index){
+  var d=details(t.A);
+  html.push('<section class="whole-calculation"><h3>'+t.label+(index?" · replace the "+["x","y","z"][index-1]+" column with the constants":" · coefficient matrix")+"</h3>");
+  html.push(wholeMatrixHTML(t.A));
+  html.push('<div class="direction">');
+  [0,3].forEach(function(offset){
+   html.push('<div class="group '+(offset?"up":"down")+'"><div class="group-title">'+(offset?"↗ Upward products (N)":"↘ Downward products (P)")+"</div>");
+   for(var i=offset;i<offset+3;i++)html.push('<div class="rowstep">'+productText(t.A,allIdx[i])+" = <strong>"+pretty(d.products[i])+"</strong></div>");
+   html.push('<div class="rowstep"><strong>'+(offset?"N":"P")+" = "+signedSum(d.products.slice(offset,offset+3))+" = "+pretty(offset?d.N:d.P)+"</strong></div></div>");
+  });
+  html.push('</div><div class="rowstep"><strong>'+t.label+" = P − N = "+pretty(d.P)+" − ("+pretty(d.N)+") = "+pretty(d.D)+"</strong></div></section>");
+ });
+ var values=wholeValues();
+ html.push('<div class="solution"><h3>Cramer divisions</h3>');
+ ["x","y","z"].forEach(function(name,i){html.push('<div class="rowstep">'+name+" = "+wholeKeys[i+1]+" / D = "+pretty(values[i+1])+" / ("+pretty(values[0])+") = <strong>"+pretty(values[i+4])+"</strong></div>")});
+ html.push('</div>');$("wholeCalculations").innerHTML=html.join("");
+}
+$("wholeNew").onclick=startWhole;
+$("wholeDifficulty").onchange=startWhole;
+$("wholeTimer").onchange=function(){
+ $("wholeTimeWrap").hidden=!this.checked;
+ if(this.checked)resumeWholeTimer();else pauseWholeTimer();
+};
+$("wholeForm").onsubmit=function(e){e.preventDefault();checkWhole()};
+$("wholeReveal").onclick=revealWhole;
+$("wholeShow").onclick=function(){
+ var show=$("wholeCalculations").hidden;
+ if(show){renderWholeCalculations();stopWholeTimer()}
+ $("wholeCalculations").hidden=!show;
+ this.textContent=show?"Hide Calculations":"Show Calculations";this.setAttribute("aria-expanded",String(show));
+};
+
 makeCalculator();setCalcExample();startRound();
 
 // Scratchpad: strokes stored in normalized coordinates, so they survive resizing.
