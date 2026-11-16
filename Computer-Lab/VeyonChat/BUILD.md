@@ -9,3 +9,5 @@ The Veyon plugin targets Veyon 4.10.2 and its installed Qt 6.10.3 / MinGW runtim
 `bridge/Build-Bridge.ps1` compiles the teacher bridge and its native chat window. Install the resulting bridge at the fixed staff integration path used by the plugin. Student clients are embedded and installed by the management service, under Program Files, using the least-privilege interactive logon task.
 
 The public signed update ZIP and metadata are in `bin/`. The existing updater verifies its pinned RSA signature, file hashes, and fixed path allowlist before installation. It waits for a normal restart and restores UWF afterward.
+
+The teacher bridge can update independently of the embedded student client. Teacher sources are in bridge/; the signed student snapshot is in Management/ChatSource/. Run updater regression checks with Windows PowerShell 5.1: powershell.exe -NoProfile -File Management/Update/Test-AutomaticUpdate.ps1.
