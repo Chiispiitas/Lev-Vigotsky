@@ -1,7 +1,7 @@
 ﻿#Requires -RunAsAdministrator
 [CmdletBinding()]
 param(
- [Parameter(Mandatory)][ValidateSet('class','class-ai','exam','free','cleanup','status','uwf-status','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update')][string]$Action,
+ [Parameter(Mandatory)][ValidateSet('class','class-ai','exam','free','cleanup','browser-cleanup','status','uwf-status','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update')][string]$Action,
  [switch]$PolicyOnly
 )
 $ErrorActionPreference='Stop'
@@ -56,6 +56,21 @@ namespace UEPLV {
   [DllImport("kernel32.dll",EntryPoint="SetFileInformationByHandle",SetLastError=true)]static extern bool SetDisposition(SafeFileHandle h,int kind,ref Disposition info,uint size);
   [DllImport("kernel32.dll",EntryPoint="SetFileInformationByHandle",SetLastError=true)]static extern bool SetBasic(SafeFileHandle h,int kind,ref BasicInfo info,uint size);
   static void Check(SafeFileHandle h,string root,bool allowRoot){if(h.IsInvalid)throw new Win32Exception(Marshal.GetLastWin32Error(),"Cannot acquire safe cleanup handle");var path=new StringBuilder(32768);uint n=GetFinalPathNameByHandle(h,path,(uint)path.Capacity,0);if(n==0||n>=path.Capacity)throw new Win32Exception(Marshal.GetLastWin32Error(),"Cannot resolve cleanup handle");string resolved=path.ToString();if(resolved.StartsWith(@"\\?\"))resolved=resolved.Substring(4);string expected=Path.GetFullPath(root).TrimEnd('\\');if(!(resolved.StartsWith(expected+"\\",StringComparison.OrdinalIgnoreCase)||(allowRoot&&resolved.Equals(expected,StringComparison.OrdinalIgnoreCase))))throw new IOException("Resolved cleanup handle escaped the approved student root");TagInfo info;if(!GetFileInformationByHandleEx(h,9,out info,8))throw new Win32Exception(Marshal.GetLastWin32Error());if((info.Attributes&0x400)!=0)throw new IOException("Cleanup refused a reparse point");}
+  [StructLayout(LayoutKind.Sequential)]struct FileInfo {public uint Attributes;public System.Runtime.InteropServices.ComTypes.FILETIME Created,Accessed,Written;public uint Volume,SizeHigh,SizeLow,Links,IndexHigh,IndexLow;}
+  [DllImport("kernel32.dll",SetLastError=true)]static extern bool GetFileInformationByHandle(SafeFileHandle h,out FileInfo info);
+  [DefaultDllImportSearchPaths(DllImportSearchPath.System32)][DllImport("winsqlite3.dll",CallingConvention=CallingConvention.Cdecl,CharSet=CharSet.Unicode)]static extern int sqlite3_open16(string name,out IntPtr db);
+  [DefaultDllImportSearchPaths(DllImportSearchPath.System32)][DllImport("winsqlite3.dll",CallingConvention=CallingConvention.Cdecl)]static extern int sqlite3_exec(IntPtr db,byte[] sql,IntPtr callback,IntPtr arg,out IntPtr error);
+  [DefaultDllImportSearchPaths(DllImportSearchPath.System32)][DllImport("winsqlite3.dll",CallingConvention=CallingConvention.Cdecl)]static extern int sqlite3_close(IntPtr db);
+  [DefaultDllImportSearchPaths(DllImportSearchPath.System32)][DllImport("winsqlite3.dll",CallingConvention=CallingConvention.Cdecl)]static extern void sqlite3_free(IntPtr p);
+  static SafeFileHandle LockDatabaseFile(string path,string root){var h=CreateFile(path,0xc0000000,3,IntPtr.Zero,4,0x00200000,IntPtr.Zero);try{Check(h,root,false);FileInfo info;if(!GetFileInformationByHandle(h,out info)||info.Links!=1)throw new IOException("Browser database has links or cannot be verified");return h;}catch{h.Dispose();throw;}}
+  static void Sql(IntPtr db,string sql){IntPtr error;int code=sqlite3_exec(db,Encoding.UTF8.GetBytes(sql+"\0"),IntPtr.Zero,IntPtr.Zero,out error);if(error!=IntPtr.Zero)sqlite3_free(error);if(code!=0)throw new IOException("Browser history cleanup failed (SQLite "+code+")");}
+  public static void FirefoxHistory(string path,string root){
+   if(!File.Exists(path))return;
+   using(var dbLock=LockDatabaseFile(path,root))using(var walLock=LockDatabaseFile(path+"-wal",root))using(var shmLock=LockDatabaseFile(path+"-shm",root))using(var journalLock=LockDatabaseFile(path+"-journal",root)){
+    bool wal=false;using(var header=new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.ReadWrite)){header.Position=18;wal=header.ReadByte()==2;}
+    IntPtr db=IntPtr.Zero;try{if(sqlite3_open16(path,out db)!=0)throw new IOException("Could not open student browser history");if(!wal)Sql(db,"PRAGMA journal_mode=PERSIST;");Sql(db,"PRAGMA busy_timeout=5000; PRAGMA trusted_schema=OFF; PRAGMA secure_delete=ON; BEGIN IMMEDIATE; DELETE FROM moz_historyvisits; DELETE FROM moz_inputhistory; UPDATE moz_places SET visit_count=0,last_visit_date=NULL,typed=0; COMMIT; PRAGMA wal_checkpoint(TRUNCATE);");}finally{if(db!=IntPtr.Zero)sqlite3_close(db);}
+   }
+  }
   public static SafeFileHandle LockDirectory(string path,string root){var h=CreateFile(path,0x81,1,IntPtr.Zero,3,0x02200000,IntPtr.Zero);try{Check(h,root,true);return h;}catch{h.Dispose();throw;}}
   public static void Delete(string path,string root,bool directory){using(var h=CreateFile(path,0x10180,7,IntPtr.Zero,3,0x02200000,IntPtr.Zero)){if(h.IsInvalid)throw new Win32Exception(Marshal.GetLastWin32Error(),"Cannot open cleanup item: "+path);Check(h,root,false);if(!directory){var basic=new BasicInfo{Attributes=0x80};if(!SetBasic(h,0,ref basic,(uint)Marshal.SizeOf(typeof(BasicInfo))))throw new Win32Exception(Marshal.GetLastWin32Error());}var d=new Disposition{Delete=true};if(!SetDisposition(h,4,ref d,(uint)Marshal.SizeOf(typeof(Disposition))))throw new Win32Exception(Marshal.GetLastWin32Error(),"Cleanup could not delete the checked item");}}
  }
@@ -281,13 +296,46 @@ try {
   }
   Run-Native ipconfig.exe @('/flushdns')|Out-Null
   if($browserResetRequired){$browserResult=Reset-StudentBrowserSessions;$result.detail='Mode '+$Action+' applied; tighter restrictions verified after closing student browsers. '+$browserResult}else{$result.detail='Mode '+$Action+' applied; browser windows and tabs preserved (no added restrictions).'}
+ } elseif($Action -eq 'browser-cleanup') {
+  $feature=Get-WindowsOptionalFeature -Online -FeatureName Client-UnifiedWriteFilter
+  if($feature.State -eq 'EnablePending' -or $feature.State -eq 'DisablePending'){throw 'UWF feature restart is pending.'}
+  if($feature.State -eq 'Enabled'){$privacyUwf=Uwf-State;if($privacyUwf.current -or $privacyUwf.servicing){throw 'Browser baseline cleanup requires current-session UWF disabled and no servicing.'}}
+  Reset-StudentBrowserSessions|Out-Null
+  $student=Get-Student
+  foreach($relative in @('AppData\Local\Microsoft\Edge\User Data','AppData\Local\Google\Chrome\User Data','AppData\Local\BraveSoftware\Brave-Browser\User Data','AppData\Local\Vivaldi\User Data','AppData\Roaming\Opera Software\Opera Stable','AppData\Roaming\Opera Software\Opera GX Stable')){
+   $browserRoot=Join-Path $student.Root $relative;if(-not(Test-Path -LiteralPath $browserRoot)){continue}
+   $browserLease=Get-CleanupLease $browserRoot $student.Root
+   try{
+    $profiles=@((Get-Item -LiteralPath $browserRoot -Force))+@(Get-ChildItem -LiteralPath $browserRoot -Directory -Force)
+    foreach($profile in $profiles){
+     $profileLease=Get-CleanupLease $profile.FullName $student.Root
+     try{foreach($file in @('History','History-journal','History-wal','History-shm','Cookies','Cookies-journal','Cookies-wal','Cookies-shm','Network\Cookies','Network\Cookies-journal','Network\Cookies-wal','Network\Cookies-shm','Visited Links','Top Sites','Top Sites-journal','Shortcuts','Shortcuts-journal')){Delete-CheckedFile (Join-Path $profile.FullName $file) $student.Root}
+      foreach($cache in @('Session Storage','Sessions','Local Storage','IndexedDB')){Clear-CheckedDirectory (Join-Path $profile.FullName $cache) $student.Root}
+     }finally{Close-CleanupLease $profileLease}
+    }
+   }finally{Close-CleanupLease $browserLease}
+  }
+  foreach($relative in @('AppData\Roaming\Mozilla\Firefox\Profiles','AppData\Roaming\Waterfox\Profiles','AppData\Roaming\librewolf\Profiles')){
+   $base=Join-Path $student.Root $relative;if(-not(Test-Path -LiteralPath $base)){continue}
+   $browserLease=Get-CleanupLease $base $student.Root
+   try{foreach($profile in Get-ChildItem -LiteralPath $base -Directory -Force){$profileLease=Get-CleanupLease $profile.FullName $student.Root
+    try{[UEPLV.CheckedDelete]::FirefoxHistory((Join-Path $profile.FullName 'places.sqlite'),$student.Root)
+     foreach($file in @('cookies.sqlite','cookies.sqlite-wal','cookies.sqlite-shm','sessionstore.jsonlz4','sessionstore.js')){Delete-CheckedFile (Join-Path $profile.FullName $file) $student.Root}
+     foreach($cache in @('sessionstore-backups','storage\default')){Clear-CheckedDirectory (Join-Path $profile.FullName $cache) $student.Root}
+    }finally{Close-CleanupLease $profileLease}
+   }}finally{Close-CleanupLease $browserLease}
+  }
+  foreach($relative in @('AppData\Roaming\Microsoft\Windows\Cookies','AppData\Local\Microsoft\Windows\INetCookies','AppData\Local\Microsoft\Windows\History','AppData\Local\Microsoft\Windows\WebCache')){Clear-CheckedDirectory (Join-Path $student.Root $relative) $student.Root}
+  Reset-StudentBrowserSessions|Out-Null
+  if($script:CleanupSkippedBusy.Count -or $script:CleanupSkippedLinks.Count){throw 'Browser data could not be completely cleared; protection must wait for review.'}
+  $result.detail='Student browser cookies, browsing history and web sessions cleared on the unprotected volume. Student files, bookmarks, saved passwords and MAINTENANCE were preserved.'
  } elseif($Action -eq 'cleanup') {
   $student=Get-Student
   foreach($folder in @('Downloads','Documents','Music','Videos','Pictures','AppData\Local\Microsoft\Windows\INetCache','AppData\Local\Microsoft\Windows\History','AppData\Roaming\Microsoft\Windows\Cookies','AppData\Local\Microsoft\Windows\WebCache')){Clear-CheckedDirectory (Join-Path $student.Root $folder) $student.Root}
   foreach($relative in @('AppData\Local\Google\Chrome\User Data','AppData\Local\Microsoft\Edge\User Data','AppData\Local\BraveSoftware\Brave-Browser\User Data','AppData\Roaming\Opera Software\Opera Stable')){
    $browserRoot=Join-Path $student.Root $relative;if(-not(Test-Path -LiteralPath $browserRoot)){continue};$browserLease=Get-CleanupLease $browserRoot $student.Root
    try{$dirs=@((Get-Item -LiteralPath $browserRoot -Force))+@(Get-ChildItem -LiteralPath $browserRoot -Directory -Force)
-    foreach($dir in $dirs){$profileLease=Get-CleanupLease $dir.FullName $student.Root;try{foreach($file in @('History','History-journal','Cookies','Cookies-journal','Login Data','Login Data-journal','Visited Links','Top Sites','Top Sites-journal','Web Data','Web Data-journal','Network\Cookies','Network\Cookies-journal')){Delete-CheckedFile (Join-Path $dir.FullName $file) $student.Root};foreach($cache in @('Cache','Code Cache','GPUCache','Service Worker\CacheStorage','Session Storage','Local Storage')){Clear-CheckedDirectory (Join-Path $dir.FullName $cache) $student.Root}}finally{Close-CleanupLease $profileLease}}
+    foreach($dir in $dirs){$profileLease=Get-CleanupLease $dir.FullName $student.Root;try{foreach($file in @('History','History-journal','Cookies','Cookies-journal','Login Data','Login Data-journal','Visited Links','Top Sites','Top Sites-journal','Web Data','Web Data-journal','Network\Cookies','Network\Cookies-journal')){Delete-CheckedFile (Join-Path $dir.FullName $file) $student.Root};foreach($cache in @('Cache','Code Cache','GPUCache','Session Storage','Local Storage')){Clear-CheckedDirectory (Join-Path $dir.FullName $cache) $student.Root}}finally{Close-CleanupLease $profileLease}}
    }finally{Close-CleanupLease $browserLease}
   }
   foreach($relative in @('AppData\Roaming\Mozilla\Firefox\Profiles','AppData\Local\Mozilla\Firefox\Profiles')){$base=Join-Path $student.Root $relative;if(Test-Path -LiteralPath $base){$browserLease=Get-CleanupLease $base $student.Root;try{foreach($dir in Get-ChildItem -LiteralPath $base -Directory -Force){$profileLease=Get-CleanupLease $dir.FullName $student.Root;try{foreach($file in @('cookies.sqlite','cookies.sqlite-wal','cookies.sqlite-shm','places.sqlite','places.sqlite-wal','places.sqlite-shm','formhistory.sqlite')){Delete-CheckedFile (Join-Path $dir.FullName $file) $student.Root};foreach($cache in @('cache2','startupCache')){Clear-CheckedDirectory (Join-Path $dir.FullName $cache) $student.Root}}finally{Close-CleanupLease $profileLease}}}finally{Close-CleanupLease $browserLease}}}

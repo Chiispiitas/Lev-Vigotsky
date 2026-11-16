@@ -8,7 +8,7 @@ WebView2 chat with the light UEPLV dashboard palette, using the existing Servido
 - Only teachers may send to multiple recipients, enforced by the server. Students select one conversation at a time, even when student-to-student chat is permitted.
 - The teacher receiver remains active while Veyon is open. Students receive a background client and notification-area shortcut automatically.
 - Credentials stay in the native host. The web interface receives message/permission data only, has no general API proxy, and cannot navigate to websites, download files, or access host objects.
-- Signed management update **1.9.3** embeds the student client. It fetches fixed WebView2 SDK dependencies from this repository with pinned SHA256 hashes. A missing WebView2 Runtime is installed silently using Microsoft's signature-verified installer. Installation readiness waits for dependencies before protection restoration.
+- Signed management update **1.10.1** embeds the student client. It fetches fixed WebView2 SDK dependencies from this repository with pinned SHA256 hashes. A missing WebView2 Runtime is installed silently using Microsoft's signature-verified installer. Installation readiness waits for dependencies before protection restoration.
 - The existing automatic updater downloads updates and installs them during a normal restart cycle, preserving device identities and restoring UWF. Pending older updates finish first. No USB refresh is required for deployed PCs.
 - Messages are retained for up to 24 hours, with approximately 200 recent messages across the lab to reserve CMS capacity for device control. Polling is every three seconds; connection errors appear in the chat window.
 
@@ -22,3 +22,9 @@ Teacher sources are in `bridge/`; the embedded student source snapshot is in `Ma
 - Congelar y Reiniciar enables protection for the next boot and restarts selected PCs.
 - Descongelar y Reiniciar accepts 1–99 thawed boot sessions (default and recommendation: 1). One means the requested restart opens one thawed session; the following restart restores protection. Service restarts do not spend a boot. The last thawed boot arms protection locally, without requiring network access.
 - Timed thaw requires verified private persistent state and configured C: protection. Updates and conflicting maintenance operations wait until the lease completes. Frozen/unfrozen status remains visible in the UWF fields.
+
+## Limpieza antes de congelar
+
+Release 1.10.1 includes the one-time `2026-11-16-student-browser` cleanup campaign. The agent keeps its readiness flag false until browser-only cleanup succeeds while the current C: session is unprotected. Student sessions are signed out through the final protected boot; MAINTENANCE is preserved. Before the final restart, cookies, browsing history and web-session data are cleared again. Readiness/protection guards remain enabled.
+
+Student documents, downloads, bookmarks, saved passwords and staff browser data are preserved. The existing full-profile cleanup action is unchanged. Chromium profiles and Windows browser stores are handled with checked file/directory handles; Firefox history uses the Windows SQLite library and keeps bookmarks. Temporary-file checks covered Chromium cleanup and SQLite rollback/WAL history, with student documents and staff files retained. VM verification was skipped at the user's request.

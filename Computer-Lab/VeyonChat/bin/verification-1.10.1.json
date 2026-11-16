@@ -1,0 +1,19 @@
+{
+  "version": "1.10.1",
+  "nativePluginVersion": "1.8.0",
+  "nativeChecks": 2,
+  "backendChecks": 58,
+  "automaticUpdateChecks": 44,
+  "deploymentChecks": 171,
+  "browserCleanupFixture": {
+    "Passed": true,
+    "HostAccountsAndPoliciesUntouched": true,
+    "BookmarksAndSavedPasswordsPreserved": true,
+    "ChromiumCookiesAndHistoryRemoved": true,
+    "StaffDataPreserved": true,
+    "StudentFilesPreserved": true
+  },
+  "firefoxHistoryFixture": "rollback and WAL passed; bookmark preserved",
+  "vmVerification": "Skipped by user",
+  "publishedToLab": true
+}
