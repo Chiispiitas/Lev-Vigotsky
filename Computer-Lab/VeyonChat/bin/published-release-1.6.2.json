@@ -1,0 +1,22 @@
+{
+  "version": "1.6.2",
+  "issuedUtc": "2026-11-16T04:35:26.147Z",
+  "packageSha256": "e8b455557408463f3d2040e69de8b1d8b2a01160c1da158dcee3c86b6b1dc758",
+  "files": [
+    {
+      "path": "Actions/Invoke-LabAction.ps1",
+      "sha256": "51826b14bbead92ed056222e5b65f543779942f6d07d0c64c832b1bb101b49ec",
+      "size": 60668
+    },
+    {
+      "path": "UEPLV.Management.exe",
+      "sha256": "05dede70978812b41b370b0e913c60a5741c319b64b63eb5ef24696d7b14ee5a",
+      "size": 203264
+    },
+    {
+      "path": "Update/Invoke-AutomaticUpdate.ps1",
+      "sha256": "89baeff680b8f720fcce5eb3eb2272c9796847740c66dec4432b8c118c2c6fb0",
+      "size": 35279
+    }
+  ]
+}

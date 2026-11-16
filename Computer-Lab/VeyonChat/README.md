@@ -9,7 +9,7 @@ Implemented with the existing Wix backend and GitHub deployment. This is UEPLV's
 - The teacher can send individually or to all selected PCs. No files or executable attachments are accepted.
 - Permissions are checked on the server on each send and read. Student clients receive a signed session token, never the management cloud key or staff cookie.
 - Student chat runs as LEV VIGOTSKY in its interactive session. The management service provisions it, refreshes its session, and registers its logon task. Students cannot write its installation or session file.
-- The client is embedded in the signed management update, so it does not require a new installer or updater path exception. Release **1.6.1** installs through the existing updater at a normal restart.
+- The client is embedded in the signed management update, so it does not require a new installer or updater path exception. Release **1.6.2** installs through the existing updater at a normal restart.
 - Recent messages are limited to 24 hours and approximately 200 retained messages across the lab, to preserve CMS space for device control. A busy concurrent burst can temporarily exceed this until the next send prunes it.
 - Polling is every three seconds with backoff on connection errors. Network and Wix response time also affect delivery.
 
