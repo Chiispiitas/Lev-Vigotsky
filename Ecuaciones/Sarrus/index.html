@@ -40,6 +40,8 @@ select{border:1px solid #d9ddd6;border-radius:9px;padding:10px 12px;background:w
 .btn.danger{color:#a83d3d}
 .btn.small{padding:7px 10px;min-height:33px;font-size:.78rem}
 .btn:disabled{opacity:.5;cursor:not-allowed}
+.practice-note{font-size:.79rem;color:#526f5b;margin:12px 0 0;line-height:1.45}
+.large-column{color:#1c7854;font-weight:800;background:#eaf5ee}
 .status-strip{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid #eef0ec;border-bottom:1px solid #eef0ec;margin:18px 0;padding:13px 0;font-size:.83rem;color:#647168}
 .status-strip strong{color:#1e2f25;font-variant-numeric:tabular-nums}
 .status-strip .spacer{margin-left:auto}
@@ -126,7 +128,8 @@ body.pad-open{overflow:hidden}
 <div class="workspace">
 <div class="panel">
 <section id="practiceScreen">
-<div class="header-row"><div><h2>Arithmetic practice</h2><p class="lead">Multiply six diagonals, add the groups, then subtract.</p></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect"><option value="single">One determinant</option><option value="cramer">Full Cramer's round</option></select><button class="btn" id="newRound">New exercise</button></div></div>
+<div class="header-row"><div><h2>Arithmetic practice</h2><p class="lead">Multiply six diagonals, add the groups, then subtract.</p></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect" aria-label="Practice mode"><option value="single">One determinant</option><option value="cramer">Full Cramer's round</option></select><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard numbers</option><option value="large">Large replacement column (Dx/Dy/Dz)</option></select><button class="btn" id="newRound">New exercise</button></div></div>
+<p id="difficultyNote" class="practice-note" hidden></p>
 <div class="status-strip"><span>Time <strong id="clock">00:00</strong></span><span>Completed <strong id="progress">0 / 1</strong></span><span>Streak <strong id="streak">0</strong></span><span class="spacer">Best <strong id="best">0</strong></span></div>
 <div id="systemBlock" class="system" hidden><strong>System of equations</strong><div class="equations" id="equations"></div></div>
 <div id="targetTabs" class="targets" hidden></div>
@@ -192,28 +195,45 @@ function pretty(n){return String(n).replace(/-/g,"−")}
 function factor(n){return n<0?"("+pretty(n)+")":String(n)}
 function productText(a,idx){return idx.map(function(i){return factor(a[i])}).join(" × ")}
 function randomInt(min,max){return Math.floor(Math.random()*(max-min+1))+min}
-function generate(){
- for(var t=0;t<10000;t++){
+function generate(difficulty){
+ var large=difficulty==="large";
+ for(var t=0;t<15000;t++){
   var A=Array.from({length:9},function(){var n=0;while(!n)n=randomInt(-3,3);return n});
   var d=details(A).D;
   if(Math.abs(d)<12||Math.abs(d)>110)continue;
-  var answer=Array.from({length:3},function(){return randomInt(-3,3)});
+  // Larger solutions create equation constants similar to the right side
+  // of a contest system; the coefficient matrix remains unchanged.
+  var answer=Array.from({length:3},function(){
+   if(!large)return randomInt(-3,3);
+   return (Math.random()<.5?-1:1)*randomInt(2,6);
+  });
   if(answer.every(function(n){return n===0}))continue;
   var b=[0,1,2].map(function(row){return A[row*3]*answer[0]+A[row*3+1]*answer[1]+A[row*3+2]*answer[2]});
-  if(b.some(function(n){return Math.abs(n)>24}))continue;
+  if(large){
+   if(b.some(function(n){return Math.abs(n)>45}))continue;
+   if(b.filter(function(n){return Math.abs(n)>=10}).length<2)continue;
+  }else if(b.some(function(n){return Math.abs(n)>24}))continue;
   return {A:A,b:b,solution:answer};
  }
- return {A:[3,-2,1,2,1,-3,1,4,2],b:[11,-6,4],solution:[2,-1,3]};
+ // Deterministic fallback with validated nonzero D and two large constants.
+ return large?
+  {A:[3,-2,1,2,1,-3,1,4,2],b:[34,-11,-2],solution:[6,-5,6]}:
+  {A:[3,-2,1,2,1,-3,1,4,2],b:[11,-6,4],solution:[2,-1,3]};
 }
-function targetsFor(s,mode){
- return mode==="cramer"?[
+function targetsFor(s,mode,difficulty){
+ if(mode==="cramer")return [
   {label:"D",A:s.A},{label:"Dx",A:replaceColumn(s.A,s.b,0)},
   {label:"Dy",A:replaceColumn(s.A,s.b,1)},{label:"Dz",A:replaceColumn(s.A,s.b,2)}
- ]:[{label:"D",A:s.A}];
+ ];
+ if(difficulty==="large"){
+  var col=randomInt(0,2);
+  return [{label:["Dx","Dy","Dz"][col],A:replaceColumn(s.A,s.b,col),replacedColumn:col}];
+ }
+ return [{label:"D",A:s.A}];
 }
 var stats={streak:0,best:0};
 try{stats=Object.assign(stats,JSON.parse(localStorage.getItem("sarrus-stats")||"{}"))}catch(e){}
-var mode="single",round=null,active=0,start=0,end=0,finished=false;
+var mode="single",difficulty="standard",round=null,active=0,start=0,end=0,finished=false;
 function saveStats(){try{localStorage.setItem("sarrus-stats",JSON.stringify(stats))}catch(e){}}
 function timerText(ms){
  var sec=Math.max(0,Math.floor(ms/1000));
@@ -238,10 +258,13 @@ function refreshStatus(){
 }
 function startRound(){
  mode=$("modeSelect").value;
- var s=generate();
- round={system:s,targets:targetsFor(s,mode).map(function(t){return Object.assign(t,{values:Array(9).fill(""),checked:null,complete:false,reveal:false,firstCheck:false})})};
+ difficulty=$("difficultySelect").value;
+ var s=generate(difficulty);
+ round={system:s,targets:targetsFor(s,mode,difficulty).map(function(t){return Object.assign(t,{values:Array(9).fill(""),checked:null,complete:false,reveal:false,firstCheck:false})})};
  active=0;start=performance.now();end=0;finished=false;
  $("systemBlock").hidden=mode!=="cramer";
+ $("difficultyNote").hidden=difficulty!=="large";
+ $("difficultyNote").textContent=mode==="cramer"?"Large-column mode: D uses small coefficients; Dx, Dy and Dz replace one column with larger equation constants.":"Large-column mode: practice a randomly selected Dx, Dy or Dz with one column replaced by larger equation constants.";
  $("solutionPanel").hidden=true;$("solutionFeedback").textContent="";
  ["solX","solY","solZ"].forEach(function(id){$(id).value=""});
  $("equations").innerHTML="";
@@ -265,7 +288,8 @@ function renderMatrix(A){
   var tr=document.createElement("tr");
   for(var c=0;c<5;c++){
    var td=document.createElement("td");td.textContent=pretty(A[r*3+(c%3)]);
-   if(c>2)td.className="repeat";
+   if(difficulty==="large"&&current().replacedColumn===c%3)td.classList.add("large-column");
+   if(c>2)td.classList.add("repeat");
    tr.appendChild(td);
   }tbody.appendChild(tr);
  }
@@ -365,6 +389,7 @@ function setScreen(which){
  $("calculatorTab").setAttribute("aria-selected",String(!onPractice));
 }
 $("modeSelect").onchange=startRound;
+$("difficultySelect").onchange=startRound;
 $("newRound").onclick=startRound;
 $("checkWork").onclick=checkWork;
 $("checkSolution").onclick=checkSolution;
