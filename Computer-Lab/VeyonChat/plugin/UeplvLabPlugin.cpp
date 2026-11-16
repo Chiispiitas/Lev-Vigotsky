@@ -102,6 +102,11 @@ void UeplvLabPlugin::customizeToolbar()
 {
     auto master = VeyonCore::instance()->findChild<VeyonMasterInterface*>();
     if (!master || !master->mainWindow()) return;
+    // Keep one staff receiver alive with Master, including when its chat window is hidden.
+    auto chatProcess=new QProcess(this);chatProcess->setObjectName(QStringLiteral("ueplv-teacher-chat"));
+    chatProcess->setProgram(QDir(qEnvironmentVariable("ProgramData")).filePath(QStringLiteral("UEPLV/VeyonIntegration/UEPLV.VeyonBridge.exe")));
+    chatProcess->setArguments({QStringLiteral("--chat-listen")});chatProcess->start();
+    connect(VeyonCore::instance(),&QObject::destroyed,chatProcess,[chatProcess](){if(chatProcess->state()!=QProcess::NotRunning)chatProcess->kill();});
     if (!findChild<QObject*>(QStringLiteral("ueplv-cloud-presence"))) { auto cloud=new CloudPresence(master->mainWindow(),this); cloud->setObjectName(QStringLiteral("ueplv-cloud-presence")); }
     auto refreshGuard = new RemoteRefreshGuard(master,this); refreshGuard->setObjectName(QStringLiteral("ueplv-remote-refresh-guard"));
     auto toolbar = master->mainWindow()->findChild<QToolBar*>(QStringLiteral("toolBar"));

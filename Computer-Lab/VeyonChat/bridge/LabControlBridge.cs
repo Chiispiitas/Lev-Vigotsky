@@ -272,7 +272,7 @@ namespace UEPLV.VeyonIntegration {
     }
     [STAThread] public static int Main(string[] args){
       Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
-      try{if(args.Length==2&&args[0]=="--chat-qa"){var chat=new ChatWindow(true,new[]{"UEPLV-34"});chat.QaPath=Path.GetFullPath(args[1]);Application.Run(chat);return 0;}if(args.Length==1&&args[0]=="--student-chat"){Application.Run(new ChatWindow(false,null));return 0;}if(args.Length==1&&args[0]=="--presence-snapshot"){
+      try{if(args.Length==1&&args[0]=="--chat-listen"){ChatHost.Run(Enumerable.Range(1,34).Select(n=>"UEPLV-"+n.ToString("00")).ToArray(),true);return 0;}if(args.Length==2&&args[0]=="--chat-qa"){var chat=new ChatWindow(true,new[]{"UEPLV-34"});chat.QaPath=Path.GetFullPath(args[1]);Application.Run(chat);return 0;}if(args.Length==1&&args[0]=="--student-chat"){Application.Run(new ChatWindow(false,null));return 0;}if(args.Length==1&&args[0]=="--presence-snapshot"){
         try {
           var session=SessionStore.Load();if(session==null)throw new Exception("session");
           var status=Api.Call(session,"status").GetAwaiter().GetResult();
@@ -284,7 +284,7 @@ namespace UEPLV.VeyonIntegration {
           }).Where(d=>Regex.IsMatch(d.name,@"^UEPLV-(0[1-9]|[12][0-9]|3[0-4])$")).ToArray();
           Console.WriteLine(Api.Json.Serialize(new{ok=true,checkedUtc=DateTime.UtcNow.ToString("o"),devices=devices}));return 0;
         }catch{Console.WriteLine("{\"ok\":false}");return 2;}
-      }var options=Options.Parse(args);if(options.SelfTest){SelfTest();return 0;}if(options.Import!=null){SessionStore.Import(options.Import);return 0;}if(options.Action=="chat"){Application.Run(new ChatWindow(true,options.Targets));return 0;}var form=new ControlForm(options);Application.Run(form);return options.TestRun?form.ResultCode:0;}
+      }var options=Options.Parse(args);if(options.SelfTest){SelfTest();return 0;}if(options.Import!=null){SessionStore.Import(options.Import);return 0;}if(options.Action=="chat"){ChatHost.Run(options.Targets,false);return 0;}var form=new ControlForm(options);Application.Run(form);return options.TestRun?form.ResultCode:0;}
       catch(Exception){if(!args.Contains("--self-test")&&!args.Contains("--import-session")&&!args.Contains("--test-run"))MessageBox.Show("No se pudo abrir el control del laboratorio.","Laboratorio",MessageBoxButtons.OK,MessageBoxIcon.Error);return 1;}
     }
   }

@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace UEPLV.VeyonIntegration {
   sealed class ChatWindow:Form {
-    readonly bool teacher;readonly string[] targets;
+    readonly bool teacher;string[] targets;readonly bool startHidden;
     readonly ListBox contacts=new ListBox{Dock=DockStyle.Left,Width=165,BorderStyle=BorderStyle.None};
     readonly RichTextBox conversation=new RichTextBox{Dock=DockStyle.Fill,ReadOnly=true,BorderStyle=BorderStyle.None,BackColor=Color.White,DetectUrls=false};
     readonly TextBox message=new TextBox{Dock=DockStyle.Fill,MaxLength=2000,Multiline=true};
@@ -19,32 +19,36 @@ namespace UEPLV.VeyonIntegration {
     readonly Label status=new Label{Dock=DockStyle.Bottom,Height=30,Text="Conectando…",Padding=new Padding(8,4,0,0)};
     readonly ComboBox mode=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,Width=240};
     readonly Button apply=new Button{Text="Aplicar",Width=85};
+    readonly Label targetLabel=new Label{AutoSize=true,Padding=new Padding(8,7,0,0)};
     readonly CheckBox broadcast=new CheckBox{Text="Enviar a todos los seleccionados",Dock=DockStyle.Top,Height=27,AutoSize=false};
     readonly NotifyIcon tray=new NotifyIcon{Text="Chat del laboratorio",Icon=SystemIcons.Information,Visible=true};
     readonly Timer timer=new Timer{Interval=3000};
+    readonly Timer openRequests=new Timer{Interval=350};
     Dictionary<string,object> snapshot;StaffSession session;bool busy,first=true,exiting;string currentName,draftId,draftText;
     readonly HashSet<string> seen=new HashSet<string>();
     public string QaPath;
     sealed class Contact {public string Name;public bool CanSend;public override string ToString(){return Name=="teacher"?"Docente":Name.Replace("UEPLV-","PC ");}}
     static readonly string[] Modes={"teacher-student","teacher-only","students"};
-    public ChatWindow(bool isTeacher,string[] selected){
+    public ChatWindow(bool isTeacher,string[] selected,bool hidden=false){
+      startHidden=hidden;
       teacher=isTeacher;targets=selected??new string[0];Text="Chat del laboratorio";Size=new Size(820,550);MinimumSize=new Size(620,400);StartPosition=FormStartPosition.CenterScreen;Font=new Font("Segoe UI",10);BackColor=Color.FromArgb(247,245,240);
       ForeColor=Color.FromArgb(36,52,81);conversation.ForeColor=ForeColor;contacts.ForeColor=ForeColor;contacts.ItemHeight=28;conversation.Margin=new Padding(14);message.BorderStyle=BorderStyle.FixedSingle;
       foreach(var button in new[]{send,apply}){button.FlatStyle=FlatStyle.Flat;button.FlatAppearance.BorderSize=0;button.BackColor=Color.FromArgb(245,190,79);button.ForeColor=ForeColor;button.Font=new Font("Segoe UI",10,FontStyle.Bold);}
       var bottom=new Panel{Dock=DockStyle.Bottom,Height=64,Padding=new Padding(8)};bottom.Controls.Add(message);bottom.Controls.Add(send);
       var main=new Panel{Dock=DockStyle.Fill,Padding=new Padding(8)};main.Controls.Add(conversation);main.Controls.Add(contacts);
       Controls.Add(main);Controls.Add(bottom);Controls.Add(status);
-      if(teacher){var top=new FlowLayoutPanel{Dock=DockStyle.Top,Height=48,Padding=new Padding(8)};mode.Items.AddRange(new object[]{"Docente ↔ estudiantes","Solo mensajes del docente","Permitir entre estudiantes"});mode.SelectedIndex=0;top.Controls.Add(mode);top.Controls.Add(apply);top.Controls.Add(new Label{AutoSize=true,Padding=new Padding(8,7,0,0),Text=targets.Length==1?targets[0]:targets.Length+" equipos"});Controls.Add(top);bottom.Controls.Add(broadcast);bottom.Height=90;apply.Click+=async(s,e)=>await Configure();}
+      if(teacher){var top=new FlowLayoutPanel{Dock=DockStyle.Top,Height=48,Padding=new Padding(8)};mode.Items.AddRange(new object[]{"Docente ↔ estudiantes","Solo mensajes del docente","Permitir entre estudiantes"});mode.SelectedIndex=0;top.Controls.Add(mode);top.Controls.Add(apply);targetLabel.Text=targets.Length==1?targets[0]:targets.Length+" equipos";top.Controls.Add(targetLabel);Controls.Add(top);bottom.Controls.Add(broadcast);bottom.Height=90;apply.Click+=async(s,e)=>await Configure();}
       contacts.SelectedIndexChanged+=(s,e)=>Render();send.Click+=async(s,e)=>await Send();message.KeyDown+=async(s,e)=>{if(e.KeyCode==Keys.Enter&&!e.Shift){e.SuppressKeyPress=true;await Send();}};
       tray.DoubleClick+=(s,e)=>Open();tray.BalloonTipClicked+=(s,e)=>Open();
       var menu=new ContextMenuStrip();menu.Items.Add("Abrir chat",null,(s,e)=>Open());tray.ContextMenuStrip=menu;
-      FormClosing+=(s,e)=>{if(!exiting&&e.CloseReason==CloseReason.UserClosing&&!teacher){e.Cancel=true;Hide();}};
-      FormClosed+=(s,e)=>{exiting=true;timer.Stop();tray.Dispose();};
-      timer.Tick+=async(s,e)=>await Poll();Shown+=async(s,e)=>{if(!teacher)Hide();await Poll();timer.Start();};
+      FormClosing+=(s,e)=>{if(!exiting&&e.CloseReason==CloseReason.UserClosing){e.Cancel=true;Hide();}};
+      FormClosed+=(s,e)=>{exiting=true;timer.Stop();openRequests.Stop();tray.Dispose();};
+      openRequests.Tick+=async(s,e)=>{if(!teacher)return;try{string file=Path.Combine(SessionStore.DirectoryPath,"chat-open.json");if(File.Exists(file)){var request=Api.Json.Deserialize<Dictionary<string,object>>(File.ReadAllText(file));var names=Options.ParseTargets(Api.String(request,"targets"));File.Delete(file);targets=names;targetLabel.Text=targets.Length==1?targets[0]:targets.Length+" equipos";snapshot=null;contacts.Items.Clear();send.Enabled=message.Enabled=false;first=true;Open();timer.Interval=3000;await Poll();}if(System.Diagnostics.Process.GetProcessesByName("veyon-master").Length==0&&QaPath==null){exiting=true;Close();}}catch{}};
+      timer.Tick+=async(s,e)=>await Poll();Shown+=async(s,e)=>{if(!teacher||startHidden)Hide();if(teacher)openRequests.Start();await Poll();timer.Start();};
     }
     void Open(){Show();WindowState=FormWindowState.Normal;Activate();}
     async Task<Dictionary<string,object>> Call(Dictionary<string,object> body){
-      if(teacher){if(session==null)session=SessionStore.Load();try{return await Api.Call(session,"chat",body);}catch(LoginRequired){}using(var login=new LoginForm()){if(login.ShowDialog(this)!=DialogResult.OK)throw new Exception("Sin sesión.");}session=SessionStore.Load();return await Api.Call(session,"chat",body);}
+      if(teacher){if(session==null)session=SessionStore.Load();try{return await Api.Call(session,"chat",body);}catch(LoginRequired){}if(!Visible)throw new Exception("Sin sesión.");using(var login=new LoginForm()){if(login.ShowDialog(this)!=DialogResult.OK)throw new Exception("Sin sesión.");}session=SessionStore.Load();return await Api.Call(session,"chat",body);}
       string path=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"UEPLV","Chat","student-session.json");
       var config=Api.Json.Deserialize<Dictionary<string,object>>(File.ReadAllText(path));body["token"]=Api.String(config,"token");
       var request=(HttpWebRequest)WebRequest.Create(SessionStore.BaseUrl+"/api/chat/student");request.Method="POST";request.ContentType="application/json";request.AllowAutoRedirect=false;request.Timeout=15000;request.ReadWriteTimeout=15000;
@@ -69,7 +73,7 @@ namespace UEPLV.VeyonIntegration {
       if(QaPath!=null){string report=QaPath;QaPath=null;PerformLayout();using(var bitmap=new Bitmap(Width,Height)){DrawToBitmap(bitmap,new Rectangle(0,0,Width,Height));bitmap.Save(report+".png");}File.WriteAllText(report,Api.Json.Serialize(new{connected=true,contactCount=contacts.Items.Count,messageCount=Api.Objects(snapshot,"messages").Count(),sendEnabled=send.Enabled,selected=contacts.SelectedItem==null?"":((Contact)contacts.SelectedItem).Name,utc=DateTime.UtcNow.ToString("o")}));exiting=true;BeginInvoke(new Action(Close));}
     }catch(Exception ex){status.Text=ex is FileNotFoundException?"Conectando…":ex.Message;send.Enabled=false;message.Enabled=false;timer.Interval=Math.Min(30000,timer.Interval+3000);WriteDiagnostics(false);}finally{busy=false;}}
     string lastDiagnostic;DateTime lastDiagnosticUtc;
-    void WriteDiagnostics(bool connected){if(teacher)return;try{string state=Api.Json.Serialize(new{connected,mode=Api.String(snapshot,"mode"),contacts=contacts.Items.Cast<Contact>().Select(c=>new{name=c.Name,canSend=c.CanSend}).ToArray(),messageCount=Api.Objects(snapshot,"messages").Count(),sendEnabled=send.Enabled});if(state==lastDiagnostic&&DateTime.UtcNow-lastDiagnosticUtc<TimeSpan.FromMinutes(1))return;string root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"UEPLV","Chat");Directory.CreateDirectory(root);File.WriteAllText(Path.Combine(root,"client-status.json"),state);lastDiagnostic=state;lastDiagnosticUtc=DateTime.UtcNow;}catch{}}
+    void WriteDiagnostics(bool connected){try{string state=Api.Json.Serialize(new{connected,visible=Visible,mode=Api.String(snapshot,"mode"),contacts=contacts.Items.Cast<Contact>().Select(c=>new{name=c.Name,canSend=c.CanSend}).ToArray(),messageCount=Api.Objects(snapshot,"messages").Count(),sendEnabled=send.Enabled});if(state==lastDiagnostic&&DateTime.UtcNow-lastDiagnosticUtc<TimeSpan.FromMinutes(1))return;string root=teacher?SessionStore.DirectoryPath:Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),"UEPLV","Chat");Directory.CreateDirectory(root);File.WriteAllText(Path.Combine(root,teacher?"teacher-chat-state.json":"client-status.json"),state);lastDiagnostic=state;lastDiagnosticUtc=DateTime.UtcNow;}catch{}}
     static string LabelFor(string name){return name=="teacher"?"Docente":name.Replace("UEPLV-","PC ");}
     void Render(){if(snapshot==null)return;var contact=contacts.SelectedItem as Contact;bool allowed=contact!=null&&contact.CanSend;send.Enabled=message.Enabled=allowed;
       string text=string.Join(Environment.NewLine+Environment.NewLine,Api.Objects(snapshot,"messages").Where(m=>contact!=null&&(Api.String(m,"from")==contact.Name||Api.String(m,"to")==contact.Name)).Select(m=>LabelFor(Api.String(m,"from"))+" · "+DateTime.Parse(Api.String(m,"utc")).ToLocalTime().ToString("HH:mm")+Environment.NewLine+Api.String(m,"text")));

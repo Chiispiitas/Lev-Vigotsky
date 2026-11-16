@@ -2,7 +2,7 @@
 
 Implemented with the existing Wix backend and GitHub deployment. This is UEPLV's own chat, not a Rocket.Chat installation.
 
-- Native Veyon **Chat** replaces **Text message** in the toolbar and computer context menu.
+- Native Veyon **Chat** replaces **Text message** in the toolbar and computer context menu. One staff receiver stays connected while Veyon is open; closing its window keeps notifications active.
 - Teacher/student two-way messages are the default. Students open the chat from its notification-area icon.
 - Teacher can select **Solo mensajes del docente** or **Permitir entre estudiantes** for the PCs selected in Veyon. Both students need a current peer grant to communicate.
 - An explicit configuration replaces the previous temporary grants. A PC restart returns that PC to two-way teacher/student mode and revokes its old student session.
