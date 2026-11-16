@@ -1,0 +1,12 @@
+{
+  "purpose": "PUBLIC TEST VECTOR ONLY, NEVER A DEPLOYED CREDENTIAL",
+  "key": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+Pw==",
+  "plaintext": "{\"requestId\":\"fa430195-3fe5-455e-94ac-deb4d35876d8\",\"sentUtc\":\"2026-11-13T16:00:00.000Z\",\"deviceId\":\"7d764bd4-713c-471e-b0dc-205a9307f3ce\",\"sequence\":42,\"status\":{\"name\":\"UEPLV-01\",\"mode\":\"exam\",\"uwfError\":\"Área técnica: innovación\"},\"results\":[]}",
+  "envelope": {
+    "name": "UEPLV-01",
+    "nonce": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYX",
+    "iv": "EBESExQVFhcYGRobHB0eHw==",
+    "data": "ZF6nh6ry9p+mgUvBXSumiK1w9Bh6CTkXUabzoeuRoV6OAifIdwSB+DWFhzmzZD00rllR8aVJCTB4zzOcTt4HdOukIdvU6ucxcVDFqU43Yh9ozxF4XOj0fkyyxWHWQYf8LGH9V+H0ezv4ocAHABROVeI+ubDQiT/K+9QwBBlY9Oj81VO3OAPf9HHJ6dpxHxeuB4levgXwf23oVCMfSx9A80dhcmeh1NN/t/Yv9cKxdAwQ8i0U1coBXcpAz779FkftaH7ofpu13Cwuftd9+f13EU2NGRbxpQssOu06fjWH6EhF8s5piVlhmOyQd2srOxtjWa7zjsfg/1gxTI/X9DaR4g==",
+    "mac": "7DCcK4XJfeLCvaJiLYF5ydYfgAPBADcIXjdnfUmWhqU="
+  }
+}

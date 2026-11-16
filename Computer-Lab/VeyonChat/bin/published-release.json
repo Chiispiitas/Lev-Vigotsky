@@ -1,0 +1,17 @@
+{
+  "version": "1.6.1",
+  "issuedUtc": "2026-11-16T04:28:32.956Z",
+  "packageSha256": "a6955b2719d190381be0a65541eaf34465a2a3033a64197b7ba6cb22ee466368",
+  "files": [
+    {
+      "path": "Actions/Invoke-LabAction.ps1",
+      "sha256": "51826b14bbead92ed056222e5b65f543779942f6d07d0c64c832b1bb101b49ec",
+      "size": 60668
+    },
+    {
+      "path": "UEPLV.Management.exe",
+      "sha256": "22ae8b94cf57725728cdde73350b87c6c117d936bf78e792a1ff4c9bfd955b8f",
+      "size": 203264
+    }
+  ]
+}
