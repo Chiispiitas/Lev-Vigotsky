@@ -63,6 +63,7 @@ namespace UEPLV {
         File.WriteAllText(Path.Combine(Root,"status.json"),Util.Json(new{connected=true,utc=Util.Utc()}));
       }
     }catch(Exception ex){next=DateTime.UtcNow.AddSeconds(30);try{Directory.CreateDirectory(Root);File.WriteAllText(Path.Combine(Root,"status.json"),Util.Json(new{connected=false,utc=Util.Utc(),error=ex.Message}));}catch{}}
+      if(installed)try{if(NeedsInteractiveLaunch())Util.Run(Path.Combine(Environment.SystemDirectory,"schtasks.exe"),"/Run /TN UEPLV-StudentChat",10000);}catch(Exception ex){try{File.WriteAllText(Path.Combine(Root,"launch-error.txt"),ex.Message);}catch{}}
       for(int i=0;i<10&&!stopping;i++)Thread.Sleep(1000);
     }}
   }

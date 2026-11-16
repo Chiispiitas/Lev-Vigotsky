@@ -85,11 +85,20 @@ namespace UEPLV {
    if(Pending(state.session))throw new Exception("Ya hay un cambio de sesion en curso.");
    if(action=="maintenance-enter"){
     if(state.session!=null&&state.session.phase=="maintenance"&&snapshot.currentEnabled==false&&snapshot.nextEnabled==false&&User()==Staff){var old=state.results.First(x=>x.id==job.id);old.state="completed";old.detail="Mantenimiento — sin protección";return;}
-    if(!Util.ProtectionConsistent(snapshot))throw new Exception("Primero complete el reinicio pendiente y verifique la proteccion UWF.");
+    bool alreadyThawed=snapshot.currentEnabled==false;
+    if(!alreadyThawed&&!Util.ProtectionConsistent(snapshot))throw new Exception("Complete primero el cambio de proteccion pendiente.");
     if(string.IsNullOrEmpty(job.credentialEnvelope)||job.credentialEnvelope.Length>8192)throw new Exception("Falta la credencial cifrada para este equipo.");
     var c=Util.From<MaintenanceCredential>(Util.Unprotect(cfg.name,cfg.cloudKey,job.credentialEnvelope));
     if(c==null||c.purpose!="ueplv-maintenance-login"||c.jobId!=job.id||c.expiresUtc!=job.expiresUtc||c.account!=Staff||!Util.ValidJob(job))throw new Exception("Credencial de sesion invalida o caducada.");
     VerifyPassword(c.password);
+    if(FreezeSchedule.Active(state.freezeLease)){state.freezeLease.phase="complete";state.freezeLease.remainingBoots=0;state.freezeLease.error=null;}
+    if(alreadyThawed){
+     if(FreezeSchedule.Active(state.freezeLease)){state.freezeLease.phase="complete";state.freezeLease.remainingBoots=0;state.freezeLease.error=null;}
+     Uwf("filter disable");
+     StaffAutologon(c.password);c.password=null;
+     state.session=new SessionTransition{phase="maintenance-login",jobId=job.id,bootTicks=snapshot.bootTicks,startedUtc=Util.Utc()};
+     var pending=state.results.First(x=>x.id==job.id);pending.state="awaiting-session";pending.detail="Entrando a MAINTENANCE; proteccion sin cambios.";save();Restart();return;
+    }
     state.session=new SessionTransition{phase="disabling",jobId=job.id,bootTicks=snapshot.bootTicks,startedUtc=Util.Utc(),encryptedCredential=Seal(c.password,state.deviceId)};save();
     // Commit this value only: the first unprotected boot must not auto-sign in a student.
     DisableAutologon();Uwf("registry commit \"HKLM\\"+Winlogon+"\" AutoAdminLogon");
@@ -101,8 +110,9 @@ namespace UEPLV {
      state.session=new SessionTransition{phase="student",jobId=job.id};Complete(state,"Estudiante — protección activa");save();return;
     }
     if(snapshot.currentEnabled==true)throw new Exception("Entre en mantenimiento antes de restaurar la sesion del estudiante.");
-    if(snapshot.nextEnabled==true)throw new Exception("Ya hay un cambio de proteccion pendiente. Reinicie primero.");
+    // Returning to student explicitly confirms protection for the next boot, including a timed thaw.
     using(var pending=Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending")){if(pending!=null)throw new Exception("Complete primero el reinicio pendiente de Windows.");}
+    if(FreezeSchedule.Active(state.freezeLease)){state.freezeLease.phase="complete";state.freezeLease.remainingBoots=0;state.freezeLease.error=null;}
     StudentAutologon();
     if(snapshot.nextCProtected!=true)Uwf("volume protect C:");
     state.session=new SessionTransition{phase="student-login",jobId=job.id,bootTicks=snapshot.bootTicks,startedUtc=Util.Utc()};save();

@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [switch]$LibraryOnly,
     [string]$StateRoot = (Join-Path $env:ProgramData 'UEPLV\Update'),
@@ -192,10 +192,10 @@ function New-UpdateState([string]$InitialVersion='1.2.0') {
     Get-ReleaseVersion $InitialVersion|Out-Null
     return [pscustomobject][ordered]@{schemaVersion=1;installedVersion=$InitialVersion;previousInstalledVersion=$null;expectedAgentVersion=$null;requiresStaffReview=$false;phase='idle';pendingVersion=$null;failedVersion=$null;lastError=$null;lastCheckedUtc=$null;completedUtc=$null;wasProtected=$false;preparedBootId=$null;restoreBootId=$null;rebootsRemaining=1;packageSha256=$null;rollback=@();serviceStartIdBefore=$null}
 }
-function Test-UpdateAgentIdle($Agent,[switch]$AllowMaintenanceBlocked) {
+function Test-UpdateAgentIdle($Agent,[switch]$AllowMaintenanceBlocked,[switch]$ManualThaw) {
     if(-not $Agent) { return $false }
-    if($Agent.PSObject.Properties['freezeLease'] -and $Agent.freezeLease -and $Agent.freezeLease.phase -ne 'complete'){return $false}
-    if($Agent.PSObject.Properties['session'] -and $Agent.session -and $Agent.session.phase -ne 'student'){return $false}
+    if($Agent.PSObject.Properties['freezeLease'] -and $Agent.freezeLease -and $Agent.freezeLease.phase -ne 'complete' -and -not ($ManualThaw -and $Agent.freezeLease.phase -eq 'active')){return $false}
+    if($Agent.PSObject.Properties['session'] -and $Agent.session -and $Agent.session.phase -ne 'student' -and -not ($ManualThaw -and $Agent.session.phase -eq 'maintenance')){return $false}
     if(-not $AllowMaintenanceBlocked -and $Agent.PSObject.Properties['maintenanceBlocked'] -and $Agent.maintenanceBlocked) { return $false }
     return [bool](-not $Agent.PSObject.Properties['activeAction'] -or -not $Agent.activeAction -or $Agent.activeAction -in @('status','uwf-status'))
 }
@@ -220,7 +220,12 @@ function Restore-UpdateProtection($State,$Runtime) {
 function Invoke-UpdateCycle($State,$Runtime) {
     # Runtime is an injected set of fixed operations; tests use only in-memory fake operations.
     $save={ $State.lastCheckedUtc=[datetime]::UtcNow.ToString('o'); & $Runtime.SaveState $State }
+    $manualThawOnly=$Runtime.ContainsKey('ManualThawOnly') -and [bool]$Runtime.ManualThawOnly
     $snapshot=& $Runtime.Snapshot
+    # Production releases never thaw or reboot a classroom automatically.
+    if($manualThawOnly -and ($snapshot.CurrentEnabled -or $snapshot.Servicing)) {
+        $State.lastError='Descargada; esperando descongelacion manual y reinicio del docente.';& $save;return
+    }
     if($State.phase -eq 'verifying-protection') {
         if($snapshot.BootId -eq $State.restoreBootId) { & $save;return }
         if($snapshot.CurrentEnabled -and $snapshot.NextEnabled -and $snapshot.CurrentCProtected -and $snapshot.NextCProtected -and -not $snapshot.Servicing) {
@@ -238,7 +243,7 @@ function Invoke-UpdateCycle($State,$Runtime) {
         & $save;return
     }
     if($State.phase -in @('installing','rolling-back')) {
-        if($snapshot.Servicing -or ($snapshot.AgentRunning -and -not(Test-UpdateAgentIdle $snapshot.Agent -AllowMaintenanceBlocked))) { $State.lastError='Interrupted update waits for servicing or the previous management action.';& $save;return }
+        if($snapshot.Servicing -or ($snapshot.AgentRunning -and -not(Test-UpdateAgentIdle $snapshot.Agent -AllowMaintenanceBlocked -ManualThaw:$manualThawOnly))) { $State.lastError='Interrupted update waits for servicing or the previous management action.';& $save;return }
         if($snapshot.CurrentEnabled) {
             & $Runtime.SetFilter $false
             $State.lastError='Interrupted update waits for the next normal restart before rollback.';& $save;return
@@ -287,35 +292,41 @@ function Invoke-UpdateCycle($State,$Runtime) {
         & $save;return
     }
     if($State.phase -notin @('preparing-restart','awaiting-normal-restart','backing-up')) {
-        if($snapshot.Agent -and $snapshot.Agent.PSObject.Properties['freezeLease'] -and $snapshot.Agent.freezeLease -and $snapshot.Agent.freezeLease.phase -ne 'complete'){ $State.lastError='Update waits for thaw protection restoration.';& $save;return }
-        if($snapshot.Agent -and $snapshot.Agent.PSObject.Properties['session'] -and $snapshot.Agent.session -and $snapshot.Agent.session.phase -ne 'student'){ $State.lastError='Update waits for student mode.';& $save;return }
-        if($snapshot.CurrentEnabled -ne $snapshot.NextEnabled -or ($snapshot.CurrentEnabled -and (-not $snapshot.CurrentCProtected -or -not $snapshot.NextCProtected))) { $State.lastError='Update waits for consistent current and next UWF protection.';& $save;return }
-        $State.pendingVersion=$release.Version;$State.packageSha256=$release.PackageHash;$State.wasProtected=[bool]$snapshot.CurrentEnabled;$State.preparedBootId=$snapshot.BootId;$State.rebootsRemaining=1;$State.rollback=@();$State.lastError=$null;$State.previousInstalledVersion=$State.installedVersion
+        if(-not $manualThawOnly -and $snapshot.Agent -and $snapshot.Agent.PSObject.Properties['freezeLease'] -and $snapshot.Agent.freezeLease -and $snapshot.Agent.freezeLease.phase -ne 'complete'){ $State.lastError='Update waits for thaw protection restoration.';& $save;return }
+        if(-not $manualThawOnly -and $snapshot.Agent -and $snapshot.Agent.PSObject.Properties['session'] -and $snapshot.Agent.session -and $snapshot.Agent.session.phase -ne 'student'){ $State.lastError='Update waits for student mode.';& $save;return }
+        if(-not $manualThawOnly -and ($snapshot.CurrentEnabled -ne $snapshot.NextEnabled -or ($snapshot.CurrentEnabled -and (-not $snapshot.CurrentCProtected -or -not $snapshot.NextCProtected)))) { $State.lastError='Update waits for consistent current and next UWF protection.';& $save;return }
+        $State.pendingVersion=$release.Version;$State.packageSha256=$release.PackageHash;$State.wasProtected=([bool]$snapshot.CurrentEnabled -and -not $manualThawOnly);$State.preparedBootId=$snapshot.BootId;$State.rebootsRemaining=1;$State.rollback=@();$State.lastError=$null;$State.previousInstalledVersion=$State.installedVersion
         $State.expectedAgentVersion=if(@($release.Files|Where-Object {$_.Path -ceq 'UEPLV.Management.exe'}).Count){$release.Version}else{$null}
         $State.phase='preparing-restart';& $save
     }
     if($State.phase -eq 'preparing-restart') {
         # Phase-first/activeAction-second pairs with the agent's inverse handshake.
-        $snapshot=& $Runtime.Snapshot
-        if(-not $snapshot.AgentRunning -or -not(Test-UpdateAgentIdle $snapshot.Agent)) { $State.lastError='Update waits for a running idle management service.';& $save;return }
+        $manualThawOnly=$Runtime.ContainsKey('ManualThawOnly') -and [bool]$Runtime.ManualThawOnly
+    $snapshot=& $Runtime.Snapshot
+        if(-not $snapshot.AgentRunning -or -not(Test-UpdateAgentIdle $snapshot.Agent -ManualThaw:$manualThawOnly)) { $State.lastError='Update waits for a running idle management service.';& $save;return }
         if($snapshot.Servicing -or -not $snapshot.InitialDeploymentComplete){$State.lastError='Update waits for initial deployment or servicing.';& $save;return}
         if($State.wasProtected) {
-            if($snapshot.CurrentEnabled) { & $Runtime.SetFilter $false;$snapshot=& $Runtime.Snapshot;if($snapshot.NextEnabled){throw 'UWF disable was not confirmed for the next boot.'} }
+            if($snapshot.CurrentEnabled) { & $Runtime.SetFilter $false;$manualThawOnly=$Runtime.ContainsKey('ManualThawOnly') -and [bool]$Runtime.ManualThawOnly
+    $snapshot=& $Runtime.Snapshot;if($snapshot.NextEnabled){throw 'UWF disable was not confirmed for the next boot.'} }
             elseif($snapshot.BootId -eq $State.preparedBootId) { throw 'Unexpected unprotected state during preparation.' }
         }
-        elseif($snapshot.CurrentEnabled -or $snapshot.NextEnabled) { $State.lastError='Update preserves a separately scheduled protection change and waits.';& $save;return }
+        elseif($snapshot.CurrentEnabled -or ($snapshot.NextEnabled -and -not $manualThawOnly)) { $State.lastError='Update preserves a separately scheduled protection change and waits.';& $save;return }
         $State.phase='awaiting-normal-restart';& $save
     }
     if($State.phase -eq 'awaiting-normal-restart') {
-        if($snapshot.BootId -eq $State.preparedBootId) { return }
-        if($snapshot.CurrentEnabled -or $snapshot.NextEnabled -or $snapshot.Servicing) { $State.lastError='Update will not replace files while current/next UWF protection or servicing is enabled.';& $save;return }
+        if(-not $manualThawOnly -and $snapshot.BootId -eq $State.preparedBootId) { return }
+        if($snapshot.CurrentEnabled -or ($snapshot.NextEnabled -and -not $manualThawOnly) -or $snapshot.Servicing) { $State.lastError='Update will not replace files while current/next UWF protection or servicing is enabled.';& $save;return }
         $State.phase='backing-up';& $save
     }
     if($State.phase -eq 'backing-up') {
-        $snapshot=& $Runtime.Snapshot
-        if($snapshot.CurrentEnabled -or $snapshot.NextEnabled -or $snapshot.Servicing) { $State.lastError='Update backup waits for UWF to be fully disabled.';& $save;return }
-        if(-not $snapshot.AgentRunning -or -not(Test-UpdateAgentIdle $snapshot.Agent)) { $State.lastError='Update waits for a running idle management service.';& $save;return }
+        $manualThawOnly=$Runtime.ContainsKey('ManualThawOnly') -and [bool]$Runtime.ManualThawOnly
+    $snapshot=& $Runtime.Snapshot
+        if($snapshot.CurrentEnabled -or ($snapshot.NextEnabled -and -not $manualThawOnly) -or $snapshot.Servicing) { $State.lastError='Update backup waits for UWF to be fully disabled.';& $save;return }
+        if(-not $snapshot.AgentRunning -or -not(Test-UpdateAgentIdle $snapshot.Agent -ManualThaw:$manualThawOnly)) { $State.lastError='Update waits for a running idle management service.';& $save;return }
         try {
+            if($Runtime.ContainsKey('Preflight')){
+                try{& $Runtime.Preflight}catch{$State.phase='idle';$State.pendingVersion=$null;$State.lastError='Actualizacion en espera: '+$_.Exception.Message;& $save;return}
+            }
             $State.serviceStartIdBefore=if($snapshot.Agent.PSObject.Properties['serviceStartId']){[string]$snapshot.Agent.serviceStartId}else{$null}
             $State.rollback=@(& $Runtime.Backup $release)
             $State.phase='installing';& $save
@@ -365,8 +376,16 @@ try {
     try { $locked=$mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $locked=$true }
     if(-not $locked) { return }
     $state=Read-UpdateState $statePath $checkpointPath
-    $runtime=@{}
+    $runtime=@{ManualThawOnly=$true}
     $runtime.SaveState={param($value) Write-UpdateState $statePath $checkpointPath $value}
+    $runtime.Preflight={
+        $disk=[IO.DriveInfo]::new([IO.Path]::GetPathRoot($ProgramRoot))
+        if($disk.AvailableFreeSpace -lt 536870912){throw 'Menos de 512 MB libres; no se modifico el servicio.'}
+        $agent=Read-PrivateJson (Join-Path $env:ProgramData 'UEPLV\Management\agent-state.json') 2097152
+        $last=[datetime]::MinValue
+        if(-not [datetime]::TryParse([string]$agent.cloudLastSuccessUtc,[ref]$last) -or [math]::Abs(([datetime]::UtcNow-$last.ToUniversalTime()).TotalSeconds) -gt 180){throw 'Sin conexion autenticada reciente al Servidor; compruebe internet y fecha/hora.'}
+        if(Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending'){throw 'Windows tiene un reinicio pendiente; reinicie manualmente antes de instalar.'}
+    }
     $runtime.Snapshot={
         $boot=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().Ticks.ToString()
         $agent=$null;try{$agent=Read-PrivateJson (Join-Path $env:ProgramData 'UEPLV\Management\agent-state.json') 2097152}catch{}
@@ -393,6 +412,7 @@ try {
         Get-ValidatedRelease $envelope $keyXml
     }
     $runtime.SetFilter={param([bool]$enabled)
+        if(-not $enabled){throw 'El actualizador no descongela equipos; requiere accion manual del docente.'}
         $arg=if($enabled){'enable'}else{'disable'}
         $text=& (Join-Path $env:windir 'System32\uwfmgr.exe') filter $arg 2>&1|Out-String
         if($LASTEXITCODE -ne 0){throw ('UWF filter '+$arg+' failed: '+$text.Trim())}
@@ -414,7 +434,7 @@ try {
     }
     $runtime.StopAgent={
         $service=Get-Service -Name UEPLVAgent -ErrorAction Stop
-        if($service.Status -ne 'Stopped'){Stop-Service -Name UEPLVAgent -Force;$service.WaitForStatus('Stopped',[TimeSpan]::FromSeconds(30))}
+        if($service.Status -ne 'Stopped'){$controller=[ServiceProcess.ServiceController]::new('UEPLVAgent');try{$controller.Stop();$controller.WaitForStatus([ServiceProcess.ServiceControllerStatus]::Stopped,[TimeSpan]::FromSeconds(30))}finally{$controller.Dispose()}}
     }
     $runtime.Install={param($release)
         foreach($file in $release.Files){
@@ -444,12 +464,13 @@ try {
     }
     $runtime.StartAgent={Start-Service -Name UEPLVAgent;(Get-Service UEPLVAgent).WaitForStatus('Running',[TimeSpan]::FromSeconds(30))}
     $runtime.WaitHealthy={param([string]$oldStartId,[string]$expectedVersion)
-        $deadline=[datetime]::UtcNow.AddSeconds(300);$stable=0
+        $healthySince=[datetime]::UtcNow.AddSeconds(-10);$deadline=[datetime]::UtcNow.AddSeconds(300);$stable=0
         do{
             $service=Get-Service -Name UEPLVAgent
             $agent=$null;try{$agent=Read-PrivateJson (Join-Path $env:ProgramData 'UEPLV\Management\agent-state.json') 2097152}catch{}
             $valid=[bool]($service.Status -eq 'Running' -and $agent -and $agent.PSObject.Properties['serviceStartId'] -and $agent.serviceStartId -and $agent.serviceStartId -ne $oldStartId -and $agent.policiesApplied -eq $true -and -not $agent.maintenanceBlocked)
             if($expectedVersion -and $valid -and [string]$agent.version -cne $expectedVersion){$valid=$false}
+            if($valid){$reported=[datetime]::MinValue;if(-not [datetime]::TryParse([string]$agent.cloudLastSuccessUtc,[ref]$reported) -or $reported.ToUniversalTime() -lt $healthySince){$valid=$false}}
             if($valid){$stable++}else{$stable=0}
             if($stable -ge 3){return}
             Start-Sleep -Seconds 5
@@ -458,6 +479,7 @@ try {
     }
     $runtime.ClearPending={Write-PrivateJson $pendingPath ([pscustomobject]@{})}
     $runtime.Restart={
+        throw 'Reinicio pendiente: el docente debe reiniciar manualmente.'
         & (Join-Path $env:windir 'System32\shutdown.exe') /r /t 30 /c 'UEPLV: actualizacion aplicada; reiniciando una vez para restaurar la proteccion.'|Out-Null
         if($LASTEXITCODE -ne 0){throw 'Protection restoration restart could not be scheduled.'}
     }

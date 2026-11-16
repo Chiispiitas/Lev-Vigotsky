@@ -205,6 +205,49 @@ try{
             Assert-Equal $f.State.phase 'awaiting-normal-restart' 'Restored protection releases updates'
         }
     }
+    Test-Case 'Manual policy never thaws a protected PC or blocks its thaw action' {
+        $f=New-CycleFixture;$f.Runtime.ManualThawOnly=$true;Invoke-FixtureCycle
+        Assert-Equal $f.State.phase 'idle' 'No active install lock while waiting for teacher'
+        Assert-Equal (Count-Event 'filter:False') 0 'No automatic thaw'
+        Assert-Equal (Count-Event 'install') 0 'No writes in overlay'
+    }
+    Test-Case 'Manual thaw installs on current thawed boot without another restart' {
+        $f=New-CycleFixture $false;$f.Runtime.ManualThawOnly=$true;Invoke-FixtureCycle
+        Assert-Equal $f.State.phase 'complete' 'Installed in already thawed session'
+        Assert-Equal (Count-Event 'install') 1 'Installed once'
+        Assert-Equal (Count-Event 'restart') 0 'No forced restart'
+    }
+    Test-Case 'Manual maintenance and finite thaw preserve next-boot freeze intent' {
+        $f=New-CycleFixture $false;$f.Runtime.ManualThawOnly=$true;$f.Snapshot.NextEnabled=$true
+        $f.Snapshot.Agent|Add-Member session ([pscustomobject]@{phase='maintenance'})
+        $f.Snapshot.Agent|Add-Member freezeLease ([pscustomobject]@{phase='active'})
+        Invoke-FixtureCycle
+        Assert-Equal $f.State.phase 'complete' 'Stable maintenance is a valid update window'
+        Assert-True $f.Snapshot.NextEnabled 'Teacher freeze choice preserved'
+        Assert-Equal (Count-Event 'restart') 0 'No boot consumed'
+    }
+    Test-Case 'Manual policy waits for session transitions and active mutations' {
+        foreach($phase in @('disabling','student-login','maintenance-login','error')){
+            $f=New-CycleFixture $false;$f.Runtime.ManualThawOnly=$true
+            $f.Snapshot.Agent|Add-Member session ([pscustomobject]@{phase=$phase})
+            Invoke-FixtureCycle
+            Assert-Equal (Count-Event 'install') 0 'Transition never interrupted'
+        }
+    }
+    Test-Case 'Manual failed health rolls back without forced reboot or thaw' {
+        $f=New-CycleFixture $false;$f.Runtime.ManualThawOnly=$true;$f.HealthFailures=1;Invoke-FixtureCycle
+        Assert-Equal (Count-Event 'rollback') 1 'Previous service restored'
+        Assert-Equal $f.State.installedVersion '1.2.0' 'Failed release not called installed'
+        Assert-Equal (Count-Event 'restart') 0 'No reboot'
+        Assert-Equal (Count-Event 'filter:False') 0 'No thaw'
+    }
+    Test-Case 'Failed disk/network/restart preflight preserves service and releases action interlock' {
+        $f=New-CycleFixture $false;$f.Runtime.ManualThawOnly=$true;$f.Runtime.Preflight={throw 'No space or stale authenticated report'}
+        Invoke-FixtureCycle
+        Assert-Equal $f.State.phase 'idle' 'Teacher actions stay available'
+        Assert-Equal (Count-Event 'stop') 0 'Existing service remains running'
+        Assert-Equal (Count-Event 'install') 0 'No partial install'
+    }
     Write-Output ('ALL '+$script:passed+' AUTOMATIC UPDATE TESTS PASSED (no host settings changed).')
 }finally{
     $script:testRsa.Dispose()
