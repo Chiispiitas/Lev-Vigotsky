@@ -7,9 +7,9 @@
   window.labFetch=fetch;
 
   const expectedNames = Array.from({ length: 34 }, (_, i) => `UEPLV-${String(i + 1).padStart(2, '0')}`);
-  const allowedActions = new Set(['cleanup', 'shutdown-warning-test', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
-  const confirmationActions = new Set(['cleanup','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
-  const actionLabels = { class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', shutdown:'Apagar', 'shutdown-warning-test':'Probar aviso de apagado', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
+  const allowedActions = new Set(['maintenance-enter','student-return','cleanup', 'shutdown-warning-test', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
+  const confirmationActions = new Set(['maintenance-enter','student-return','cleanup','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
+  const actionLabels = { 'maintenance-enter':'Entrar a MAINTENANCE', 'student-return':'Volver a LEV VIGOTSKY', class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', shutdown:'Apagar', 'shutdown-warning-test':'Probar aviso de apagado', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
   const stageLabels = { Prepare: 'Preparando protección', Updates: 'Actualizando Windows', Readiness: 'Verificando requisitos', ProtectionPending: 'Protección programada', PostBoot: 'Verificando reinicio', Complete: 'Instalación completa', Pending: 'Pendiente', Installed: 'Configuración inicial lista', 'Provisioned-awaiting-protection':'Esperando protección', 'Provisioning-failed':'Revisar instalación' };
   const stateLabels = { queued: 'Pendiente', pending: 'Pendiente', sent: 'Enviada', running: 'En curso', accepted: 'Recibida', completed: 'Completada', failed: 'Falló', expired: 'Caducó', rejected: 'Rechazada', interrupted:'Interrumpida', 'shutdown-scheduled':'Apagado programado', 'awaiting-restart': 'Esperando reinicio', 'needs-update-review': 'Revisar actualizaciones' };
   const updateLabels = { 'waiting-installation':'En espera', idle:'Al día', 'preparing-restart':'Preparando reinicio', 'awaiting-normal-restart':'Descargada · espera reinicio', 'backing-up':'Guardando copia anterior', 'rolling-back':'Revirtiendo', 'verifying-protection':'Verificando protección', downloaded:'Descargada · espera reinicio', 'awaiting-restart':'Espera reinicio', 'awaiting-unprotected-boot':'Espera reinicio', 'waiting-restart':'Espera reinicio', installing:'Instalando', applying:'Instalando', verifying:'Verificando', 'restoring-protection':'Restaurando protección', 'awaiting-protected-boot':'Verificando protección', complete:'Actualizada', completed:'Actualizada', deferred:'Pospuesta por mantenimiento', failed:'Revisar actualización', rollback:'Revirtiendo', 'rolled-back':'Versión anterior restaurada', 'rollback-failed':'Revisar recuperación' };
@@ -254,9 +254,9 @@
     if (state.sending || !state.authenticated || !allowedActions.has(action) || !targets.length || targets.some(n => !expectedNames.includes(n))) return;
     state.sending = true; updateSelection();
     try {
-      const response = await api('/api/admin/jobs','POST',{targets,action,requestId:requestId()});
-      const count = Array.isArray(response.jobs) ? response.jobs.length : targets.length;
-      showToast(`Orden enviada · ${count} equipo${count === 1 ? '' : 's'}.`);
+      let count=0;const failed=[];
+      for(const target of targets){try{await api('/api/admin/jobs','POST',{targets:[target],action,requestId:requestId()});count++;}catch(error){failed.push(target);}}
+      showToast(`Enviadas: ${count}${failed.length ? ' · Fallaron: '+failed.join(', ') : ''}`,failed.length>0);
       await refresh({quiet:true});
     } catch (error) {
       if (error.status === 401 || error.status === 403) showLogin(error.message);
