@@ -7,8 +7,8 @@
   window.labFetch=fetch;
 
   const expectedNames = Array.from({ length: 34 }, (_, i) => `UEPLV-${String(i + 1).padStart(2, '0')}`);
-  const allowedActions = new Set(['class', 'class-ai', 'exam', 'free', 'close-apps', 'cleanup', 'reboot', 'shutdown', 'shutdown-warning-test', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
-  const confirmationActions = new Set(['close-apps','cleanup','reboot','shutdown','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
+  const allowedActions = new Set(['cleanup', 'shutdown-warning-test', 'maintenance', 'status', 'uwf-status', 'uwf-enable', 'uwf-disable', 'uwf-purge-swap', 'uwf-repair', 'uwf-reset-stage1', 'uwf-reset-stage2', 'windows-update']);
+  const confirmationActions = new Set(['cleanup','maintenance','uwf-enable','uwf-disable','uwf-purge-swap','uwf-repair','uwf-reset-stage1','uwf-reset-stage2','windows-update']);
   const actionLabels = { class: 'Modo clase', 'class-ai':'Clase + bloqueo de IA', exam: 'Modo examen', free: 'Modo libre', 'close-apps': 'Cerrar aplicaciones', cleanup:'Limpiar perfil de estudiantes', reboot: 'Reiniciar', shutdown:'Apagar', 'shutdown-warning-test':'Probar aviso de apagado', maintenance: 'Mantenimiento UWF', status: 'Solicitar estado', 'uwf-status':'Consultar estado UWF', 'uwf-enable':'Activar protección UWF', 'uwf-disable':'Desactivar protección UWF', 'uwf-purge-swap':'Purgar archivo temporal UWF', 'uwf-repair':'Reparar configuración UWF', 'uwf-reset-stage1':'Restablecer UWF · etapa 1', 'uwf-reset-stage2':'Restablecer UWF · etapa 2', 'windows-update':'Actualizar Windows' };
   const stageLabels = { Prepare: 'Preparando protección', Updates: 'Actualizando Windows', Readiness: 'Verificando requisitos', ProtectionPending: 'Protección programada', PostBoot: 'Verificando reinicio', Complete: 'Instalación completa', Pending: 'Pendiente', Installed: 'Configuración inicial lista', 'Provisioned-awaiting-protection':'Esperando protección', 'Provisioning-failed':'Revisar instalación' };
   const stateLabels = { queued: 'Pendiente', pending: 'Pendiente', sent: 'Enviada', running: 'En curso', accepted: 'Recibida', completed: 'Completada', failed: 'Falló', expired: 'Caducó', rejected: 'Rechazada', interrupted:'Interrumpida', 'shutdown-scheduled':'Apagado programado', 'awaiting-restart': 'Esperando reinicio', 'needs-update-review': 'Revisar actualizaciones' };
@@ -147,7 +147,6 @@
     ui['selected-badge'].textContent = `${size} seleccionado${size === 1 ? '' : 's'}`;
     ui['send-command'].disabled = !state.authenticated || !size || state.sending;
     ui['send-advanced-command'].disabled = !state.authenticated || !size || state.sending;
-    document.querySelectorAll('[data-quick]').forEach(button => {button.disabled = !state.authenticated || !size || state.sending;});
     ui['clear-selection'].disabled = !size || state.sending;
     const offline = [...state.selected].filter(name => connectivity(deviceFor(name)) !== 'online').length;
     ui['offline-selection-note'].textContent = offline ? `${offline} sin conexión · caduca en 5 min` : '';
@@ -316,7 +315,6 @@
   }
   ui['send-command'].addEventListener('click', () => submitAction(ui['command-select'].value));
   ui['send-advanced-command'].addEventListener('click', () => submitAction(ui['advanced-command-select'].value));
-  document.querySelectorAll('[data-quick]').forEach(button => button.addEventListener('click', () => submitAction(button.dataset.quick)));
   ui['confirm-dialog'].addEventListener('close', () => {
     const confirmed = ui['confirm-dialog'].returnValue === 'confirm' && pendingConfirmation;
     const request = pendingConfirmation; pendingConfirmation = null;

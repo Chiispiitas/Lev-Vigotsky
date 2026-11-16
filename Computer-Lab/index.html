@@ -6,9 +6,9 @@
   <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="referrer" content="no-referrer">
   <meta name="color-scheme" content="light">
-  <title>Control del laboratorio · UEPLV</title>
+  <title>Diagnóstico y mantenimiento · UEPLV</title>
   <link rel="stylesheet" href="./app.css">
-  <script src="./app.js?v=7" defer></script>
+  <script src="./app.js?v=9" defer></script>
   <script src="./update-ui.js?v=4" defer></script>
 <link rel="stylesheet" href="./school.css?v=4">
 </head>
@@ -52,8 +52,8 @@
       </section>
 
       <section class="control-panel" aria-labelledby="commands-heading">
-        <div class="control-title"><div><h2 id="commands-heading">Acciones</h2></div><span class="selection-badge" id="selected-badge">0 seleccionados</span></div>
-        <div class="quick-actions" role="group" aria-label="Modos y control de clase"><button type="button" class="quick-action" data-quick="class">Modo clase</button><button type="button" class="quick-action" data-quick="class-ai">Clase + bloqueo IA</button><button type="button" class="quick-action" data-quick="exam">Modo examen</button><button type="button" class="quick-action" data-quick="free">Modo libre</button><button type="button" class="quick-action" data-quick="close-apps">Cerrar aplicaciones</button><button type="button" class="quick-action" data-quick="shutdown">Apagar</button></div><div class="command-form"><div class="command-field"><label for="command-select">Acción</label><select id="command-select"><option value="class">Modo clase</option><option value="class-ai">Clase + bloqueo de IA</option><option value="exam">Modo examen</option><option value="free">Modo libre</option><option value="close-apps">Cerrar aplicaciones de estudiantes</option><option value="cleanup">Limpiar perfil de estudiantes</option><option value="reboot">Reiniciar equipos</option><option value="shutdown">Apagar equipos</option><option value="shutdown-warning-test">Probar aviso de apagado</option><option value="maintenance">Mantenimiento UWF</option><option value="status">Solicitar estado</option></select></div><button id="send-command" type="button" class="button button-primary" disabled>Enviar orden <span aria-hidden="true">↗</span></button></div>
+        <div class="control-title"><div><h2 id="commands-heading">Diagnóstico y mantenimiento</h2></div><span class="selection-badge" id="selected-badge">0 seleccionados</span></div>
+        <div class="command-form"><div class="command-field"><label for="command-select">Acción</label><select id="command-select"><option value="status">Solicitar estado</option><option value="cleanup">Limpiar perfil de estudiantes</option><option value="shutdown-warning-test">Probar aviso de apagado</option><option value="maintenance">Mantenimiento UWF</option></select></div><button id="send-command" type="button" class="button button-primary" disabled>Enviar orden <span aria-hidden="true">↗</span></button></div>
         <details class="advanced-controls"><summary>Mantenimiento y herramientas</summary><div class="advanced-content"><div class="command-field"><label for="advanced-command-select">Acción de mantenimiento</label><select id="advanced-command-select"><option value="uwf-status">Consultar estado UWF</option><option value="uwf-enable">Activar protección UWF</option><option value="uwf-disable">Desactivar protección UWF</option><option value="uwf-purge-swap">Purgar archivo temporal UWF</option><option value="uwf-repair">Reparar configuración UWF</option><option value="uwf-reset-stage1">Restablecer UWF · etapa 1</option><option value="uwf-reset-stage2">Restablecer UWF · etapa 2</option><option value="windows-update">Buscar e instalar actualizaciones</option><option value="maintenance">Mantenimiento de Windows con UWF</option></select></div><button type="button" class="button button-quiet" id="send-advanced-command" disabled>Enviar acción</button></div></details><div class="command-footer"><span id="offline-selection-note"></span><button id="clear-selection" class="text-button" type="button" disabled>Quitar selección</button></div>
       </section>
 
