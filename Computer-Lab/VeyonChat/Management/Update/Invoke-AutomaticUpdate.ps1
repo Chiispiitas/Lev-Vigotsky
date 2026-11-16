@@ -442,7 +442,7 @@ try {
     }
     $runtime.StartAgent={Start-Service -Name UEPLVAgent;(Get-Service UEPLVAgent).WaitForStatus('Running',[TimeSpan]::FromSeconds(30))}
     $runtime.WaitHealthy={param([string]$oldStartId,[string]$expectedVersion)
-        $deadline=[datetime]::UtcNow.AddSeconds(120);$stable=0
+        $deadline=[datetime]::UtcNow.AddSeconds(300);$stable=0
         do{
             $service=Get-Service -Name UEPLVAgent
             $agent=$null;try{$agent=Read-PrivateJson (Join-Path $env:ProgramData 'UEPLV\Management\agent-state.json') 2097152}catch{}

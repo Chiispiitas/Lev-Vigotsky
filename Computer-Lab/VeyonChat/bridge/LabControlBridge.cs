@@ -272,7 +272,7 @@ namespace UEPLV.VeyonIntegration {
     }
     [STAThread] public static int Main(string[] args){
       Application.EnableVisualStyles();Application.SetCompatibleTextRenderingDefault(false);
-      try{if(args.Length==1&&args[0]=="--chat-listen"){ChatHost.Run(Enumerable.Range(1,34).Select(n=>"UEPLV-"+n.ToString("00")).ToArray(),true);return 0;}if(args.Length==2&&args[0]=="--chat-qa"){var chat=new ChatWindow(true,new[]{"UEPLV-34"});chat.QaPath=Path.GetFullPath(args[1]);Application.Run(chat);return 0;}if(args.Length==1&&args[0]=="--student-chat"){Application.Run(new ChatWindow(false,null));return 0;}if(args.Length==1&&args[0]=="--presence-snapshot"){
+      try{if(args.Length==1&&args[0]=="--chat-listen"){ChatHost.Run(new string[0],true);return 0;}if(args.Length==2&&args[0]=="--chat-qa"){var chat=new ChatWindow(true,new[]{"UEPLV-34"});chat.QaPath=Path.GetFullPath(args[1]);Application.Run(chat);return 0;}if(args.Length==1&&args[0]=="--student-chat"){Application.Run(new ChatWindow(false,null));return 0;}if(args.Length==1&&args[0]=="--presence-snapshot"){
         try {
           var session=SessionStore.Load();if(session==null)throw new Exception("session");
           var status=Api.Call(session,"status").GetAwaiter().GetResult();

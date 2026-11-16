@@ -1,18 +1,15 @@
 # Chat del laboratorio
 
-Implemented with the existing Wix backend and GitHub deployment. This is UEPLV's own chat, not a Rocket.Chat installation.
+WebView2 chat with the light UEPLV dashboard palette, using the existing Wix backend and Veyon integration. This is UEPLV's own chat, not Rocket.Chat.
 
-- Native Veyon **Chat** replaces **Text message** in the toolbar and computer context menu. One staff receiver stays connected while Veyon is open; closing its window keeps notifications active.
-- Teacher/student two-way messages are the default. Students open the chat from its notification-area icon.
-- Teacher can select **Solo mensajes del docente** or **Permitir entre estudiantes** for the PCs selected in Veyon. Both students need a current peer grant to communicate.
-- An explicit configuration replaces the previous temporary grants. A PC restart returns that PC to two-way teacher/student mode and revokes its old student session.
-- The teacher can send individually or to all selected PCs. No files or executable attachments are accepted.
-- Permissions are checked on the server on each send and read. Student clients receive a signed session token, never the management cloud key or staff cookie.
-- Student chat runs as LEV VIGOTSKY in its interactive session. The management service provisions it, refreshes its session, and registers its logon task. Students cannot write its installation or session file.
-- The client is embedded in the signed management update, so it does not require a new installer or updater path exception. Release **1.6.2** installs through the existing updater at a normal restart.
-- Recent messages are limited to 24 hours and approximately 200 retained messages across the lab, to preserve CMS space for device control. A busy concurrent burst can temporarily exceed this until the next send prunes it.
-- Polling is every three seconds with backoff on connection errors. Network and Wix response time also affect delivery.
+- **Chat** opens the computers selected in Veyon. Teachers can check additional recipients. One send creates a separate private message in each recipient's individual conversation; it never creates a student group chat.
+- **Anuncio** in Veyon and **Anuncio a todos** in the window select physical PCs 01–33, leaving the composer ready to send. The reserved VM 34 is excluded from announcements.
+- **Solo docente** is the default. Teachers may temporarily enable **Docente ↔ estudiantes** or **Entre estudiantes**. Restarting a PC returns it to teacher-only messaging. An explicit configuration replaces preceding temporary permissions.
+- Only teachers may send to multiple recipients, enforced by the server. Students select one conversation at a time, even when student-to-student chat is permitted.
+- The teacher receiver remains active while Veyon is open. Students receive a background client and notification-area shortcut automatically.
+- Credentials stay in the native host. The web interface receives message/permission data only, has no general API proxy, and cannot navigate to websites, download files, or access host objects.
+- Signed management update **1.7.2** embeds the student client. It fetches fixed WebView2 SDK dependencies from this repository with pinned SHA256 hashes. A missing WebView2 Runtime is installed silently using Microsoft's signature-verified installer. Installation readiness waits for dependencies before protection restoration.
+- The existing automatic updater downloads updates and installs them during a normal restart cycle, preserving device identities and restoring UWF. Pending older updates finish first. No USB refresh is required for deployed PCs.
+- Messages are retained for up to 24 hours, with approximately 200 recent messages across the lab to reserve CMS capacity for device control. Polling is every three seconds; connection errors appear in the chat window.
 
-Verification files in this directory contain backend checks, VM-only live message tests, native teacher-window rendering, the student process owner/permissions, and restart/protection checks. No trial messages were sent to physical lab PCs.
-
-The real lab rollout is automatic when existing installers receive the signed update and complete their normal restart cycle. A pending earlier update may need to finish first.
+Teacher sources are in `bridge/`; the embedded student source snapshot is in `Management/ChatSource/`. They can update independently. Microsoft SDK files retain their own license under `Runtime/`.

@@ -21,6 +21,7 @@
 #include <QSet>
 #include <QTimer>
 #include <QToolBar>
+#include <QToolButton>
 
 namespace {
 Feature labFeature(const char* action, const char* id, const QString& label, const char* icon)
@@ -121,7 +122,9 @@ void UeplvLabPlugin::customizeToolbar()
     const QSet<QString> hidden{QStringLiteral("Demo"), QStringLiteral("RemoteView"),
                                QStringLiteral("RemoteControl"), QStringLiteral("PowerOn"), QStringLiteral("TextMessage")};
     if(toolbar){QAction* chatAction=nullptr;QAction* oldAction=nullptr;for(auto action:toolbar->actions()){auto widget=toolbar->widgetForAction(action);if(widget&&widget->objectName()==QStringLiteral("chat"))chatAction=action;if(widget&&widget->objectName()==QStringLiteral("TextMessage"))oldAction=action;}
-        if(chatAction&&oldAction){toolbar->removeAction(chatAction);toolbar->insertAction(oldAction,chatAction);}}
+        if(chatAction&&oldAction){toolbar->removeAction(chatAction);toolbar->insertAction(oldAction,chatAction);
+            auto announce=new QAction(QIcon(QStringLiteral(":/ueplv/chat.png")),QStringLiteral("Anuncio"),toolbar);announce->setObjectName(QStringLiteral("ueplv-announcement"));toolbar->insertAction(oldAction,announce);if(auto button=qobject_cast<QToolButton*>(toolbar->widgetForAction(announce))){button->setObjectName(QStringLiteral("Announcement"));button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);button->setIconSize(QSize(64,64));}
+            connect(announce,&QAction::triggered,this,[](){QStringList targets;for(int i=1;i<=33;++i)targets.append(QStringLiteral("UEPLV-%1").arg(i,2,10,QLatin1Char('0')));const auto bridge=QDir(qEnvironmentVariable("ProgramData")).filePath(QStringLiteral("UEPLV/VeyonIntegration/UEPLV.VeyonBridge.exe"));QProcess::startDetached(bridge,{QStringLiteral("--action"),QStringLiteral("chat"),QStringLiteral("--targets"),targets.join(QLatin1Char(','))});});}}
     if (toolbar) for (auto action : toolbar->actions()) {
         auto widget = toolbar->widgetForAction(action);
         if (widget && hidden.contains(widget->objectName())) {

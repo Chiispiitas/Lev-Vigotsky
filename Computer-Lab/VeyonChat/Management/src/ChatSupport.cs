@@ -14,7 +14,7 @@ using System.Threading;
 
 namespace UEPLV {
   static class ChatSupport {
-    static Thread worker;static volatile bool stopping;
+    static Thread worker;static volatile bool stopping;public static volatile bool Ready;
     static readonly string Root=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"UEPLV","Chat");
     static string Boot(){using(var q=new ManagementObjectSearcher("SELECT LastBootUpTime FROM Win32_OperatingSystem"))foreach(ManagementObject o in q.Get())return ManagementDateTimeConverter.ToDateTime((string)o["LastBootUpTime"]).ToUniversalTime().Ticks.ToString(CultureInfo.InvariantCulture);throw new Exception("No boot identity");}
     public static void Start(){worker=new Thread(Loop){IsBackground=true,Name="UEPLV Chat session"};worker.Start();}
@@ -31,6 +31,7 @@ namespace UEPLV {
       foreach(var sid in new[]{new SecurityIdentifier("S-1-5-18"),new SecurityIdentifier("S-1-5-32-544")})acl.AddAccessRule(new FileSystemAccessRule(sid,FileSystemRights.FullControl,InheritanceFlags.ContainerInherit|InheritanceFlags.ObjectInherit,PropagationFlags.None,AccessControlType.Allow));
       acl.AddAccessRule(new FileSystemAccessRule(student,FileSystemRights.ReadAndExecute,InheritanceFlags.ContainerInherit|InheritanceFlags.ObjectInherit,PropagationFlags.None,AccessControlType.Allow));
       Directory.CreateDirectory(Root);Directory.SetAccessControl(Root,acl);
+      ChatDependencies.Ensure(AppDomain.CurrentDomain.BaseDirectory,Root);
       string escapeFile=System.Security.SecurityElement.Escape(file);
       string xml="<?xml version=\"1.0\" encoding=\"UTF-16\"?><Task version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\"><Triggers><LogonTrigger><Enabled>true</Enabled><UserId>"+student.Value+"</UserId></LogonTrigger></Triggers><Principals><Principal id=\"Student\"><UserId>"+student.Value+"</UserId><LogonType>InteractiveToken</LogonType><RunLevel>LeastPrivilege</RunLevel></Principal></Principals><Settings><MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy><DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries><StopIfGoingOnBatteries>false</StopIfGoingOnBatteries><ExecutionTimeLimit>PT0S</ExecutionTimeLimit><RestartOnFailure><Interval>PT1M</Interval><Count>10</Count></RestartOnFailure></Settings><Actions Context=\"Student\"><Exec><Command>"+escapeFile+"</Command><Arguments>--student-chat</Arguments></Exec></Actions></Task>";
       string task=Path.Combine(Root,"task.xml");File.WriteAllText(task,xml,Encoding.Unicode);
@@ -55,7 +56,7 @@ namespace UEPLV {
     }
     static void Loop(){bool installed=false;DateTime next=DateTime.MinValue;string boot=null;while(!stopping){try{
       if(DateTime.UtcNow>=next){string management=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),"UEPLV","Management");var cfg=Util.From<AgentConfig>(File.ReadAllText(Path.Combine(management,"agent-config.json")));var state=Util.From<AgentState>(File.ReadAllText(Path.Combine(management,"agent-state.json")));
-        if(!installed){var student=(SecurityIdentifier)new NTAccount(Environment.MachineName,"LEV VIGOTSKY").Translate(typeof(SecurityIdentifier));InstallClient(student);boot=Boot();installed=true;}
+        if(!installed){var student=(SecurityIdentifier)new NTAccount(Environment.MachineName,"LEV VIGOTSKY").Translate(typeof(SecurityIdentifier));InstallClient(student);boot=Boot();installed=true;Ready=true;}
         Enroll(cfg,state,boot);next=DateTime.UtcNow.AddHours(6);
         // InteractiveToken never starts a desktop process as SYSTEM or in maintenance.
         if(NeedsInteractiveLaunch())try{Util.Run(Path.Combine(Environment.SystemDirectory,"schtasks.exe"),"/Run /TN UEPLV-StudentChat",10000);}catch(Exception ex){File.WriteAllText(Path.Combine(Root,"launch-error.txt"),ex.Message);}

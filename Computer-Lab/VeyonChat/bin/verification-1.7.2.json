@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "version": "1.7.2",
+  "webviewStudentConnected": true,
+  "defaultOneWayVerified": true,
+  "studentBatchRejected": true,
+  "teacherMultipleSelectionVerified": true,
+  "privateFanoutCoveredByTests": true,
+  "signedUpdateInstalled": true,
+  "uwfNow": true,
+  "uwfNext": true,
+  "utc": "2026-11-16T05:19:22.091Z"
+}

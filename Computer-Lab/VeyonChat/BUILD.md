@@ -11,3 +11,5 @@ The Veyon plugin targets Veyon 4.10.2 and its installed Qt 6.10.3 / MinGW runtim
 The public signed update ZIP and metadata are in `bin/`. The existing updater verifies its pinned RSA signature, file hashes, and fixed path allowlist before installation. It waits for a normal restart and restores UWF afterward.
 
 The teacher bridge can update independently of the embedded student client. Teacher sources are in bridge/; the signed student snapshot is in Management/ChatSource/. Run updater regression checks with Windows PowerShell 5.1: powershell.exe -NoProfile -File Management/Update/Test-AutomaticUpdate.ps1.
+
+WebView2 SDK references are included under Runtime/1.0.4314.35. The teacher bridge build uses the matching copies beside its source. Runtime installation on student PCs is automatic; Microsoft-signed SDK dependencies are pinned by SHA256 in ChatDependencies.cs.

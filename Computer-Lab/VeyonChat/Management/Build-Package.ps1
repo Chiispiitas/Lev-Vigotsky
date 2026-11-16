@@ -4,9 +4,10 @@ $ErrorActionPreference='Stop'
 $root=$PSScriptRoot
 $csc=Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
 New-Item -ItemType Directory -Path (Join-Path $root 'bin') -Force | Out-Null
-& $csc /nologo /target:winexe /platform:anycpu /optimize+ ('/out:'+(Join-Path $root 'bin\UEPLV.Chat.exe')) /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.Web.Extensions.dll /r:System.Security.dll (Join-Path $root 'ChatSource\LabControlBridge.cs') (Join-Path $root 'ChatSource\ChatWindow.cs')
+$sdk=Join-Path $root '..\Runtime\1.0.4314.35'
+& $csc /nologo /target:winexe /platform:x64 /optimize+ ('/out:'+(Join-Path $root 'bin\UEPLV.Chat.exe')) /r:System.dll /r:System.Core.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll /r:System.Web.Extensions.dll /r:System.Security.dll ('/r:'+(Join-Path $sdk 'Microsoft.Web.WebView2.Core.dll')) ('/r:'+(Join-Path $sdk 'Microsoft.Web.WebView2.WinForms.dll')) (Join-Path $root 'ChatSource\LabControlBridge.cs') (Join-Path $root 'ChatSource\ChatWindow.cs') (Join-Path $root 'ChatSource\ChatHost.cs') ('/resource:'+(Join-Path $root 'ChatSource\chat.html')+',chat.html')
 if($LASTEXITCODE -ne 0){throw 'Chat client compilation failed.'}
-& $csc /nologo /target:exe /platform:x64 /optimize+ ('/out:'+ (Join-Path $root 'bin\UEPLV.Management.exe')) /reference:System.Security.dll /reference:System.ServiceProcess.dll /reference:System.Management.dll /reference:System.Web.Extensions.dll /reference:System.Windows.Forms.dll /reference:System.Drawing.dll (Join-Path $root 'src\UEPLV.Management.cs') (Join-Path $root 'src\ShutdownSchedule.cs') (Join-Path $root 'src\SessionTransitions.cs') (Join-Path $root 'src\ChatSupport.cs') ('/resource:'+(Join-Path $root 'bin\UEPLV.Chat.exe')+',UEPLV.Chat.exe')
+& $csc /nologo /target:exe /platform:x64 /optimize+ ('/out:'+ (Join-Path $root 'bin\UEPLV.Management.exe')) /reference:System.Security.dll /reference:System.ServiceProcess.dll /reference:System.Management.dll /reference:System.Web.Extensions.dll /reference:System.Windows.Forms.dll /reference:System.Drawing.dll (Join-Path $root 'src\UEPLV.Management.cs') (Join-Path $root 'src\ShutdownSchedule.cs') (Join-Path $root 'src\SessionTransitions.cs') (Join-Path $root 'src\ChatSupport.cs') (Join-Path $root 'src\ChatDependencies.cs') ('/resource:'+(Join-Path $root 'bin\UEPLV.Chat.exe')+',UEPLV.Chat.exe')
 if($LASTEXITCODE -ne 0){throw 'Management compilation failed.'}
 & (Join-Path $root 'bin\UEPLV.Management.exe') self-test
 if($LASTEXITCODE -ne 0){throw 'Management security checks failed.'}

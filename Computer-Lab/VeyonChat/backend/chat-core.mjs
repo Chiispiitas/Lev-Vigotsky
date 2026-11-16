@@ -10,7 +10,7 @@ export function createChat(store,{now,fail,json,deterministicId,protect,unprotec
   async function token(c,claims){const payload=encode(enc.encode(JSON.stringify(claims)));return payload+'.'+encode(new Uint8Array(await crypto.subtle.sign('HMAC',await signingKey(c),enc.encode(payload))));}
   async function policy(){return (await store.getConfig(CHAT_POLICY_ID))?.policy||{revision:'default',devices:{}};}
   async function boot(name){return store.getChat(await deterministicId('chat-boot:'+name));}
-  function mode(p,b){const grant=p.devices?.[b?.name];return grant&&grant.bootTicks===b.bootTicks&&CHAT_MODES.includes(grant.mode)?grant.mode:'teacher-student';}
+  function mode(p,b){const grant=p.devices?.[b?.name];return grant&&grant.bootTicks===b.bootTicks&&CHAT_MODES.includes(grant.mode)?grant.mode:'teacher-only';}
   async function student(c,bearer){
     try{
       if(typeof bearer!=='string'||bearer.length>2048)throw Error();
@@ -53,6 +53,7 @@ export function createChat(store,{now,fail,json,deterministicId,protect,unprotec
         const next={revision:crypto.randomUUID(),devices};await store.savePolicy(CHAT_POLICY_ID,next);return json({saved:true,unavailable:body.targets.filter(name=>!devices[name]),...next});
       }
       if(body?.op==='send'){
+        if(!staff&&Array.isArray(body.recipients)&&body.recipients.length!==1)fail(403,'chat_not_allowed','Solo el docente puede seleccionar varios destinatarios.');
         if(!GUID.test(body.requestId)||typeof body.text!=='string'||!body.text.trim()||body.text.length>2000||!Array.isArray(body.recipients)||!body.recipients.length||body.recipients.length>34)fail(400,'invalid_chat_message','Mensaje no válido.');
         const recipients=[...new Set(body.recipients)];if(recipients.some(to=>!mayContact(actor,to,p,boots,true)))fail(403,'chat_not_allowed','Este chat no está permitido.');
         const recent=await store.recentChatFrom(actor.name,now()-10000);if(new Set(recent.map(r=>r.requestId)).size>=8&&!recent.some(r=>r.requestId===body.requestId))fail(429,'chat_rate_limited','Espera unos segundos.');
