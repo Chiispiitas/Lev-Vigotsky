@@ -3,9 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f6f6f3">
 <title>Sarrus</title>
-<meta name="description" content="Practice 3×3 determinants with Sarrus' Rule, signed arithmetic drills, Cramer's Rule, whole-system exercises and a handwriting notepad.">
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#222827;background:#f6f6f3;font-synthesis:none}
 *{box-sizing:border-box}
@@ -133,18 +131,66 @@ body.pad-open{overflow:hidden}
 @media(max-width:720px){.workspace{grid-template-columns:1fr}.canvas-panel{position:static}.direction{grid-template-columns:1fr}.pad{height:300px}.result-grid{grid-template-columns:repeat(2,1fr)}.subtitle{font-size:.72rem}.top a{font-size:.75rem}.shell{padding:12px}.panel{padding:16px}.status-strip{gap:9px}.status-strip .spacer{margin-left:0}.product{grid-template-columns:minmax(0,1fr) 110px 21px}.product code{font-size:.83rem}}
 @media(max-width:390px){.sum-grid{gap:6px}.calculator-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.mat td{padding:10px 8px}.product{grid-template-columns:minmax(0,1fr) 80px 17px}.product code{font-size:.75rem}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+
+/* Compact, traditional utility layout. */
+:root{font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#20252b;background:#e9eaec}
+.top{background:#f5f5f5;border-bottom:1px solid #8a929c}
+.top-inner{padding:12px 20px}
+h1{font-size:1.25rem;letter-spacing:0;color:#23394f}
+h2{font-size:1.1rem;letter-spacing:0}
+h3{font-size:1rem}
+.top a{color:#24496b;text-decoration:underline}
+.shell{padding:18px 20px 32px}
+.switches{gap:3px;margin-bottom:0;border-bottom:1px solid #929aa3;padding-left:8px}
+.switches button{border:1px solid #a5abb2;border-bottom:0;border-radius:3px 3px 0 0;background:#e1e3e6;color:#3d4650;padding:9px 17px;font-weight:400}
+.switches button.active{background:#fff;color:#172e47;border-color:#929aa3;font-weight:700;position:relative;bottom:-1px;padding-top:10px}
+.workspace{gap:14px;padding-top:14px}
+.panel{border:1px solid #aab0b7;border-radius:0;padding:18px;background:#fff}
+.header-row{align-items:center;padding-bottom:12px;border-bottom:1px solid #d6d9dd;margin-bottom:14px}
+.btn,select{border:1px solid #929aa4;border-radius:2px;background:#ededed;color:#202b38;padding:7px 11px;min-height:33px;font-size:.9rem;font-weight:400}
+select{background:#fff}
+.btn:hover{background:#dfe4e9;border-color:#687789}
+.btn.primary{background:#304c68;border-color:#243e58;color:#fff;font-weight:700}
+.btn.primary:hover{background:#243e58}
+.btn.small{min-height:29px;padding:5px 8px;font-size:.85rem}
+.num{height:34px;border:1px solid #9aa3ad;border-radius:1px;padding:6px;background:#fff}
+.targets button{border-radius:2px;background:#eee;border-color:#a5adb5;color:#334354;padding:7px 13px}
+.targets button.active{background:#dfe7ef;border-color:#657c91;color:#1b3650}
+.status-strip{margin:12px 0;padding:9px 0;border-color:#d6d9dd}
+.system{background:#f4f5f6;border:1px solid #b8bfc7;border-radius:0;padding:12px;margin-bottom:14px}
+.system strong{color:#4d5864;font-size:.76rem;letter-spacing:.04em}
+.equations{font-size:1.05rem;margin-top:9px}
+.group,.sum-area{border:1px solid #c4c9cf;border-radius:0;padding:12px}
+.group-title{font-size:.92rem}
+.down .group-title{color:#254f52}
+.up .group-title{color:#79542d}
+.direction{gap:12px}
+.feedback,.solution,.calc-details,.result-tile{border-radius:0}
+.feedback{padding:9px 11px}
+.solution{background:#f1f4f7;border:1px solid #c3ccd5}
+.result-tile{background:#f2f3f5;border-color:#c4cad1}
+.result-tile span{color:#505d6b}
+.result-tile strong{font-size:1.1rem}
+.calc-details{background:#f5f6f7;border:1px solid #c4cad1}
+.canvas-head{padding-bottom:10px;border-bottom:1px solid #d6d9dd}
+.canvas-toolbar button[aria-pressed="true"]{background:#dae3ed;border-color:#70869b;color:#1c3651}
+.pad{border:1px solid #a6afb8;border-radius:0}
+.whole-options{margin-top:0;margin-bottom:14px}
+.whole-options label{color:#303e4c}
+.whole-answers{margin:14px 0}
+.whole-answers legend{font-size:1rem}
+.footer-actions{margin-top:14px}
+@media(max-width:720px){.shell{padding:12px}.panel{padding:13px}.top-inner{padding:12px}.switches{padding-left:0}.switches button{padding:8px 12px}.workspace{padding-top:12px}.header-row{gap:10px}}
 </style>
 </head>
 <body>
-<header class="top"><div class="top-inner"><div class="brand"><div><h1>Sarrus</h1></div></div><a href="../">← Equations</a></div></header>
 <main class="shell">
-<div class="switches" role="tablist" aria-label="App sections"><button id="practiceTab" class="active" role="tab" aria-controls="practiceScreen" aria-selected="true">Practice</button><button id="calculatorTab" role="tab" aria-controls="calculatorScreen" aria-selected="false" tabindex="-1">Calculator</button><button id="wholeTab" role="tab" aria-controls="wholeScreen" aria-selected="false" tabindex="-1">Whole Exercises</button></div>
+<div class="switches" role="tablist" aria-label="App sections"><button id="practiceTab" class="active" role="tab" aria-controls="practiceScreen" aria-selected="true">Practice</button><button id="wholeTab" role="tab" aria-controls="wholeScreen" aria-selected="false" tabindex="-1">Whole Exercises</button></div>
 <div class="workspace">
 <div class="panel">
 <section role="tabpanel" aria-labelledby="practiceTab" id="practiceScreen">
-<div class="header-row"><div><h2>Practice</h2></div><div class="actions"><label class="sr-only" for="modeSelect">Practice mode</label><select id="modeSelect" aria-label="Practice mode"><option value="single">One determinant</option><option value="cramer">Cramer's Rule</option></select><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard</option><option value="large">Large constants</option></select><button class="btn" id="newRound">New exercise</button></div></div>
+<div class="header-row"><div><h2>Practice</h2></div><div class="actions"><select id="difficultySelect" aria-label="Difficulty"><option value="standard">Standard</option><option value="large">Large constants</option></select><button class="btn" id="newRound">New exercise</button></div></div>
 
-<div class="status-strip"><span>Time <strong id="clock">00:00</strong></span><span>Completed <strong id="progress">0 / 1</strong></span></div>
 <div id="systemBlock" class="system" hidden><strong>System of equations</strong><div class="equations" id="equations"></div></div>
 <div id="targetTabs" class="targets" hidden></div>
 <div class="matrix-title"><h3 id="targetHeading">Determinant D</h3></div>
@@ -162,13 +208,6 @@ body.pad-open{overflow:hidden}
 <div id="feedback" role="status" aria-live="polite" hidden></div>
 <div class="worked" id="worked" hidden></div>
 <div id="solutionPanel" class="solution" hidden><h3>Solution</h3><div class="solution-grid"><div><label for="solX">x</label><input class="num" id="solX" inputmode="text"></div><div><label for="solY">y</label><input class="num" id="solY" inputmode="text"></div><div><label for="solZ">z</label><input class="num" id="solZ" inputmode="text"></div></div><button class="btn primary" id="checkSolution">Check solution</button><div id="solutionFeedback" role="status" class="lead"></div></div>
-</section>
-<section role="tabpanel" aria-labelledby="calculatorTab" id="calculatorScreen" hidden>
-<div class="header-row"><div><h2>Calculator</h2></div><button class="btn" id="loadExample">Load example</button></div>
-<div class="calculator-grid" id="calcInputs"></div>
-<div class="actions"><button class="btn primary" id="calculate">Calculate determinants</button><button class="btn" id="clearCalc">Clear matrix</button></div>
-<div id="calcFeedback" role="status" aria-live="polite"></div>
-<div id="calcResults" class="calc-results" hidden><div class="result-grid" id="resultGrid"></div><div id="calcSolution" class="feedback ok"></div><h3 style="margin:18px 0 10px">Calculations</h3><div class="targets calc-step-tabs" id="calcSteps"></div><div id="calcDetail" class="calc-details"></div></div>
 </section>
 <section id="wholeScreen" role="tabpanel" aria-labelledby="wholeTab" hidden>
 <div class="header-row"><div><h2>Whole Exercises</h2></div><button type="button" class="btn" id="wholeNew">New exercise</button></div>
@@ -191,7 +230,6 @@ body.pad-open{overflow:hidden}
 <button class="btn small" id="eraser" aria-pressed="false">◻ Eraser</button>
 <button class="btn small" id="undo">↶ Undo</button>
 <button class="btn small danger" id="clearPad">Clear</button>
-<button class="btn small" id="savePad">Save PNG</button>
 </div>
 <div class="pad" id="pad"><canvas id="board" aria-label="Freehand scratchpad"></canvas></div>
 
@@ -266,12 +304,10 @@ function timerText(ms){
  var sec=Math.max(0,Math.floor(ms/1000));
  return String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");
 }
-function tick(){$("clock").textContent=timerText((finished?end:performance.now())-start)}
-setInterval(tick,250);
+function tick(){}
 function current(){return round.targets[active]}
 function refreshStatus(){
  var done=round.targets.filter(function(t){return t.complete}).length;
- $("progress").textContent=done+" / "+round.targets.length;
  var tabs=$("targetTabs");
  tabs.hidden=mode!=="cramer";tabs.innerHTML="";
  round.targets.forEach(function(t,i){
@@ -282,7 +318,7 @@ function refreshStatus(){
  });
 }
 function startRound(){
- mode=$("modeSelect").value;
+ mode="single";
  difficulty=$("difficultySelect").value;
  var s=generate(difficulty);
  round={system:s,targets:targetsFor(s,mode,difficulty).map(function(t){return Object.assign(t,{values:Array(9).fill(""),checked:null,complete:false,reveal:false,firstCheck:false})})};
@@ -401,7 +437,7 @@ function checkSolution(){
  $("solutionFeedback").className="feedback "+(valid?"ok":"issue");
  if(valid&&!finished){finished=true;end=performance.now();tick()}
 }
-var screen="practice",screenNames=["practice","calculator","whole"];
+var screen="practice",screenNames=["practice","whole"];
 screenNames.forEach(function(name,index){
  $(name+"Tab").onclick=function(){setScreen(name)};
  $(name+"Tab").onkeydown=function(e){
@@ -426,7 +462,6 @@ function setScreen(which){
  });
  if(screen==="whole"){if(!wholeRound)startWhole();else resumeWholeTimer()}
 }
-$("modeSelect").onchange=startRound;
 $("difficultySelect").onchange=startRound;
 $("newRound").onclick=startRound;
 $("checkWork").onclick=checkWork;
@@ -435,73 +470,6 @@ $("showWork").onclick=function(){var t=current();t.reveal=!t.reveal;renderWorked
 $("resetFields").onclick=function(){
  var t=current();t.values=Array(9).fill("");t.checked=null;t.reveal=false;renderTarget();
 };
-function makeCalculator(){
- var parent=$("calcInputs");parent.innerHTML="";
- ["x","y","z","constant"].forEach(function(t){var h=document.createElement("span");h.className="colhead";h.textContent=t;parent.appendChild(h)});
- for(var r=0;r<3;r++)for(var c=0;c<4;c++){
-  var i=r*4+c,el=document.createElement("input");el.className="num calc-in"+(c===3?" constant":"");
-  el.id="calc"+i;el.inputMode="decimal";el.setAttribute("aria-label","Row "+(r+1)+" "+["x","y","z","constant"][c]);
-  parent.appendChild(el);
- }
-}
-function setCalcExample(){
- var s={A:[3,-2,1,2,1,-3,1,4,2],b:[11,-6,4]};
- for(var r=0;r<3;r++)for(var c=0;c<4;c++)$("calc"+(r*4+c)).value=c===3?s.b[r]:s.A[r*3+c];
- $("calcResults").hidden=true;$("calcFeedback").textContent="";
-}
-var calcData=null,calcActive=0;
-function calculate(){
- var v=Array.from({length:12},function(_,i){return readNum($("calc"+i).value)});
- if(v.some(function(n){return !Number.isFinite(n)||Math.abs(n)>999})){
-  $("calcFeedback").className="feedback issue";
-  $("calcFeedback").textContent="Enter all 12 numbers (−999 to 999).";
-  $("calcResults").hidden=true;return;
- }
- $("calcFeedback").textContent="";
- var A=[],b=[];
- for(var r=0;r<3;r++){for(var c=0;c<3;c++)A.push(v[r*4+c]);b.push(v[r*4+3])}
- calcData=[
-  {label:"D",A:A},
-  {label:"Dx",A:replaceColumn(A,b,0)},
-  {label:"Dy",A:replaceColumn(A,b,1)},
-  {label:"Dz",A:replaceColumn(A,b,2)}
- ].map(function(t){t.detail=details(t.A);return t});
- $("resultGrid").innerHTML="";
- calcData.forEach(function(t){
-  var tile=document.createElement("div");tile.className="result-tile";
-  var name=document.createElement("span");name.textContent=t.label;
-  var v=document.createElement("strong");v.textContent=pretty(t.detail.D);
-  tile.append(name,v);$("resultGrid").appendChild(tile);
- });
- var D=calcData[0].detail.D,sol=$("calcSolution");
- if(Math.abs(D)<1e-10){sol.textContent="D = 0 · No unique solution"}
- else{
-  var names=["x","y","z"];
-  sol.textContent=names.map(function(k,i){return k+" = "+Number((calcData[i+1].detail.D/D).toPrecision(10))}).join("   ·   ");
- }
- $("calcResults").hidden=false;calcActive=0;renderCalcDetail();
-}
-function renderCalcDetail(){
- var tabs=$("calcSteps");tabs.innerHTML="";
- calcData.forEach(function(t,i){
-  var btn=document.createElement("button");btn.textContent=t.label;btn.type="button";
-  btn.className=i===calcActive?"active":"";
-  btn.onclick=function(){calcActive=i;renderCalcDetail()};
-  tabs.appendChild(btn);
- });
- var t=calcData[calcActive],d=t.detail,html=[];
- html.push("<strong>"+t.label+" · downward products</strong>");
- for(var i=0;i<3;i++)html.push("<div>"+productText(t.A,allIdx[i])+" = "+pretty(d.products[i])+"</div>");
- html.push("<div><strong>P = "+pretty(d.P)+"</strong></div>");
- html.push("<strong>"+t.label+" · upward products</strong>");
- for(var j=3;j<6;j++)html.push("<div>"+productText(t.A,allIdx[j])+" = "+pretty(d.products[j])+"</div>");
- html.push("<div><strong>N = "+pretty(d.N)+"</strong></div>");
- html.push("<div><strong>"+t.label+" = "+pretty(d.P)+" − ("+pretty(d.N)+") = "+pretty(d.D)+"</strong></div>");
- $("calcDetail").innerHTML=html.join("");
-}
-$("calculate").onclick=calculate;
-$("loadExample").onclick=setCalcExample;
-$("clearCalc").onclick=function(){for(var i=0;i<12;i++)$("calc"+i).value="";$("calcResults").hidden=true;$("calcFeedback").textContent=""};
 // Whole-system exercises share the same Sarrus arithmetic as the other sections.
 var wholeRound=null,wholeElapsed=0,wholeStarted=null,wholeFinished=false;
 var wholeKeys=["D","Dx","Dy","Dz","x","y","z"];
@@ -636,7 +604,7 @@ $("wholeShow").onclick=function(){
  this.textContent=show?"Hide Calculations":"Show Calculations";this.setAttribute("aria-expanded",String(show));
 };
 
-makeCalculator();setCalcExample();startRound();
+startRound();
 
 // Scratchpad: strokes stored in normalized coordinates, so they survive resizing.
 var canvas=$("board"),pad=$("pad"),ctx=canvas.getContext("2d"),strokes=[],tool="pen",drawing=false,currentStroke=null;
@@ -685,15 +653,6 @@ $("pen").onclick=function(){setTool("pen")};
 $("eraser").onclick=function(){setTool("eraser")};
 $("undo").onclick=function(){strokes.pop();persistPad();redraw()};
 $("clearPad").onclick=function(){if(!strokes.length||confirm("Clear all scratchpad drawings?")){strokes=[];persistPad();redraw()}};
-$("savePad").onclick=function(){
- var x=document.createElement("canvas"),w=canvas.width,h=canvas.height;x.width=w;x.height=h;
- var c=x.getContext("2d");c.fillStyle="#fdfefa";c.fillRect(0,0,w,h);
- var ratio=w/canvas.clientWidth,step=24*ratio;c.strokeStyle="#e9eee7";c.lineWidth=Math.max(1,ratio*.7);
- for(var px=0;px<w;px+=step){c.beginPath();c.moveTo(px,0);c.lineTo(px,h);c.stroke()}
- for(var py=0;py<h;py+=step){c.beginPath();c.moveTo(0,py);c.lineTo(w,py);c.stroke()}
- c.drawImage(canvas,0,0);
- var a=document.createElement("a");a.download="sarrus-notes.png";a.href=x.toDataURL("image/png");a.click();
-};
 $("expandPad").onclick=function(){
  var expanded=$("canvasPanel").classList.toggle("expanded");
  document.body.classList.toggle("pad-open",expanded);
