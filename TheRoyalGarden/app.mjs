@@ -269,7 +269,7 @@ async function withPending(task) {
   } finally { controls.forEach(c=>{c.disabled=false;}); pending=false; }
 }
 async function login(credential,restoring=false) {
-  const button=$('#loginForm button');
+  const button=$('#loginForm button[type=submit]');
   button.disabled=true;
   $('#loginStatus').textContent=restoring?'Restableciendo sesión…':'Conectando…';
   try {
