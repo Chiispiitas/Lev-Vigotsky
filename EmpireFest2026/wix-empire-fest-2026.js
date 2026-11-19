@@ -8,7 +8,7 @@ const EF_PARTICIPANTS='EmpireFest2026Participants';
 const EF_SCORES='EmpireFest2026Scores';
 const EF_ACCESS='EmpireFest2026Access';
 const EF_OPTIONS={suppressAuth:true,consistentRead:true};
-function efResponse(status,body){return response({status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':'https://chiispiitas.github.io','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Cache-Control':'no-store'},body:JSON.stringify(body)});}
+function efResponse(status,body){return response({status,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':'https://ueplv.com','Access-Control-Allow-Methods':'POST, OPTIONS','Access-Control-Allow-Headers':'Content-Type','Cache-Control':'no-store'},body:JSON.stringify(body)});}
 function efError(message,status=400){const error=new Error(message);error.status=status;throw error;}
 function efText(value,max){if(typeof value!=='string'||!value.trim()||value.length>max)efError('Datos de texto inválidos.');return value.trim();}
 function efParticipant(p){return {_id:p._id,number:p.number,name:p.name,empire:p.empire,category:p.category,course:p.course||'',color:p.color||''};}
