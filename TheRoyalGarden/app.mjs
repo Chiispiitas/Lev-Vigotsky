@@ -89,10 +89,17 @@ function renderJudge() {
       <p class="kicker">${escapeHtml(title)}</p><h2>${escapeHtml(current.name)}</h2>
       <p class="meta">${candidateMeta(current)} <span class="hint">Tutoría · ${escapeHtml(current.tutor)}</span></p>
       <form id="scoreForm">
-      ${criteria.map(c=>`<div class="criterion"><label for="mark-${c.id}">${escapeHtml(c.title)} <span class="span-note">/ ${c.max}</span></label>
-
-        <input type="number" inputmode="decimal" id="mark-${c.id}" name="${c.id}" min="0" max="${c.max}" step="0.01"
-          value="${escapeHtml(draft?.marks[c.id] ?? old?.marks[c.id] ?? '')}" required></div>`).join('')}
+      ${criteria.map(c=>{
+        const selectedMark=String(draft?.marks[c.id] ?? old?.marks[c.id] ?? '');
+        const marks=Array.from({length:c.max+1},(_,i)=>String(i));
+        // Keep previously saved decimal scores available when reviewing an evaluation.
+        if(selectedMark!==''&&!marks.includes(selectedMark)) marks.push(selectedMark);
+        return `<fieldset class="criterion"><legend>${escapeHtml(c.title)} <span class="span-note">/ ${c.max}</span></legend>
+          <div class="mark-options">${marks.map(mark=>`<label class="mark-choice">
+            <input type="radio" name="${c.id}" value="${escapeHtml(mark)}" required ${mark===selectedMark?'checked':''}>
+            <span>${Number.isInteger(Number(mark))?mark:fmt(mark)}</span>
+          </label>`).join('')}</div></fieldset>`;
+      }).join('')}
       <label for="comment">Observaciones (opcional)</label>
       <textarea id="comment" rows="3" maxlength="1000">${escapeHtml(draft?.comment ?? old?.comment ?? '')}</textarea>
       <div class="actions"><output class="score" id="sum"></output>
