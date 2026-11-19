@@ -69,6 +69,10 @@ function activeCandidates() {
   return data.candidates.filter(c=>tab==='mini'?c.group==='mini':c.group==='main'&&(tab!=='final'||data.finalists.includes(c.id)));
 }
 const candidateMeta = c => `${escapeHtml(c.course)} · ${escapeHtml(c.queen || 'Reina histórica pendiente')}`;
+function savedRevision(data,phase,candidate) {
+  return data.scoreRevisions?.find(r=>r.phase===phase&&r.candidate===candidate)?.revision
+    ?? data.scores.find(r=>r.phase===phase&&r.candidate===candidate)?.revision ?? 0;
+}
 function renderJudge() {
   const candidates=activeCandidates();
   if (!candidates.some(c=>c.id===selected)) selected=candidates[0]?.id || '';
@@ -80,6 +84,7 @@ function renderJudge() {
   const {criteria,title}=data.phases[tab];
   const old=data.scores.find(s=>s.phase===tab&&s.candidate===current.id);
   const draft=drafts.get(key());
+  const revision=savedRevision(data,tab,current.id);
   $('#view').innerHTML=`<div class="split">
     <aside class="card"><h2>Candidatas</h2><div class="roster">${candidates.map(c=>{
       const scored=data.scores.some(s=>s.phase===tab&&s.candidate===c.id);
@@ -121,7 +126,7 @@ function renderJudge() {
     $('#sum').textContent=(values.every(v=>v!=='')?fmt(values.reduce((t,v)=>t+Number(v),0)):'—')+' / 10';
   };
   sum();
-  form.oninput=()=>{ drafts.set(key(),{...read(),revision:draft?.revision ?? old?.revision ?? 0}); sum(); };
+  form.oninput=()=>{ drafts.set(key(),{...read(),revision:draft?.revision ?? revision}); sum(); };
   form.onsubmit=async event=>{
     event.preventDefault();
     if(pending) return;
@@ -129,7 +134,7 @@ function renderJudge() {
     const fields=read();
     const payload={candidate:current.id,phase:tab,
       marks:Object.fromEntries(Object.entries(fields.marks).map(([id,value])=>[id,Number(value)])),
-      comment:fields.comment,revision:previous?.revision ?? old?.revision ?? 0};
+      comment:fields.comment,revision:previous?.revision ?? revision};
     const signature=JSON.stringify(payload);
     const requestId=previous?.signature===signature?previous.requestId:crypto.randomUUID();
     const draftKey=key();
@@ -138,6 +143,7 @@ function renderJudge() {
       const {score}=await api('score',{...payload,requestId});
       data.scores=data.scores.filter(s=>s.phase!==score.phase||s.candidate!==score.candidate);
       data.scores.push(score);
+      data.scoreRevisions=(data.scoreRevisions ?? []).filter(r=>r.phase!==score.phase||r.candidate!==score.candidate);
       drafts.delete(draftKey);
       render();
       $('#notice').textContent='Evaluación guardada.';
@@ -149,25 +155,57 @@ function renderResults() {
   const rows=rankings(activeCandidates(),data.scores,judges,tab);
   const openSelection=tab==='first';
   const complete=rows.filter(r=>r.average!==null).length;
+  const canManage=Array.isArray(data.scoreHistory);
+  const phaseScores=data.scores.filter(s=>s.phase===tab&&rows.some(r=>r.candidate.id===s.candidate));
+  const history=(data.scoreHistory ?? []).slice().reverse().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
   $('#view').innerHTML=`<section class="card results">
     <div class="results-head"><div><p class="kicker">Consolidado</p><h2>${statuses[tab]}</h2></div>
     <span class="score">${complete} de ${rows.length} con 3 notas</span></div>
     ${tab==='final'&&!rows.length?'<p>La pregunta final se habilita al confirmar las finalistas.</p>':`
     <p class="span-note">El promedio se muestra cuando han calificado los tres jurados. Los empates comparten posición.</p>
     <div class="table-scroll"><table><thead><tr><th>Pos.</th><th>Candidata</th>
-    ${judges.map(j=>`<th>${escapeHtml(j.name)} / 10</th>`).join('')}<th>Promedio / 10</th></tr></thead><tbody>
+    ${judges.map(j=>`<th>${escapeHtml(j.name)} / 10</th>`).join('')}<th>Promedio / 10</th>${canManage?'<th class="screen-only">Acciones</th>':''}</tr></thead><tbody>
     ${rows.map(r=>`<tr><td>${r.rank??'—'}</td><td>${escapeHtml(r.candidate.name)}<small>${candidateMeta(r.candidate)}</small>
       <small>Tutoría · ${escapeHtml(r.candidate.tutor)}</small>
       ${openSelection?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}" ${data.finalists.includes(r.candidate.id)?'checked':''}>Seleccionar como finalista</label>`:''}
       ${tab==='first'&&data.finalists.includes(r.candidate.id)?'<strong class="hint">Finalista</strong>':''}</td>
       ${r.scores.map(value=>`<td class="num">${fmt(value)}</td>`).join('')}
-      <td class="num"><strong>${fmt(r.average)}</strong><small>${r.count}/3 notas</small></td></tr>`).join('')}
+      <td class="num"><strong>${fmt(r.average)}</strong><small>${r.count}/3 notas</small></td>
+      ${canManage?`<td class="screen-only"><button class="secondary danger" type="button" data-delete-score="${escapeHtml(r.candidate.id)}" ${r.count?'':'disabled'}>Borrar notas</button></td>`:''}</tr>`).join('')}
     </tbody></table></div>
     <div class="actions">
     ${openSelection?`<button id="confirmFinalists">${data.finalists.length?'Guardar cambios':'Confirmar finalistas'}</button>`:''}
     ${openSelection&&data.finalists.length?'<button class="secondary" id="clearFinalists">Borrar selección de finalistas</button>':''}
+    ${canManage?`<button class="secondary danger" id="deletePhase" ${phaseScores.length?'':'disabled'}>Borrar puntuaciones de la fase</button>`: ''}
     <button class="secondary" id="csv">Descargar CSV</button><button class="secondary" id="print">Imprimir</button></div>`}
-  </section>`;
+  </section>
+  ${canManage?`<details class="card results screen-only" id="scoreHistory">
+    <summary>Historial de borrados (${history.length})</summary>
+    ${history.length?`<ul class="score-history">${history.map(event=>{
+      const subject=event.candidate===null?'Toda la fase':data.candidates.find(c=>c.id===event.candidate)?.name ?? 'Candidata';
+      const date=event.date?.$date ?? event.date;
+      return `<li><span><strong>${escapeHtml(subject)}</strong><small>${escapeHtml(statuses[event.phase])} · ${event.count} notas${date?' · '+escapeHtml(new Date(date).toLocaleString('es-EC',{timeZone:'America/Guayaquil'})):''}</small></span>
+        ${event.undone?'<span>Deshecho</span>':`<button class="secondary" data-undo-score="${escapeHtml(event.id)}">Deshacer</button>`}</li>`;
+    }).join('')}</ul>`:'<p>Todavía no hay borrados.</p>'}
+  </details>`:''}`;
+  const updateScores=async(action,payload,message)=>withPending(async()=>{
+    await api(action,{...payload,confirmed:true,requestId:crypto.randomUUID()});
+    adopt(await api('state'));
+    $('#scoreHistory').open=true;
+    $('#notice').textContent=message;
+  });
+  const removeScores=async candidate=>{
+    const scores=phaseScores.filter(s=>candidate===null||s.candidate===candidate);
+    const subject=candidate===null?statuses[tab]:data.candidates.find(c=>c.id===candidate)?.name;
+    if (!scores.length || !window.confirm(`¿Borrar ${scores.length} notas de ${subject}? Puedes deshacerlo desde el historial.`)) return;
+    await updateScores('deleteScores',{phase:tab,candidate,scoreIds:scores.map(s=>s.id)},'Puntuaciones borradas. Puedes deshacer el borrado.');
+  };
+  $('#view').querySelectorAll('[data-delete-score]').forEach(button=>button.onclick=()=>removeScores(button.dataset.deleteScore));
+  if($('#deletePhase')) $('#deletePhase').onclick=()=>removeScores(null);
+  $('#view').querySelectorAll('[data-undo-score]').forEach(button=>button.onclick=()=>{
+    if (window.confirm('¿Deshacer este borrado? Si ya existe una nota nueva, se conserva.'))
+      return updateScores('undoScores',{deletionId:button.dataset.undoScore},'Borrado deshecho.');
+  });
   if($('#confirmFinalists')) $('#confirmFinalists').onclick=async()=>{
     const checked=[...$('#view').querySelectorAll('input:checked')].map(input=>input.value);
     if(!checked.length){$('#notice').textContent='Selecciona al menos una finalista.';return;}
@@ -229,8 +267,7 @@ $('#refresh').onclick=()=>withPending(async()=>{
   const result=await api('state');
   for(const [id,draft] of drafts){
     const [phase,candidate]=id.split('/');
-    const current=result.scores.find(s=>s.phase===phase&&s.candidate===candidate);
-    if((current?.revision ?? 0)!==draft.revision) drafts.delete(id);
+    if(savedRevision(result,phase,candidate)!==draft.revision) drafts.delete(id);
   }
   adopt(result);
   $('#notice').textContent='Datos actualizados.';
