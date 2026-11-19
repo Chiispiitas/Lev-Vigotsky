@@ -30,9 +30,9 @@ async function api(action,payload={},credential=code) {
 }
 function setCodeVisible(visible) {
   $('#code').type=visible?'text':'password';
-  $('#toggleCode').setAttribute('aria-pressed',String(visible));
+  $('#toggleCode')?.setAttribute('aria-pressed',String(visible));
 }
-$('#toggleCode').onclick=()=>setCodeVisible($('#code').type==='password');
+$('#toggleCode')?.addEventListener('click',()=>setCodeVisible($('#code').type==='password'));
 
 function showLogin(message='') {
   code=''; data=null; tab=''; selected=''; drafts.clear();
