@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.wix/
+.astro/
+.wrangler/
+.env*
+!.env.example
+*.zip
+*.log
