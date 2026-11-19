@@ -91,13 +91,13 @@ function renderJudge() {
       <form id="scoreForm">
       ${criteria.map(c=>{
         const selectedMark=String(draft?.marks[c.id] ?? old?.marks[c.id] ?? '');
-        const marks=Array.from({length:c.max+1},(_,i)=>String(i));
+        const marks=Array.from({length:c.max*2+1},(_,i)=>String(i/2));
         // Keep previously saved decimal scores available when reviewing an evaluation.
         if(selectedMark!==''&&!marks.includes(selectedMark)) marks.push(selectedMark);
         return `<fieldset class="criterion"><legend>${escapeHtml(c.title)} <span class="span-note">/ ${c.max}</span></legend>
           <div class="mark-options">${marks.map(mark=>`<label class="mark-choice">
             <input type="radio" name="${c.id}" value="${escapeHtml(mark)}" required ${mark===selectedMark?'checked':''}>
-            <span>${Number.isInteger(Number(mark))?mark:fmt(mark)}</span>
+            <span>${Number(mark).toLocaleString('es-EC',{maximumFractionDigits:2})}</span>
           </label>`).join('')}</div></fieldset>`;
       }).join('')}
       <label for="comment">Observaciones (opcional)</label>
