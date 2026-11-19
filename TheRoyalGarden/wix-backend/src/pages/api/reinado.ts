@@ -48,8 +48,9 @@ export const POST:APIRoute = async ({request}) => {
     let body:any;
     try { body=JSON.parse(raw); } catch { throw new Problem(400,'Solicitud inválida.'); }
     const code = typeof body?.code === 'string' ? body.code.trim().toLowerCase() : '';
-    if (!/^[a-f0-9]{32}$/.test(code)) throw new Problem(401,'Código de acceso inválido.');
-    const access = await query(collections.access).eq('hash',await digest(code)).limit(1).find(readOptions);
+    const field = /^[a-f0-9]{32}$/.test(code) ? 'hash' : /^[a-z]{3,20}[0-9]{6}$/.test(code) ? 'shortHash' : null;
+    if (!field) throw new Problem(401,'Código de acceso inválido.');
+    const access = await query(collections.access).eq(field,await digest(code)).limit(1).find(readOptions);
     if (!access.items.length) throw new Problem(401,'Código de acceso inválido.');
     const user = person(access.items[0]);
     if (!['mini','main','admin'].includes(user.panel)) throw new Problem(403,'Acceso no disponible.');

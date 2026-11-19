@@ -222,5 +222,5 @@ $('#refresh').onclick=()=>withPending(async()=>{
 $('#logout').onclick=()=>showLogin();
 try {
   const saved=JSON.parse(sessionStorage.getItem(sessionKey));
-  if(/^[a-f0-9]{32}$/.test(saved?.code)){tab=saved.tab;selected=saved.selected;login(saved.code,true);}
+  if(/^(?:[a-f0-9]{32}|[a-z]{3,20}[0-9]{6})$/.test(saved?.code)){tab=saved.tab;selected=saved.selected;login(saved.code,true);}
 } catch {}
