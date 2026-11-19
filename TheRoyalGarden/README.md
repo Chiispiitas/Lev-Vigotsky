@@ -5,7 +5,7 @@ Frontend estático en https://ueplv.com/TheRoyalGarden/ y servicio de evaluació
 - Mini Reinado y primera fase: cinco criterios de hasta 2 puntos.
 - Segunda fase: Impacto del proyecto y Elocuencia y expresión, hasta 5 puntos cada uno.
 - Cada fase se califica sobre 10. El consolidado promedia las tres notas de su mesa, con el mismo peso y sin desempate automático. La segunda fase se presenta por separado.
-- Organización confirma manualmente la lista de finalistas. Puede hacerlo con notas pendientes. La lista se bloquea al confirmarla.
+- Organización confirma manualmente la lista de finalistas. Puede hacerlo con notas pendientes. Organización puede editar o borrar la selección con confirmación. Las notas se conservan.
 - Los códigos se entregan por separado. El portal conserva la sesión al recargar la misma pestaña y la elimina al salir.
 - Wix CMS: RoyalGardenCandidates, RoyalGardenAccess, RoyalGardenScores y RoyalGardenFinalists, todas privadas. Los registros de acceso contienen huellas de los códigos. Las correcciones de notas agregan revisiones y el consolidado usa la más reciente. En el CMS se pueden completar las reinas pendientes.
 

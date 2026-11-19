@@ -147,7 +147,7 @@ function renderJudge() {
 function renderResults() {
   const judges=data.judges.filter(j=>j.panel===(tab==='mini'?'mini':'main'));
   const rows=rankings(activeCandidates(),data.scores,judges,tab);
-  const openSelection=tab==='first'&&!data.finalists.length;
+  const openSelection=tab==='first';
   const complete=rows.filter(r=>r.average!==null).length;
   $('#view').innerHTML=`<section class="card results">
     <div class="results-head"><div><p class="kicker">Consolidado</p><h2>${statuses[tab]}</h2></div>
@@ -158,21 +158,30 @@ function renderResults() {
     ${judges.map(j=>`<th>${escapeHtml(j.name)} / 10</th>`).join('')}<th>Promedio / 10</th></tr></thead><tbody>
     ${rows.map(r=>`<tr><td>${r.rank??'—'}</td><td>${escapeHtml(r.candidate.name)}<small>${candidateMeta(r.candidate)}</small>
       <small>Tutoría · ${escapeHtml(r.candidate.tutor)}</small>
-      ${openSelection?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}">Seleccionar como finalista</label>`:''}
+      ${openSelection?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}" ${data.finalists.includes(r.candidate.id)?'checked':''}>Seleccionar como finalista</label>`:''}
       ${tab==='first'&&data.finalists.includes(r.candidate.id)?'<strong class="hint">Finalista</strong>':''}</td>
       ${r.scores.map(value=>`<td class="num">${fmt(value)}</td>`).join('')}
       <td class="num"><strong>${fmt(r.average)}</strong><small>${r.count}/3 notas</small></td></tr>`).join('')}
     </tbody></table></div>
     <div class="actions">
-    ${openSelection?`<button id="confirmFinalists">Confirmar finalistas</button>`:''}
+    ${openSelection?`<button id="confirmFinalists">${data.finalists.length?'Guardar cambios':'Confirmar finalistas'}</button>`:''}
+    ${openSelection&&data.finalists.length?'<button class="secondary" id="clearFinalists">Borrar selección de finalistas</button>':''}
     <button class="secondary" id="csv">Descargar CSV</button><button class="secondary" id="print">Imprimir</button></div>`}
   </section>`;
   if($('#confirmFinalists')) $('#confirmFinalists').onclick=async()=>{
     const checked=[...$('#view').querySelectorAll('input:checked')].map(input=>input.value);
     if(!checked.length){$('#notice').textContent='Selecciona al menos una finalista.';return;}
     const names=rows.filter(r=>checked.includes(r.candidate.id)).map(r=>r.candidate.name).join('\n');
-    if(!window.confirm('¿Confirmar estas finalistas y habilitar la pregunta final? La lista queda cerrada.\n\n'+names))return;
-    await withPending(async()=>{await api('finalists',{candidates:checked,confirmed:true}); adopt(await api('state')); $('#notice').textContent='Finalistas confirmadas.';});
+    if(!window.confirm('¿Confirmar estas finalistas y habilitar la pregunta final? Puedes cambiar la lista desde Organización.\n\n'+names))return;
+    await withPending(async()=>{await api('finalists',{candidates:checked,confirmed:true,revision:data.finalistRevision}); adopt(await api('state')); $('#notice').textContent='Finalistas confirmadas.';});
+  };
+  if($('#clearFinalists')) $('#clearFinalists').onclick=async()=>{
+    if(!window.confirm('¿Borrar toda la selección? Se cerrará la segunda fase hasta que confirmes otra lista. Las notas guardadas se conservan.'))return;
+    await withPending(async()=>{
+      await api('finalists',{candidates:[],confirmed:true,revision:data.finalistRevision});
+      adopt(await api('state'));
+      $('#notice').textContent='Selección de finalistas borrada.';
+    });
   };
   if($('#csv')) $('#csv').onclick=()=>exportCsv(rows,judges);
   if($('#print')) $('#print').onclick=()=>window.print();

@@ -59,7 +59,10 @@ export const POST:APIRoute = async ({request}) => {
         (body.action === 'score' && user.panel === 'admin')) throw new Problem(403,'Acción no permitida.');
     const [candidateItems,finalItems] = await Promise.all([listing(collections.candidates),listing(collections.finalists)]);
     const candidates = candidateItems.map(candidate).filter(c=>user.panel==='admin'||c.group===user.panel).sort((a,b)=>a.number-b.number);
-    const selection = finalItems.find(r=>r._id==='official-finalists');
+    const revisionOf = (row:any) => Number(/^official-finalists-(\d+)$/.exec(row._id)?.[1] ?? 0);
+    const selection = finalItems.filter(r=>/^official-finalists(?:-\d+)?$/.test(r._id))
+      .sort((a,b)=>revisionOf(b)-revisionOf(a))[0];
+    const finalistRevision = selection ? revisionOf(selection) : 0;
     const finalists:string[] = user.panel==='mini' || !selection ? [] : JSON.parse(selection.candidates);
     if (body.action === 'state') {
       const [records, people] = await Promise.all([
@@ -71,25 +74,25 @@ export const POST:APIRoute = async ({request}) => {
           }),
         user.panel==='admin' ? listing(collections.access) : Promise.resolve([])
       ]);
-      return send({user,candidates,finalists,phases,scores:latestScores(records).map(score),
+      return send({user,candidates,finalists,finalistRevision,phases,scores:latestScores(records).map(score),
         judges:people.map(person).filter(r=>r.panel!=='admin')});
     }
     if (body.action === 'finalists') {
-      if (!Array.isArray(body.candidates) || !body.candidates.length || body.confirmed!==true ||
+      if (!Array.isArray(body.candidates) || body.confirmed!==true ||
+          !Number.isSafeInteger(body.revision) || body.revision<0 ||
           new Set(body.candidates).size!==body.candidates.length ||
           !body.candidates.every((id:unknown)=>candidates.some(c=>c.id===id && c.group==='main')))
         throw new Problem(400,'Selecciona y confirma las finalistas del Reinado.');
-      const selected = [...body.candidates].sort();
-      if (selection) {
-        if (JSON.stringify([...finalists].sort())===JSON.stringify(selected)) return send({ok:true});
-        throw new Problem(409,'La lista de finalistas ya fue confirmada.');
-      }
+      const selected = JSON.stringify([...body.candidates].sort());
+      if (JSON.stringify([...finalists].sort())===selected) return send({ok:true});
+      if (body.revision!==finalistRevision) throw new Problem(409,'La lista cambió. Recarga antes de editarla.');
+      const id = 'official-finalists-'+(finalistRevision+1);
       try {
-        await insert(collections.finalists,{_id:'official-finalists',title:'Finalistas confirmadas',candidates:JSON.stringify(selected)});
+        await insert(collections.finalists,{_id:id,title:body.candidates.length?'Finalistas confirmadas':'Selección borrada',candidates:selected});
       } catch(error) {
-        const current=(await query(collections.finalists).eq('_id','official-finalists').limit(1).find(readOptions)).items[0];
+        const current=(await query(collections.finalists).eq('_id',id).limit(1).find(readOptions)).items[0];
         if (!current) throw error;
-        if (current.candidates!==JSON.stringify(selected)) throw new Problem(409,'La lista de finalistas ya fue confirmada.');
+        if (current.candidates!==selected) throw new Problem(409,'La lista cambió. Recarga antes de editarla.');
       }
       return send({ok:true});
     }
