@@ -86,3 +86,9 @@ fieldset.criterion { border: 0; border-bottom: 1px solid var(--line); margin: 0 
 @media print { .screen-only { display: none !important; } }
 
 .delete-one { display: block; margin-top: 5px; padding: 4px 7px; font-size: .75rem; min-height: 32px; }
+
+.code-field { position: relative; }
+#loginForm .code-field input { min-height: 44px; padding-inline-end: 50px; }
+#loginForm #toggleCode { position: absolute; inset: 0 0 auto auto; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; background: transparent; color: var(--ink); }
+#toggleCode .eye-slash { visibility: hidden; }
+#toggleCode[aria-pressed="true"] .eye-slash { visibility: visible; }

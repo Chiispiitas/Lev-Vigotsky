@@ -28,6 +28,12 @@ async function api(action,payload={},credential=code) {
   }
   return result;
 }
+function setCodeVisible(visible) {
+  $('#code').type=visible?'text':'password';
+  $('#toggleCode').setAttribute('aria-pressed',String(visible));
+}
+$('#toggleCode').onclick=()=>setCodeVisible($('#code').type==='password');
+
 function showLogin(message='') {
   code=''; data=null; tab=''; selected=''; drafts.clear();
   try { sessionStorage.removeItem(sessionKey); } catch {}
@@ -36,6 +42,7 @@ function showLogin(message='') {
   $('#login').hidden=false;
   $('#loginStatus').textContent=message;
   $('#code').value='';
+  setCodeVisible(false);
 }
 function availableTabs() {
   if (data.user.panel==='mini') return ['mini'];
@@ -270,6 +277,7 @@ async function login(credential,restoring=false) {
     code=credential;
     adopt(result);
     $('#code').value='';
+    setCodeVisible(false);
   } catch(error) {
     if(error.status===401) showLogin(error.message);
     else $('#loginStatus').textContent=error.message;
