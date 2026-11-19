@@ -84,3 +84,5 @@ fieldset.criterion { border: 0; border-bottom: 1px solid var(--line); margin: 0 
 .score-history li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
 .score-history small { display: block; color: var(--muted); }
 @media print { .screen-only { display: none !important; } }
+
+.delete-one { display: block; margin-top: 5px; padding: 4px 7px; font-size: .75rem; min-height: 32px; }

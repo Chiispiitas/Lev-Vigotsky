@@ -169,7 +169,14 @@ function renderResults() {
       <small>Tutoría · ${escapeHtml(r.candidate.tutor)}</small>
       ${openSelection?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}" ${data.finalists.includes(r.candidate.id)?'checked':''}>Seleccionar como finalista</label>`:''}
       ${tab==='first'&&data.finalists.includes(r.candidate.id)?'<strong class="hint">Finalista</strong>':''}</td>
-      ${r.scores.map(value=>`<td class="num">${fmt(value)}</td>`).join('')}
+      ${r.scores.map((value,i)=>{
+        const judge=judges[i];
+        const label=`Borrar nota de ${judge.name} para ${r.candidate.name}`;
+        return `<td class="num">${fmt(value)}
+          ${canManage&&value!==null?`<button type="button" class="secondary danger screen-only delete-one"
+            data-delete-candidate="${escapeHtml(r.candidate.id)}" data-delete-judge="${escapeHtml(judge.id)}"
+            aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">Borrar nota</button>`:''}</td>`;
+      }).join('')}
       <td class="num"><strong>${fmt(r.average)}</strong><small>${r.count}/3 notas</small></td>
       ${canManage?`<td class="screen-only"><button class="secondary danger" type="button" data-delete-score="${escapeHtml(r.candidate.id)}" ${r.count?'':'disabled'}>Borrar notas</button></td>`:''}</tr>`).join('')}
     </tbody></table></div>
@@ -184,7 +191,8 @@ function renderResults() {
     ${history.length?`<ul class="score-history">${history.map(event=>{
       const subject=event.candidate===null?'Toda la fase':data.candidates.find(c=>c.id===event.candidate)?.name ?? 'Candidata';
       const date=event.date?.$date ?? event.date;
-      return `<li><span><strong>${escapeHtml(subject)}</strong><small>${escapeHtml(statuses[event.phase])} · ${event.count} notas${date?' · '+escapeHtml(new Date(date).toLocaleString('es-EC',{timeZone:'America/Guayaquil'})):''}</small></span>
+      const judge=event.judge ? data.judges.find(j=>j.id===event.judge)?.name ?? 'Jurado' : '';
+      return `<li><span><strong>${escapeHtml(subject)}</strong><small>${escapeHtml(statuses[event.phase])} · ${event.count} ${event.count===1?'nota':'notas'}${judge?' · '+escapeHtml(judge):''}${date?' · '+escapeHtml(new Date(date).toLocaleString('es-EC',{timeZone:'America/Guayaquil'})):''}</small></span>
         ${event.undone?'<span>Deshecho</span>':`<button class="secondary" data-undo-score="${escapeHtml(event.id)}">Deshacer</button>`}</li>`;
     }).join('')}</ul>`:'<p>Todavía no hay borrados.</p>'}
   </details>`:''}`;
@@ -194,12 +202,17 @@ function renderResults() {
     $('#scoreHistory').open=true;
     $('#notice').textContent=message;
   });
-  const removeScores=async candidate=>{
-    const scores=phaseScores.filter(s=>candidate===null||s.candidate===candidate);
+  const removeScores=async (candidate,judge=null)=>{
+    const scores=phaseScores.filter(s=>(candidate===null||s.candidate===candidate)&&(judge===null||s.judge===judge));
     const subject=candidate===null?statuses[tab]:data.candidates.find(c=>c.id===candidate)?.name;
-    if (!scores.length || !window.confirm(`¿Borrar ${scores.length} notas de ${subject}? Puedes deshacerlo desde el historial.`)) return;
-    await updateScores('deleteScores',{phase:tab,candidate,scoreIds:scores.map(s=>s.id)},'Puntuaciones borradas. Puedes deshacer el borrado.');
+    const judgeName=judge===null?'':data.judges.find(j=>j.id===judge)?.name;
+    const prompt=judgeName?`¿Borrar la nota de ${judgeName} para ${subject}?`:
+      `¿Borrar ${scores.length} ${scores.length===1?'nota':'notas'} de ${subject}?`;
+    if (!scores.length || !window.confirm(prompt+' Puedes deshacerlo desde el historial.')) return;
+    await updateScores('deleteScores',{phase:tab,candidate,judge,scoreIds:scores.map(s=>s.id)},'Borrado guardado. Puedes deshacerlo.');
   };
+  $('#view').querySelectorAll('[data-delete-judge]').forEach(button=>button.onclick=()=>
+    removeScores(button.dataset.deleteCandidate,button.dataset.deleteJudge));
   $('#view').querySelectorAll('[data-delete-score]').forEach(button=>button.onclick=()=>removeScores(button.dataset.deleteScore));
   if($('#deletePhase')) $('#deletePhase').onclick=()=>removeScores(null);
   $('#view').querySelectorAll('[data-undo-score]').forEach(button=>button.onclick=()=>{

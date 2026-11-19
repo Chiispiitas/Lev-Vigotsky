@@ -103,17 +103,20 @@ export const POST:APIRoute = async ({request}) => {
         event = {_id:(await digest('restore:'+deletion.id)).slice(0,32), phase:restorationPhase,
           title:'Borrado deshecho',requestId:deletion.id};
       } else {
+        const judge = body.judge ?? null;
+        if (judge!==null && (typeof judge!=='string' || !judge || body.candidate===null))
+          throw new Problem(400,'Selecciona un jurado y una candidata válidos.');
         if (!Object.hasOwn(phases,body.phase) || (body.candidate!==null && !candidates.some(c=>c.id===body.candidate)))
           throw new Problem(400,'Selecciona una fase o una candidata válida.');
         if (history.some(r=>r.id===body.requestId)) return send({ok:true});
         const hidden = hiddenIds(history);
         const scoreIds = latestScores(records.filter(isScore)).filter(r=>r.phase===body.phase &&
           (body.phase!=='final' || finalists.includes(r.candidate)) && !hidden.has(r._id) &&
-          (body.candidate===null || r.candidate===body.candidate)).map(r=>r._id).sort();
+          (body.candidate===null || r.candidate===body.candidate) && (judge===null || r.judge===judge)).map(r=>r._id).sort();
         if (!scoreIds.length || !Array.isArray(body.scoreIds) || JSON.stringify([...body.scoreIds].sort())!==JSON.stringify(scoreIds))
           throw new Problem(409,'Las puntuaciones cambiaron. Recarga y confirma otra vez.');
         event = {_id:body.requestId,phase:deletionPhase,title:'Puntuaciones borradas',
-          marks:JSON.stringify({phase:body.phase,candidate:body.candidate,scoreIds})};
+          marks:JSON.stringify({phase:body.phase,candidate:body.candidate,judge,scoreIds})};
       }
       try { await insert(collections.scores,event); }
       catch(error) {
