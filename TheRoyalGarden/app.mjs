@@ -158,13 +158,13 @@ function renderResults() {
     ${judges.map(j=>`<th>${escapeHtml(j.name)} / 10</th>`).join('')}<th>Promedio / 10</th></tr></thead><tbody>
     ${rows.map(r=>`<tr><td>${r.rank??'—'}</td><td>${escapeHtml(r.candidate.name)}<small>${candidateMeta(r.candidate)}</small>
       <small>Tutoría · ${escapeHtml(r.candidate.tutor)}</small>
-      ${openSelection&&r.average!==null?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}">Seleccionar como finalista</label>`:''}
+      ${openSelection?`<label class="pick"><input type="checkbox" value="${escapeHtml(r.candidate.id)}">Seleccionar como finalista</label>`:''}
       ${tab==='first'&&data.finalists.includes(r.candidate.id)?'<strong class="hint">Finalista</strong>':''}</td>
       ${r.scores.map(value=>`<td class="num">${fmt(value)}</td>`).join('')}
       <td class="num"><strong>${fmt(r.average)}</strong><small>${r.count}/3 notas</small></td></tr>`).join('')}
     </tbody></table></div>
     <div class="actions">
-    ${openSelection?`<button id="confirmFinalists" ${complete?'':'disabled'}>Confirmar finalistas</button>`:''}
+    ${openSelection?`<button id="confirmFinalists">Confirmar finalistas</button>`:''}
     <button class="secondary" id="csv">Descargar CSV</button><button class="secondary" id="print">Imprimir</button></div>`}
   </section>`;
   if($('#confirmFinalists')) $('#confirmFinalists').onclick=async()=>{

@@ -84,11 +84,6 @@ export const POST:APIRoute = async ({request}) => {
         if (JSON.stringify([...finalists].sort())===JSON.stringify(selected)) return send({ok:true});
         throw new Problem(409,'La lista de finalistas ya fue confirmada.');
       }
-      const first = (await listing(collections.scores)).filter(r=>r.phase==='first');
-      const eligibleJudges = new Set((await listing(collections.access)).map(person).filter(j=>j.panel==='main').map(j=>j.id));
-      const ranked = latestScores(first);
-      if (!selected.every(id=>ranked.filter(r=>r.candidate===id && eligibleJudges.has(r.judge)).length===3))
-        throw new Problem(409,'Cada finalista debe tener las tres notas de la primera pregunta.');
       try {
         await insert(collections.finalists,{_id:'official-finalists',title:'Finalistas confirmadas',candidates:JSON.stringify(selected)});
       } catch(error) {
