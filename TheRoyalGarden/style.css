@@ -62,8 +62,8 @@ label{font-weight:650} input:not([type=checkbox]),textarea{display:block;width:1
 @media (max-width: 520px) {
   .entry { padding: 68px 12px 80px; min-height: min(620px, calc(100svh - 73px)); }
   .garden-art::before, .garden-art::after { width: 211px; opacity: .36; }
-  .garden-art::before { left: -100px; top: -104px; }
-  .garden-art::after { right: -110px; bottom: -101px; }
+  .garden-art::before { left: -51px; top: -67px; }
+  .garden-art::after { right: -61px; bottom: -60px; }
   .wordmark { width: min(100%, 282px); }
   #loginForm { padding: 19px 18px; }
 }
