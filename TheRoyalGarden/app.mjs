@@ -179,7 +179,14 @@ function renderResults() {
       ${r.scores.map((value,i)=>{
         const judge=judges[i];
         const label=`Borrar nota de ${judge.name} para ${r.candidate.name}`;
-        return `<td class="num">${fmt(value)}
+        const evaluation=data.scores.find(s=>s.phase===tab&&s.candidate===r.candidate.id&&s.judge===judge.id);
+        const criteria=data.phases[tab]?.criteria ?? [];
+        return `<td class="num">${evaluation&&criteria.length?`<details class="score-breakdown">
+          <summary aria-label="${escapeHtml('Desglose de '+judge.name+' para '+r.candidate.name+': '+fmt(value))}">${fmt(value)}</summary>
+          <dl class="screen-only">${criteria.map(c=>`<div>
+            <dt>${escapeHtml(c.title)}</dt><dd>${fmt(evaluation.marks?.[c.id])} / ${c.max}</dd>
+          </div>`).join('')}</dl>
+        </details>`:fmt(value)}
           ${canManage&&value!==null?`<button type="button" class="secondary danger screen-only delete-one"
             data-delete-candidate="${escapeHtml(r.candidate.id)}" data-delete-judge="${escapeHtml(judge.id)}"
             aria-label="${escapeHtml(label)}" title="${escapeHtml(label)}">Borrar nota</button>`:''}</td>`;

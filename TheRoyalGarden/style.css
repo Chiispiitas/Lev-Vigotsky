@@ -92,3 +92,10 @@ fieldset.criterion { border: 0; border-bottom: 1px solid var(--line); margin: 0 
 #loginForm #toggleCode { position: absolute; inset: 0 0 auto auto; display: grid; place-items: center; width: 44px; height: 44px; padding: 0; background: transparent; color: var(--ink); }
 #toggleCode .eye-slash { visibility: hidden; }
 #toggleCode[aria-pressed="true"] .eye-slash { visibility: visible; }
+
+.score-breakdown summary { cursor: pointer; color: var(--purple); width: fit-content; min-height: 32px; padding-block: 4px; }
+.score-breakdown summary:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+.score-breakdown dl { margin: 4px 0 7px; width: 10rem; font-size: .8rem; white-space: normal; }
+.score-breakdown dl div { display: grid; gap: 2px; padding-block: 5px; border-top: 1px solid var(--line); }
+.score-breakdown dd { margin: 0; color: var(--purple); font-weight: 700; }
+@media print { .score-breakdown summary { display: block; padding: 0; min-height: 0; color: inherit; } }
