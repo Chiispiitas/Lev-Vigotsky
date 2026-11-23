@@ -1,0 +1,320 @@
+{
+  "id": "a2-practice-b",
+  "level": "A2",
+  "variation": "B",
+  "title": "A2 Practice",
+  "minutes": 40,
+  "parts": [
+    {
+      "id": "r1",
+      "title": "Signs and messages",
+      "instructions": "Read each notice or message. Choose what it means.",
+      "skill": "reading",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "prompt": "What does the text say?",
+          "options": [
+            "Early travelers can arrange a breakfast to take away.",
+            "Guests can only order food after 9:30.",
+            "Everyone must leave before 7:00."
+          ],
+          "answer": "Early travelers can arrange a breakfast to take away.",
+          "explanation": "Guests leaving early may order a packed breakfast in advance.",
+          "context": "NORTH HOTEL\nBreakfast is served until 9:30. If you need to leave earlier than 7:00, order a packed breakfast the night before."
+        },
+        {
+          "id": "r1-q2",
+          "prompt": "What does the text say?",
+          "options": [
+            "Mo has already paid for his ticket.",
+            "Mo wants to choose the film before getting a ticket.",
+            "Mo wants Tess to meet him at the bus stop."
+          ],
+          "answer": "Mo wants to choose the film before getting a ticket.",
+          "explanation": "He asks her not to buy his ticket until they check the film.",
+          "context": "Hi Tess, I’m walking from the bus stop now. Don’t buy my ticket yet. I want to check which film we’re going to see first. — Mo"
+        },
+        {
+          "id": "r1-q3",
+          "prompt": "What does the text say?",
+          "options": [
+            "The museum is open until 1:15.",
+            "The city tour is canceled today.",
+            "Today you catch the tour bus at the market."
+          ],
+          "answer": "Today you catch the tour bus at the market.",
+          "explanation": "The departure point today is the market.",
+          "context": "CITY TOUR\nOur next bus leaves at 1:15 from the market today. The usual stop by the museum is closed."
+        },
+        {
+          "id": "r1-q4",
+          "prompt": "What does the text say?",
+          "options": [
+            "Ryan wants Asha to keep a seat for him.",
+            "Ryan asks Asha to pay for his ticket.",
+            "Ryan will miss the show because of work."
+          ],
+          "answer": "Ryan wants Asha to keep a seat for him.",
+          "explanation": "He asks Asha to save a seat before he arrives.",
+          "context": "Hi Asha, I can come to your show. I’ll be at work until six, so please save me a seat. I’ll buy my ticket when I arrive. — Ryan"
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Three places to visit",
+      "instructions": "Read the descriptions. Which place is right for each visitor?",
+      "skill": "reading",
+      "passage": "A. Hillside Cinema\nWe show adventure films in the evening. The ticket office opens at six. There is a pizza shop just across the road, open until eleven.\n\nB. Corner Café\nOn Sundays at half past three, musicians from the neighborhood play for free. The café is three minutes from the bus station. There is no need to book.\n\nC. Studio Museum\nSee costumes from famous films, then learn how to use a camera. In each afternoon workshop, visitors make a short film. All workshop places must be reserved.",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "prompt": "Anya wants to make a short film herself.",
+          "options": [
+            "Hillside Cinema",
+            "Corner Café",
+            "Studio Museum"
+          ],
+          "answer": "Studio Museum",
+          "explanation": "Visitors make a short film in a workshop."
+        },
+        {
+          "id": "r2-q2",
+          "prompt": "David wants an afternoon event near the bus station.",
+          "options": [
+            "Hillside Cinema",
+            "Corner Café",
+            "Studio Museum"
+          ],
+          "answer": "Corner Café",
+          "explanation": "The afternoon show is three minutes from the station."
+        },
+        {
+          "id": "r2-q3",
+          "prompt": "Chloe wants an evening film and a nearby meal afterward.",
+          "options": [
+            "Hillside Cinema",
+            "Corner Café",
+            "Studio Museum"
+          ],
+          "answer": "Hillside Cinema",
+          "explanation": "Hillside shows evening films and there is a pizza shop across the road."
+        },
+        {
+          "id": "r2-q4",
+          "prompt": "Ben wants to hear a group without buying a ticket.",
+          "options": [
+            "Hillside Cinema",
+            "Corner Café",
+            "Studio Museum"
+          ],
+          "answer": "Corner Café",
+          "explanation": "Local musicians play for free."
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "A change of plans",
+      "instructions": "Read the text and choose one answer for each question.",
+      "skill": "reading",
+      "passage": "Last weekend, my friend Jules invited me to a concert in another town. We planned to go by bus, but the timetable changed and the last bus left before the concert ended. Jules’s father offered to drive us and pick us up. I was glad because I didn’t want to leave the concert early.\n\nI had never heard the band before. The first song was too loud for me, but after that I enjoyed the music. My favorite song was about a train trip. Jules liked that one too. We had time to buy a snack after the show. The café was closed, so we went to a shop near the station instead.\n\nNext month the band is playing in our town. We’re going to go again, and my sister wants to come with us. We have to book soon because the concert hall only has sixty seats.",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "prompt": "Why did they change their travel plan?",
+          "options": [
+            "The last bus left too early.",
+            "The bus stop had moved.",
+            "Jules’s father wanted to see the concert."
+          ],
+          "answer": "The last bus left too early.",
+          "explanation": "They would have had to leave the concert before the end to catch the bus."
+        },
+        {
+          "id": "r3-q2",
+          "prompt": "What did the writer think of the band?",
+          "options": [
+            "She liked the first song best.",
+            "She enjoyed most of the music.",
+            "She already knew all the songs."
+          ],
+          "answer": "She enjoyed most of the music.",
+          "explanation": "Only the first song was too loud. She enjoyed the music after that."
+        },
+        {
+          "id": "r3-q3",
+          "prompt": "Where did they get a snack?",
+          "options": [
+            "At the café",
+            "In the concert hall",
+            "At a shop near the station"
+          ],
+          "answer": "At a shop near the station",
+          "explanation": "The café was closed, so they went to the shop."
+        },
+        {
+          "id": "r3-q4",
+          "prompt": "Why will they book soon for the next concert?",
+          "options": [
+            "There are not many seats.",
+            "The band is leaving town.",
+            "The writer’s sister needs a ride."
+          ],
+          "answer": "There are not many seats.",
+          "explanation": "The next concert hall only has sixty seats."
+        }
+      ]
+    },
+    {
+      "id": "r4",
+      "title": "An invitation",
+      "instructions": "Write one word in each numbered gap.",
+      "skill": "reading",
+      "passage": "Hi Rina,\nWould you like (1) ____ join us for a film on Sunday? I’ve (2) ____ to this cinema once, and it’s very comfortable. We’re going (3) ____ meet outside the entrance. The movie finishes at six. After that we can have dinner (4) ____ a restaurant near the station.\nKai",
+      "questions": [
+        {
+          "id": "r4-q1",
+          "prompt": "Gap 1",
+          "answer": "to",
+          "explanation": "Use Would you like to + verb for this invitation."
+        },
+        {
+          "id": "r4-q2",
+          "prompt": "Gap 2",
+          "answer": "been",
+          "explanation": "Use I’ve been to a place to talk about a previous visit."
+        },
+        {
+          "id": "r4-q3",
+          "prompt": "Gap 3",
+          "answer": "to",
+          "explanation": "Use going to + verb for the plan."
+        },
+        {
+          "id": "r4-q4",
+          "prompt": "Gap 4",
+          "answer": "at",
+          "explanation": "Use at or in to say where they will have dinner.",
+          "accepted": [
+            "in"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "title": "An evening of music",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/a2-practice-b-l1.mp3",
+      "transcript": "Narrator: You will hear two friends planning an evening out.\nMaya: Shall we go by bus to the concert on Friday, Rob?\nBen: The bus after six is too late. My aunt can drive us at five thirty.\nMaya: Great. I looked at the concert program. Two groups are playing. Have you heard the first group before?\nBen: Yes, at the town festival. I loved the singer. The second group is new to me.\nMaya: Good. I like hearing new groups. Do we have to show a paper ticket?\nBen: No, we can show it on our phones. I've already bought the tickets. I paid twelve dollars for each one, not fifteen like last year.\nMaya: Thanks. Where shall we meet your aunt?\nBen: At the library entrance. There's more space there than outside my house.\nMaya: Okay. Let's buy some sandwiches before the concert. We can eat them in the park next to the hall.",
+      "questions": [
+        {
+          "id": "l1-q1",
+          "prompt": "How will they get to the concert?",
+          "options": [
+            "By bus",
+            "By car",
+            "By train"
+          ],
+          "answer": "By car",
+          "explanation": "Rob’s aunt can drive them early enough."
+        },
+        {
+          "id": "l1-q2",
+          "prompt": "Where did Rob first hear the first group?",
+          "options": [
+            "At a town festival",
+            "At the library",
+            "At the concert hall"
+          ],
+          "answer": "At a town festival",
+          "explanation": "He heard them at the town festival."
+        },
+        {
+          "id": "l1-q3",
+          "prompt": "How much did one ticket cost this year?",
+          "options": [
+            "$15",
+            "$10",
+            "$12"
+          ],
+          "answer": "$12",
+          "explanation": "He paid twelve dollars this year. Fifteen was last year’s price."
+        },
+        {
+          "id": "l1-q4",
+          "prompt": "Where will they meet Rob’s aunt?",
+          "options": [
+            "At Rob’s house",
+            "At the library entrance",
+            "At the park gate"
+          ],
+          "answer": "At the library entrance",
+          "explanation": "The library entrance has more space."
+        },
+        {
+          "id": "l1-q5",
+          "prompt": "What do they want to eat before the concert?",
+          "options": [
+            "Sandwiches",
+            "Pasta",
+            "Soup"
+          ],
+          "answer": "Sandwiches",
+          "explanation": "They will buy sandwiches and eat them in the park."
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "title": "A bike tour",
+      "instructions": "Listen twice. Write one word or a number in each gap.",
+      "skill": "listening",
+      "audio": "audio/a2-practice-b-l2.mp3",
+      "transcript": "Narrator: Listen to a message about a bike tour.\nBen: Thanks for booking the river bike tour on Saturday. Please meet us outside the station. The tour was going to start at nine, but we now start at eight thirty. The price is sixteen dollars and includes the bike. You can buy food at the café, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after twelve.",
+      "questions": [
+        {
+          "id": "l2-q1",
+          "prompt": "Day of tour: ____",
+          "answer": "Saturday",
+          "explanation": "The tour takes place on Saturday."
+        },
+        {
+          "id": "l2-q2",
+          "prompt": "New start time: ____ a.m.",
+          "answer": "8:30",
+          "explanation": "The new time is eight thirty.",
+          "accepted": [
+            "8.30",
+            "eight thirty",
+            "half past eight"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "prompt": "Meeting point: outside the ____.",
+          "answer": "station",
+          "explanation": "Meet outside the station."
+        },
+        {
+          "id": "l2-q4",
+          "prompt": "Price: $____.",
+          "answer": "16",
+          "explanation": "The price is sixteen dollars.",
+          "accepted": [
+            "sixteen"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "prompt": "Bring ____ for the ride.",
+          "answer": "water",
+          "explanation": "The guide asks you to bring water."
+        }
+      ]
+    }
+  ]
+}

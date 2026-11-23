@@ -1,0 +1,232 @@
+{
+  "examId": "b1-practice-a",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "Tell the instructor if you feel ill and need to leave."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "Jorge wants feedback on the ideas before improving the design."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Use the lower route in wet weather."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Bea is interested in joining Luis next time."
+          ]
+        },
+        {
+          "id": "r1-q5",
+          "answers": [
+            "Groups can work there in the afternoon if they book."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Forest Steps"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "Quiet Corner"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "New Routes"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "River Count"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "Tom’s experience made the writer curious."
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "The writer wanted a quieter walk away from messages."
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "It was easier to concentrate on homework."
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "A small break that helped me focus"
+          ]
+        },
+        {
+          "id": "r4-q1",
+          "answers": [
+            "That was the first time I thought of the garden as a place for more than plants."
+          ]
+        },
+        {
+          "id": "r4-q2",
+          "answers": [
+            "I asked him to write the names on labels so that I could check them later."
+          ]
+        },
+        {
+          "id": "r4-q3",
+          "answers": [
+            "Fortunately, someone had already moved the seedlings under a shelter."
+          ]
+        },
+        {
+          "id": "r4-q4",
+          "answers": [
+            "We had grown enough to give each visitor a small bunch."
+          ]
+        },
+        {
+          "id": "r5-q1",
+          "answers": [
+            "tried",
+            "been",
+            "done"
+          ]
+        },
+        {
+          "id": "r5-q2",
+          "answers": [
+            "for"
+          ]
+        },
+        {
+          "id": "r5-q3",
+          "answers": [
+            "on",
+            "through",
+            "via",
+            "using",
+            "from"
+          ]
+        },
+        {
+          "id": "r5-q4",
+          "answers": [
+            "would",
+            "might",
+            "could"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "He used his phone in bed."
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "Choose the main idea"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "The view from the top"
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "She felt ready for a harder route."
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "library"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "9:15",
+            "9.15",
+            "09:15",
+            "nine fifteen",
+            "quarter past nine"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "gloves"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "herbs"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "answers": [
+            "workshop"
+          ]
+        },
+        {
+          "id": "l3-q1",
+          "answers": [
+            "Her friends wanted longer conversations."
+          ]
+        },
+        {
+          "id": "l3-q2",
+          "answers": [
+            "Talked together"
+          ]
+        },
+        {
+          "id": "l3-q3",
+          "answers": [
+            "The start time"
+          ]
+        },
+        {
+          "id": "l3-q4",
+          "answers": [
+            "They can notice when phones interrupt social time."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "a1-practice-a-l1.mp3": {
+    "similarity": 0.98,
+    "changes": [
+      {
+        "script": "wanted",
+        "heard": "want it"
+      },
+      {
+        "script": "wanted",
+        "heard": "want it"
+      },
+      {
+        "script": "",
+        "heard": "table"
+      },
+      {
+        "script": "",
+        "heard": "i can't"
+      }
+    ],
+    "heard": "Take a moment to look at the questions question one is your birthday party on Friday Leo. I Want it Friday, but my sister works then it's on Saturday Great see you on Saturday Now listen again Is your birthday party on Friday Leo I want it Friday, but my sister works then it's on Saturday Great see you on Saturday Question 2. Can I try on this black jacket? Sorry, we only have it in blue in your size. That's fine. I'll try the blue one. Now listen again. Can I try on this black jacket? Sorry, we only have it in blue in your size. That's fine. I'll try the blue one. Question 3. Where are my keys? Are they on the kitchen table? table? No, they're by the door on the little chair. Oh, I see them now. Now listen again. Where are my keys? Are they on the kitchen table? No, they're by the door on the little chair. Oh, I see them now. Question four. Can you play the guitar at the school show? I can't I can't play the guitar, but I can sing. Good. We need a singer. Now listen again. Can you play the guitar at the school show? I can't play the guitar, but I can sing. Good. We need a singer. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a1-practice-a-l2.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at 10. We can take bus 6. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small cafe next to the gate. See you at 10. Now listen again. Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at 10. We can take bus 6. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small cafe next to the gate. See you at 10. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a1-practice-b-l1.mp3": {
+    "similarity": 0.9866,
+    "changes": [
+      {
+        "script": "come in",
+        "heard": "coming"
+      },
+      {
+        "script": "come in",
+        "heard": "coming"
+      }
+    ],
+    "heard": "Take a moment to look at the questions question one is the class picnic in the park this week No, it's going to rain. We're having lunch in the school gym The gym. Okay. Thanks now listen again Is the class picnic in the park this week? No, it's going to rain. We're having lunch in the school gym The gym. Okay. Thanks question two Do you have these shoes in black only in brown the black ones coming next week? I'll take the brown ones today Now listen again Do you have these shoes in black only in brown the black ones coming next week? I'll take the brown ones today Question three. I can't find my bag. Is it in the living room? No, I put it under your bed in your bedroom Thanks. Now listen again. I can't find my bag. Is it in the living room? No. I put it under your bed, in your bedroom. Thanks. Question four. What can you do at the school fair? Can you make cakes? I can't make cakes, but I can take photos. Great. Bring your camera. Now listen again. What can you do at the school fair? Can you make cakes? I can't make cakes, but I can take photos. Great, bring your camera. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a1-practice-b-l2.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at 9. We can take bus number 8 from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station. Now listen again. Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at 9. We can take bus number eight from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a2-practice-a-l1.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. You will hear two friends planning a weekend trip. The film festival starts at 12 on Saturday. Shall we get the 10 o'clock train? That one is full. The 915 still has seats. It's earlier than I wanted, but let's book it. Great. And where shall we stay? We could stay at the hotel near the station. I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast. Let's stay there. Have you chosen a film? I'd like the one about a long bike trip. My brother saw it last week and said it was funny. Alright, we don't have to buy tickets online. I can pay at the cinema, but I have to show my student ID to get the lower price. Good idea. What shall we do after the film? Let's have dinner at the market. The cafe by the cinema closes at five. Now listen again. The film festival starts at 12 on Saturday. Shall we get the 10 o'clock train? That one is full. The 915 still has seats. It's earlier than I wanted, but let's book it. Great. And where shall we stay? We could stay at the hotel near the station. I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast. Let's stay there. Have you chosen a film? I'd like the one about a long bike trip. My brother saw it last week and said it was funny. All right. We don't have to buy tickets online. I can pay at the cinema, but I have to show my student ID to get the lower price. Good idea. What shall we do after the film? Let's have dinner at the market. The cafe by the cinema closes at 5. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a2-practice-a-l2.mp3": {
+    "similarity": 0.9917,
+    "changes": [
+      {
+        "script": "we're going",
+        "heard": ""
+      },
+      {
+        "script": "",
+        "heard": "by"
+      }
+    ],
+    "heard": "Take a moment to look at the questions. Listen to a message about a coach tour. Hello, and thanks for booking a place on our City Coach tour. It leaves on Sunday. We usually leave at 10.30, but this week we leave earlier at 10. Please meet us outside the museum. The ticket costs $14. You don't need to print the ticket, but bring a jacket. It can be cold when we stop by the river. to visit the old bridge before lunch and return to the museum at three. Now listen again. Hello and thanks for booking a place on our City Coach tour. It leaves on Sunday. We usually leave at 10.30 but this week we leave earlier at 10. Please meet us outside the museum. The ticket costs $14. You don't need to print the ticket but bring a jacket. It can be cold when we stop by by the river. We're going to visit the old bridge before lunch and return to the museum at 3. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a2-practice-b-l1.mp3": {
+    "similarity": 0.9717,
+    "changes": [
+      {
+        "script": "by",
+        "heard": "buy"
+      },
+      {
+        "script": "my aunt",
+        "heard": "maya"
+      },
+      {
+        "script": "loved",
+        "heard": "love"
+      },
+      {
+        "script": "",
+        "heard": "dollars"
+      },
+      {
+        "script": "by",
+        "heard": "buy"
+      },
+      {
+        "script": "my aunt",
+        "heard": "maya"
+      },
+      {
+        "script": "loved",
+        "heard": "love"
+      },
+      {
+        "script": "i",
+        "heard": "i've"
+      }
+    ],
+    "heard": "Take a moment to look at the questions. You will hear two friends planning an evening out. Shall we go buy bus to the concert on Friday, Rob? The bus after six is too late. Maya can drive us at five thirty. Great. I looked at the concert program. Two groups are playing. Have you heard the first group before? Yes, at the town festival. I love the singer. The second group is new to me. Good. I like hearing new groups. Do we have to show a paper ticket? No. We can show it on our phones. I've already bought the tickets. I paid $12 for each one, not $15 like last year. Thanks. Where shall we meet your aunt? At the library entrance. There's more space there than outside my house. Okay. Let's buy some sandwiches before the concert. We can eat them in the park next to the hall. Now listen again. Shall we go buy bus to the concert on Friday, Rob? The bus after 6 is too late. Maya can drive us at 5.30. Great. I looked at the concert program. Two groups are playing. Have you heard the first group before? Yes, at the town festival. I love the singer. The second group is new to me. Good. I like hearing new groups. Do we have to show a paper ticket? No, we can show it on our phones. I've already bought the tickets. I've paid $12 for each one, not 15 like last year. Thanks. Where shall we meet your aunt? At the library entrance. There's more space there than outside my house. Okay, let's buy some sandwiches before the concert. We can eat them in the park next to the hall. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "a2-practice-b-l2.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. Listen to a message about a bike tour. Thanks for booking the River Bike Tour on Saturday. Please meet us outside the station. The tour was going to start at 9, but we now start at 8.30. The price is $16 and includes the bike. You can buy food at the cafe, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after 12. Now listen again. Thanks for booking the River Bike Tour on Saturday. Please meet us outside the station. The tour was going to start at 9, but we now start at 8.30. The price is $16 and includes the bike. You can buy food at the cafe, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after 12. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-a-l1.mp3": {
+    "similarity": 0.9845,
+    "changes": [
+      {
+        "script": "look tired",
+        "heard": "looked hired"
+      },
+      {
+        "script": "look",
+        "heard": "looked"
+      },
+      {
+        "script": "kept",
+        "heard": "keep"
+      },
+      {
+        "script": "kept",
+        "heard": "keep"
+      },
+      {
+        "script": "question",
+        "heard": "in"
+      }
+    ],
+    "heard": "Take a moment to look at the questions question one You hear two friends talking after class You looked hired Alex were you up late doing your homework again? I actually finished it before dinner But I kept looking at my phone after I went to bed. I'm going to leave it downstairs tonight Good idea. It might be easier to sleep without it there Now listen again You looked tired, Alex. Were you up late doing your homework again? I actually finished it before dinner, but I kept looking at my phone after I went to bed. I'm going to leave it downstairs tonight. Good idea. It might be easier to sleep without it there. Question two. You hear two people deciding how to prepare a project. Should we finish the slides first? The slides can wait. If we don't agree on our main idea now, We'll have to do the work twice. Alright, let's make a list of ideas and choose one. Now listen again. Should we finish the slides first? The slides can wait. If we don't agree on our main idea now, we'll have to do the work twice. Alright, let's make a list of ideas and choose one. Question three. You hear two people discussing a walk. Did you see any animals on your walk? A lot of birds, but they keep flying away. The best part was reaching the top just as the clouds cleared. I could see all the way to the coast. That sounds worth the long climb. Now, listen again. Did you see any animals on your walk? A lot of birds, but they keep flying away. The best part was reaching the top, just as the clouds cleared. I could see all the way to the coast. That sounds worth the long climb. in four. You hear two friends discussing a new activity. How was climbing? My arms were tired afterward, but I found it much easier than I expected. The instructor explained things slowly, which helped. I'll try a harder route next time. Now listen again. How was climbing? My arms were tired afterward, but I found it much easier than I expected. The instructor explained things slowly, which helped. I'll try a harder route next time. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-a-l2.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. Welcome to the Community Garden Project. This Saturday, we will meet at the library rather than at the Garden Gate. Let's get there at 9.15, so we can start work at 9.30. Bring gloves, we have masks, and all the other equipment you will need. First, we'll clear the paths. After lunch, we plan to plant herbs beside the entrance. If it rains, we'll work in the workshop instead. You'll still be able to help by repairing tools. Now listen again. Welcome to the Community Garden Project. This Saturday we will meet at the library rather than at the garden gate. Let's get there at 9.15 so we can start work at 9.30. Bring gloves, we have masks and all the other equipment you will need. First we'll clear the paths. After lunch, we plan to plant herbs beside the entrance. If it rains, we'll work in the workshop instead. You'll still be able to help by repairing tools. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-a-l3.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. You will hear an interview with a student who organized a screen-free evening. What gave you the idea for a screen-free evening, Ella? I saw a similar challenge online, but the idea only felt useful when my friends said we never finished a conversation without looking at our phones. We wanted an evening when we could really talk. How did the first evening go? I was worried that nobody would know what to do, so I brought a board game. In fact, we talked for the first hour and only opened the box later. We started too late though, and some people had to catch the bus home before the game ended. Will you run it again? Yes, but next time we'll start earlier. I don't want everyone to give up their phones all the time. I just want them to notice when their phones get in the way. Now listen again. What gave you the idea for a screen free evening Ella? I saw a similar challenge online, but the idea only felt useful when my friends said we never finished a conversation without looking at our phones. We wanted an evening when we could really talk. How did the first evening go? I was worried that nobody would know what to do, so I brought a board game. In fact, we talked for the first hour and only opened the box later. We started too late though, and some people had to catch the bus home before the game ended. Will you run it again? Yes, but next time we'll start earlier. I don't want everyone to give up their phones all the time. I just want them to notice when their phones get in the way. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-b-l1.mp3": {
+    "similarity": 0.9988,
+    "changes": [
+      {
+        "script": "",
+        "heard": "off"
+      }
+    ],
+    "heard": "Take a moment to look at the questions question one You hear two friends talking after lunch Is your headache any better Sam a little I thought it was because I hadn't eaten enough But I had lunch and it didn't help. I feel better now that I've had some water You should take a bottle with you next time Now listen again Is your headache any better Sam a little I thought it was because I hadn't eaten enough off, but I had lunch and it didn't help. I feel better now that I've had some water. You should take a bottle with you next time. Question two. You hear two people preparing a talk. Why don't we practice the whole talk once more? We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next. You're right. Let's change the final message now. Now listen again. Why don't we practice the whole talk once more? We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next. You're right. Let's change the final message now. Question three. You hear two friends talking about a weekend outdoors. Was the wildlife center busy? Quite busy in the morning. Things were quieter after lunch, and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance. I'd like to go on a guided visit too. Now listen again. Was the wildlife center busy? Quite busy in the morning. Things were quieter after lunch and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance. I'd like to go on a guided visit too. Question four. You hear two friends discussing a new activity. So, would you try kayaking again? Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time. Now listen again. So, would you try kayaking again? Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-b-l2.mp3": {
+    "similarity": 0.9942,
+    "changes": [
+      {
+        "script": "that",
+        "heard": "what"
+      }
+    ],
+    "heard": "Take a moment to look at the questions. Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at 10.30, but new volunteers should arrive by 10.15 for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead. Now listen again. Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at 1030, but new volunteers should arrive by 1015 for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead. What is the end of this part?",
+    "recognizerUsedVoiceActivityDetection": true
+  },
+  "b1-practice-b-l3.mp3": {
+    "similarity": 1.0,
+    "changes": [],
+    "heard": "Take a moment to look at the questions. You will hear an interview with a student who started a quiet lunch club. Why did you start the lunch club, Nico? I used to spend every break finishing homework. After a while, I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too. Was the club popular at first? Only three people came on the first day. The original room was right by the cafeteria, and it was so noisy that we had to move. The library gave us a corner, and after that a lot more people joined. Will you change anything next month? Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose. Now listen again. Why did you start the lunch club, Nico? I used to spend every break finishing homework. After a while I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too. Was the club popular at first? Only three people came on the first day. The original room was right by the cafeteria and it was so noisy that we had to move. The library gave us a corner and after that a lot more people joined. Will you change anything next month? Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose. That is the end of this part.",
+    "recognizerUsedVoiceActivityDetection": true
+  }
+}

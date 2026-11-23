@@ -1,0 +1,265 @@
+{
+  "id": "a1-practice-b",
+  "level": "A1",
+  "variation": "B",
+  "title": "A1 Practice",
+  "minutes": 30,
+  "parts": [
+    {
+      "id": "r1",
+      "title": "Signs and messages",
+      "instructions": "Read each notice or message. Choose what it means.",
+      "skill": "reading",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "prompt": "What does the text say?",
+          "options": [
+            "Members need to bring an old shirt.",
+            "Members must buy brushes.",
+            "Members should wear new clothes."
+          ],
+          "answer": "Members need to bring an old shirt.",
+          "explanation": "The art club asks everyone to bring an old shirt for painting.",
+          "context": "ART CLUB\nBring an old shirt to wear when you paint. There are paints and brushes in the room."
+        },
+        {
+          "id": "r1-q2",
+          "prompt": "What does the text say?",
+          "options": [
+            "The party is in the cafeteria.",
+            "The party is in Room 6.",
+            "There is no party tonight."
+          ],
+          "answer": "The party is in Room 6.",
+          "explanation": "Room 6 is the location for tonight.",
+          "context": "SCHOOL PARTY\nThe party is in Room 6 tonight. It is not in the cafeteria."
+        },
+        {
+          "id": "r1-q3",
+          "prompt": "What does the text say?",
+          "options": [
+            "Dani asks Pablo to play the guitar.",
+            "Dani is going to play on Pablo’s guitar.",
+            "Dani wants Pablo to buy a guitar."
+          ],
+          "answer": "Dani asks Pablo to play the guitar.",
+          "explanation": "Dani asks Pablo to bring his guitar and play.",
+          "context": "Hi Pablo, I can’t play the guitar today. Can you bring yours and play for us? — Dani"
+        },
+        {
+          "id": "r1-q4",
+          "prompt": "What does the text say?",
+          "options": [
+            "Take new books to the door.",
+            "Return books at the desk upstairs.",
+            "Go upstairs to borrow a book."
+          ],
+          "answer": "Go upstairs to borrow a book.",
+          "explanation": "To get new books, visitors go to the desk upstairs.",
+          "context": "CITY LIBRARY\nReturn books here. For new books, go to the desk upstairs."
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Three homes",
+      "instructions": "Read about the homes. Choose the right home for each question.",
+      "skill": "reading",
+      "passage": "A. Rosa’s home\nOur house is near the train station. It has four bedrooms and a small yard. On summer evenings my family often eats outside.\n\nB. Tom’s home\nI have a one-bedroom apartment on the sixth floor. I can see the park from the living room. My favorite room is the living room.\n\nC. Luz’s home\nWe live in a house next to a supermarket. There are two bedrooms. My school is near our house. It takes me ten minutes to walk there.",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "prompt": "Who can see the park from home?",
+          "options": [
+            "Rosa",
+            "Tom",
+            "Luz"
+          ],
+          "answer": "Tom",
+          "explanation": "Tom sees the park from his living room."
+        },
+        {
+          "id": "r2-q2",
+          "prompt": "Who lives near a supermarket?",
+          "options": [
+            "Rosa",
+            "Tom",
+            "Luz"
+          ],
+          "answer": "Luz",
+          "explanation": "Luz’s house is next to a supermarket."
+        },
+        {
+          "id": "r2-q3",
+          "prompt": "Who often eats outside in summer?",
+          "options": [
+            "Rosa",
+            "Tom",
+            "Luz"
+          ],
+          "answer": "Rosa",
+          "explanation": "Rosa’s family often eats outside in summer."
+        },
+        {
+          "id": "r2-q4",
+          "prompt": "Who has one bedroom at home?",
+          "options": [
+            "Rosa",
+            "Tom",
+            "Luz"
+          ],
+          "answer": "Tom",
+          "explanation": "Tom has a one-bedroom apartment."
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "A party message",
+      "instructions": "Choose one word for each numbered gap.",
+      "skill": "reading",
+      "passage": "Hi Luis,\nMy sister’s party is (1) ____ Friday. You can come (2) ____ train. The party is in a room next (3) ____ the café. There (4) ____ four big tables in the room. See you at four!\nMaría",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "prompt": "Gap 1",
+          "options": [
+            "in",
+            "at",
+            "on"
+          ],
+          "answer": "on",
+          "explanation": "Use on with a day of the week."
+        },
+        {
+          "id": "r3-q2",
+          "prompt": "Gap 2",
+          "options": [
+            "with",
+            "by",
+            "from"
+          ],
+          "answer": "by",
+          "explanation": "Use by before a means of transport, such as by train."
+        },
+        {
+          "id": "r3-q3",
+          "prompt": "Gap 3",
+          "options": [
+            "to",
+            "at",
+            "of"
+          ],
+          "answer": "to",
+          "explanation": "The preposition phrase is next to."
+        },
+        {
+          "id": "r3-q4",
+          "prompt": "Gap 4",
+          "options": [
+            "is",
+            "have",
+            "are"
+          ],
+          "answer": "are",
+          "explanation": "Use there are for more than one table."
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "title": "Four short conversations",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/a1-practice-b-l1.mp3",
+      "transcript": "Narrator: Question one.\nBen: Is the class picnic in the park this week?\nMaya: No, it's going to rain. We're having lunch in the school gym.\nBen: The gym? Okay, thanks.\n\nNarrator: Question two.\nBen: Do you have these shoes in black?\nMaya: Only in brown. The black ones come in next week.\nBen: I'll take the brown ones today.\n\nNarrator: Question three.\nMaya: I can't find my bag. Is it in the living room?\nBen: No, I put it under your bed, in your bedroom.\nMaya: Thanks.\n\nNarrator: Question four.\nMaya: What can you do at the school fair? Can you make cakes?\nBen: I can't make cakes, but I can take photos.\nMaya: Great, bring your camera.",
+      "questions": [
+        {
+          "id": "l1-q1",
+          "prompt": "Where is the class picnic now?",
+          "options": [
+            "In the park",
+            "In the school gym",
+            "In the library"
+          ],
+          "answer": "In the school gym",
+          "explanation": "The class will eat in the school gym because of rain."
+        },
+        {
+          "id": "l1-q2",
+          "prompt": "Which shoes does the customer buy?",
+          "options": [
+            "The black ones",
+            "The white ones",
+            "The brown ones"
+          ],
+          "answer": "The brown ones",
+          "explanation": "He takes the brown pair today."
+        },
+        {
+          "id": "l1-q3",
+          "prompt": "Where is the bag?",
+          "options": [
+            "In the living room",
+            "Under the bed",
+            "By the door"
+          ],
+          "answer": "Under the bed",
+          "explanation": "The boy put it under the bed."
+        },
+        {
+          "id": "l1-q4",
+          "prompt": "What can the boy do at the fair?",
+          "options": [
+            "Take photos",
+            "Make cakes",
+            "Play the piano"
+          ],
+          "answer": "Take photos",
+          "explanation": "He can take photos and will bring his camera."
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "title": "A market visit",
+      "instructions": "Listen twice. Write one word or a number in each gap.",
+      "skill": "listening",
+      "audio": "audio/a1-practice-b-l2.mp3",
+      "transcript": "Ben: Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at nine. We can take bus number eight from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station.",
+      "questions": [
+        {
+          "id": "l2-q1",
+          "prompt": "Day of the visit: ____",
+          "answer": "Saturday",
+          "explanation": "Dan says the visit is on Saturday."
+        },
+        {
+          "id": "l2-q2",
+          "prompt": "Meet at ____ o’clock.",
+          "answer": "9",
+          "explanation": "They meet at nine.",
+          "accepted": [
+            "nine"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "prompt": "Bus number: ____",
+          "answer": "8",
+          "explanation": "They will take bus eight.",
+          "accepted": [
+            "eight"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "prompt": "Bring a ____ for your food.",
+          "answer": "bag",
+          "explanation": "Dan asks for a bag for food."
+        }
+      ]
+    }
+  ]
+}

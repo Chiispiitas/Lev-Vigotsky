@@ -1,0 +1,352 @@
+{
+  "level": "B1",
+  "grade": "2nd BGU · Science and Technical",
+  "scope": "Personal Best B1, Units 5–6, Student’s Book pp. 40–57. Review wellbeing, experiences, nature and discussion through general English contexts.",
+  "topics": [
+    {
+      "title": "Health and useful advice",
+      "pages": "Personal Best B1 pp. 40–41; Health and medicine p. 144",
+      "words": [
+        "cold",
+        "cough",
+        "headache",
+        "backache",
+        "earache",
+        "toothache",
+        "sore throat",
+        "stomachache",
+        "fever",
+        "flu",
+        "nosebleed",
+        "cut",
+        "burn",
+        "knee",
+        "injury",
+        "symptom",
+        "feel better",
+        "feel stressed",
+        "rest",
+        "appointment",
+        "advice"
+      ],
+      "grammar": [
+        "Should and shouldn’t + base verb for advice.",
+        "Should I …? and What should I do? for asking for advice.",
+        "I think you should … / You could … to suggest an action."
+      ]
+    },
+    {
+      "title": "Managing stress and possible outcomes",
+      "pages": "Personal Best B1 pp. 42–47; vocabulary pp. 145–146",
+      "words": [
+        "make a list",
+        "make a decision",
+        "make a plan",
+        "do homework",
+        "do your best",
+        "have a meeting",
+        "have a rest",
+        "take a break",
+        "take a deep breath",
+        "feel worried",
+        "feel relieved",
+        "deadline",
+        "priority",
+        "concentrate",
+        "unwind",
+        "habit",
+        "routine",
+        "assignment",
+        "ask for help"
+      ],
+      "grammar": [
+        "Do, make, have and take in common phrases.",
+        "First conditional for a realistic future possibility: If I make a list, I’ll remember the tasks.",
+        "Link causes and results with because, so and if. Clarify or confirm details in a reply."
+      ]
+    },
+    {
+      "title": "Experiences and challenges",
+      "pages": "Personal Best B1 pp. 48–51",
+      "words": [
+        "try something new",
+        "challenge",
+        "climbing",
+        "kayaking",
+        "sailing",
+        "equipment",
+        "instructor",
+        "beginner",
+        "session",
+        "avoid",
+        "decide",
+        "manage",
+        "give up",
+        "look forward to",
+        "improve",
+        "succeed"
+      ],
+      "grammar": [
+        "Present perfect with ever/never and past simple for a finished event.",
+        "For and since with duration: She has been climbing for three months / since August.",
+        "Past simple and past continuous in a short narrative; recognize past perfect where it explains what happened earlier."
+      ]
+    },
+    {
+      "title": "Nature, imagined situations and discussion",
+      "pages": "Personal Best B1 pp. 52–55; nature wordbank p. 147",
+      "words": [
+        "nature",
+        "wildlife",
+        "species",
+        "coast",
+        "forest",
+        "lake",
+        "river",
+        "trail",
+        "path",
+        "bridge",
+        "shelter",
+        "boots",
+        "gloves",
+        "litter",
+        "volunteer",
+        "protect",
+        "collect",
+        "observe",
+        "recycle",
+        "slippery",
+        "risk",
+        "safe"
+      ],
+      "grammar": [
+        "Second conditional: If I had the equipment, I would try kayaking.",
+        "Compare first and second conditionals by deciding whether the situation is a realistic plan or imagined.",
+        "Suggestions and responses: Why don’t we …? I agree because … . I’m not sure about that. What do you think?",
+        "Refer back clearly with this, that, they and it, and follow contrast and result links in gapped reading."
+      ]
+    }
+  ],
+  "drills": [
+    {
+      "id": "b1-wellbeing",
+      "title": "Advice, collocations and plans",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "b1-wellbeing-1",
+          "prompt": "You should ____ a short break before starting the next task.",
+          "options": [
+            "take",
+            "make",
+            "do"
+          ],
+          "answer": "take",
+          "explanation": "The collocation is take a break."
+        },
+        {
+          "id": "b1-wellbeing-2",
+          "prompt": "Can you ____ a list of what we need for the trip?",
+          "options": [
+            "have",
+            "do",
+            "make"
+          ],
+          "answer": "make",
+          "explanation": "The collocation is make a list."
+        },
+        {
+          "id": "b1-wellbeing-3",
+          "prompt": "The deadline is close. We should ____ the teacher for help.",
+          "options": [
+            "asking",
+            "to ask",
+            "ask"
+          ],
+          "answer": "ask",
+          "explanation": "Use the base verb after should."
+        },
+        {
+          "id": "b1-wellbeing-4",
+          "prompt": "If I ____ my tasks now, I’ll have more time after dinner.",
+          "options": [
+            "finish",
+            "finished",
+            "will finish"
+          ],
+          "answer": "finish",
+          "explanation": "The if clause in this first conditional uses the present simple."
+        },
+        {
+          "id": "b1-wellbeing-5",
+          "prompt": "If the weather gets worse, the guide ____ us back to the center.",
+          "options": [
+            "take",
+            "will take",
+            "would took"
+          ],
+          "answer": "will take",
+          "explanation": "Use will + base verb for this likely consequence."
+        },
+        {
+          "id": "b1-wellbeing-6",
+          "prompt": "I made a plan before leaving the room, so I could relax. What does so introduce?",
+          "options": [
+            "A reason that came before the plan",
+            "A result of making the plan",
+            "An event that interrupted the plan"
+          ],
+          "answer": "A result of making the plan",
+          "explanation": "The plan allowed the speaker to relax."
+        }
+      ]
+    },
+    {
+      "id": "b1-experiences",
+      "title": "Experiences and imagined choices",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "b1-experiences-1",
+          "prompt": "Have you ever ____ a wildlife center?",
+          "options": [
+            "visit",
+            "visited",
+            "visiting"
+          ],
+          "answer": "visited",
+          "explanation": "Use have + past participle."
+        },
+        {
+          "id": "b1-experiences-2",
+          "prompt": "Yes. I ____ one last Saturday.",
+          "options": [
+            "have visited",
+            "visit",
+            "visited"
+          ],
+          "answer": "visited",
+          "explanation": "Last Saturday is a finished past time."
+        },
+        {
+          "id": "b1-experiences-3",
+          "prompt": "She has been training ____ two months.",
+          "options": [
+            "for",
+            "since",
+            "during"
+          ],
+          "answer": "for",
+          "explanation": "For introduces a period of time."
+        },
+        {
+          "id": "b1-experiences-4",
+          "prompt": "If I had more time, I ____ at the park every week.",
+          "options": [
+            "will volunteer",
+            "would volunteer",
+            "volunteered"
+          ],
+          "answer": "would volunteer",
+          "explanation": "The imagined situation uses if + past, then would + base verb."
+        },
+        {
+          "id": "b1-experiences-5",
+          "prompt": "We were following the path when it ____ to rain.",
+          "options": [
+            "started",
+            "has started",
+            "had starting"
+          ],
+          "answer": "started",
+          "explanation": "The past simple event interrupts the action in progress."
+        },
+        {
+          "id": "b1-experiences-6",
+          "prompt": "Lena borrowed boots from the center. They kept her feet dry. What does ‘they’ refer to?",
+          "options": [
+            "Lena and a friend",
+            "The people at the center",
+            "The boots"
+          ],
+          "answer": "The boots",
+          "explanation": "The sentence says the borrowed boots kept her feet dry."
+        }
+      ]
+    }
+  ],
+  "speaking": {
+    "minutes": 8,
+    "interview": [
+      "What helps you relax after a busy day?",
+      "Have you tried a new activity recently? What was it like?",
+      "Do you prefer being indoors or outdoors? Why?"
+    ],
+    "individual": {
+      "prompt": "Look at the photo. Talk for about one minute.",
+      "cues": [
+        "Who is there",
+        "What the people are doing",
+        "How they might feel",
+        "Why the project could be useful"
+      ]
+    },
+    "pair": {
+      "prompt": "Your class wants to make school breaks more relaxing. Compare the ideas with your partner, respond to each other and agree on one to try.",
+      "options": [
+        "A short outdoor walk",
+        "A quiet library corner",
+        "A phone-free games table",
+        "A group stretch break"
+      ],
+      "followUps": [
+        "What will happen if students like the change?",
+        "What would you change if the space were smaller?"
+      ]
+    },
+    "rubric": [
+      "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+      "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+      "Interaction. Listen, respond, take turns and ask at least one question.",
+      "Development. Add a reason, detail or example when you can."
+    ],
+    "variationB": {
+      "minutes": 8,
+      "interview": [
+        "What do you do when you have a lot of assignments?",
+        "Have you ever joined a sports or nature group?",
+        "What new activity would you like to try?"
+      ],
+      "individual": {
+        "prompt": "Look at the photo. Talk for about one minute.",
+        "cues": [
+          "What the place is like",
+          "What the volunteers are doing",
+          "Why they decided to help",
+          "What you would do if you joined them"
+        ]
+      },
+      "pair": {
+        "prompt": "Your class can choose one new outdoor activity. Compare the choices, explain risks or advantages and make a decision with your partner.",
+        "options": [
+          "A guided forest walk",
+          "A river cleanup",
+          "A beginner climbing lesson",
+          "A wildlife observation visit"
+        ],
+        "followUps": [
+          "What should you bring?",
+          "What would you do if it started raining?"
+        ]
+      },
+      "rubric": [
+        "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+        "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+        "Interaction. Listen, respond, take turns and ask at least one question.",
+        "Development. Add a reason, detail or example when you can."
+      ]
+    }
+  }
+}

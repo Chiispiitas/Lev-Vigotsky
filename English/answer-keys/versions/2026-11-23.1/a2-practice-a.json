@@ -1,0 +1,176 @@
+{
+  "examId": "a2-practice-a",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "Reception can look after your bags before check-in."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "Isa needs Lucas to be at the station at 8:35."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Students pay a lower price if they show their card at the desk."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Nina wants to see Marta after the film."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Station Arts Center"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "City Film Museum"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "Riverside Cinema"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "Station Arts Center"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "Her car had a problem."
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "She enjoyed the journey."
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "They got tickets for a later film."
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "Spend one night in the town"
+          ]
+        },
+        {
+          "id": "r4-q1",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "r4-q2",
+          "answers": [
+            "been"
+          ]
+        },
+        {
+          "id": "r4-q3",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "r4-q4",
+          "answers": [
+            "on"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "The 9:15"
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "Near the river"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "His brother liked it."
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "Her student ID"
+          ]
+        },
+        {
+          "id": "l1-q5",
+          "answers": [
+            "At the market"
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "Sunday"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "10:00",
+            "10",
+            "ten",
+            "10.00"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "museum"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "14",
+            "fourteen"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "answers": [
+            "jacket"
+          ]
+        }
+      ]
+    }
+  ]
+}

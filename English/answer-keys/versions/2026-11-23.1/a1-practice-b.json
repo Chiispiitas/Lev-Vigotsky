@@ -1,0 +1,138 @@
+{
+  "examId": "a1-practice-b",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "Members need to bring an old shirt."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "The party is in Room 6."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Dani asks Pablo to play the guitar."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Go upstairs to borrow a book."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Tom"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "Luz"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "Rosa"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "Tom"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "on"
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "by"
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "are"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "In the school gym"
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "The brown ones"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "Under the bed"
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "Take photos"
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "Saturday"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "9",
+            "nine"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "8",
+            "eight"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "bag"
+          ]
+        }
+      ]
+    }
+  ]
+}

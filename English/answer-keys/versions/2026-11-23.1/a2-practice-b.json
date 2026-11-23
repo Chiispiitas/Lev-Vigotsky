@@ -1,0 +1,177 @@
+{
+  "examId": "a2-practice-b",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "Early travelers can arrange a breakfast to take away."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "Mo wants to choose the film before getting a ticket."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Today you catch the tour bus at the market."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Ryan wants Asha to keep a seat for him."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Studio Museum"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "Corner Café"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "Hillside Cinema"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "Corner Café"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "The last bus left too early."
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "She enjoyed most of the music."
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "At a shop near the station"
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "There are not many seats."
+          ]
+        },
+        {
+          "id": "r4-q1",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "r4-q2",
+          "answers": [
+            "been"
+          ]
+        },
+        {
+          "id": "r4-q3",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "r4-q4",
+          "answers": [
+            "at",
+            "in"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "By car"
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "At a town festival"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "$12"
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "At the library entrance"
+          ]
+        },
+        {
+          "id": "l1-q5",
+          "answers": [
+            "Sandwiches"
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "Saturday"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "8:30",
+            "8.30",
+            "eight thirty",
+            "half past eight"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "station"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "16",
+            "sixteen"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "answers": [
+            "water"
+          ]
+        }
+      ]
+    }
+  ]
+}

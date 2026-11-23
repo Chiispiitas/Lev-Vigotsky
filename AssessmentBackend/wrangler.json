@@ -1,0 +1,6 @@
+{
+  "name": "ueplv-english-practice-service",
+  "main": "./node_modules/@wix/astro-wix-hosting-adapter/build/backend-runtime/server.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"]
+}

@@ -1,0 +1,317 @@
+{
+  "id": "a2-practice-a",
+  "level": "A2",
+  "variation": "A",
+  "title": "A2 Practice",
+  "minutes": 40,
+  "parts": [
+    {
+      "id": "r1",
+      "title": "Signs and messages",
+      "instructions": "Read each notice or message. Choose what it means.",
+      "skill": "reading",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "prompt": "What does the text say?",
+          "options": [
+            "Reception can look after your bags before check-in.",
+            "You need to arrive before 2 p.m. to check in.",
+            "Guests must take their bags to their rooms before 2 p.m."
+          ],
+          "answer": "Reception can look after your bags before check-in.",
+          "explanation": "Early arrivals can leave their luggage at reception.",
+          "context": "RIVER HOTEL\nCheck-in is from 2 p.m. Guests arriving earlier can leave their bags at reception."
+        },
+        {
+          "id": "r1-q2",
+          "prompt": "What does the text say?",
+          "options": [
+            "Isa wants Lucas to book the tickets.",
+            "Isa needs Lucas to be at the station at 8:35.",
+            "Isa is taking a different coach from Lucas."
+          ],
+          "answer": "Isa needs Lucas to be at the station at 8:35.",
+          "explanation": "Fifteen minutes before 8:50 is 8:35.",
+          "context": "Hi Lucas, the 8:10 coach is full, so I’ve booked us seats on the 8:50. Let’s meet at the station 15 minutes before it leaves. — Isa"
+        },
+        {
+          "id": "r1-q3",
+          "prompt": "What does the text say?",
+          "options": [
+            "Student prices are available when you book online.",
+            "Students pay a lower price if they show their card at the desk.",
+            "Everyone gets a discount at the desk."
+          ],
+          "answer": "Students pay a lower price if they show their card at the desk.",
+          "explanation": "The discount requires showing a student card in person.",
+          "context": "PALACE CINEMA\nShow your student card at the ticket desk for a discount. Online tickets are full price."
+        },
+        {
+          "id": "r1-q4",
+          "prompt": "What does the text say?",
+          "options": [
+            "Nina wants to choose another film.",
+            "Nina plans to go to the film and dinner.",
+            "Nina wants to see Marta after the film."
+          ],
+          "answer": "Nina wants to see Marta after the film.",
+          "explanation": "She has seen the film, but she wants to join dinner.",
+          "context": "Hi Marta, thanks for inviting me. I’ve already seen the film, but I’d love to meet you for dinner afterward. — Nina"
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Three places to visit",
+      "instructions": "Read the descriptions. Which place is right for each visitor?",
+      "skill": "reading",
+      "passage": "A. Riverside Cinema\nFilms start at seven. The cinema shows new films from many countries. Get a ticket online before you come. There is a restaurant next door, open until ten.\n\nB. Station Arts Center\nThis is a good place to hear live music. At four on Saturdays, local groups play in the café. There is no ticket charge. It is two minutes from the station.\n\nC. City Film Museum\nLearn how directors make films. You can take a guided tour or make a short video in a workshop. The last workshop starts at three. The museum opens at ten.",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "prompt": "Marco wants to hear music without paying for a ticket.",
+          "options": [
+            "Riverside Cinema",
+            "Station Arts Center",
+            "City Film Museum"
+          ],
+          "answer": "Station Arts Center",
+          "explanation": "Live music is free at the Station Arts Center."
+        },
+        {
+          "id": "r2-q2",
+          "prompt": "Lina wants to make her own video.",
+          "options": [
+            "Riverside Cinema",
+            "Station Arts Center",
+            "City Film Museum"
+          ],
+          "answer": "City Film Museum",
+          "explanation": "The museum workshop lets visitors make a short video."
+        },
+        {
+          "id": "r2-q3",
+          "prompt": "Ruth would like to watch a new film and have dinner afterward.",
+          "options": [
+            "Riverside Cinema",
+            "Station Arts Center",
+            "City Film Museum"
+          ],
+          "answer": "Riverside Cinema",
+          "explanation": "New films start at seven and the restaurant stays open until ten."
+        },
+        {
+          "id": "r2-q4",
+          "prompt": "Joel has a train at five and wants an event close to the station.",
+          "options": [
+            "Riverside Cinema",
+            "Station Arts Center",
+            "City Film Museum"
+          ],
+          "answer": "Station Arts Center",
+          "explanation": "The four o’clock music event is two minutes from the station."
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "A day out by train",
+      "instructions": "Read the text and choose one answer for each question.",
+      "skill": "reading",
+      "passage": "Last month, I took my cousin Vera to a town by the sea. I planned to drive, but my car had a problem the day before. We went by train instead. At first I was unhappy about changing my plans, but on the train I could sit by the window and enjoy the view. That was nicer than driving.\n\nVera wanted to visit the old cinema because she’d read about it in a magazine. Our train was late, so we missed the first film. The afternoon film still had seats, and we booked two tickets. Then we spent the morning at a market. I bought a small bag, and Vera found a book about the town.\n\nI’d like to go back next month. This time we’re going to stay one night and go to the cinema in the evening. We don’t have to take a taxi from the station because our hotel is across the street.",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "prompt": "Why did the writer use the train?",
+          "options": [
+            "Her cousin did not want to drive.",
+            "Her car had a problem.",
+            "The train was faster than driving."
+          ],
+          "answer": "Her car had a problem.",
+          "explanation": "The writer’s car had a problem the day before."
+        },
+        {
+          "id": "r3-q2",
+          "prompt": "How did the writer feel on the train?",
+          "options": [
+            "She enjoyed the journey.",
+            "She was worried about the car.",
+            "She wanted to drive instead."
+          ],
+          "answer": "She enjoyed the journey.",
+          "explanation": "She found looking at the view nicer than driving."
+        },
+        {
+          "id": "r3-q3",
+          "prompt": "What did they do after they missed the first film?",
+          "options": [
+            "They decided to return home.",
+            "They got tickets for a later film.",
+            "They watched a film at the market."
+          ],
+          "answer": "They got tickets for a later film.",
+          "explanation": "They booked seats for the afternoon film."
+        },
+        {
+          "id": "r3-q4",
+          "prompt": "What is their plan for next month?",
+          "options": [
+            "Spend one night in the town",
+            "Take a taxi to a hotel",
+            "Watch the first film of the morning"
+          ],
+          "answer": "Spend one night in the town",
+          "explanation": "They plan to stay one night and watch an evening film."
+        }
+      ]
+    },
+    {
+      "id": "r4",
+      "title": "An invitation",
+      "instructions": "Write one word in each numbered gap.",
+      "skill": "reading",
+      "passage": "Hi Joey,\nWould you like (1) ____ come with me to a concert on Saturday? I’ve (2) ____ to this hall before, and it’s a great place. We’re going (3) ____ take the bus because parking is expensive. The concert starts at six. See you (4) ____ Saturday. Let me know tonight.\nAri",
+      "questions": [
+        {
+          "id": "r4-q1",
+          "prompt": "Gap 1",
+          "answer": "to",
+          "explanation": "Would you like is followed by to + verb here."
+        },
+        {
+          "id": "r4-q2",
+          "prompt": "Gap 2",
+          "answer": "been",
+          "explanation": "Use I’ve been to a place to talk about a previous visit."
+        },
+        {
+          "id": "r4-q3",
+          "prompt": "Gap 3",
+          "answer": "to",
+          "explanation": "Use going to + verb for the plan."
+        },
+        {
+          "id": "r4-q4",
+          "prompt": "Gap 4",
+          "answer": "on",
+          "explanation": "Use on with a named day of the week."
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "title": "A weekend trip",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/a2-practice-a-l1.mp3",
+      "transcript": "Narrator: You will hear two friends planning a weekend trip.\nMaya: The film festival starts at twelve on Saturday. Shall we get the ten o'clock train?\nBen: That one is full. The nine fifteen still has seats. It's earlier than I wanted, but let's book it.\nMaya: Great. And where shall we stay? We could stay at the hotel near the station.\nBen: I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast.\nMaya: Let's stay there. Have you chosen a film?\nBen: I'd like the one about a long bike trip. My brother saw it last week and said it was funny.\nMaya: All right. We don't have to buy tickets online. I can pay at the cinema. But I have to show my student ID to get the lower price.\nBen: Good idea. What shall we do after the film?\nMaya: Let's have dinner at the market. The café by the cinema closes at five.",
+      "questions": [
+        {
+          "id": "l1-q1",
+          "prompt": "Which train will they take?",
+          "options": [
+            "The 9:15",
+            "The 10:00",
+            "The 12:00"
+          ],
+          "answer": "The 9:15",
+          "explanation": "The 10:00 is full. They agree to book the 9:15."
+        },
+        {
+          "id": "l1-q2",
+          "prompt": "Where is the hotel they choose?",
+          "options": [
+            "By the cinema",
+            "Near the station",
+            "Near the river"
+          ],
+          "answer": "Near the river",
+          "explanation": "The hotel near the station costs too much."
+        },
+        {
+          "id": "l1-q3",
+          "prompt": "Why does Ben want to see the bike film?",
+          "options": [
+            "He has seen it before.",
+            "His brother liked it.",
+            "Maya has a free ticket."
+          ],
+          "answer": "His brother liked it.",
+          "explanation": "His brother saw the film and said it was funny."
+        },
+        {
+          "id": "l1-q4",
+          "prompt": "What must Maya bring for the cheaper ticket?",
+          "options": [
+            "Her student ID",
+            "A printed ticket",
+            "A photo of her brother"
+          ],
+          "answer": "Her student ID",
+          "explanation": "Maya has to show her student ID for the lower price."
+        },
+        {
+          "id": "l1-q5",
+          "prompt": "Where will they eat dinner?",
+          "options": [
+            "In the hotel",
+            "At the café by the cinema",
+            "At the market"
+          ],
+          "answer": "At the market",
+          "explanation": "The café closes too early. They decide on the market."
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "title": "A coach tour",
+      "instructions": "Listen twice. Write one word or a number in each gap.",
+      "skill": "listening",
+      "audio": "audio/a2-practice-a-l2.mp3",
+      "transcript": "Narrator: Listen to a message about a coach tour.\nMaya: Hello and thanks for booking a place on our city coach tour. It leaves on Sunday. We usually leave at ten thirty, but this week we leave earlier, at ten. Please meet us outside the museum. The ticket costs fourteen dollars. You don't need to print the ticket, but bring a jacket. It can be cold when we stop by the river. We're going to visit the old bridge before lunch and return to the museum at three.",
+      "questions": [
+        {
+          "id": "l2-q1",
+          "prompt": "Day of tour: ____",
+          "answer": "Sunday",
+          "explanation": "The guide says that the tour leaves on Sunday."
+        },
+        {
+          "id": "l2-q2",
+          "prompt": "Departure this week: ____ a.m.",
+          "answer": "10:00",
+          "explanation": "This week’s tour leaves at ten.",
+          "accepted": [
+            "10",
+            "ten",
+            "10.00"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "prompt": "Meeting point: outside the ____.",
+          "answer": "museum",
+          "explanation": "Meet outside the museum."
+        },
+        {
+          "id": "l2-q4",
+          "prompt": "Ticket price: $____.",
+          "answer": "14",
+          "explanation": "The ticket costs fourteen dollars.",
+          "accepted": [
+            "fourteen"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "prompt": "Bring a ____.",
+          "answer": "jacket",
+          "explanation": "The guide asks you to bring a jacket."
+        }
+      ]
+    }
+  ]
+}

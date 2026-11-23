@@ -1,0 +1,138 @@
+{
+  "examId": "a1-practice-a",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "Students should wait by the library door."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "You can try on a jacket here."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Alex needs to know how many people are coming."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Large bags go in the lockers."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Camila"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "Ben"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "Ana"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "Ben"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "on"
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "by"
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "of"
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "is"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "Saturday"
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "The blue one"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "On a chair"
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "Sing"
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "Sunday"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "10",
+            "ten"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "6",
+            "six"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "water"
+          ]
+        }
+      ]
+    }
+  ]
+}

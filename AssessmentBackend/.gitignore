@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.wix/
+.astro/
+.wrangler/
+.env*
+src/generated/
+*.zip

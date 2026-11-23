@@ -1,0 +1,231 @@
+{
+  "examId": "b1-practice-b",
+  "keyVersion": "2026-11-23.1",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "r1-q1",
+          "answers": [
+            "The teacher can suggest easier movements."
+          ]
+        },
+        {
+          "id": "r1-q2",
+          "answers": [
+            "Dani thinks Thursday’s work should be discussed and adjusted."
+          ]
+        },
+        {
+          "id": "r1-q3",
+          "answers": [
+            "Cyclists may cross the bridge on foot."
+          ]
+        },
+        {
+          "id": "r1-q4",
+          "answers": [
+            "Jo can return Alex’s binoculars before the trip."
+          ]
+        },
+        {
+          "id": "r1-q5",
+          "answers": [
+            "In the afternoon, you can use the room if you reserve it."
+          ]
+        },
+        {
+          "id": "r2-q1",
+          "answers": [
+            "Wildlife Watch"
+          ]
+        },
+        {
+          "id": "r2-q2",
+          "answers": [
+            "Park Walkers"
+          ]
+        },
+        {
+          "id": "r2-q3",
+          "answers": [
+            "Paddle Club"
+          ]
+        },
+        {
+          "id": "r2-q4",
+          "answers": [
+            "Study Reset"
+          ]
+        },
+        {
+          "id": "r3-q1",
+          "answers": [
+            "The writer wanted to test Ana’s routine."
+          ]
+        },
+        {
+          "id": "r3-q2",
+          "answers": [
+            "It helped the writer stop worrying about what to do later."
+          ]
+        },
+        {
+          "id": "r3-q3",
+          "answers": [
+            "The writer felt more energetic."
+          ]
+        },
+        {
+          "id": "r3-q4",
+          "answers": [
+            "Taking a break can improve the way you work."
+          ]
+        },
+        {
+          "id": "r4-q1",
+          "answers": [
+            "I realized that we could also make the path easier for other people to use."
+          ]
+        },
+        {
+          "id": "r4-q2",
+          "answers": [
+            "We divided it into sections and checked one section at a time."
+          ]
+        },
+        {
+          "id": "r4-q3",
+          "answers": [
+            "Luckily, the trees kept most of the rain off the main path."
+          ]
+        },
+        {
+          "id": "r4-q4",
+          "answers": [
+            "Once we had spread the wood chips, people could walk over the muddy ground again."
+          ]
+        },
+        {
+          "id": "r5-q1",
+          "answers": [
+            "tried",
+            "been",
+            "done"
+          ]
+        },
+        {
+          "id": "r5-q2",
+          "answers": [
+            "for"
+          ]
+        },
+        {
+          "id": "r5-q3",
+          "answers": [
+            "on",
+            "through",
+            "via",
+            "using",
+            "from"
+          ]
+        },
+        {
+          "id": "r5-q4",
+          "answers": [
+            "would",
+            "might",
+            "could"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "l1-q1",
+          "answers": [
+            "Drinking water"
+          ]
+        },
+        {
+          "id": "l1-q2",
+          "answers": [
+            "Change the last slide"
+          ]
+        },
+        {
+          "id": "l1-q3",
+          "answers": [
+            "Learning how injured birds are helped"
+          ]
+        },
+        {
+          "id": "l1-q4",
+          "answers": [
+            "She would try calmer water."
+          ]
+        },
+        {
+          "id": "l2-q1",
+          "answers": [
+            "bridge"
+          ]
+        },
+        {
+          "id": "l2-q2",
+          "answers": [
+            "10:15",
+            "10.15",
+            "ten fifteen",
+            "quarter past ten"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "answers": [
+            "boots"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "answers": [
+            "litter"
+          ]
+        },
+        {
+          "id": "l2-q5",
+          "answers": [
+            "school"
+          ]
+        },
+        {
+          "id": "l3-q1",
+          "answers": [
+            "He wanted to take a proper break."
+          ]
+        },
+        {
+          "id": "l3-q2",
+          "answers": [
+            "Their first room was too noisy."
+          ]
+        },
+        {
+          "id": "l3-q3",
+          "answers": [
+            "The club got more visitors."
+          ]
+        },
+        {
+          "id": "l3-q4",
+          "answers": [
+            "A relaxed club with choices"
+          ]
+        }
+      ]
+    }
+  ]
+}

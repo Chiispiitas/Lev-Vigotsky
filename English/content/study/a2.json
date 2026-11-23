@@ -1,0 +1,356 @@
+{
+  "level": "A2",
+  "grade": "1st BGU · Science and Technical",
+  "scope": "Personal Best A2, Units 11–12, Student’s Book pp. 94–111. Review the travel and entertainment themes and the classroom communication tasks.",
+  "topics": [
+    {
+      "title": "Transport and travel plans",
+      "pages": "Personal Best A2 pp. 94–99; transport wordbank p. 155",
+      "words": [
+        "commute",
+        "commuter",
+        "bike lane",
+        "bus stop",
+        "station",
+        "platform",
+        "coach",
+        "ferry",
+        "subway",
+        "taxi",
+        "ticket",
+        "return ticket",
+        "route",
+        "timetable",
+        "traffic",
+        "delay",
+        "seat",
+        "departure",
+        "arrival",
+        "destination",
+        "itinerary",
+        "luggage",
+        "book",
+        "leave",
+        "arrive",
+        "by train",
+        "on foot"
+      ],
+      "grammar": [
+        "Have to, has to, don’t have to and doesn’t have to for requirements and choices.",
+        "Do/Does + subject + have to + base verb for questions.",
+        "Be going to + base verb for intentions and plans.",
+        "Can, may, might and probably for simple guesses or uncertainty when reading and discussing plans."
+      ]
+    },
+    {
+      "title": "At a hotel",
+      "pages": "Personal Best A2 pp. 100–101",
+      "words": [
+        "reception",
+        "receptionist",
+        "guest",
+        "reservation",
+        "check in",
+        "check out",
+        "room key",
+        "single room",
+        "double room",
+        "available",
+        "included",
+        "breakfast",
+        "receipt",
+        "lift",
+        "stairs",
+        "floor",
+        "night"
+      ],
+      "grammar": [
+        "Ask and check details: Could you check my reservation? Is breakfast included?",
+        "Use at for a time, on for a day or date, and from … to … for a range.",
+        "Read signs and schedules for conditions, changes and practical details."
+      ]
+    },
+    {
+      "title": "Going out and entertainment",
+      "pages": "Personal Best A2 pp. 102–109; wordbanks pp. 157–158",
+      "words": [
+        "cinema",
+        "concert",
+        "show",
+        "festival",
+        "play",
+        "movie",
+        "screen",
+        "audience",
+        "band",
+        "singer",
+        "actor",
+        "director",
+        "character",
+        "story",
+        "scene",
+        "comedy",
+        "adventure film",
+        "review",
+        "funny",
+        "exciting",
+        "boring",
+        "recommend",
+        "invite",
+        "accept",
+        "decline",
+        "free",
+        "available"
+      ],
+      "grammar": [
+        "Present perfect with ever and never: Have you ever seen a live show?",
+        "Past simple for a finished time or follow-up detail: I saw one last May.",
+        "Past participles: been, gone, seen, done, taken, bought, read and made.",
+        "Make and respond to invitations: Would you like to come? I’d love to. I can’t on Friday, but I’m free on Saturday."
+      ]
+    },
+    {
+      "title": "Quick recap",
+      "pages": "Personal Best A2 pp. 110–111 and class notes",
+      "words": [
+        "confirm",
+        "plan",
+        "change",
+        "instead",
+        "before",
+        "after",
+        "because",
+        "so",
+        "already",
+        "yet"
+      ],
+      "grammar": [
+        "Compare obligation and plans: We have to bring tickets. We’re going to meet outside.",
+        "Link reasons and outcomes with because and so.",
+        "For the separate class tense workshop, use your wider tense notes. The mock targets A2 forms in context."
+      ]
+    }
+  ],
+  "drills": [
+    {
+      "id": "a2-travel",
+      "title": "Transport, hotels and plans",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "a2-travel-1",
+          "prompt": "Lunch is included. You ____ bring food.",
+          "options": [
+            "have to",
+            "don’t have to",
+            "has to"
+          ],
+          "answer": "don’t have to",
+          "explanation": "It is already provided, so bringing food is optional."
+        },
+        {
+          "id": "a2-travel-2",
+          "prompt": "____ he have to show his ticket?",
+          "options": [
+            "Does",
+            "Do",
+            "Is"
+          ],
+          "answer": "Does",
+          "explanation": "With he, use Does + subject + have to."
+        },
+        {
+          "id": "a2-travel-3",
+          "prompt": "We’re going ____ take the early coach.",
+          "options": [
+            "for",
+            "to",
+            "at"
+          ],
+          "answer": "to",
+          "explanation": "Be going to is followed by the base verb."
+        },
+        {
+          "id": "a2-travel-4",
+          "prompt": "The train departs at 8:40. Meet 10 minutes before departure. When?",
+          "options": [
+            "8:30",
+            "8:40",
+            "8:50"
+          ],
+          "answer": "8:30",
+          "explanation": "8:30 is ten minutes before 8:40."
+        },
+        {
+          "id": "a2-travel-5",
+          "prompt": "HOTEL: Check-in starts at 2 p.m. Early guests may leave bags at reception. Which is true?",
+          "options": [
+            "A room is ready as soon as a guest arrives.",
+            "Guests can leave bags before 2 p.m.",
+            "Guests must carry bags after 2 p.m."
+          ],
+          "answer": "Guests can leave bags before 2 p.m.",
+          "explanation": "Early guests may leave luggage at reception."
+        },
+        {
+          "id": "a2-travel-6",
+          "prompt": "You want to check whether breakfast costs extra. What do you ask?",
+          "options": [
+            "Is breakfast included?",
+            "Where’s the ticket desk?",
+            "Would you like a receipt?"
+          ],
+          "answer": "Is breakfast included?",
+          "explanation": "Included means covered by the room price."
+        }
+      ]
+    },
+    {
+      "id": "a2-out",
+      "title": "Experiences and invitations",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "a2-out-1",
+          "prompt": "Have you ever ____ to a film festival?",
+          "options": [
+            "be",
+            "been",
+            "was"
+          ],
+          "answer": "been",
+          "explanation": "Use the past participle after have."
+        },
+        {
+          "id": "a2-out-2",
+          "prompt": "I ____ a live show with my cousin last Friday.",
+          "options": [
+            "have seen",
+            "see",
+            "saw"
+          ],
+          "answer": "saw",
+          "explanation": "Last Friday is a finished past time."
+        },
+        {
+          "id": "a2-out-3",
+          "prompt": "I’ve never ____ that movie.",
+          "options": [
+            "see",
+            "saw",
+            "seen"
+          ],
+          "answer": "seen",
+          "explanation": "Seen is the past participle of see."
+        },
+        {
+          "id": "a2-out-4",
+          "prompt": "Would you like ____ to a concert?",
+          "options": [
+            "come",
+            "coming",
+            "to come"
+          ],
+          "answer": "to come",
+          "explanation": "Use Would you like to + verb to invite someone."
+        },
+        {
+          "id": "a2-out-5",
+          "prompt": "Thanks for asking. I can’t go tonight, but I’m free tomorrow. What does the speaker do?",
+          "options": [
+            "Accept tonight’s plan",
+            "Suggest another day",
+            "Ask to change the place"
+          ],
+          "answer": "Suggest another day",
+          "explanation": "The speaker is unavailable tonight but offers tomorrow."
+        },
+        {
+          "id": "a2-out-6",
+          "prompt": "The singer was great, but it was difficult to hear the words. What is the speaker's problem?",
+          "options": [
+            "The singer did not arrive.",
+            "The words were not clear.",
+            "The concert started late."
+          ],
+          "answer": "The words were not clear.",
+          "explanation": "It was difficult to hear the words, despite enjoying the singer."
+        }
+      ]
+    }
+  ],
+  "speaking": {
+    "minutes": 7,
+    "interview": [
+      "How do you usually travel to school?",
+      "What do you like to do on weekends?",
+      "Have you ever been to a live show?"
+    ],
+    "individual": {
+      "prompt": "Talk about a day out you remember.",
+      "cues": [
+        "Where and when you went",
+        "How you got there",
+        "What you did",
+        "Whether you would recommend it and why"
+      ]
+    },
+    "pair": {
+      "prompt": "Plan an afternoon out with a visiting friend. Compare the choices, then agree on where to go and how to get there.",
+      "options": [
+        "Visit a film museum",
+        "See an adventure film",
+        "Listen to a local band",
+        "Walk in the city park"
+      ],
+      "followUps": [
+        "What do you have to bring?",
+        "What are you going to do if it rains?"
+      ]
+    },
+    "rubric": [
+      "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+      "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+      "Interaction. Listen, respond, take turns and ask at least one question.",
+      "Development. Add a reason, detail or example when you can."
+    ],
+    "variationB": {
+      "minutes": 7,
+      "interview": [
+        "Where do you like to go with friends?",
+        "How do you get there?",
+        "Have you ever stayed in a hotel?"
+      ],
+      "individual": {
+        "prompt": "Talk about an event you would like to attend.",
+        "cues": [
+          "Where it is",
+          "How you’re going to travel",
+          "What you have to organize",
+          "Why it interests you"
+        ]
+      },
+      "pair": {
+        "prompt": "Plan a short trip. Discuss the choices and agree on one. Confirm a meeting time and one thing a visitor needs to bring.",
+        "options": [
+          "Take a train to another town",
+          "Take a coach tour",
+          "Join a bike tour",
+          "Go to a concert in town"
+        ],
+        "followUps": [
+          "How much might it cost?",
+          "What would you say to invite a friend?"
+        ]
+      },
+      "rubric": [
+        "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+        "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+        "Interaction. Listen, respond, take turns and ask at least one question.",
+        "Development. Add a reason, detail or example when you can."
+      ]
+    }
+  }
+}

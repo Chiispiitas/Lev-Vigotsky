@@ -1,0 +1,24 @@
+{
+  "collection": {
+    "id": "PracticeAttempts",
+    "displayName": "English Practice Attempts",
+    "fields": [
+      { "key": "title", "displayName": "Student", "type": "TEXT" },
+      { "key": "examId", "displayName": "Practice exam", "type": "TEXT" },
+      { "key": "keyVersion", "displayName": "Answer key", "type": "TEXT" },
+      { "key": "group", "displayName": "Group", "type": "TEXT" },
+      { "key": "score", "displayName": "Score", "type": "NUMBER" },
+      { "key": "maxScore", "displayName": "Max score", "type": "NUMBER" },
+      { "key": "durationSeconds", "displayName": "Duration (seconds)", "type": "NUMBER" },
+      { "key": "submittedAt", "displayName": "Submitted", "type": "DATETIME" },
+      { "key": "requestDigest", "displayName": "Submission fingerprint", "type": "TEXT" },
+      { "key": "review", "displayName": "Question review", "type": "TEXT" }
+    ],
+    "permissions": {
+      "insert": "ADMIN",
+      "update": "ADMIN",
+      "remove": "ADMIN",
+      "read": "ADMIN"
+    }
+  }
+}

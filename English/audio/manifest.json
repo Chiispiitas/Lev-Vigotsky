@@ -1,0 +1,2134 @@
+{
+  "a1-practice-a-l1.mp3": {
+    "audio": "audio/a1-practice-a-l1.mp3",
+    "sha256": "acbbe55c34665d77abc00746722afdad434c5cec6e4e02be07c51e019db34721",
+    "durationSeconds": 144.928,
+    "recordingGroups": 4,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Question one."
+        ],
+        "turns": [
+          [
+            "A",
+            "Is your birthday party on Friday, Leo?"
+          ],
+          [
+            "B",
+            "I wanted Friday, but my sister works then. It's on Saturday."
+          ],
+          [
+            "A",
+            "Great, see you on Saturday!"
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question two."
+        ],
+        "turns": [
+          [
+            "A",
+            "Can I try on this black jacket?"
+          ],
+          [
+            "B",
+            "Sorry, we only have it in blue in your size."
+          ],
+          [
+            "A",
+            "That's fine. I'll try the blue one."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question three."
+        ],
+        "turns": [
+          [
+            "B",
+            "Where are my keys? Are they on the kitchen table?"
+          ],
+          [
+            "A",
+            "No, they're by the door, on the little chair."
+          ],
+          [
+            "B",
+            "Oh, I see them now."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question four."
+        ],
+        "turns": [
+          [
+            "A",
+            "Can you play the guitar at the school show?"
+          ],
+          [
+            "B",
+            "I can't play the guitar, but I can sing."
+          ],
+          [
+            "A",
+            "Good. We need a singer."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 15.628,
+        "voice": "en-US-JennyNeural",
+        "text": "Question one."
+      },
+      {
+        "startSeconds": 17.628,
+        "endSeconds": 20.532,
+        "voice": "en-US-AvaNeural",
+        "text": "Is your birthday party on Friday, Leo?"
+      },
+      {
+        "startSeconds": 20.762,
+        "endSeconds": 25.274,
+        "voice": "en-US-AndrewNeural",
+        "text": "I wanted Friday, but my sister works then. It's on Saturday."
+      },
+      {
+        "startSeconds": 25.504,
+        "endSeconds": 27.928,
+        "voice": "en-US-AvaNeural",
+        "text": "Great, see you on Saturday!"
+      },
+      {
+        "startSeconds": 29.928,
+        "endSeconds": 32.16,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 32.91,
+        "endSeconds": 35.814,
+        "voice": "en-US-AvaNeural",
+        "text": "Is your birthday party on Friday, Leo?"
+      },
+      {
+        "startSeconds": 36.044,
+        "endSeconds": 40.556,
+        "voice": "en-US-AndrewNeural",
+        "text": "I wanted Friday, but my sister works then. It's on Saturday."
+      },
+      {
+        "startSeconds": 40.786,
+        "endSeconds": 43.21,
+        "voice": "en-US-AvaNeural",
+        "text": "Great, see you on Saturday!"
+      },
+      {
+        "startSeconds": 47.21,
+        "endSeconds": 49.322,
+        "voice": "en-US-JennyNeural",
+        "text": "Question two."
+      },
+      {
+        "startSeconds": 51.322,
+        "endSeconds": 53.746,
+        "voice": "en-US-AvaNeural",
+        "text": "Can I try on this black jacket?"
+      },
+      {
+        "startSeconds": 53.976,
+        "endSeconds": 57.264,
+        "voice": "en-US-AndrewNeural",
+        "text": "Sorry, we only have it in blue in your size."
+      },
+      {
+        "startSeconds": 57.494,
+        "endSeconds": 60.902,
+        "voice": "en-US-AvaNeural",
+        "text": "That's fine. I'll try the blue one."
+      },
+      {
+        "startSeconds": 62.902,
+        "endSeconds": 65.134,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 65.884,
+        "endSeconds": 68.308,
+        "voice": "en-US-AvaNeural",
+        "text": "Can I try on this black jacket?"
+      },
+      {
+        "startSeconds": 68.538,
+        "endSeconds": 71.826,
+        "voice": "en-US-AndrewNeural",
+        "text": "Sorry, we only have it in blue in your size."
+      },
+      {
+        "startSeconds": 72.056,
+        "endSeconds": 75.464,
+        "voice": "en-US-AvaNeural",
+        "text": "That's fine. I'll try the blue one."
+      },
+      {
+        "startSeconds": 79.464,
+        "endSeconds": 81.576,
+        "voice": "en-US-JennyNeural",
+        "text": "Question three."
+      },
+      {
+        "startSeconds": 83.576,
+        "endSeconds": 86.864,
+        "voice": "en-US-AndrewNeural",
+        "text": "Where are my keys? Are they on the kitchen table?"
+      },
+      {
+        "startSeconds": 87.094,
+        "endSeconds": 90.79,
+        "voice": "en-US-AvaNeural",
+        "text": "No, they're by the door, on the little chair."
+      },
+      {
+        "startSeconds": 91.02,
+        "endSeconds": 92.892,
+        "voice": "en-US-AndrewNeural",
+        "text": "Oh, I see them now."
+      },
+      {
+        "startSeconds": 94.892,
+        "endSeconds": 97.124,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 97.874,
+        "endSeconds": 101.162,
+        "voice": "en-US-AndrewNeural",
+        "text": "Where are my keys? Are they on the kitchen table?"
+      },
+      {
+        "startSeconds": 101.392,
+        "endSeconds": 105.088,
+        "voice": "en-US-AvaNeural",
+        "text": "No, they're by the door, on the little chair."
+      },
+      {
+        "startSeconds": 105.318,
+        "endSeconds": 107.19,
+        "voice": "en-US-AndrewNeural",
+        "text": "Oh, I see them now."
+      },
+      {
+        "startSeconds": 111.19,
+        "endSeconds": 113.398,
+        "voice": "en-US-JennyNeural",
+        "text": "Question four."
+      },
+      {
+        "startSeconds": 115.398,
+        "endSeconds": 118.014,
+        "voice": "en-US-AvaNeural",
+        "text": "Can you play the guitar at the school show?"
+      },
+      {
+        "startSeconds": 118.244,
+        "endSeconds": 121.34,
+        "voice": "en-US-AndrewNeural",
+        "text": "I can't play the guitar, but I can sing."
+      },
+      {
+        "startSeconds": 121.57,
+        "endSeconds": 124.066,
+        "voice": "en-US-AvaNeural",
+        "text": "Good. We need a singer."
+      },
+      {
+        "startSeconds": 126.066,
+        "endSeconds": 128.298,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 129.048,
+        "endSeconds": 131.664,
+        "voice": "en-US-AvaNeural",
+        "text": "Can you play the guitar at the school show?"
+      },
+      {
+        "startSeconds": 131.894,
+        "endSeconds": 134.99,
+        "voice": "en-US-AndrewNeural",
+        "text": "I can't play the guitar, but I can sing."
+      },
+      {
+        "startSeconds": 135.22,
+        "endSeconds": 137.716,
+        "voice": "en-US-AvaNeural",
+        "text": "Good. We need a singer."
+      },
+      {
+        "startSeconds": 141.716,
+        "endSeconds": 144.428,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a1-practice-a-l2.mp3": {
+    "audio": "audio/a1-practice-a-l2.mp3",
+    "sha256": "289efa1b420e874918d47cb901ec07067455540da67d6e5eb51a99d190daf4f2",
+    "durationSeconds": 69.942,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": null,
+        "turns": [
+          [
+            "A",
+            "Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at ten. We can take bus six. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small café next to the gate. See you at ten!"
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 35.668,
+        "voice": "en-US-AvaNeural",
+        "text": "Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at ten. We can take bus six. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small café next to the gate. See you at ten!"
+      },
+      {
+        "startSeconds": 37.668,
+        "endSeconds": 39.9,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 40.65,
+        "endSeconds": 62.73,
+        "voice": "en-US-AvaNeural",
+        "text": "Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at ten. We can take bus six. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small café next to the gate. See you at ten!"
+      },
+      {
+        "startSeconds": 66.73,
+        "endSeconds": 69.442,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a1-practice-b-l1.mp3": {
+    "audio": "audio/a1-practice-b-l1.mp3",
+    "sha256": "e67ec77c300e5657d7172e1e13330f1a5516b614d3ce5c7aa761ccaf59fcb1aa",
+    "durationSeconds": 145.216,
+    "recordingGroups": 4,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Question one."
+        ],
+        "turns": [
+          [
+            "B",
+            "Is the class picnic in the park this week?"
+          ],
+          [
+            "A",
+            "No, it's going to rain. We're having lunch in the school gym."
+          ],
+          [
+            "B",
+            "The gym? Okay, thanks."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question two."
+        ],
+        "turns": [
+          [
+            "B",
+            "Do you have these shoes in black?"
+          ],
+          [
+            "A",
+            "Only in brown. The black ones come in next week."
+          ],
+          [
+            "B",
+            "I'll take the brown ones today."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question three."
+        ],
+        "turns": [
+          [
+            "A",
+            "I can't find my bag. Is it in the living room?"
+          ],
+          [
+            "B",
+            "No, I put it under your bed, in your bedroom."
+          ],
+          [
+            "A",
+            "Thanks."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question four."
+        ],
+        "turns": [
+          [
+            "A",
+            "What can you do at the school fair? Can you make cakes?"
+          ],
+          [
+            "B",
+            "I can't make cakes, but I can take photos."
+          ],
+          [
+            "A",
+            "Great, bring your camera."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 15.628,
+        "voice": "en-US-JennyNeural",
+        "text": "Question one."
+      },
+      {
+        "startSeconds": 17.628,
+        "endSeconds": 20.388,
+        "voice": "en-US-AndrewNeural",
+        "text": "Is the class picnic in the park this week?"
+      },
+      {
+        "startSeconds": 20.618,
+        "endSeconds": 25.298,
+        "voice": "en-US-AvaNeural",
+        "text": "No, it's going to rain. We're having lunch in the school gym."
+      },
+      {
+        "startSeconds": 25.528,
+        "endSeconds": 27.856,
+        "voice": "en-US-AndrewNeural",
+        "text": "The gym? Okay, thanks."
+      },
+      {
+        "startSeconds": 29.856,
+        "endSeconds": 32.088,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 32.838,
+        "endSeconds": 35.598,
+        "voice": "en-US-AndrewNeural",
+        "text": "Is the class picnic in the park this week?"
+      },
+      {
+        "startSeconds": 35.828,
+        "endSeconds": 40.508,
+        "voice": "en-US-AvaNeural",
+        "text": "No, it's going to rain. We're having lunch in the school gym."
+      },
+      {
+        "startSeconds": 40.738,
+        "endSeconds": 43.066,
+        "voice": "en-US-AndrewNeural",
+        "text": "The gym? Okay, thanks."
+      },
+      {
+        "startSeconds": 47.066,
+        "endSeconds": 49.178,
+        "voice": "en-US-JennyNeural",
+        "text": "Question two."
+      },
+      {
+        "startSeconds": 51.178,
+        "endSeconds": 53.194,
+        "voice": "en-US-AndrewNeural",
+        "text": "Do you have these shoes in black?"
+      },
+      {
+        "startSeconds": 53.424,
+        "endSeconds": 57.624,
+        "voice": "en-US-AvaNeural",
+        "text": "Only in brown. The black ones come in next week."
+      },
+      {
+        "startSeconds": 57.854,
+        "endSeconds": 59.894,
+        "voice": "en-US-AndrewNeural",
+        "text": "I'll take the brown ones today."
+      },
+      {
+        "startSeconds": 61.894,
+        "endSeconds": 64.126,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 64.876,
+        "endSeconds": 66.892,
+        "voice": "en-US-AndrewNeural",
+        "text": "Do you have these shoes in black?"
+      },
+      {
+        "startSeconds": 67.122,
+        "endSeconds": 71.322,
+        "voice": "en-US-AvaNeural",
+        "text": "Only in brown. The black ones come in next week."
+      },
+      {
+        "startSeconds": 71.552,
+        "endSeconds": 73.592,
+        "voice": "en-US-AndrewNeural",
+        "text": "I'll take the brown ones today."
+      },
+      {
+        "startSeconds": 77.592,
+        "endSeconds": 79.704,
+        "voice": "en-US-JennyNeural",
+        "text": "Question three."
+      },
+      {
+        "startSeconds": 81.704,
+        "endSeconds": 85.376,
+        "voice": "en-US-AvaNeural",
+        "text": "I can't find my bag. Is it in the living room?"
+      },
+      {
+        "startSeconds": 85.606,
+        "endSeconds": 89.158,
+        "voice": "en-US-AndrewNeural",
+        "text": "No, I put it under your bed, in your bedroom."
+      },
+      {
+        "startSeconds": 89.388,
+        "endSeconds": 91.26,
+        "voice": "en-US-AvaNeural",
+        "text": "Thanks."
+      },
+      {
+        "startSeconds": 93.26,
+        "endSeconds": 95.492,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 96.242,
+        "endSeconds": 99.914,
+        "voice": "en-US-AvaNeural",
+        "text": "I can't find my bag. Is it in the living room?"
+      },
+      {
+        "startSeconds": 100.144,
+        "endSeconds": 103.696,
+        "voice": "en-US-AndrewNeural",
+        "text": "No, I put it under your bed, in your bedroom."
+      },
+      {
+        "startSeconds": 103.926,
+        "endSeconds": 105.798,
+        "voice": "en-US-AvaNeural",
+        "text": "Thanks."
+      },
+      {
+        "startSeconds": 109.798,
+        "endSeconds": 112.006,
+        "voice": "en-US-JennyNeural",
+        "text": "Question four."
+      },
+      {
+        "startSeconds": 114.006,
+        "endSeconds": 117.846,
+        "voice": "en-US-AvaNeural",
+        "text": "What can you do at the school fair? Can you make cakes?"
+      },
+      {
+        "startSeconds": 118.076,
+        "endSeconds": 121.196,
+        "voice": "en-US-AndrewNeural",
+        "text": "I can't make cakes, but I can take photos."
+      },
+      {
+        "startSeconds": 121.426,
+        "endSeconds": 123.514,
+        "voice": "en-US-AvaNeural",
+        "text": "Great, bring your camera."
+      },
+      {
+        "startSeconds": 125.514,
+        "endSeconds": 127.746,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 128.496,
+        "endSeconds": 132.336,
+        "voice": "en-US-AvaNeural",
+        "text": "What can you do at the school fair? Can you make cakes?"
+      },
+      {
+        "startSeconds": 132.566,
+        "endSeconds": 135.686,
+        "voice": "en-US-AndrewNeural",
+        "text": "I can't make cakes, but I can take photos."
+      },
+      {
+        "startSeconds": 135.916,
+        "endSeconds": 138.004,
+        "voice": "en-US-AvaNeural",
+        "text": "Great, bring your camera."
+      },
+      {
+        "startSeconds": 142.004,
+        "endSeconds": 144.716,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a1-practice-b-l2.mp3": {
+    "audio": "audio/a1-practice-b-l2.mp3",
+    "sha256": "cfbae73709821bac1c1ec7791c3b38ac0e754d743b00a1211164de597285b17e",
+    "durationSeconds": 58.038,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": null,
+        "turns": [
+          [
+            "B",
+            "Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at nine. We can take bus number eight from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 29.716,
+        "voice": "en-US-AndrewNeural",
+        "text": "Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at nine. We can take bus number eight from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station."
+      },
+      {
+        "startSeconds": 31.716,
+        "endSeconds": 33.948,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 34.698,
+        "endSeconds": 50.826,
+        "voice": "en-US-AndrewNeural",
+        "text": "Hi, this is Dan. Let's visit the market on Saturday. Meet me at the train station at nine. We can take bus number eight from there. Bring a bag for your food. You don't need to bring lunch. We can buy sandwiches at the market. See you at the station."
+      },
+      {
+        "startSeconds": 54.826,
+        "endSeconds": 57.538,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a2-practice-a-l1.mp3": {
+    "audio": "audio/a2-practice-a-l1.mp3",
+    "sha256": "9dde8d0e3eb9ae7b8edcd02e8eb93d1acfa58fbd365ef384209f17fcdbc40f99",
+    "durationSeconds": 138.722,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "You will hear two friends planning a weekend trip."
+        ],
+        "turns": [
+          [
+            "A",
+            "The film festival starts at twelve on Saturday. Shall we get the ten o'clock train?"
+          ],
+          [
+            "B",
+            "That one is full. The nine fifteen still has seats. It's earlier than I wanted, but let's book it."
+          ],
+          [
+            "A",
+            "Great. And where shall we stay? We could stay at the hotel near the station."
+          ],
+          [
+            "B",
+            "I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast."
+          ],
+          [
+            "A",
+            "Let's stay there. Have you chosen a film?"
+          ],
+          [
+            "B",
+            "I'd like the one about a long bike trip. My brother saw it last week and said it was funny."
+          ],
+          [
+            "A",
+            "All right. We don't have to buy tickets online. I can pay at the cinema. But I have to show my student ID to get the lower price."
+          ],
+          [
+            "B",
+            "Good idea. What shall we do after the film?"
+          ],
+          [
+            "A",
+            "Let's have dinner at the market. The café by the cinema closes at five."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 19.808,
+        "voice": "en-US-JennyNeural",
+        "text": "You will hear two friends planning a weekend trip."
+      },
+      {
+        "startSeconds": 21.808,
+        "endSeconds": 27.376,
+        "voice": "en-US-AvaNeural",
+        "text": "The film festival starts at twelve on Saturday. Shall we get the ten o'clock train?"
+      },
+      {
+        "startSeconds": 27.606,
+        "endSeconds": 34.278,
+        "voice": "en-US-AndrewNeural",
+        "text": "That one is full. The nine fifteen still has seats. It's earlier than I wanted, but let's book it."
+      },
+      {
+        "startSeconds": 34.508,
+        "endSeconds": 40.004,
+        "voice": "en-US-AvaNeural",
+        "text": "Great. And where shall we stay? We could stay at the hotel near the station."
+      },
+      {
+        "startSeconds": 40.234,
+        "endSeconds": 46.882,
+        "voice": "en-US-AndrewNeural",
+        "text": "I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast."
+      },
+      {
+        "startSeconds": 47.112,
+        "endSeconds": 50.232,
+        "voice": "en-US-AvaNeural",
+        "text": "Let's stay there. Have you chosen a film?"
+      },
+      {
+        "startSeconds": 50.462,
+        "endSeconds": 56.054,
+        "voice": "en-US-AndrewNeural",
+        "text": "I'd like the one about a long bike trip. My brother saw it last week and said it was funny."
+      },
+      {
+        "startSeconds": 56.284,
+        "endSeconds": 65.308,
+        "voice": "en-US-AvaNeural",
+        "text": "All right. We don't have to buy tickets online. I can pay at the cinema. But I have to show my student ID to get the lower price."
+      },
+      {
+        "startSeconds": 65.538,
+        "endSeconds": 68.634,
+        "voice": "en-US-AndrewNeural",
+        "text": "Good idea. What shall we do after the film?"
+      },
+      {
+        "startSeconds": 68.864,
+        "endSeconds": 74.168,
+        "voice": "en-US-AvaNeural",
+        "text": "Let's have dinner at the market. The café by the cinema closes at five."
+      },
+      {
+        "startSeconds": 76.168,
+        "endSeconds": 78.4,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 79.15,
+        "endSeconds": 84.718,
+        "voice": "en-US-AvaNeural",
+        "text": "The film festival starts at twelve on Saturday. Shall we get the ten o'clock train?"
+      },
+      {
+        "startSeconds": 84.948,
+        "endSeconds": 91.62,
+        "voice": "en-US-AndrewNeural",
+        "text": "That one is full. The nine fifteen still has seats. It's earlier than I wanted, but let's book it."
+      },
+      {
+        "startSeconds": 91.85,
+        "endSeconds": 97.346,
+        "voice": "en-US-AvaNeural",
+        "text": "Great. And where shall we stay? We could stay at the hotel near the station."
+      },
+      {
+        "startSeconds": 97.576,
+        "endSeconds": 104.224,
+        "voice": "en-US-AndrewNeural",
+        "text": "I called it yesterday. It was too expensive. I found a small hotel near the river that includes breakfast."
+      },
+      {
+        "startSeconds": 104.454,
+        "endSeconds": 107.574,
+        "voice": "en-US-AvaNeural",
+        "text": "Let's stay there. Have you chosen a film?"
+      },
+      {
+        "startSeconds": 107.804,
+        "endSeconds": 113.396,
+        "voice": "en-US-AndrewNeural",
+        "text": "I'd like the one about a long bike trip. My brother saw it last week and said it was funny."
+      },
+      {
+        "startSeconds": 113.626,
+        "endSeconds": 122.65,
+        "voice": "en-US-AvaNeural",
+        "text": "All right. We don't have to buy tickets online. I can pay at the cinema. But I have to show my student ID to get the lower price."
+      },
+      {
+        "startSeconds": 122.88,
+        "endSeconds": 125.976,
+        "voice": "en-US-AndrewNeural",
+        "text": "Good idea. What shall we do after the film?"
+      },
+      {
+        "startSeconds": 126.206,
+        "endSeconds": 131.51,
+        "voice": "en-US-AvaNeural",
+        "text": "Let's have dinner at the market. The café by the cinema closes at five."
+      },
+      {
+        "startSeconds": 135.51,
+        "endSeconds": 138.222,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a2-practice-a-l2.mp3": {
+    "audio": "audio/a2-practice-a-l2.mp3",
+    "sha256": "6de00058738a2c226e3a7c3f30591f92d642b3507878bf07a05a9b6da6812301",
+    "durationSeconds": 87.57,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Listen to a message about a coach tour."
+        ],
+        "turns": [
+          [
+            "A",
+            "Hello and thanks for booking a place on our city coach tour. It leaves on Sunday. We usually leave at ten thirty, but this week we leave earlier, at ten. Please meet us outside the museum. The ticket costs fourteen dollars. You don't need to print the ticket, but bring a jacket. It can be cold when we stop by the river. We're going to visit the old bridge before lunch and return to the museum at three."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 19.424,
+        "voice": "en-US-JennyNeural",
+        "text": "Listen to a message about a coach tour."
+      },
+      {
+        "startSeconds": 21.424,
+        "endSeconds": 48.4,
+        "voice": "en-US-AvaNeural",
+        "text": "Hello and thanks for booking a place on our city coach tour. It leaves on Sunday. We usually leave at ten thirty, but this week we leave earlier, at ten. Please meet us outside the museum. The ticket costs fourteen dollars. You don't need to print the ticket, but bring a jacket. It can be cold when we stop by the river. We're going to visit the old bridge before lunch and return to the museum at three."
+      },
+      {
+        "startSeconds": 50.4,
+        "endSeconds": 52.632,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 53.382,
+        "endSeconds": 80.358,
+        "voice": "en-US-AvaNeural",
+        "text": "Hello and thanks for booking a place on our city coach tour. It leaves on Sunday. We usually leave at ten thirty, but this week we leave earlier, at ten. Please meet us outside the museum. The ticket costs fourteen dollars. You don't need to print the ticket, but bring a jacket. It can be cold when we stop by the river. We're going to visit the old bridge before lunch and return to the museum at three."
+      },
+      {
+        "startSeconds": 84.358,
+        "endSeconds": 87.07,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a2-practice-b-l1.mp3": {
+    "audio": "audio/a2-practice-b-l1.mp3",
+    "sha256": "3da988c7b17044164142a289215daf3cfe04d1d372ce0d1739034a9a9a9db5b2",
+    "durationSeconds": 134.81,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "You will hear two friends planning an evening out."
+        ],
+        "turns": [
+          [
+            "A",
+            "Shall we go by bus to the concert on Friday, Rob?"
+          ],
+          [
+            "B",
+            "The bus after six is too late. My aunt can drive us at five thirty."
+          ],
+          [
+            "A",
+            "Great. I looked at the concert program. Two groups are playing. Have you heard the first group before?"
+          ],
+          [
+            "B",
+            "Yes, at the town festival. I loved the singer. The second group is new to me."
+          ],
+          [
+            "A",
+            "Good. I like hearing new groups. Do we have to show a paper ticket?"
+          ],
+          [
+            "B",
+            "No, we can show it on our phones. I've already bought the tickets. I paid twelve dollars for each one, not fifteen like last year."
+          ],
+          [
+            "A",
+            "Thanks. Where shall we meet your aunt?"
+          ],
+          [
+            "B",
+            "At the library entrance. There's more space there than outside my house."
+          ],
+          [
+            "A",
+            "Okay. Let's buy some sandwiches before the concert. We can eat them in the park next to the hall."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 19.736,
+        "voice": "en-US-JennyNeural",
+        "text": "You will hear two friends planning an evening out."
+      },
+      {
+        "startSeconds": 21.736,
+        "endSeconds": 25.072,
+        "voice": "en-US-AvaNeural",
+        "text": "Shall we go by bus to the concert on Friday, Rob?"
+      },
+      {
+        "startSeconds": 25.302,
+        "endSeconds": 29.91,
+        "voice": "en-US-AndrewNeural",
+        "text": "The bus after six is too late. My aunt can drive us at five thirty."
+      },
+      {
+        "startSeconds": 30.14,
+        "endSeconds": 37.58,
+        "voice": "en-US-AvaNeural",
+        "text": "Great. I looked at the concert program. Two groups are playing. Have you heard the first group before?"
+      },
+      {
+        "startSeconds": 37.81,
+        "endSeconds": 43.306,
+        "voice": "en-US-AndrewNeural",
+        "text": "Yes, at the town festival. I loved the singer. The second group is new to me."
+      },
+      {
+        "startSeconds": 43.536,
+        "endSeconds": 48.576,
+        "voice": "en-US-AvaNeural",
+        "text": "Good. I like hearing new groups. Do we have to show a paper ticket?"
+      },
+      {
+        "startSeconds": 48.806,
+        "endSeconds": 57.614,
+        "voice": "en-US-AndrewNeural",
+        "text": "No, we can show it on our phones. I've already bought the tickets. I paid twelve dollars for each one, not fifteen like last year."
+      },
+      {
+        "startSeconds": 57.844,
+        "endSeconds": 60.676,
+        "voice": "en-US-AvaNeural",
+        "text": "Thanks. Where shall we meet your aunt?"
+      },
+      {
+        "startSeconds": 60.906,
+        "endSeconds": 65.586,
+        "voice": "en-US-AndrewNeural",
+        "text": "At the library entrance. There's more space there than outside my house."
+      },
+      {
+        "startSeconds": 65.816,
+        "endSeconds": 72.176,
+        "voice": "en-US-AvaNeural",
+        "text": "Okay. Let's buy some sandwiches before the concert. We can eat them in the park next to the hall."
+      },
+      {
+        "startSeconds": 74.176,
+        "endSeconds": 76.408,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 77.158,
+        "endSeconds": 80.494,
+        "voice": "en-US-AvaNeural",
+        "text": "Shall we go by bus to the concert on Friday, Rob?"
+      },
+      {
+        "startSeconds": 80.724,
+        "endSeconds": 85.332,
+        "voice": "en-US-AndrewNeural",
+        "text": "The bus after six is too late. My aunt can drive us at five thirty."
+      },
+      {
+        "startSeconds": 85.562,
+        "endSeconds": 93.002,
+        "voice": "en-US-AvaNeural",
+        "text": "Great. I looked at the concert program. Two groups are playing. Have you heard the first group before?"
+      },
+      {
+        "startSeconds": 93.232,
+        "endSeconds": 98.728,
+        "voice": "en-US-AndrewNeural",
+        "text": "Yes, at the town festival. I loved the singer. The second group is new to me."
+      },
+      {
+        "startSeconds": 98.958,
+        "endSeconds": 103.998,
+        "voice": "en-US-AvaNeural",
+        "text": "Good. I like hearing new groups. Do we have to show a paper ticket?"
+      },
+      {
+        "startSeconds": 104.228,
+        "endSeconds": 113.036,
+        "voice": "en-US-AndrewNeural",
+        "text": "No, we can show it on our phones. I've already bought the tickets. I paid twelve dollars for each one, not fifteen like last year."
+      },
+      {
+        "startSeconds": 113.266,
+        "endSeconds": 116.098,
+        "voice": "en-US-AvaNeural",
+        "text": "Thanks. Where shall we meet your aunt?"
+      },
+      {
+        "startSeconds": 116.328,
+        "endSeconds": 121.008,
+        "voice": "en-US-AndrewNeural",
+        "text": "At the library entrance. There's more space there than outside my house."
+      },
+      {
+        "startSeconds": 121.238,
+        "endSeconds": 127.598,
+        "voice": "en-US-AvaNeural",
+        "text": "Okay. Let's buy some sandwiches before the concert. We can eat them in the park next to the hall."
+      },
+      {
+        "startSeconds": 131.598,
+        "endSeconds": 134.31,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "a2-practice-b-l2.mp3": {
+    "audio": "audio/a2-practice-b-l2.mp3",
+    "sha256": "b6956283555f256b7d3cb07b65faa47eeb73202ce4c21e7d083618c34b40e501",
+    "durationSeconds": 77.514,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Listen to a message about a bike tour."
+        ],
+        "turns": [
+          [
+            "B",
+            "Thanks for booking the river bike tour on Saturday. Please meet us outside the station. The tour was going to start at nine, but we now start at eight thirty. The price is sixteen dollars and includes the bike. You can buy food at the café, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after twelve."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 19.352,
+        "voice": "en-US-JennyNeural",
+        "text": "Listen to a message about a bike tour."
+      },
+      {
+        "startSeconds": 21.352,
+        "endSeconds": 43.336,
+        "voice": "en-US-AndrewNeural",
+        "text": "Thanks for booking the river bike tour on Saturday. Please meet us outside the station. The tour was going to start at nine, but we now start at eight thirty. The price is sixteen dollars and includes the bike. You can buy food at the café, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after twelve."
+      },
+      {
+        "startSeconds": 45.336,
+        "endSeconds": 47.568,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 48.318,
+        "endSeconds": 70.302,
+        "voice": "en-US-AndrewNeural",
+        "text": "Thanks for booking the river bike tour on Saturday. Please meet us outside the station. The tour was going to start at nine, but we now start at eight thirty. The price is sixteen dollars and includes the bike. You can buy food at the café, so you don't have to bring lunch. Please bring water for the ride. We stop at the castle and finish just after twelve."
+      },
+      {
+        "startSeconds": 74.302,
+        "endSeconds": 77.014,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-a-l1.mp3": {
+    "audio": "audio/b1-practice-a-l1.mp3",
+    "sha256": "5747fbc59c2aa1dc384a8bd9d2f7182bd7fd7c2597ed551f80b309b9f4d1cce9",
+    "durationSeconds": 192.252,
+    "recordingGroups": 4,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Question one. You hear two friends talking after class."
+        ],
+        "turns": [
+          [
+            "A",
+            "You look tired, Alex. Were you up late doing your homework again?"
+          ],
+          [
+            "B",
+            "I actually finished it before dinner. But I kept looking at my phone after I went to bed. I'm going to leave it downstairs tonight."
+          ],
+          [
+            "A",
+            "Good idea. It might be easier to sleep without it there."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question two. You hear two people deciding how to prepare a project."
+        ],
+        "turns": [
+          [
+            "B",
+            "Should we finish the slides first?"
+          ],
+          [
+            "A",
+            "The slides can wait. If we don't agree on our main idea now, we'll have to do the work twice."
+          ],
+          [
+            "B",
+            "All right. Let's make a list of ideas and choose one."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question three. You hear two people discussing a walk."
+        ],
+        "turns": [
+          [
+            "A",
+            "Did you see any animals on your walk?"
+          ],
+          [
+            "B",
+            "A lot of birds, but they kept flying away. The best part was reaching the top just as the clouds cleared. I could see all the way to the coast."
+          ],
+          [
+            "A",
+            "That sounds worth the long climb."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question four. You hear two friends discussing a new activity."
+        ],
+        "turns": [
+          [
+            "B",
+            "How was climbing?"
+          ],
+          [
+            "A",
+            "My arms were tired afterward, but I found it much easier than I expected. The instructor explained things slowly, which helped. I'll try a harder route next time."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 19.108,
+        "voice": "en-US-JennyNeural",
+        "text": "Question one. You hear two friends talking after class."
+      },
+      {
+        "startSeconds": 21.108,
+        "endSeconds": 25.452,
+        "voice": "en-US-AvaNeural",
+        "text": "You look tired, Alex. Were you up late doing your homework again?"
+      },
+      {
+        "startSeconds": 25.682,
+        "endSeconds": 32.57,
+        "voice": "en-US-AndrewNeural",
+        "text": "I actually finished it before dinner. But I kept looking at my phone after I went to bed. I'm going to leave it downstairs tonight."
+      },
+      {
+        "startSeconds": 32.8,
+        "endSeconds": 36.736,
+        "voice": "en-US-AvaNeural",
+        "text": "Good idea. It might be easier to sleep without it there."
+      },
+      {
+        "startSeconds": 38.736,
+        "endSeconds": 40.968,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 41.718,
+        "endSeconds": 46.062,
+        "voice": "en-US-AvaNeural",
+        "text": "You look tired, Alex. Were you up late doing your homework again?"
+      },
+      {
+        "startSeconds": 46.292,
+        "endSeconds": 53.18,
+        "voice": "en-US-AndrewNeural",
+        "text": "I actually finished it before dinner. But I kept looking at my phone after I went to bed. I'm going to leave it downstairs tonight."
+      },
+      {
+        "startSeconds": 53.41,
+        "endSeconds": 57.346,
+        "voice": "en-US-AvaNeural",
+        "text": "Good idea. It might be easier to sleep without it there."
+      },
+      {
+        "startSeconds": 61.346,
+        "endSeconds": 67.418,
+        "voice": "en-US-JennyNeural",
+        "text": "Question two. You hear two people deciding how to prepare a project."
+      },
+      {
+        "startSeconds": 69.418,
+        "endSeconds": 71.554,
+        "voice": "en-US-AndrewNeural",
+        "text": "Should we finish the slides first?"
+      },
+      {
+        "startSeconds": 71.784,
+        "endSeconds": 77.784,
+        "voice": "en-US-AvaNeural",
+        "text": "The slides can wait. If we don't agree on our main idea now, we'll have to do the work twice."
+      },
+      {
+        "startSeconds": 78.014,
+        "endSeconds": 81.806,
+        "voice": "en-US-AndrewNeural",
+        "text": "All right. Let's make a list of ideas and choose one."
+      },
+      {
+        "startSeconds": 83.806,
+        "endSeconds": 86.038,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 86.788,
+        "endSeconds": 88.924,
+        "voice": "en-US-AndrewNeural",
+        "text": "Should we finish the slides first?"
+      },
+      {
+        "startSeconds": 89.154,
+        "endSeconds": 95.154,
+        "voice": "en-US-AvaNeural",
+        "text": "The slides can wait. If we don't agree on our main idea now, we'll have to do the work twice."
+      },
+      {
+        "startSeconds": 95.384,
+        "endSeconds": 99.176,
+        "voice": "en-US-AndrewNeural",
+        "text": "All right. Let's make a list of ideas and choose one."
+      },
+      {
+        "startSeconds": 103.176,
+        "endSeconds": 108.408,
+        "voice": "en-US-JennyNeural",
+        "text": "Question three. You hear two people discussing a walk."
+      },
+      {
+        "startSeconds": 110.408,
+        "endSeconds": 112.544,
+        "voice": "en-US-AvaNeural",
+        "text": "Did you see any animals on your walk?"
+      },
+      {
+        "startSeconds": 112.774,
+        "endSeconds": 121.606,
+        "voice": "en-US-AndrewNeural",
+        "text": "A lot of birds, but they kept flying away. The best part was reaching the top just as the clouds cleared. I could see all the way to the coast."
+      },
+      {
+        "startSeconds": 121.836,
+        "endSeconds": 124.116,
+        "voice": "en-US-AvaNeural",
+        "text": "That sounds worth the long climb."
+      },
+      {
+        "startSeconds": 126.116,
+        "endSeconds": 128.348,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 129.098,
+        "endSeconds": 131.234,
+        "voice": "en-US-AvaNeural",
+        "text": "Did you see any animals on your walk?"
+      },
+      {
+        "startSeconds": 131.464,
+        "endSeconds": 140.296,
+        "voice": "en-US-AndrewNeural",
+        "text": "A lot of birds, but they kept flying away. The best part was reaching the top just as the clouds cleared. I could see all the way to the coast."
+      },
+      {
+        "startSeconds": 140.526,
+        "endSeconds": 142.806,
+        "voice": "en-US-AvaNeural",
+        "text": "That sounds worth the long climb."
+      },
+      {
+        "startSeconds": 146.806,
+        "endSeconds": 152.638,
+        "voice": "en-US-JennyNeural",
+        "text": "Question four. You hear two friends discussing a new activity."
+      },
+      {
+        "startSeconds": 154.638,
+        "endSeconds": 156.51,
+        "voice": "en-US-AndrewNeural",
+        "text": "How was climbing?"
+      },
+      {
+        "startSeconds": 156.74,
+        "endSeconds": 167.348,
+        "voice": "en-US-AvaNeural",
+        "text": "My arms were tired afterward, but I found it much easier than I expected. The instructor explained things slowly, which helped. I'll try a harder route next time."
+      },
+      {
+        "startSeconds": 169.348,
+        "endSeconds": 171.58,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 172.33,
+        "endSeconds": 174.202,
+        "voice": "en-US-AndrewNeural",
+        "text": "How was climbing?"
+      },
+      {
+        "startSeconds": 174.432,
+        "endSeconds": 185.04,
+        "voice": "en-US-AvaNeural",
+        "text": "My arms were tired afterward, but I found it much easier than I expected. The instructor explained things slowly, which helped. I'll try a harder route next time."
+      },
+      {
+        "startSeconds": 189.04,
+        "endSeconds": 191.752,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-a-l2.mp3": {
+    "audio": "audio/b1-practice-a-l2.mp3",
+    "sha256": "62d8effb296bd348d5c2b2a34fca0cdbf4fa79a7920e6e697bc60e30c04f13f5",
+    "durationSeconds": 83.626,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": null,
+        "turns": [
+          [
+            "A",
+            "Welcome to the community garden project. This Saturday we will meet at the library rather than at the garden gate. Let's get there at nine fifteen so we can start work at nine thirty. Bring gloves; we have masks and all the other equipment you will need. First we'll clear the paths. After lunch, we plan to plant herbs beside the entrance. If it rains, we'll work in the workshop instead. You'll still be able to help by repairing tools."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 43.76,
+        "voice": "en-US-AvaNeural",
+        "text": "Welcome to the community garden project. This Saturday we will meet at the library rather than at the garden gate. Let's get there at nine fifteen so we can start work at nine thirty. Bring gloves; we have masks and all the other equipment you will need. First we'll clear the paths. After lunch, we plan to plant herbs beside the entrance. If it rains, we'll work in the workshop instead. You'll still be able to help by repairing tools."
+      },
+      {
+        "startSeconds": 45.76,
+        "endSeconds": 47.992,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 48.742,
+        "endSeconds": 76.414,
+        "voice": "en-US-AvaNeural",
+        "text": "Welcome to the community garden project. This Saturday we will meet at the library rather than at the garden gate. Let's get there at nine fifteen so we can start work at nine thirty. Bring gloves; we have masks and all the other equipment you will need. First we'll clear the paths. After lunch, we plan to plant herbs beside the entrance. If it rains, we'll work in the workshop instead. You'll still be able to help by repairing tools."
+      },
+      {
+        "startSeconds": 80.414,
+        "endSeconds": 83.126,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-a-l3.mp3": {
+    "audio": "audio/b1-practice-a-l3.mp3",
+    "sha256": "2fbf7bf147cd71ee43ebd0ede769e3e4da7202ddd8430c9dada705565e3b2944",
+    "durationSeconds": 122.41,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "You will hear an interview with a student who organized a screen-free evening."
+        ],
+        "turns": [
+          [
+            "B",
+            "What gave you the idea for a screen-free evening, Ella?"
+          ],
+          [
+            "A",
+            "I saw a similar challenge online, but the idea only felt useful when my friends said we never finished a conversation without looking at our phones. We wanted an evening when we could really talk."
+          ],
+          [
+            "B",
+            "How did the first evening go?"
+          ],
+          [
+            "A",
+            "I was worried that nobody would know what to do, so I brought a board game. In fact, we talked for the first hour and only opened the box later. We started too late, though, and some people had to catch the bus home before the game ended."
+          ],
+          [
+            "B",
+            "Will you run it again?"
+          ],
+          [
+            "A",
+            "Yes, but next time we'll start earlier. I don't want everyone to give up their phones all the time. I just want them to notice when their phones get in the way."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 18.556,
+        "voice": "en-US-JennyNeural",
+        "text": "You will hear an interview with a student who organized a screen-free evening."
+      },
+      {
+        "startSeconds": 20.556,
+        "endSeconds": 23.58,
+        "voice": "en-US-AndrewNeural",
+        "text": "What gave you the idea for a screen-free evening, Ella?"
+      },
+      {
+        "startSeconds": 23.81,
+        "endSeconds": 35.93,
+        "voice": "en-US-AvaNeural",
+        "text": "I saw a similar challenge online, but the idea only felt useful when my friends said we never finished a conversation without looking at our phones. We wanted an evening when we could really talk."
+      },
+      {
+        "startSeconds": 36.16,
+        "endSeconds": 38.032,
+        "voice": "en-US-AndrewNeural",
+        "text": "How did the first evening go?"
+      },
+      {
+        "startSeconds": 38.262,
+        "endSeconds": 53.55,
+        "voice": "en-US-AvaNeural",
+        "text": "I was worried that nobody would know what to do, so I brought a board game. In fact, we talked for the first hour and only opened the box later. We started too late, though, and some people had to catch the bus home before the game ended."
+      },
+      {
+        "startSeconds": 53.78,
+        "endSeconds": 55.652,
+        "voice": "en-US-AndrewNeural",
+        "text": "Will you run it again?"
+      },
+      {
+        "startSeconds": 55.882,
+        "endSeconds": 65.386,
+        "voice": "en-US-AvaNeural",
+        "text": "Yes, but next time we'll start earlier. I don't want everyone to give up their phones all the time. I just want them to notice when their phones get in the way."
+      },
+      {
+        "startSeconds": 67.386,
+        "endSeconds": 69.618,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 70.368,
+        "endSeconds": 73.392,
+        "voice": "en-US-AndrewNeural",
+        "text": "What gave you the idea for a screen-free evening, Ella?"
+      },
+      {
+        "startSeconds": 73.622,
+        "endSeconds": 85.742,
+        "voice": "en-US-AvaNeural",
+        "text": "I saw a similar challenge online, but the idea only felt useful when my friends said we never finished a conversation without looking at our phones. We wanted an evening when we could really talk."
+      },
+      {
+        "startSeconds": 85.972,
+        "endSeconds": 87.844,
+        "voice": "en-US-AndrewNeural",
+        "text": "How did the first evening go?"
+      },
+      {
+        "startSeconds": 88.074,
+        "endSeconds": 103.362,
+        "voice": "en-US-AvaNeural",
+        "text": "I was worried that nobody would know what to do, so I brought a board game. In fact, we talked for the first hour and only opened the box later. We started too late, though, and some people had to catch the bus home before the game ended."
+      },
+      {
+        "startSeconds": 103.592,
+        "endSeconds": 105.464,
+        "voice": "en-US-AndrewNeural",
+        "text": "Will you run it again?"
+      },
+      {
+        "startSeconds": 105.694,
+        "endSeconds": 115.198,
+        "voice": "en-US-AvaNeural",
+        "text": "Yes, but next time we'll start earlier. I don't want everyone to give up their phones all the time. I just want them to notice when their phones get in the way."
+      },
+      {
+        "startSeconds": 119.198,
+        "endSeconds": 121.91,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-b-l1.mp3": {
+    "audio": "audio/b1-practice-b-l1.mp3",
+    "sha256": "05a00b2e3b0cdedb3c576b2823e54f2c6babe9b49013ca9ea68315fd74c8c958",
+    "durationSeconds": 194.82,
+    "recordingGroups": 4,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "Question one. You hear two friends talking after lunch."
+        ],
+        "turns": [
+          [
+            "A",
+            "Is your headache any better, Sam?"
+          ],
+          [
+            "B",
+            "A little. I thought it was because I hadn't eaten enough, but I had lunch and it didn't help. I feel better now that I've had some water."
+          ],
+          [
+            "A",
+            "You should take a bottle with you next time."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question two. You hear two people preparing a talk."
+        ],
+        "turns": [
+          [
+            "B",
+            "Why don't we practice the whole talk once more?"
+          ],
+          [
+            "A",
+            "We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next."
+          ],
+          [
+            "B",
+            "You're right. Let's change the final message now."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question three. You hear two friends talking about a weekend outdoors."
+        ],
+        "turns": [
+          [
+            "A",
+            "Was the wildlife center busy?"
+          ],
+          [
+            "B",
+            "Quite busy in the morning. Things were quieter after lunch, and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance."
+          ],
+          [
+            "A",
+            "I'd like to go on a guided visit, too."
+          ]
+        ]
+      },
+      {
+        "cue": [
+          "Narrator",
+          "Question four. You hear two friends discussing a new activity."
+        ],
+        "turns": [
+          [
+            "B",
+            "So, would you try kayaking again?"
+          ],
+          [
+            "A",
+            "Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 18.964,
+        "voice": "en-US-JennyNeural",
+        "text": "Question one. You hear two friends talking after lunch."
+      },
+      {
+        "startSeconds": 20.964,
+        "endSeconds": 23.124,
+        "voice": "en-US-AvaNeural",
+        "text": "Is your headache any better, Sam?"
+      },
+      {
+        "startSeconds": 23.354,
+        "endSeconds": 31.226,
+        "voice": "en-US-AndrewNeural",
+        "text": "A little. I thought it was because I hadn't eaten enough, but I had lunch and it didn't help. I feel better now that I've had some water."
+      },
+      {
+        "startSeconds": 31.456,
+        "endSeconds": 33.808,
+        "voice": "en-US-AvaNeural",
+        "text": "You should take a bottle with you next time."
+      },
+      {
+        "startSeconds": 35.808,
+        "endSeconds": 38.04,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 38.79,
+        "endSeconds": 40.95,
+        "voice": "en-US-AvaNeural",
+        "text": "Is your headache any better, Sam?"
+      },
+      {
+        "startSeconds": 41.18,
+        "endSeconds": 49.052,
+        "voice": "en-US-AndrewNeural",
+        "text": "A little. I thought it was because I hadn't eaten enough, but I had lunch and it didn't help. I feel better now that I've had some water."
+      },
+      {
+        "startSeconds": 49.282,
+        "endSeconds": 51.634,
+        "voice": "en-US-AvaNeural",
+        "text": "You should take a bottle with you next time."
+      },
+      {
+        "startSeconds": 55.634,
+        "endSeconds": 60.914,
+        "voice": "en-US-JennyNeural",
+        "text": "Question two. You hear two people preparing a talk."
+      },
+      {
+        "startSeconds": 62.914,
+        "endSeconds": 65.506,
+        "voice": "en-US-AndrewNeural",
+        "text": "Why don't we practice the whole talk once more?"
+      },
+      {
+        "startSeconds": 65.736,
+        "endSeconds": 73.152,
+        "voice": "en-US-AvaNeural",
+        "text": "We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next."
+      },
+      {
+        "startSeconds": 73.382,
+        "endSeconds": 76.358,
+        "voice": "en-US-AndrewNeural",
+        "text": "You're right. Let's change the final message now."
+      },
+      {
+        "startSeconds": 78.358,
+        "endSeconds": 80.59,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 81.34,
+        "endSeconds": 83.932,
+        "voice": "en-US-AndrewNeural",
+        "text": "Why don't we practice the whole talk once more?"
+      },
+      {
+        "startSeconds": 84.162,
+        "endSeconds": 91.578,
+        "voice": "en-US-AvaNeural",
+        "text": "We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next."
+      },
+      {
+        "startSeconds": 91.808,
+        "endSeconds": 94.784,
+        "voice": "en-US-AndrewNeural",
+        "text": "You're right. Let's change the final message now."
+      },
+      {
+        "startSeconds": 98.784,
+        "endSeconds": 104.88,
+        "voice": "en-US-JennyNeural",
+        "text": "Question three. You hear two friends talking about a weekend outdoors."
+      },
+      {
+        "startSeconds": 106.88,
+        "endSeconds": 108.92,
+        "voice": "en-US-AvaNeural",
+        "text": "Was the wildlife center busy?"
+      },
+      {
+        "startSeconds": 109.15,
+        "endSeconds": 119.278,
+        "voice": "en-US-AndrewNeural",
+        "text": "Quite busy in the morning. Things were quieter after lunch, and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance."
+      },
+      {
+        "startSeconds": 119.508,
+        "endSeconds": 122.148,
+        "voice": "en-US-AvaNeural",
+        "text": "I'd like to go on a guided visit, too."
+      },
+      {
+        "startSeconds": 124.148,
+        "endSeconds": 126.38,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 127.13,
+        "endSeconds": 129.17,
+        "voice": "en-US-AvaNeural",
+        "text": "Was the wildlife center busy?"
+      },
+      {
+        "startSeconds": 129.4,
+        "endSeconds": 139.528,
+        "voice": "en-US-AndrewNeural",
+        "text": "Quite busy in the morning. Things were quieter after lunch, and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance."
+      },
+      {
+        "startSeconds": 139.758,
+        "endSeconds": 142.398,
+        "voice": "en-US-AvaNeural",
+        "text": "I'd like to go on a guided visit, too."
+      },
+      {
+        "startSeconds": 146.398,
+        "endSeconds": 152.23,
+        "voice": "en-US-JennyNeural",
+        "text": "Question four. You hear two friends discussing a new activity."
+      },
+      {
+        "startSeconds": 154.23,
+        "endSeconds": 156.486,
+        "voice": "en-US-AndrewNeural",
+        "text": "So, would you try kayaking again?"
+      },
+      {
+        "startSeconds": 156.716,
+        "endSeconds": 168.428,
+        "voice": "en-US-AvaNeural",
+        "text": "Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time."
+      },
+      {
+        "startSeconds": 170.428,
+        "endSeconds": 172.66,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 173.41,
+        "endSeconds": 175.666,
+        "voice": "en-US-AndrewNeural",
+        "text": "So, would you try kayaking again?"
+      },
+      {
+        "startSeconds": 175.896,
+        "endSeconds": 187.608,
+        "voice": "en-US-AvaNeural",
+        "text": "Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time."
+      },
+      {
+        "startSeconds": 191.608,
+        "endSeconds": 194.32,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-b-l2.mp3": {
+    "audio": "audio/b1-practice-b-l2.mp3",
+    "sha256": "722d30cb9e2bc267c27979b288266add284b0c351bdfcdc8c79f652a323dbf09",
+    "durationSeconds": 79.21,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 5,
+    "script": [
+      {
+        "cue": null,
+        "turns": [
+          [
+            "B",
+            "Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at ten thirty, but new volunteers should arrive by ten fifteen for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 16.088,
+        "endSeconds": 41.552,
+        "voice": "en-US-AndrewNeural",
+        "text": "Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at ten thirty, but new volunteers should arrive by ten fifteen for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead."
+      },
+      {
+        "startSeconds": 43.552,
+        "endSeconds": 45.784,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 46.534,
+        "endSeconds": 71.998,
+        "voice": "en-US-AndrewNeural",
+        "text": "Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at ten thirty, but new volunteers should arrive by ten fifteen for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead."
+      },
+      {
+        "startSeconds": 75.998,
+        "endSeconds": 78.71,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  },
+  "b1-practice-b-l3.mp3": {
+    "audio": "audio/b1-practice-b-l3.mp3",
+    "sha256": "5bd7fb3ba49c322b920d57bbcf5da27e02a6cf45d3ca19c64e3f24754963a178",
+    "durationSeconds": 115.954,
+    "recordingGroups": 1,
+    "playbacksPerGroup": 2,
+    "questionCount": 4,
+    "script": [
+      {
+        "cue": [
+          "Narrator",
+          "You will hear an interview with a student who started a quiet lunch club."
+        ],
+        "turns": [
+          [
+            "A",
+            "Why did you start the lunch club, Nico?"
+          ],
+          [
+            "B",
+            "I used to spend every break finishing homework. After a while I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too."
+          ],
+          [
+            "A",
+            "Was the club popular at first?"
+          ],
+          [
+            "B",
+            "Only three people came on the first day. The original room was right by the cafeteria and it was so noisy that we had to move. The library gave us a corner, and after that a lot more people joined."
+          ],
+          [
+            "A",
+            "Will you change anything next month?"
+          ],
+          [
+            "B",
+            "Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose."
+          ]
+        ]
+      }
+    ],
+    "spokenSequence": [
+      {
+        "startSeconds": 0.3,
+        "endSeconds": 3.588,
+        "voice": "en-US-JennyNeural",
+        "text": "Take a moment to look at the questions."
+      },
+      {
+        "startSeconds": 13.588,
+        "endSeconds": 18.388,
+        "voice": "en-US-JennyNeural",
+        "text": "You will hear an interview with a student who started a quiet lunch club."
+      },
+      {
+        "startSeconds": 20.388,
+        "endSeconds": 22.788,
+        "voice": "en-US-AvaNeural",
+        "text": "Why did you start the lunch club, Nico?"
+      },
+      {
+        "startSeconds": 23.018,
+        "endSeconds": 32.978,
+        "voice": "en-US-AndrewNeural",
+        "text": "I used to spend every break finishing homework. After a while I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too."
+      },
+      {
+        "startSeconds": 33.208,
+        "endSeconds": 35.392,
+        "voice": "en-US-AvaNeural",
+        "text": "Was the club popular at first?"
+      },
+      {
+        "startSeconds": 35.622,
+        "endSeconds": 47.382,
+        "voice": "en-US-AndrewNeural",
+        "text": "Only three people came on the first day. The original room was right by the cafeteria and it was so noisy that we had to move. The library gave us a corner, and after that a lot more people joined."
+      },
+      {
+        "startSeconds": 47.612,
+        "endSeconds": 49.868,
+        "voice": "en-US-AvaNeural",
+        "text": "Will you change anything next month?"
+      },
+      {
+        "startSeconds": 50.098,
+        "endSeconds": 62.074,
+        "voice": "en-US-AndrewNeural",
+        "text": "Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose."
+      },
+      {
+        "startSeconds": 64.074,
+        "endSeconds": 66.306,
+        "voice": "en-US-JennyNeural",
+        "text": "Now listen again."
+      },
+      {
+        "startSeconds": 67.056,
+        "endSeconds": 69.456,
+        "voice": "en-US-AvaNeural",
+        "text": "Why did you start the lunch club, Nico?"
+      },
+      {
+        "startSeconds": 69.686,
+        "endSeconds": 79.646,
+        "voice": "en-US-AndrewNeural",
+        "text": "I used to spend every break finishing homework. After a while I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too."
+      },
+      {
+        "startSeconds": 79.876,
+        "endSeconds": 82.06,
+        "voice": "en-US-AvaNeural",
+        "text": "Was the club popular at first?"
+      },
+      {
+        "startSeconds": 82.29,
+        "endSeconds": 94.05,
+        "voice": "en-US-AndrewNeural",
+        "text": "Only three people came on the first day. The original room was right by the cafeteria and it was so noisy that we had to move. The library gave us a corner, and after that a lot more people joined."
+      },
+      {
+        "startSeconds": 94.28,
+        "endSeconds": 96.536,
+        "voice": "en-US-AvaNeural",
+        "text": "Will you change anything next month?"
+      },
+      {
+        "startSeconds": 96.766,
+        "endSeconds": 108.742,
+        "voice": "en-US-AndrewNeural",
+        "text": "Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose."
+      },
+      {
+        "startSeconds": 112.742,
+        "endSeconds": 115.454,
+        "voice": "en-US-JennyNeural",
+        "text": "That is the end of this part."
+      }
+    ]
+  }
+}

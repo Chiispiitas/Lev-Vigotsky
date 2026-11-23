@@ -1,0 +1,265 @@
+{
+  "id": "a1-practice-a",
+  "level": "A1",
+  "variation": "A",
+  "title": "A1 Practice",
+  "minutes": 30,
+  "parts": [
+    {
+      "id": "r1",
+      "title": "Signs and messages",
+      "instructions": "Read each notice or message. Choose what it means.",
+      "skill": "reading",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "prompt": "What does the text say?",
+          "options": [
+            "The film is in the morning.",
+            "Students should wait by the library door.",
+            "Students should go to the gym."
+          ],
+          "answer": "Students should wait by the library door.",
+          "explanation": "The notice names the library door as the place to wait.",
+          "context": "FRIDAY FILM CLUB\nToday’s film starts at 4:30. Please wait by the library door."
+        },
+        {
+          "id": "r1-q2",
+          "prompt": "What does the text say?",
+          "options": [
+            "You can try on a jacket here.",
+            "You must pay outside.",
+            "The stall only sells shoes."
+          ],
+          "answer": "You can try on a jacket here.",
+          "explanation": "The sign says you can try on jackets at the stall.",
+          "context": "MARKET CLOTHES STALL\nTry on jackets here. Pay at the desk by the door."
+        },
+        {
+          "id": "r1-q3",
+          "prompt": "What does the text say?",
+          "options": [
+            "Alex wants to change the day of the party.",
+            "Alex needs to know how many people are coming.",
+            "Alex asks Emi to bring sandwiches."
+          ],
+          "answer": "Alex needs to know how many people are coming.",
+          "explanation": "Alex asks Emi for the number of guests.",
+          "context": "Hi Emi, I can bring sandwiches to your party. Please tell me how many people are coming. — Alex"
+        },
+        {
+          "id": "r1-q4",
+          "prompt": "What does the text say?",
+          "options": [
+            "You must pay to enter.",
+            "Only small bags go in the lockers.",
+            "Large bags go in the lockers."
+          ],
+          "answer": "Large bags go in the lockers.",
+          "explanation": "The museum asks visitors to put large bags in lockers.",
+          "context": "CITY MUSEUM\nFree entry. Put large bags in the lockers."
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Three homes",
+      "instructions": "Read about the homes. Choose the right home for each question.",
+      "skill": "reading",
+      "passage": "A. Ana’s home\nI live on the fourth floor. There are two bedrooms. There isn’t a garden, but we have a big balcony. I can see the city from it.\n\nB. Ben’s home\nOur house has a garden. We eat lunch outside when it is sunny. The kitchen is small, and there are three bedrooms.\n\nC. Camila’s home\nI live in a small apartment near the park. There is one bedroom. I walk to school in five minutes. My favorite room is the kitchen.",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "prompt": "Who can walk to school in five minutes?",
+          "options": [
+            "Ana",
+            "Ben",
+            "Camila"
+          ],
+          "answer": "Camila",
+          "explanation": "Camila says she walks to school in five minutes."
+        },
+        {
+          "id": "r2-q2",
+          "prompt": "Who has three bedrooms at home?",
+          "options": [
+            "Ana",
+            "Ben",
+            "Camila"
+          ],
+          "answer": "Ben",
+          "explanation": "Ben’s house has three bedrooms."
+        },
+        {
+          "id": "r2-q3",
+          "prompt": "Who can see the city from a balcony?",
+          "options": [
+            "Ana",
+            "Ben",
+            "Camila"
+          ],
+          "answer": "Ana",
+          "explanation": "Ana sees the city from her balcony."
+        },
+        {
+          "id": "r2-q4",
+          "prompt": "Who eats in the garden on sunny days?",
+          "options": [
+            "Ana",
+            "Ben",
+            "Camila"
+          ],
+          "answer": "Ben",
+          "explanation": "Ben’s family eats outside when it is sunny."
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "A birthday message",
+      "instructions": "Choose one word for each numbered gap.",
+      "skill": "reading",
+      "passage": "Hi Sofia,\nMy birthday is (1) ____ Sunday. You can get here (2) ____ bus. Look for the bus stop in front (3) ____ the supermarket. My house is next to it. There (4) ____ a big blue door. See you at two!\nDaniel",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "prompt": "Gap 1",
+          "options": [
+            "at",
+            "on",
+            "in"
+          ],
+          "answer": "on",
+          "explanation": "Use on with a day of the week."
+        },
+        {
+          "id": "r3-q2",
+          "prompt": "Gap 2",
+          "options": [
+            "to",
+            "with",
+            "by"
+          ],
+          "answer": "by",
+          "explanation": "Use by before a means of transport, such as by bus."
+        },
+        {
+          "id": "r3-q3",
+          "prompt": "Gap 3",
+          "options": [
+            "of",
+            "at",
+            "in"
+          ],
+          "answer": "of",
+          "explanation": "The preposition phrase is in front of."
+        },
+        {
+          "id": "r3-q4",
+          "prompt": "Gap 4",
+          "options": [
+            "are",
+            "is",
+            "have"
+          ],
+          "answer": "is",
+          "explanation": "Use there is for one door."
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "title": "Four short conversations",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/a1-practice-a-l1.mp3",
+      "transcript": "Narrator: Question one.\nMaya: Is your birthday party on Friday, Leo?\nBen: I wanted Friday, but my sister works then. It's on Saturday.\nMaya: Great, see you on Saturday!\n\nNarrator: Question two.\nMaya: Can I try on this black jacket?\nBen: Sorry, we only have it in blue in your size.\nMaya: That's fine. I'll try the blue one.\n\nNarrator: Question three.\nBen: Where are my keys? Are they on the kitchen table?\nMaya: No, they're by the door, on the little chair.\nBen: Oh, I see them now.\n\nNarrator: Question four.\nMaya: Can you play the guitar at the school show?\nBen: I can't play the guitar, but I can sing.\nMaya: Good. We need a singer.",
+      "questions": [
+        {
+          "id": "l1-q1",
+          "prompt": "When is Leo’s party?",
+          "options": [
+            "Saturday",
+            "Friday",
+            "Sunday"
+          ],
+          "answer": "Saturday",
+          "explanation": "Friday was Leo’s first idea. The party is on Saturday."
+        },
+        {
+          "id": "l1-q2",
+          "prompt": "Which jacket does the customer try on?",
+          "options": [
+            "The black one",
+            "The blue one",
+            "The green one"
+          ],
+          "answer": "The blue one",
+          "explanation": "The shop has the blue jacket in her size."
+        },
+        {
+          "id": "l1-q3",
+          "prompt": "Where are the keys?",
+          "options": [
+            "On the kitchen table",
+            "In a bag",
+            "On a chair"
+          ],
+          "answer": "On a chair",
+          "explanation": "They’re on the little chair by the door."
+        },
+        {
+          "id": "l1-q4",
+          "prompt": "What can the boy do at the show?",
+          "options": [
+            "Play the guitar",
+            "Sing",
+            "Dance"
+          ],
+          "answer": "Sing",
+          "explanation": "He says that he can sing."
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "title": "A visit to the park",
+      "instructions": "Listen twice. Write one word or a number in each gap.",
+      "skill": "listening",
+      "audio": "audio/a1-practice-a-l2.mp3",
+      "transcript": "Maya: Hi, this is Mia. Here are the plans for our visit to the park on Sunday. Meet me at the bus stop at ten. We can take bus six. Please bring some water because it is hot today and it looks like tomorrow will be hot too. We can buy lunch at the park. There is a small café next to the gate. See you at ten!",
+      "questions": [
+        {
+          "id": "l2-q1",
+          "prompt": "Day of the visit: ____",
+          "answer": "Sunday",
+          "explanation": "Mia says the visit is on Sunday."
+        },
+        {
+          "id": "l2-q2",
+          "prompt": "Meet at ____ o’clock.",
+          "answer": "10",
+          "explanation": "Mia says to meet at ten.",
+          "accepted": [
+            "ten"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "prompt": "Bus number: ____",
+          "answer": "6",
+          "explanation": "They are taking bus six.",
+          "accepted": [
+            "six"
+          ]
+        },
+        {
+          "id": "l2-q4",
+          "prompt": "Bring some ____.",
+          "answer": "water",
+          "explanation": "Mia asks everyone to bring water."
+        }
+      ]
+    }
+  ]
+}

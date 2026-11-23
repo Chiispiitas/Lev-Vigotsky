@@ -1,0 +1,460 @@
+{
+  "id": "b1-practice-b",
+  "level": "B1",
+  "variation": "B",
+  "title": "B1 Practice",
+  "minutes": 50,
+  "parts": [
+    {
+      "id": "r1",
+      "title": "Signs and messages",
+      "instructions": "Read each notice or message. Choose what it means.",
+      "skill": "reading",
+      "questions": [
+        {
+          "id": "r1-q1",
+          "prompt": "What does the text say?",
+          "options": [
+            "The teacher can suggest easier movements.",
+            "Everyone has to exercise in the same way.",
+            "Tell the teacher about pain only at the end."
+          ],
+          "answer": "The teacher can suggest easier movements.",
+          "explanation": "There is a gentler version and the notice asks students to tell the teacher early.",
+          "context": "DANCE CLASS\nIf your knee or ankle hurts, let the teacher know before the warm-up. There is a gentler version of each exercise."
+        },
+        {
+          "id": "r1-q2",
+          "prompt": "What does the text say?",
+          "options": [
+            "Dani thinks Thursday’s work should be discussed and adjusted.",
+            "Dani wants to add more tasks on Thursday.",
+            "Dani has already finished Thursday’s tasks."
+          ],
+          "answer": "Dani thinks Thursday’s work should be discussed and adjusted.",
+          "explanation": "Dani proposes a discussion because the planned work looks excessive.",
+          "context": "Hi Nia, I’ve read your study plan. Can we meet at lunch to talk about the amount of work for Thursday? It looks like too much for one evening. — Dani"
+        },
+        {
+          "id": "r1-q3",
+          "prompt": "What does the text say?",
+          "options": [
+            "Cyclists may ride across if the bridge is quiet.",
+            "Cyclists may cross the bridge on foot.",
+            "The bridge is closed to everyone with a bike."
+          ],
+          "answer": "Cyclists may cross the bridge on foot.",
+          "explanation": "Cyclists can cross if they get off and walk their bikes.",
+          "context": "LAKESIDE PATH\nThe bridge is open to walkers, but cyclists must get off their bikes until they reach the other side."
+        },
+        {
+          "id": "r1-q4",
+          "prompt": "What does the text say?",
+          "options": [
+            "Jo will keep Alex’s binoculars for another trip.",
+            "Jo wants Alex to bring more binoculars tomorrow.",
+            "Jo can return Alex’s binoculars before the trip."
+          ],
+          "answer": "Jo can return Alex’s binoculars before the trip.",
+          "explanation": "Jo has another pair to use on Sunday and will return Alex’s tomorrow.",
+          "context": "Hi Alex, thanks for lending me your binoculars. I’m going back to the lake on Sunday. This time I’ll use my sister’s pair, so you can have yours back tomorrow. — Jo"
+        },
+        {
+          "id": "r1-q5",
+          "prompt": "What does the text say?",
+          "options": [
+            "In the afternoon, you can use the room if you reserve it.",
+            "Drop-in activities continue until the evening.",
+            "The room is unavailable after midday."
+          ],
+          "answer": "In the afternoon, you can use the room if you reserve it.",
+          "explanation": "The afternoon condition is a reservation at reception.",
+          "context": "COMMUNITY ROOM\nDrop-in activities end at noon. To use the room in the afternoon, ask at reception to reserve a time."
+        }
+      ]
+    },
+    {
+      "id": "r2",
+      "title": "Activities for different needs",
+      "instructions": "Match each person to a suitable option. Some options are extra.",
+      "skill": "reading",
+      "passage": "A. Park Walkers\nJoin a Sunday morning walk in a park. The guide teaches newcomers how to follow trail signs. All activities are outdoors and no experience is needed.\n\nB. Wildlife Watch\nHelp university researchers count butterflies on Tuesday afternoons. You need to recognize several familiar species. Bring a notebook to record your observations.\n\nC. Study Reset\nSpend twenty minutes in the school library on Friday at lunch. Try a short breathing exercise and talk about how to switch off your phone before studying. No change of clothes is needed.\n\nD. Paddle Club\nPractice kayaking on Wednesday evenings. All boats and safety equipment are included. This session is for people who have already done a beginner course.\n\nE. Bike Repair\nAn indoor weekend class about fixing simple bike problems. You do not have to bring a bike to the workshop.\n\nF. Balcony Garden\nGrow herbs at home with a beginner group. The class meets on Wednesday mornings and provides all seeds.",
+      "questions": [
+        {
+          "id": "r2-q1",
+          "prompt": "Bea is free on Tuesdays. She can recognize a number of butterflies and wants to record data.",
+          "options": [
+            "Park Walkers",
+            "Wildlife Watch",
+            "Study Reset",
+            "Paddle Club",
+            "Bike Repair",
+            "Balcony Garden"
+          ],
+          "answer": "Wildlife Watch",
+          "explanation": "This research group counts butterflies on Tuesdays and expects some identification skills."
+        },
+        {
+          "id": "r2-q2",
+          "prompt": "Arturo wants to learn about outdoor signs on a Sunday. He is new to walking in parks.",
+          "options": [
+            "Park Walkers",
+            "Wildlife Watch",
+            "Study Reset",
+            "Paddle Club",
+            "Bike Repair",
+            "Balcony Garden"
+          ],
+          "answer": "Park Walkers",
+          "explanation": "A Sunday guide teaches newcomers how to follow trail signs."
+        },
+        {
+          "id": "r2-q3",
+          "prompt": "Omar finished a beginner kayaking course. He can train in the evening but owns no gear.",
+          "options": [
+            "Park Walkers",
+            "Wildlife Watch",
+            "Study Reset",
+            "Paddle Club",
+            "Bike Repair",
+            "Balcony Garden"
+          ],
+          "answer": "Paddle Club",
+          "explanation": "This evening club is for people with a beginner course and provides gear."
+        },
+        {
+          "id": "r2-q4",
+          "prompt": "Lina wants indoor help with study habits. She can spare only a few minutes at lunch.",
+          "options": [
+            "Park Walkers",
+            "Wildlife Watch",
+            "Study Reset",
+            "Paddle Club",
+            "Bike Repair",
+            "Balcony Garden"
+          ],
+          "answer": "Study Reset",
+          "explanation": "The indoor study session is twenty minutes and meets at lunchtime."
+        }
+      ]
+    },
+    {
+      "id": "r3",
+      "title": "A different kind of lunch break",
+      "instructions": "Read the text and choose one answer for each question.",
+      "skill": "reading",
+      "passage": "For most of the school year, I ate lunch at my desk so I could start my homework before the afternoon classes. I felt pleased when I got an exercise done early, but I often lost concentration in my last lesson. My friend Ana usually went outside. One day she asked me to join her, and I decided to test her routine for a week.\n\nAt first, leaving my work behind was harder than I expected. I kept thinking about assignments that were due. On Tuesday, I made a list of my tasks before I left the classroom. Once I could see what I needed to do later, it was easier to relax during the break. Ana and I sat near the soccer field and talked about everything except schoolwork. I noticed that I returned to class with more energy.\n\nThe experiment didn’t make my homework shorter, so I had to be more organized in the evening. I still work through lunch sometimes, especially when a deadline is close. But now I know that I can do better work if I have had a proper pause. I also look forward to seeing Ana, which is a good reason to keep taking the break.",
+      "questions": [
+        {
+          "id": "r3-q1",
+          "prompt": "Why did the writer try going outside at lunch?",
+          "options": [
+            "The writer wanted to test Ana’s routine.",
+            "The school stopped allowing lunch at desks.",
+            "Ana needed help with an evening task.",
+            "The writer had finished all homework."
+          ],
+          "answer": "The writer wanted to test Ana’s routine.",
+          "explanation": "Ana invited the writer to join, so the writer tried her method for a week."
+        },
+        {
+          "id": "r3-q2",
+          "prompt": "How did the list help?",
+          "options": [
+            "It gave the writer more homework to do.",
+            "It helped the writer stop worrying about what to do later.",
+            "It helped Ana choose a place to eat.",
+            "It meant that the writer could finish all work before lunch."
+          ],
+          "answer": "It helped the writer stop worrying about what to do later.",
+          "explanation": "Seeing the work written down made it easier to relax."
+        },
+        {
+          "id": "r3-q3",
+          "prompt": "What did the writer notice in afternoon class?",
+          "options": [
+            "It became much longer.",
+            "There were more assignments.",
+            "The writer felt more energetic.",
+            "Ana no longer joined."
+          ],
+          "answer": "The writer felt more energetic.",
+          "explanation": "The writer returned with more energy."
+        },
+        {
+          "id": "r3-q4",
+          "prompt": "Which lesson did the writer take from the week?",
+          "options": [
+            "Taking a break can improve the way you work.",
+            "The best time to study is always lunchtime.",
+            "Writing lists makes homework shorter.",
+            "Friends should always do homework together."
+          ],
+          "answer": "Taking a break can improve the way you work.",
+          "explanation": "The writer concludes that a proper pause can make later work better."
+        }
+      ]
+    },
+    {
+      "id": "r4",
+      "title": "A morning on the trail",
+      "instructions": "Four sentences are missing. Choose one sentence for each gap. There is one extra sentence.",
+      "skill": "reading",
+      "passage": "I signed up for the park project because I wanted to learn more about local birds. On the first day, the guide explained that the project also repaired paths after storms. [1] I decided to help with that work too.\n\nMy group was given a fairly long path to check. It seemed like a lot of work until the guide suggested a plan. [2] This meant that we could note the problems as we went, without missing any part of the trail.\n\nThere was a shower after lunch and we thought we might have to stop. [3] We could continue the work without getting too wet.\n\nThe next week, we came back to work on the entrance. [4] A family with a small child was able to cross without stepping into a puddle.",
+      "questions": [
+        {
+          "id": "r4-q1",
+          "prompt": "Gap 1",
+          "options": [
+            "Once we had spread the wood chips, people could walk over the muddy ground again.",
+            "I realized that we could also make the path easier for other people to use.",
+            "I stopped taking notes because I knew all the bird names.",
+            "Luckily, the trees kept most of the rain off the main path.",
+            "We divided it into sections and checked one section at a time."
+          ],
+          "answer": "I realized that we could also make the path easier for other people to use.",
+          "explanation": "The guide's explanation helped the narrator see a second way to contribute."
+        },
+        {
+          "id": "r4-q2",
+          "prompt": "Gap 2",
+          "options": [
+            "Once we had spread the wood chips, people could walk over the muddy ground again.",
+            "I realized that we could also make the path easier for other people to use.",
+            "I stopped taking notes because I knew all the bird names.",
+            "Luckily, the trees kept most of the rain off the main path.",
+            "We divided it into sections and checked one section at a time."
+          ],
+          "answer": "We divided it into sections and checked one section at a time.",
+          "explanation": "The next sentence refers to the section-by-section check."
+        },
+        {
+          "id": "r4-q3",
+          "prompt": "Gap 3",
+          "options": [
+            "Once we had spread the wood chips, people could walk over the muddy ground again.",
+            "I realized that we could also make the path easier for other people to use.",
+            "I stopped taking notes because I knew all the bird names.",
+            "Luckily, the trees kept most of the rain off the main path.",
+            "We divided it into sections and checked one section at a time."
+          ],
+          "answer": "Luckily, the trees kept most of the rain off the main path.",
+          "explanation": "Tree cover explains why they could continue in the rain."
+        },
+        {
+          "id": "r4-q4",
+          "prompt": "Gap 4",
+          "options": [
+            "Once we had spread the wood chips, people could walk over the muddy ground again.",
+            "I realized that we could also make the path easier for other people to use.",
+            "I stopped taking notes because I knew all the bird names.",
+            "Luckily, the trees kept most of the rain off the main path.",
+            "We divided it into sections and checked one section at a time."
+          ],
+          "answer": "Once we had spread the wood chips, people could walk over the muddy ground again.",
+          "explanation": "The repaired ground explains how the family crossed without stepping in water."
+        }
+      ]
+    },
+    {
+      "id": "r5",
+      "title": "An outdoor plan",
+      "instructions": "Write one word in each numbered gap.",
+      "skill": "reading",
+      "passage": "Hi Jules,\nHave you ever (1) ____ climbing? I tried it indoors last week, and now I’m looking at an outdoor course. My friend Lena has been climbing (2) ____ three months. They have an online discount, so let’s reserve two places (3) ____ the website. If I were you, I (4) ____ check which equipment is included before booking. Are you free this Saturday?\nRob",
+      "questions": [
+        {
+          "id": "r5-q1",
+          "prompt": "Gap 1",
+          "answer": "tried",
+          "explanation": "Use the participle tried. Been and done are also possible here.",
+          "accepted": [
+            "been",
+            "done"
+          ]
+        },
+        {
+          "id": "r5-q2",
+          "prompt": "Gap 2",
+          "answer": "for",
+          "explanation": "Use for with a period of time."
+        },
+        {
+          "id": "r5-q3",
+          "prompt": "Gap 3",
+          "answer": "on",
+          "accepted": [
+            "through",
+            "via",
+            "using",
+            "from"
+          ],
+          "explanation": "On the website means using the site to book. Equivalent one-word forms are accepted."
+        },
+        {
+          "id": "r5-q4",
+          "prompt": "Gap 4",
+          "answer": "would",
+          "explanation": "If I were you, I would gives advice about a hypothetical situation.",
+          "accepted": [
+            "might",
+            "could"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "l1",
+      "title": "Short conversations",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/b1-practice-b-l1.mp3",
+      "transcript": "Narrator: Question one. You hear two friends talking after lunch.\nMaya: Is your headache any better, Sam?\nBen: A little. I thought it was because I hadn't eaten enough, but I had lunch and it didn't help. I feel better now that I've had some water.\nMaya: You should take a bottle with you next time.\n\nNarrator: Question two. You hear two people preparing a talk.\nBen: Why don't we practice the whole talk once more?\nMaya: We know most of it. I'd rather spend the time fixing the last slide. It doesn't explain what the audience should do next.\nBen: You're right. Let's change the final message now.\n\nNarrator: Question three. You hear two friends talking about a weekend outdoors.\nMaya: Was the wildlife center busy?\nBen: Quite busy in the morning. Things were quieter after lunch, and a volunteer showed us how they help injured birds. That was more interesting than seeing the birds from a distance.\nMaya: I'd like to go on a guided visit, too.\n\nNarrator: Question four. You hear two friends discussing a new activity.\nBen: So, would you try kayaking again?\nMaya: Probably, but only on a calm river. I liked being on the water, but I spent the whole time worrying because our boat was moving so fast. I'd choose an easier trip next time.",
+      "questions": [
+        {
+          "id": "l1-q1",
+          "prompt": "What helped Sam feel better?",
+          "options": [
+            "Eating lunch",
+            "Taking a nap",
+            "Drinking water"
+          ],
+          "answer": "Drinking water",
+          "explanation": "Lunch did not help. He felt better after drinking water."
+        },
+        {
+          "id": "l1-q2",
+          "prompt": "What do they decide to do next?",
+          "options": [
+            "Change the last slide",
+            "Give the entire talk again",
+            "Ask the audience for suggestions"
+          ],
+          "answer": "Change the last slide",
+          "explanation": "They decide to clarify the final message."
+        },
+        {
+          "id": "l1-q3",
+          "prompt": "What was the visitor’s favorite part?",
+          "options": [
+            "Seeing birds from far away",
+            "Learning how injured birds are helped",
+            "Arriving before lunch"
+          ],
+          "answer": "Learning how injured birds are helped",
+          "explanation": "He thought the volunteer’s explanation was more interesting."
+        },
+        {
+          "id": "l1-q4",
+          "prompt": "What would the woman change on another trip?",
+          "options": [
+            "She would try calmer water.",
+            "She would use a faster boat.",
+            "She would switch to a different sport."
+          ],
+          "answer": "She would try calmer water.",
+          "explanation": "She liked being on the water but would choose a calmer river."
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "title": "A river cleanup",
+      "instructions": "Listen twice. Write one word or a number in each gap.",
+      "skill": "listening",
+      "audio": "audio/b1-practice-b-l2.mp3",
+      "transcript": "Ben: Here is the plan for our river cleanup this Sunday. We will meet at the bridge, not at the park entrance. The regular group starts at ten thirty, but new volunteers should arrive by ten fifteen for a short introduction. Please bring boots. The project will give you bags and gloves. We will collect litter before lunch and record our results afterward. If the weather is very wet, we'll move to the school and make posters instead.",
+      "questions": [
+        {
+          "id": "l2-q1",
+          "prompt": "Meeting point: the ____.",
+          "answer": "bridge",
+          "explanation": "Volunteers meet at the bridge rather than at the park entrance."
+        },
+        {
+          "id": "l2-q2",
+          "prompt": "New volunteers should arrive by ____.",
+          "answer": "10:15",
+          "explanation": "New volunteers arrive by ten fifteen, before the rest of the group starts.",
+          "accepted": [
+            "10.15",
+            "ten fifteen",
+            "quarter past ten"
+          ]
+        },
+        {
+          "id": "l2-q3",
+          "prompt": "Bring ____.",
+          "answer": "boots",
+          "explanation": "The project provides bags and gloves. Volunteers bring boots."
+        },
+        {
+          "id": "l2-q4",
+          "prompt": "Before lunch, collect ____.",
+          "answer": "litter",
+          "explanation": "The main morning job is collecting litter."
+        },
+        {
+          "id": "l2-q5",
+          "prompt": "Wet-weather location: the ____.",
+          "answer": "school",
+          "explanation": "If it is very wet, volunteers make posters at the school."
+        }
+      ]
+    },
+    {
+      "id": "l3",
+      "title": "An interview about a challenge",
+      "instructions": "Read the questions. Listen twice and choose one answer for each question.",
+      "skill": "listening",
+      "audio": "audio/b1-practice-b-l3.mp3",
+      "transcript": "Narrator: You will hear an interview with a student who started a quiet lunch club.\nMaya: Why did you start the lunch club, Nico?\nBen: I used to spend every break finishing homework. After a while I noticed I couldn't concentrate in the afternoon. I wanted a proper break and thought others might need one too.\nMaya: Was the club popular at first?\nBen: Only three people came on the first day. The original room was right by the cafeteria and it was so noisy that we had to move. The library gave us a corner, and after that a lot more people joined.\nMaya: Will you change anything next month?\nBen: Some people want us to add activities every day, but a long list of activities might make it feel like another lesson. I'd rather keep the club relaxed. We can offer games or books and let people choose.",
+      "questions": [
+        {
+          "id": "l3-q1",
+          "prompt": "Why did Nico start the club?",
+          "options": [
+            "A teacher asked him to offer activities.",
+            "He wanted to take a proper break.",
+            "He needed somewhere to finish homework."
+          ],
+          "answer": "He wanted to take a proper break.",
+          "explanation": "He noticed working through breaks hurt his concentration."
+        },
+        {
+          "id": "l3-q2",
+          "prompt": "Why did they change rooms?",
+          "options": [
+            "Their first room was too noisy.",
+            "They needed a room with more seats.",
+            "The cafeteria staff needed the room."
+          ],
+          "answer": "Their first room was too noisy.",
+          "explanation": "The room beside the cafeteria was very noisy."
+        },
+        {
+          "id": "l3-q3",
+          "prompt": "What happened after the move?",
+          "options": [
+            "The club got more visitors.",
+            "The club started meeting less often.",
+            "The cafeteria closed."
+          ],
+          "answer": "The club got more visitors.",
+          "explanation": "More students joined after they moved into the library."
+        },
+        {
+          "id": "l3-q4",
+          "prompt": "What does Nico want for the next month?",
+          "options": [
+            "An activity that everyone must do",
+            "A new long list of lessons",
+            "A relaxed club with choices"
+          ],
+          "answer": "A relaxed club with choices",
+          "explanation": "Nico wants to keep it relaxed and let members choose."
+        }
+      ]
+    }
+  ]
+}

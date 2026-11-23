@@ -1,0 +1,344 @@
+{
+  "level": "A1",
+  "grade": "10th EGB",
+  "scope": "Personal Best A2, Units 5–6, Student’s Book pp. 40–57. The practice papers use these themes and core language at A1.",
+  "topics": [
+    {
+      "title": "Celebrations and clothes",
+      "pages": "Personal Best A2 pp. 40–43",
+      "words": [
+        "birthday",
+        "party",
+        "invitation",
+        "guest",
+        "gift",
+        "balloons",
+        "cake",
+        "sandwiches",
+        "shirt",
+        "jacket",
+        "dress",
+        "jeans",
+        "pants",
+        "skirt",
+        "shoes",
+        "boots",
+        "small",
+        "medium",
+        "large",
+        "size",
+        "wear",
+        "try on",
+        "pay",
+        "price"
+      ],
+      "grammar": [
+        "Present simple for routines and facts: He wears a jacket to work.",
+        "Present continuous for actions now: He is wearing a blue jacket.",
+        "Days, dates and time: on Saturday, on May 12, at four."
+      ]
+    },
+    {
+      "title": "Hobbies and shopping",
+      "pages": "Personal Best A2 pp. 44–47",
+      "words": [
+        "sing",
+        "dance",
+        "draw",
+        "paint",
+        "swim",
+        "cook",
+        "play the guitar",
+        "take photos",
+        "practice",
+        "watch a film",
+        "go shopping",
+        "size",
+        "cash",
+        "by card",
+        "changing room"
+      ],
+      "grammar": [
+        "Can and can’t for ability: I can sing. Can you play the guitar?",
+        "Polite shop questions: Can I try it on? Do you have it in blue?",
+        "Simple questions with be, do and can."
+      ]
+    },
+    {
+      "title": "Homes and places in town",
+      "pages": "Personal Best A2 pp. 48–55",
+      "words": [
+        "home",
+        "apartment",
+        "house",
+        "bedroom",
+        "bathroom",
+        "kitchen",
+        "living room",
+        "garden",
+        "yard",
+        "balcony",
+        "floor",
+        "chair",
+        "sofa",
+        "desk",
+        "lamp",
+        "window",
+        "park",
+        "library",
+        "museum",
+        "market",
+        "station",
+        "bus stop",
+        "supermarket",
+        "street",
+        "near",
+        "across from"
+      ],
+      "grammar": [
+        "There is and there are: There is a desk. There are two chairs.",
+        "Some and any: There are some shops. Are there any parks?",
+        "Place phrases: next to, in front of, behind, under, between and across from."
+      ]
+    },
+    {
+      "title": "Quick verb review",
+      "pages": "Class notes and verb list",
+      "words": [
+        "be / was or were",
+        "have / had",
+        "go / went",
+        "take / took",
+        "see / saw",
+        "make / made",
+        "buy / bought",
+        "find / found"
+      ],
+      "grammar": [
+        "Recognize common present and simple past forms in short everyday messages.",
+        "Use do/does, am/is/are and can to form basic questions.",
+        "For the wider class tense workshop, use your separate class notes. The advanced perfect and perfect continuous forms are outside these A1 mocks."
+      ]
+    }
+  ],
+  "drills": [
+    {
+      "id": "a1-language",
+      "title": "Clothes, hobbies and routines",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "a1-language-1",
+          "prompt": "I usually ____ jeans to school.",
+          "options": [
+            "wear",
+            "am wearing",
+            "wears"
+          ],
+          "answer": "wear",
+          "explanation": "Usually describes a routine. Use wear with I."
+        },
+        {
+          "id": "a1-language-2",
+          "prompt": "Look! Sofia ____ a green shirt.",
+          "options": [
+            "wear",
+            "wears",
+            "is wearing"
+          ],
+          "answer": "is wearing",
+          "explanation": "Look draws attention to what Sofia is wearing now."
+        },
+        {
+          "id": "a1-language-3",
+          "prompt": "Pedro can ____ the piano.",
+          "options": [
+            "play",
+            "plays",
+            "playing"
+          ],
+          "answer": "play",
+          "explanation": "After can, use the base form."
+        },
+        {
+          "id": "a1-language-4",
+          "prompt": "The party is ____ June 21.",
+          "options": [
+            "at",
+            "on",
+            "in"
+          ],
+          "answer": "on",
+          "explanation": "Use on with a full date."
+        },
+        {
+          "id": "a1-language-5",
+          "prompt": "At the shop, which question asks about size?",
+          "options": [
+            "Can I pay by card?",
+            "Do you have these in size 39?",
+            "Is the shop open tomorrow?"
+          ],
+          "answer": "Do you have these in size 39?",
+          "explanation": "Size 39 asks about the fit of the item."
+        },
+        {
+          "id": "a1-language-6",
+          "prompt": "At a clothes shop, ‘Can I try it on?’ means ____.",
+          "options": [
+            "Can I put it on to see if it fits?",
+            "Can I stand by the door?",
+            "Can I buy two tickets?"
+          ],
+          "answer": "Can I put it on to see if it fits?",
+          "explanation": "Try on is used to check how clothes fit."
+        }
+      ]
+    },
+    {
+      "id": "a1-home",
+      "title": "Homes and town",
+      "skill": "reading",
+      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "questions": [
+        {
+          "id": "a1-home-1",
+          "prompt": "There ____ two windows in the room.",
+          "options": [
+            "is",
+            "are",
+            "have"
+          ],
+          "answer": "are",
+          "explanation": "Use there are with a plural noun."
+        },
+        {
+          "id": "a1-home-2",
+          "prompt": "Are there ____ chairs in the kitchen?",
+          "options": [
+            "any",
+            "a",
+            "one"
+          ],
+          "answer": "any",
+          "explanation": "Any is common in questions with a plural noun."
+        },
+        {
+          "id": "a1-home-3",
+          "prompt": "The book is ____ the bag. Open the bag to find it.",
+          "options": [
+            "next to",
+            "behind",
+            "in"
+          ],
+          "answer": "in",
+          "explanation": "You open the bag because the book is inside."
+        },
+        {
+          "id": "a1-home-4",
+          "prompt": "The café is next to the station. Where is it?",
+          "options": [
+            "Inside a train",
+            "Beside the station",
+            "On the station roof"
+          ],
+          "answer": "Beside the station",
+          "explanation": "Next to and beside mean the same here."
+        },
+        {
+          "id": "a1-home-5",
+          "prompt": "My room has a bed, a lamp and a desk. Which can you study at?",
+          "options": [
+            "A desk",
+            "A bed",
+            "A lamp"
+          ],
+          "answer": "A desk",
+          "explanation": "A desk is furniture you can sit at to study."
+        },
+        {
+          "id": "a1-home-6",
+          "prompt": "NOTICE: The market closes at 2 p.m. today. You need to go ____.",
+          "options": [
+            "after two",
+            "at night",
+            "before two"
+          ],
+          "answer": "before two",
+          "explanation": "Go before the market closes."
+        }
+      ]
+    }
+  ],
+  "speaking": {
+    "minutes": 5,
+    "interview": [
+      "Where do you live?",
+      "What do you do after school?",
+      "What can you do well?"
+    ],
+    "individual": {
+      "prompt": "Talk about a room where you like to spend time.",
+      "cues": [
+        "Where it is",
+        "Two things in the room",
+        "What you do there",
+        "Why you like it"
+      ]
+    },
+    "pair": {
+      "prompt": "You and your partner have free time on Saturday. Talk about the choices. Ask your partner what they like, give a reason and choose one together.",
+      "options": [
+        "Visit a park",
+        "Watch a film",
+        "Go to a market"
+      ],
+      "followUps": [
+        "When would you go?",
+        "How would you get there?"
+      ]
+    },
+    "rubric": [
+      "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+      "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+      "Interaction. Listen, respond, take turns and ask at least one question.",
+      "Development. Add a reason, detail or example when you can."
+    ],
+    "variationB": {
+      "minutes": 5,
+      "interview": [
+        "What clothes do you wear at weekends?",
+        "What is near your home?",
+        "Which hobby do you like?"
+      ],
+      "individual": {
+        "prompt": "Talk about a place near your home.",
+        "cues": [
+          "What the place is",
+          "Where it is",
+          "What you can do there",
+          "Why you like it"
+        ]
+      },
+      "pair": {
+        "prompt": "Plan a birthday afternoon. Talk about the choices and choose one together. Ask your partner a question and give a reason.",
+        "options": [
+          "Make snacks at home",
+          "Go to a café",
+          "Take photos in the park"
+        ],
+        "followUps": [
+          "Who can come?",
+          "What do you need to bring?"
+        ]
+      },
+      "rubric": [
+        "Grammar and vocabulary. Use familiar words and sentence patterns that express your meaning.",
+        "Pronunciation. Speak clearly enough for your partner and teacher to follow.",
+        "Interaction. Listen, respond, take turns and ask at least one question.",
+        "Development. Add a reason, detail or example when you can."
+      ]
+    }
+  }
+}
