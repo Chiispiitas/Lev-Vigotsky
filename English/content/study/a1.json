@@ -122,6 +122,10 @@
   "drills": [
     {
       "id": "a1-language",
+      "illustration": {
+        "src": "images/drills/a1-language.webp",
+        "alt": "Two people at a clothing stall with a rack of coats"
+      },
       "title": "Clothes, hobbies and routines",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",
@@ -196,6 +200,10 @@
     },
     {
       "id": "a1-home",
+      "illustration": {
+        "src": "images/drills/a1-home.webp",
+        "alt": "Two colorful houses on a quiet street"
+      },
       "title": "Homes and town",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",

@@ -1,5 +1,20 @@
 # Practice images
 
+## Exercise illustrations
+
+The six images in `drills/` were made with the built-in ImageGen tool. Each prompt used the corresponding people or places page from the supplied Horizons illustration guide.
+
+> Create one brand-new educational illustration using the artwork in the attached Horizons visual guide as style calibration. Ignore the guide typography and document layout. Rough springy black ink outlines with subtle human irregularity, flat warm cream, muted brick orange, teal, dusty violet and medium green, sparse simple background, no glossy effects or heavy textures. For people, use ordinary slightly awkward adult proportions, small plain eyes, and simple hair shapes. Horizontal 3:2 single scene. Use new characters and surroundings. No legible words, letters, numbers, borders, watermarks or logos.
+
+| Asset | Guide page | Scene prompt |
+| --- | --- | --- |
+| [a1-language.webp](drills/a1-language.webp) | People | At a small secondhand clothing stall, an adult in a dusty violet sweatshirt hangs an orange coat on a short rack while a customer in a warm cream cardigan looks over the display. A simple striped awning and a mirror. Show the everyday shopping action clearly. |
+| [a1-home.webp](drills/a1-home.webp) | Places | A quiet small-town residential street with two gently skewed adjoining row houses, colored front doors, a low brick wall and a little front garden. One young tree and a straightforward sidewalk. Clear silhouettes and spare detail. No shop, station or market. |
+| [a2-travel.webp](drills/a2-travel.webp) | People | A traveler in a dusty teal jacket and a friend in a brick-orange cardigan wait on a bench under a simple station canopy with a soft overnight bag at their feet. Behind them are plain windows and the suggestion of railway tracks. No signage, clocks, tickets or hotel desks. |
+| [a2-out.webp](drills/a2-out.webp) | People | Two young adults arrive outside a small performance hall in early evening. Show one friendly gesture toward the doorway, a simple marquee with warm circular bulbs, and muted red curtains visible through the entrance. No signs or performers. |
+| [b1-wellbeing.webp](drills/b1-wellbeing.webp) | People | In a quiet school courtyard, three older students talk informally near a shaded bench, one leaning on the bench back while another gestures as they talk. A low cream wall, a tree and simple paving. No written lists, clocks, or faces showing illness. |
+| [b1-experiences.webp](drills/b1-experiences.webp) | Places | Three small figures at a distance look out from a wooden nature overlook onto a green valley, with low hills, a few birds over the valley, and a gently curving trail in the foreground. Clear path and silhouettes, no equipment close-ups or weather drama. |
+
 Part 1 uses original vector drawings with the guide’s ink outlines and flat colors. The notice lettering comes directly from each exam’s question text. To update the images, run `node English/build-notice-images.mjs` and verify them with `node English/build-notice-images.mjs --check`.
 
 The B1 Speaking forms use stock photographs. The local JPEGs are sized for web and print.

@@ -129,6 +129,10 @@
   "drills": [
     {
       "id": "b1-wellbeing",
+      "illustration": {
+        "src": "images/drills/b1-wellbeing.webp",
+        "alt": "Three students talking in a school courtyard"
+      },
       "title": "Advice, collocations and plans",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",
@@ -203,6 +207,10 @@
     },
     {
       "id": "b1-experiences",
+      "illustration": {
+        "src": "images/drills/b1-experiences.webp",
+        "alt": "Visitors looking over a green valley from a nature trail"
+      },
       "title": "Experiences and imagined choices",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",

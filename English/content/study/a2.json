@@ -130,6 +130,10 @@
   "drills": [
     {
       "id": "a2-travel",
+      "illustration": {
+        "src": "images/drills/a2-travel.webp",
+        "alt": "Two travelers waiting on a station bench"
+      },
       "title": "Transport, hotels and plans",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",
@@ -204,6 +208,10 @@
     },
     {
       "id": "a2-out",
+      "illustration": {
+        "src": "images/drills/a2-out.webp",
+        "alt": "Two people arriving at a small performance hall"
+      },
       "title": "Experiences and invitations",
       "skill": "reading",
       "instructions": "Choose the best answer. Check the explanation after you finish.",

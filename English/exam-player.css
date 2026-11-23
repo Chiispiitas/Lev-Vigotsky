@@ -113,6 +113,9 @@
 .speaking-photo { margin: 10px 0; width: min(100%, 450px); border-radius: 6px; }
 .preparation { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; align-items: start; }
 .study-illustration { display: block; width: 100%; border-radius: 6px; }
+.drill-intro { margin-bottom: 14px; align-items: center; }
+.drill-illustration { height: auto; }
+.drill-picture-break { width: min(100%, 390px); margin: 18px auto; }
 .photo-credit { margin-top: 0; font-size: 11px; }
 .photo-credit a { text-decoration: underline; }
 .material-print-brand { display: none; }

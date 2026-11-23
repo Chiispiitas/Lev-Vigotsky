@@ -13,7 +13,7 @@ const studyArt = () => `<img class="study-illustration" src="images/${level.id}-
 
 async function load() {
   if (!level) throw new Error("Choose your grade from the practice page.");
-  const response = await fetch(`content/study/${level.id}.json`);
+  const response = await fetch(`content/study/${level.id}.json`, { cache: "no-cache" });
   if (!response.ok) throw new Error("This material could not load. Refresh the page to try again.");
   const data = await response.json();
   document.title = `${labels[view]} ${level.level} | Lev Vigotsky`;
@@ -63,17 +63,22 @@ export function normalize(value) {
   return String(value ?? "").normalize("NFKC").toLowerCase().replace(/[’‘]/g, "'").trim().replace(/\s+/g, " ");
 }
 function drills(parts) {
-  root.innerHTML = `<div class="preparation"><p>Do the exercises, then check your answers at the end of each section.</p>${studyArt()}</div>`;
-  for (const part of parts) {
+  root.innerHTML = `<p>Do the exercises, then check your answers at the end of each section.</p>`;
+  for (const [partIndex, part] of parts.entries()) {
     const section = document.createElement("section");
     section.className = "material-block";
     section.lang = "en";
-    section.innerHTML = `<h2>${escape(part.title)}</h2>${line(part.instructions)}
+    const instructions = `<div><h2>${escape(part.title)}</h2>${line(part.instructions)}</div>`;
+    const illustration = part.illustration
+      ? `<img class="study-illustration drill-illustration" src="${escape(part.illustration.src)}" alt="${escape(part.illustration.alt)}" width="900" height="600" loading="lazy" decoding="async">`
+      : "";
+    section.innerHTML = `<div class="${illustration ? "preparation drill-intro" : ""}">${instructions}${illustration}</div>
       ${part.passage ? `<p class="passage">${escape(part.passage)}</p>` : ""}
       ${part.audio ? `<audio class="practice-audio" controls preload="metadata" src="${escape(part.audio)}"></audio>` : ""}
       <form>${part.questions.map((q, i) => {
         const options = q.options || part.options;
-        return `<fieldset class="question-panel"><legend>${i + 1}. ${escape(q.prompt)}</legend><div class="question-controls">
+        const extraIllustration = partIndex === 0 && i === 3 ? `<div class="drill-picture-break">${studyArt()}</div>` : "";
+        return `${extraIllustration}<fieldset class="question-panel"><legend>${i + 1}. ${escape(q.prompt)}</legend><div class="question-controls">
           ${q.context ? `<p class="question-context">${escape(q.context)}</p>` : ""}
           ${options?.length ? options.map(option => `<label class="choice-row"><input type="radio" name="${i}" value="${escape(option)}"> ${escape(option)}</label>`).join("") : `<input name="${i}" aria-label="Answer ${i + 1}" type="text" maxlength="250">`}
           <p class="drill-feedback"></p></div></fieldset>`;
