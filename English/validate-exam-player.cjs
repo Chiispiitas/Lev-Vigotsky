@@ -264,14 +264,34 @@ async function teacherAndMaterials(browser, base, receipt) {
     const topic = json("content/study/" + level + ".json");
     for (const [index, part] of topic.drills.entries()) {
       const form = page.locator("#material form").nth(index);
+      const gapNumbers = [...String(part.cloze?.text ?? "").matchAll(/\[(\d+)\]/g)].map(match => Number(match[1]));
+      assert.deepEqual(await form.locator(".drill-cloze input").evaluateAll(inputs => inputs.map(input => Number(input.placeholder))), gapNumbers);
       for (const [i, q] of part.questions.entries()) {
-        const controls = form.locator("fieldset").nth(i);
+        const number = i + 1;
+        if (gapNumbers.includes(number)) {
+          const input = form.getByRole("textbox", { name: "Gap " + number, exact: true });
+          await input.fill(" " + (q.accepted?.[0] || q.answer).toUpperCase() + " ");
+          continue;
+        }
         const options = q.options || part.options;
-        if (options) await controls.locator("label").nth(options.indexOf(q.answer)).click();
-        else await controls.locator("input").fill(q.answer);
+        const inputs = form.locator(`input[name="${i}"]`);
+        if (options) await inputs.nth(options.indexOf(q.answer)).check();
+        else await inputs.fill(q.answer);
       }
-      await form.getByRole("button", { name: "Check answers" }).click();
+      const check = form.getByRole("button", { name: "Check answers" });
+      const firstGap = form.locator(".drill-gap").first();
+      if (gapNumbers.length) {
+        const expected = part.questions[gapNumbers[0] - 1].answer;
+        await firstGap.clear();
+        await check.click();
+        assert.equal(await form.getByRole("status").innerText(), (part.questions.length - 1) + " / " + part.questions.length);
+        assert.equal(await firstGap.getAttribute("aria-invalid"), "true");
+        assert.ok((await form.locator(".drill-gap-feedback li").first().innerText()).startsWith("Blank. Answer: " + expected));
+        await firstGap.fill(expected);
+      }
+      await check.click();
       assert.equal(await form.getByRole("status").innerText(), part.questions.length + " / " + part.questions.length);
+      if (gapNumbers.length) assert.equal(await firstGap.getAttribute("aria-invalid"), "false");
     }
     for (const view of ["study", "speaking"]) {
       await page.goto(base + "materials.html?level=" + level + "&view=" + view);

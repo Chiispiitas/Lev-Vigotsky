@@ -135,75 +135,55 @@
       },
       "title": "Advice, collocations and plans",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Type one word in each numbered gap. Use the verb in parentheses where you see one. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "b1-wellbeing-1",
-          "prompt": "You should ____ a short break before starting the next task.",
-          "options": [
-            "take",
-            "make",
-            "do"
-          ],
-          "answer": "take",
-          "explanation": "The collocation is take a break."
+          "answer": "off",
+          "explanation": "Take your mind off something means stop thinking or worrying about it for a while."
         },
         {
           "id": "b1-wellbeing-2",
-          "prompt": "Can you ____ a list of what we need for the trip?",
-          "options": [
-            "have",
-            "do",
-            "make"
-          ],
-          "answer": "make",
-          "explanation": "The collocation is make a list."
+          "answer": "if",
+          "explanation": "If I were you introduces advice through an imagined situation."
         },
         {
           "id": "b1-wellbeing-3",
-          "prompt": "The deadline is close. We should ____ the teacher for help.",
-          "options": [
-            "asking",
-            "to ask",
-            "ask"
-          ],
-          "answer": "ask",
-          "explanation": "Use the base verb after should."
+          "answer": "sort",
+          "explanation": "Use the present simple in the if-clause for a real future possibility."
         },
         {
           "id": "b1-wellbeing-4",
-          "prompt": "If I ____ my tasks now, I’ll have more time after dinner.",
-          "options": [
-            "finish",
-            "finished",
-            "will finish"
-          ],
-          "answer": "finish",
-          "explanation": "The if clause in this first conditional uses the present simple."
+          "answer": "make",
+          "explanation": "Make up your mind means make a decision."
         },
         {
           "id": "b1-wellbeing-5",
-          "prompt": "If the weather gets worse, the guide ____ us back to the center.",
+          "prompt": "Which action is the teacher actually recommending?",
           "options": [
-            "take",
-            "will take",
-            "would took"
+            "Put off all the work until tomorrow.",
+            "Ask someone else to choose every example.",
+            "Deal with the task that matters most first."
           ],
-          "answer": "will take",
-          "explanation": "Use will + base verb for this likely consequence."
+          "answer": "Deal with the task that matters most first.",
+          "explanation": "She says to start with the most urgent job."
         },
         {
           "id": "b1-wellbeing-6",
-          "prompt": "I made a plan before leaving the room, so I could relax. What does so introduce?",
+          "prompt": "The writer says, “I put my phone in another room so I could concentrate.” What does the part beginning with so explain?",
           "options": [
-            "A reason that came before the plan",
-            "A result of making the plan",
-            "An event that interrupted the plan"
+            "What originally caused the writer to lose focus.",
+            "What the writer wanted to achieve.",
+            "What happened before the phone was moved."
           ],
-          "answer": "A result of making the plan",
-          "explanation": "The plan allowed the speaker to relax."
+          "answer": "What the writer wanted to achieve.",
+          "explanation": "So I could concentrate gives the purpose of moving the phone."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "Beating the deadline",
+        "text": "I haven’t been sleeping well, and I’m worried about Friday’s deadline. My teacher suggested taking a short break to take my mind [1] it. She said, ‘[2] I were you, I’d start with the most urgent job.’\n\nIf I [3] (sort) out my notes first, I’ll have time to check the final draft tomorrow. I still need to [4] up my mind about which example to leave out."
+      }
     },
     {
       "id": "b1-experiences",
@@ -213,75 +193,59 @@
       },
       "title": "Experiences and imagined choices",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Type one to three words in each numbered gap. Use the words in parentheses where you see them. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "b1-experiences-1",
-          "prompt": "Have you ever ____ a wildlife center?",
-          "options": [
-            "visit",
-            "visited",
-            "visiting"
-          ],
-          "answer": "visited",
-          "explanation": "Use have + past participle."
+          "answer": "since",
+          "explanation": "Use since to give the starting point of an activity that continues into the present."
         },
         {
           "id": "b1-experiences-2",
-          "prompt": "Yes. I ____ one last Saturday.",
-          "options": [
-            "have visited",
-            "visit",
-            "visited"
-          ],
-          "answer": "visited",
-          "explanation": "Last Saturday is a finished past time."
+          "answer": "had already left",
+          "explanation": "The first group left before the narrator arrived. Already can also come at the end of the phrase.",
+          "accepted": [
+            "had left already"
+          ]
         },
         {
           "id": "b1-experiences-3",
-          "prompt": "She has been training ____ two months.",
-          "options": [
-            "for",
-            "since",
-            "during"
-          ],
-          "answer": "for",
-          "explanation": "For introduces a period of time."
+          "answer": "waiting",
+          "explanation": "Was waiting describes an action already in progress when the guide returned."
         },
         {
           "id": "b1-experiences-4",
-          "prompt": "If I had more time, I ____ at the park every week.",
-          "options": [
-            "will volunteer",
-            "would volunteer",
-            "volunteered"
-          ],
           "answer": "would volunteer",
-          "explanation": "The imagined situation uses if + past, then would + base verb."
+          "explanation": "The second conditional describes what the speaker would do in an imagined situation."
         },
         {
           "id": "b1-experiences-5",
-          "prompt": "We were following the path when it ____ to rain.",
+          "prompt": "Why did the narrator have to wait when they arrived?",
           "options": [
-            "started",
-            "has started",
-            "had starting"
+            "They had come before the center opened.",
+            "They needed to wait for their cousin to finish work.",
+            "They had missed the start of the first tour."
           ],
-          "answer": "started",
-          "explanation": "The past simple event interrupts the action in progress."
+          "answer": "They had missed the start of the first tour.",
+          "explanation": "The first group was already on the trail when the narrator got there."
         },
         {
           "id": "b1-experiences-6",
-          "prompt": "Lena borrowed boots from the center. They kept her feet dry. What does ‘they’ refer to?",
+          "prompt": "“The guide pointed out two rare birds near the lake. They disappeared before I could take a photo.” What does they refer to?",
           "options": [
-            "Lena and a friend",
-            "The people at the center",
-            "The boots"
+            "The guide and the visitors.",
+            "The two rare birds.",
+            "The photographs the narrator had planned to take."
           ],
-          "answer": "The boots",
-          "explanation": "The sentence says the borrowed boots kept her feet dry."
+          "answer": "The two rare birds.",
+          "explanation": "They points back to the two rare birds mentioned in the previous sentence."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "A visit to the wildlife center",
+        "wordLimit": 3,
+        "text": "My cousin has been working at the wildlife center [1] last May. I went to see her yesterday. By the time I arrived, the first group [2] (already / leave) for the trail, so I had to wait for the next tour.\n\nI was still [3] (wait) at the desk when the guide came back. She told me about their volunteer sessions. If I lived closer, I [4] (volunteer) there every week."
+      }
     }
   ],
   "speaking": {

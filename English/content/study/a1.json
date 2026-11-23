@@ -128,75 +128,55 @@
       },
       "title": "Clothes, hobbies and routines",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Type one word in each numbered gap. Use the verb in parentheses. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "a1-language-1",
-          "prompt": "I usually ____ jeans to school.",
-          "options": [
-            "wear",
-            "am wearing",
-            "wears"
-          ],
           "answer": "wear",
-          "explanation": "Usually describes a routine. Use wear with I."
+          "explanation": "Use the base form with I for a routine."
         },
         {
           "id": "a1-language-2",
-          "prompt": "Look! Sofia ____ a green shirt.",
-          "options": [
-            "wear",
-            "wears",
-            "is wearing"
-          ],
-          "answer": "is wearing",
-          "explanation": "Look draws attention to what Sofia is wearing now."
+          "answer": "wearing",
+          "explanation": "After am, use the -ing form for an action happening now."
         },
         {
           "id": "a1-language-3",
-          "prompt": "Pedro can ____ the piano.",
-          "options": [
-            "play",
-            "plays",
-            "playing"
-          ],
-          "answer": "play",
-          "explanation": "After can, use the base form."
+          "answer": "plays",
+          "explanation": "Add -s for a regular action with he or she."
         },
         {
           "id": "a1-language-4",
-          "prompt": "The party is ____ June 21.",
-          "options": [
-            "at",
-            "on",
-            "in"
-          ],
-          "answer": "on",
-          "explanation": "Use on with a full date."
+          "answer": "sing",
+          "explanation": "After can, use the base form."
         },
         {
           "id": "a1-language-5",
-          "prompt": "At the shop, which question asks about size?",
+          "prompt": "What is Eli’s usual weekend activity?",
           "options": [
-            "Can I pay by card?",
-            "Do you have these in size 39?",
-            "Is the shop open tomorrow?"
+            "He sings with his friend at the market.",
+            "He plays an instrument at the market.",
+            "He shops for jackets at the market."
           ],
-          "answer": "Do you have these in size 39?",
-          "explanation": "Size 39 asks about the fit of the item."
+          "answer": "He plays an instrument at the market.",
+          "explanation": "Every weekend tells you that Eli regularly plays the guitar there."
         },
         {
           "id": "a1-language-6",
-          "prompt": "At a clothes shop, ‘Can I try it on?’ means ____.",
+          "prompt": "At the market, you want to see how a jacket looks on you. What do you ask?",
           "options": [
-            "Can I put it on to see if it fits?",
-            "Can I stand by the door?",
-            "Can I buy two tickets?"
+            "Do you have it in a different color?",
+            "Can I pay for it here?",
+            "Can I try it on?"
           ],
-          "answer": "Can I put it on to see if it fits?",
-          "explanation": "Try on is used to check how clothes fit."
+          "answer": "Can I try it on?",
+          "explanation": "Try it on means put the jacket on to see how it looks or fits."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "Getting ready for the market",
+        "text": "I usually [1] (wear) jeans on Saturdays. It’s cold today, so I’m [2] (wear) a jacket, too.\n\nMy friend Eli [3] (play) the guitar at the market every weekend. I can [4] (sing), so we’re going to do a song together."
+      }
     },
     {
       "id": "a1-home",
@@ -206,75 +186,55 @@
       },
       "title": "Homes and town",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Type one word in each numbered gap. The message describes the apartment as it is now. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "a1-home-1",
-          "prompt": "There ____ two windows in the room.",
-          "options": [
-            "is",
-            "are",
-            "have"
-          ],
           "answer": "are",
-          "explanation": "Use there are with a plural noun."
+          "explanation": "Use are with two bedrooms."
         },
         {
           "id": "a1-home-2",
-          "prompt": "Are there ____ chairs in the kitchen?",
-          "options": [
-            "any",
-            "a",
-            "one"
-          ],
-          "answer": "any",
-          "explanation": "Any is common in questions with a plural noun."
+          "answer": "is",
+          "explanation": "Use is with one bathroom."
         },
         {
           "id": "a1-home-3",
-          "prompt": "The book is ____ the bag. Open the bag to find it.",
-          "options": [
-            "next to",
-            "behind",
-            "in"
-          ],
-          "answer": "in",
-          "explanation": "You open the bag because the book is inside."
+          "answer": "any",
+          "explanation": "Use any after aren’t to say there are no chairs there."
         },
         {
           "id": "a1-home-4",
-          "prompt": "The café is next to the station. Where is it?",
-          "options": [
-            "Inside a train",
-            "Beside the station",
-            "On the station roof"
-          ],
-          "answer": "Beside the station",
-          "explanation": "Next to and beside mean the same here."
+          "answer": "of",
+          "explanation": "The preposition is part of the phrase in front of."
         },
         {
           "id": "a1-home-5",
-          "prompt": "My room has a bed, a lamp and a desk. Which can you study at?",
+          "prompt": "Which room can they sit in without moving any chairs?",
           "options": [
-            "A desk",
-            "A bed",
-            "A lamp"
+            "The living room.",
+            "The kitchen.",
+            "The bathroom."
           ],
-          "answer": "A desk",
-          "explanation": "A desk is furniture you can sit at to study."
+          "answer": "The kitchen.",
+          "explanation": "Mia says there are chairs in the kitchen and none in the living room yet."
         },
         {
           "id": "a1-home-6",
-          "prompt": "NOTICE: The market closes at 2 p.m. today. You need to go ____.",
+          "prompt": "The notice says the market closes at 2 p.m. Which bus gets you there while it’s open?",
           "options": [
-            "after two",
-            "at night",
-            "before two"
+            "The bus that arrives at 2:05 p.m.",
+            "The bus that arrives at 2:15 p.m.",
+            "The bus that arrives at 1:45 p.m."
           ],
-          "answer": "before two",
-          "explanation": "Go before the market closes."
+          "answer": "The bus that arrives at 1:45 p.m.",
+          "explanation": "1:45 p.m. is the only arrival time before the market closes."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "Come and see our new apartment",
+        "text": "Hi Sam,\n\nCome and see our new apartment. There [1] two bedrooms, but there [2] only one bathroom. We have some chairs in the kitchen, but there aren’t [3] chairs in the living room yet. When you arrive, look for the bus stop right in front [4] our building.\n\nSee you soon!\nMia"
+      }
     }
   ],
   "speaking": {

@@ -62,6 +62,22 @@ function speakingCard(label, data, form) {
 export function normalize(value) {
   return String(value ?? "").normalize("NFKC").toLowerCase().replace(/[’‘]/g, "'").trim().replace(/\s+/g, " ");
 }
+
+function drillCloze(part, gaps) {
+  if (!part.cloze) return "";
+  const paragraphs = part.cloze.text.split(/\n\n+/).map(text =>
+    `<p>${escape(text).replaceAll("\n", "<br>").replace(/\[(\d+)\]/g, (_, number) =>
+      `<input class="drill-gap" name="${Number(number) - 1}" type="text" aria-label="Gap ${number}"
+        aria-describedby="${escape(part.id)}-gap-${number}" placeholder="${number}" maxlength="40"
+        autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">`)}</p>`
+  ).join("");
+  const feedback = [...gaps].map(index =>
+    `<li id="${escape(part.id)}-gap-${index + 1}" data-feedback="${index}" value="${index + 1}"></li>`
+  ).join("");
+  return `<article class="drill-cloze${part.cloze.wordLimit > 1 ? " phrase-gaps" : ""}"><h3>${escape(part.cloze.title)}</h3>${paragraphs}
+    <ol class="drill-gap-feedback" hidden>${feedback}</ol></article>`;
+}
+
 function drills(parts) {
   root.innerHTML = `<p>Do the exercises, then check your answers at the end of each section.</p>`;
   for (const [partIndex, part] of parts.entries()) {
@@ -72,28 +88,39 @@ function drills(parts) {
     const illustration = part.illustration
       ? `<img class="study-illustration drill-illustration" src="${escape(part.illustration.src)}" alt="${escape(part.illustration.alt)}" width="900" height="600" loading="lazy" decoding="async">`
       : "";
+    const gaps = new Set([...String(part.cloze?.text ?? "").matchAll(/\[(\d+)\]/g)].map(match => Number(match[1]) - 1));
+    const pictureBreak = partIndex === 0 ? `<div class="drill-picture-break">${studyArt()}</div>` : "";
     section.innerHTML = `<div class="${illustration ? "preparation drill-intro" : ""}">${instructions}${illustration}</div>
       ${part.passage ? `<p class="passage">${escape(part.passage)}</p>` : ""}
       ${part.audio ? `<audio class="practice-audio" controls preload="metadata" src="${escape(part.audio)}"></audio>` : ""}
-      <form>${part.questions.map((q, i) => {
+      <form>${drillCloze(part, gaps)}${pictureBreak}${part.questions.map((q, i) => {
+        if (gaps.has(i)) return "";
         const options = q.options || part.options;
-        const extraIllustration = partIndex === 0 && i === 3 ? `<div class="drill-picture-break">${studyArt()}</div>` : "";
-        return `${extraIllustration}<fieldset class="question-panel"><legend>${i + 1}. ${escape(q.prompt)}</legend><div class="question-controls">
+        return `<fieldset class="question-panel"><legend>${i + 1}. ${escape(q.prompt)}</legend><div class="question-controls">
           ${q.context ? `<p class="question-context">${escape(q.context)}</p>` : ""}
           ${options?.length ? options.map(option => `<label class="choice-row"><input type="radio" name="${i}" value="${escape(option)}"> ${escape(option)}</label>`).join("") : `<input name="${i}" aria-label="Answer ${i + 1}" type="text" maxlength="250">`}
-          <p class="drill-feedback"></p></div></fieldset>`;
+          <p class="drill-feedback" data-feedback="${i}"></p></div></fieldset>`;
       }).join("")}<button class="button primary">Check answers</button><p role="status"></p></form>`;
     const form = section.querySelector("form");
     form.onsubmit = event => {
       event.preventDefault();
       const entered = new FormData(form);
-      const feedback = form.querySelectorAll(".drill-feedback");
       let score = 0;
       part.questions.forEach((q, index) => {
-        const correct = [q.answer, ...(q.accepted || [])].map(normalize).includes(normalize(entered.get(String(index))));
+        const answer = normalize(entered.get(String(index)));
+        const correct = [q.answer, ...(q.accepted || [])].map(normalize).includes(answer);
         if (correct) score++;
-        feedback[index].textContent = correct ? "Correct." : `Answer: ${q.answer}.${q.explanation ? " " + q.explanation : ""}`;
+        const feedback = form.querySelector(`[data-feedback="${index}"]`);
+        const gap = form.querySelector(`.drill-gap[name="${index}"]`);
+        if (gap) {
+          gap.dataset.result = correct ? "correct" : "review";
+          gap.setAttribute("aria-invalid", String(!correct));
+        }
+        const correction = `Answer: ${q.answer}.${q.explanation ? " " + q.explanation : ""}`;
+        feedback.textContent = correct ? "Correct." : (answer ? correction : `Blank. ${correction}`);
       });
+      const gapFeedback = form.querySelector(".drill-gap-feedback");
+      if (gapFeedback) gapFeedback.hidden = false;
       form.querySelector('[role="status"]').textContent = `${score} / ${part.questions.length}`;
     };
     root.append(section);

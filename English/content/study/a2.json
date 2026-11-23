@@ -136,75 +136,58 @@
       },
       "title": "Transport, hotels and plans",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Read the message and type one word in each numbered gap. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "a2-travel-1",
-          "prompt": "Lunch is included. You ____ bring food.",
-          "options": [
-            "have to",
-            "don’t have to",
-            "has to"
-          ],
-          "answer": "don’t have to",
-          "explanation": "It is already provided, so bringing food is optional."
+          "answer": "to",
+          "explanation": "The expression going to introduces the plan."
         },
         {
           "id": "a2-travel-2",
-          "prompt": "____ he have to show his ticket?",
-          "options": [
-            "Does",
-            "Do",
-            "Is"
-          ],
-          "answer": "Does",
-          "explanation": "With he, use Does + subject + have to."
+          "answer": "does",
+          "explanation": "Use does to ask a present-simple question with he."
         },
         {
           "id": "a2-travel-3",
-          "prompt": "We’re going ____ take the early coach.",
-          "options": [
-            "for",
-            "to",
-            "at"
-          ],
           "answer": "to",
-          "explanation": "Be going to is followed by the base verb."
+          "explanation": "Don’t have to means there is no requirement."
         },
         {
           "id": "a2-travel-4",
-          "prompt": "The train departs at 8:40. Meet 10 minutes before departure. When?",
-          "options": [
-            "8:30",
-            "8:40",
-            "8:50"
-          ],
-          "answer": "8:30",
-          "explanation": "8:30 is ten minutes before 8:40."
+          "answer": "if",
+          "explanation": "Both if and whether introduce a yes/no question when you ask someone to check.",
+          "accepted": [
+            "whether"
+          ]
         },
         {
           "id": "a2-travel-5",
-          "prompt": "HOTEL: Check-in starts at 2 p.m. Early guests may leave bags at reception. Which is true?",
+          "prompt": "Boarding closes at 7:10. The coach leaves at 7:15. Which arrival gives you two minutes before boarding closes?",
           "options": [
-            "A room is ready as soon as a guest arrives.",
-            "Guests can leave bags before 2 p.m.",
-            "Guests must carry bags after 2 p.m."
+            "7:12 a.m.",
+            "7:08 a.m.",
+            "7:13 a.m."
           ],
-          "answer": "Guests can leave bags before 2 p.m.",
-          "explanation": "Early guests may leave luggage at reception."
+          "answer": "7:08 a.m.",
+          "explanation": "Count back two minutes from the boarding deadline of 7:10."
         },
         {
           "id": "a2-travel-6",
-          "prompt": "You want to check whether breakfast costs extra. What do you ask?",
+          "prompt": "Check-in starts at 2 p.m. Early guests may leave bags at reception. What can Nina do if she arrives at noon?",
           "options": [
-            "Is breakfast included?",
-            "Where’s the ticket desk?",
-            "Would you like a receipt?"
+            "Check in if she leaves her bag at reception.",
+            "Leave her bag and wait to check in.",
+            "Go to her room while reception keeps her bag."
           ],
-          "answer": "Is breakfast included?",
-          "explanation": "Included means covered by the room price."
+          "answer": "Leave her bag and wait to check in.",
+          "explanation": "The notice allows bag storage before check-in, which starts at 2 p.m."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "Before we leave",
+        "text": "Hi Jules,\n\nWe’re going [1] take the early coach because our seats are already booked. Does Milo have his ticket on his phone, or [2] he need to get it at the station? If you bought your ticket online, you don’t have [3] print it. Could you check [4] breakfast is included in the room price? If it costs extra, we’ll eat at a café.\n\nThanks!\nNina"
+      }
     },
     {
       "id": "a2-out",
@@ -214,75 +197,55 @@
       },
       "title": "Experiences and invitations",
       "skill": "reading",
-      "instructions": "Choose the best answer. Check the explanation after you finish.",
+      "instructions": "Type one word in each numbered gap. Use the verb in parentheses where you see one. Then answer questions 5 and 6.",
       "questions": [
         {
           "id": "a2-out-1",
-          "prompt": "Have you ever ____ to a film festival?",
-          "options": [
-            "be",
-            "been",
-            "was"
-          ],
           "answer": "been",
-          "explanation": "Use the past participle after have."
+          "explanation": "Use the past participle been for experiences of visiting or attending a place or event."
         },
         {
           "id": "a2-out-2",
-          "prompt": "I ____ a live show with my cousin last Friday.",
-          "options": [
-            "have seen",
-            "see",
-            "saw"
-          ],
-          "answer": "saw",
-          "explanation": "Last Friday is a finished past time."
+          "answer": "went",
+          "explanation": "Last June names a finished time, so use the past simple."
         },
         {
           "id": "a2-out-3",
-          "prompt": "I’ve never ____ that movie.",
-          "options": [
-            "see",
-            "saw",
-            "seen"
-          ],
           "answer": "seen",
-          "explanation": "Seen is the past participle of see."
+          "explanation": "Use the past participle after I’ve never."
         },
         {
           "id": "a2-out-4",
-          "prompt": "Would you like ____ to a concert?",
-          "options": [
-            "come",
-            "coming",
-            "to come"
-          ],
-          "answer": "to come",
-          "explanation": "Use Would you like to + verb to invite someone."
+          "answer": "to",
+          "explanation": "Would you like to is a polite way to invite someone to do something."
         },
         {
           "id": "a2-out-5",
-          "prompt": "Thanks for asking. I can’t go tonight, but I’m free tomorrow. What does the speaker do?",
+          "prompt": "Rina replies, “I can’t make Saturday. Are you going again on Sunday?” What is she doing?",
           "options": [
-            "Accept tonight’s plan",
-            "Suggest another day",
-            "Ask to change the place"
+            "Accepting the invitation for the original day.",
+            "Asking whether she can go on a different day.",
+            "Turning down the festival because it’s outdoors."
           ],
-          "answer": "Suggest another day",
-          "explanation": "The speaker is unavailable tonight but offers tomorrow."
+          "answer": "Asking whether she can go on a different day.",
+          "explanation": "She can’t go on Saturday but asks about another day."
         },
         {
           "id": "a2-out-6",
-          "prompt": "The singer was great, but it was difficult to hear the words. What is the speaker's problem?",
+          "prompt": "Mo later says, “The film was good, but we had to move closer to understand what people were saying.” What was the problem at first?",
           "options": [
-            "The singer did not arrive.",
-            "The words were not clear.",
-            "The concert started late."
+            "The dialogue was hard to hear.",
+            "The film was too difficult to follow even after they moved.",
+            "Their new seats were too close to the screen."
           ],
-          "answer": "The words were not clear.",
-          "explanation": "It was difficult to hear the words, despite enjoying the singer."
+          "answer": "The dialogue was hard to hear.",
+          "explanation": "Moving closer helped them hear the people speaking."
         }
-      ]
+      ],
+      "cloze": {
+        "title": "A movie in the park",
+        "text": "Hi Rina,\n\nHave you ever [1] (be) to an outdoor film festival? I [2] (go) to a concert in that park last June. I’ve never [3] (see) a movie outdoors, so I’m excited. Would you like [4] come with us on Saturday?\n\nMo"
+      }
     }
   ],
   "speaking": {
