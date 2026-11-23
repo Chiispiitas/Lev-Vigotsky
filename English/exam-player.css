@@ -152,6 +152,10 @@
   .material-block { break-inside: avoid; margin: 14px 0; padding-top: 8px; }
   .speaking-card + .speaking-card { break-before: page; }
   .speaking-photo { width: min(100%, 320px); max-height: 225px; object-fit: contain; object-position: left; }
-  .preparation { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 14px; }
+  .preparation { grid-template-columns: minmax(0, 2.3fr) minmax(0, 1fr); gap: 14px; }
+  .preparation ol { margin-block: 6px 0; }
+  .study-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+  .study-topics .material-block { margin: 0; }
+  .study-topics ul { margin-block: 3px 0; }
   @page { size: A4; margin: 16mm; }
 }

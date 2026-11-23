@@ -36,9 +36,9 @@ function study(data) {
   root.innerHTML = `<section class="material-block preparation"><div><h2>How to prepare</h2>
     <p>${escape(data.scope || level.book)}</p>
     <ol><li>Review each group of words and use a few in sentences of your own.</li><li>Do the practice exercises and check your answers.</li><li>Take the main practice exam, then try Variation B. Read the listening questions before you play the recording. In reading, look for the main idea first, then go back to check details.</li><li>Practice speaking with a partner. Give reasons and ask your partner at least one question.</li></ol></div>${studyArt()}
-    </section>${data.topics.map(topic => `<section class="material-block">
+    </section><div class="study-topics">${data.topics.map(topic => `<section class="material-block">
     <h2>${escape(topic.title)}</h2><p lang="en"><strong>Vocabulary</strong> · ${topic.words.map(escape).join(", ")}</p>
-    <div lang="en"><p><strong>Grammar</strong></p>${list(topic.grammar)}</div></section>`).join("")}`;
+    <div lang="en"><p><strong>Grammar topics</strong></p>${list(topic.grammar)}</div></section>`).join("")}</div>`;
 }
 function speaking(data) {
   const alternate = data.variationB ? { ...data, ...data.variationB } : null;
