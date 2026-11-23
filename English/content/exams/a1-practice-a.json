@@ -70,7 +70,7 @@
       "questions": [
         {
           "id": "r2-q1",
-          "prompt": "Who can walk to school in five minutes?",
+          "prompt": "Who can get to school on foot in less than ten minutes?",
           "options": [
             "Ana",
             "Ben",
@@ -81,7 +81,7 @@
         },
         {
           "id": "r2-q2",
-          "prompt": "Who has three bedrooms at home?",
+          "prompt": "Who has more bedrooms than the other two people?",
           "options": [
             "Ana",
             "Ben",
@@ -92,7 +92,7 @@
         },
         {
           "id": "r2-q3",
-          "prompt": "Who can see the city from a balcony?",
+          "prompt": "Who can go outside and look at the city without going downstairs?",
           "options": [
             "Ana",
             "Ben",
@@ -103,7 +103,7 @@
         },
         {
           "id": "r2-q4",
-          "prompt": "Who eats in the garden on sunny days?",
+          "prompt": "Who eats a meal outdoors when the weather is good?",
           "options": [
             "Ana",
             "Ben",
@@ -112,7 +112,11 @@
           "answer": "Ben",
           "explanation": "Ben’s family eats outside when it is sunny."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a1-a-r2.webp",
+        "alt": "A small residential street"
+      }
     },
     {
       "id": "r3",
@@ -165,7 +169,11 @@
           "answer": "is",
           "explanation": "Use there is for one door."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a1-a-r3.webp",
+        "alt": "Someone writing a birthday invitation"
+      }
     },
     {
       "id": "l1",

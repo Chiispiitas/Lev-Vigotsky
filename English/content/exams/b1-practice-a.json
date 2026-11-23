@@ -147,7 +147,7 @@
       "questions": [
         {
           "id": "r3-q1",
-          "prompt": "Why did the writer decide to walk home?",
+          "prompt": "What persuaded the writer to try something they had previously seen as ordinary?",
           "options": [
             "Tom’s experience made the writer curious.",
             "The writer needed to save money for flowers.",
@@ -159,7 +159,7 @@
         },
         {
           "id": "r3-q2",
-          "prompt": "Why did the writer leave the main road?",
+          "prompt": "Which statement best explains why the writer chose a longer route?",
           "options": [
             "It was closed to people on foot.",
             "Tom had taken a shortcut to the market.",
@@ -171,7 +171,7 @@
         },
         {
           "id": "r3-q3",
-          "prompt": "What did the writer notice after a week?",
+          "prompt": "Which change did the writer notice even though the amount of homework they finished stayed the same?",
           "options": [
             "Homework took much less time.",
             "It was easier to concentrate on homework.",
@@ -183,7 +183,7 @@
         },
         {
           "id": "r3-q4",
-          "prompt": "Which title best suits the text?",
+          "prompt": "Which title captures the writer’s main point about the walk?",
           "options": [
             "Why I stopped walking to school",
             "A park that needs more visitors",
@@ -193,7 +193,11 @@
           "answer": "A small break that helped me focus",
           "explanation": "The longer path became a useful break before afternoon work."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/b1-a-r3.webp",
+        "alt": "A quiet street in the late afternoon"
+      }
     },
     {
       "id": "r4",
@@ -254,7 +258,11 @@
           "answer": "We had grown enough to give each visitor a small bunch.",
           "explanation": "Giving herbs to visitors explains why they could use them at dinner."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/b1-a-r4.webp",
+        "alt": "Two people at a community garden gate"
+      }
     },
     {
       "id": "r5",

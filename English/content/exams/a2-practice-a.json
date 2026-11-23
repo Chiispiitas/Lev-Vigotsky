@@ -112,7 +112,11 @@
           "answer": "Station Arts Center",
           "explanation": "The four o’clock music event is two minutes from the station."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a2-a-r2.webp",
+        "alt": "Buildings in an entertainment district"
+      }
     },
     {
       "id": "r3",
@@ -123,7 +127,7 @@
       "questions": [
         {
           "id": "r3-q1",
-          "prompt": "Why did the writer use the train?",
+          "prompt": "Which detail explains why the original travel plan did not work?",
           "options": [
             "Her cousin did not want to drive.",
             "Her car had a problem.",
@@ -134,7 +138,7 @@
         },
         {
           "id": "r3-q2",
-          "prompt": "How did the writer feel on the train?",
+          "prompt": "How did the writer’s opinion change after the journey started?",
           "options": [
             "She enjoyed the journey.",
             "She was worried about the car.",
@@ -145,7 +149,7 @@
         },
         {
           "id": "r3-q3",
-          "prompt": "What did they do after they missed the first film?",
+          "prompt": "Which action shows that the late train did not stop them from seeing a film?",
           "options": [
             "They decided to return home.",
             "They got tickets for a later film.",
@@ -156,7 +160,7 @@
         },
         {
           "id": "r3-q4",
-          "prompt": "What is their plan for next month?",
+          "prompt": "What are they planning to do differently on their next visit?",
           "options": [
             "Spend one night in the town",
             "Take a taxi to a hotel",
@@ -165,7 +169,11 @@
           "answer": "Spend one night in the town",
           "explanation": "They plan to stay one night and watch an evening film."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a2-a-r3.webp",
+        "alt": "A town by the sea"
+      }
     },
     {
       "id": "r4",

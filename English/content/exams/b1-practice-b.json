@@ -147,7 +147,7 @@
       "questions": [
         {
           "id": "r3-q1",
-          "prompt": "Why did the writer try going outside at lunch?",
+          "prompt": "What led the writer to rethink a habit that had seemed productive?",
           "options": [
             "The writer wanted to test Ana’s routine.",
             "The school stopped allowing lunch at desks.",
@@ -159,7 +159,7 @@
         },
         {
           "id": "r3-q2",
-          "prompt": "How did the list help?",
+          "prompt": "Why was writing a list useful even though it did not finish any of the work?",
           "options": [
             "It gave the writer more homework to do.",
             "It helped the writer stop worrying about what to do later.",
@@ -171,7 +171,7 @@
         },
         {
           "id": "r3-q3",
-          "prompt": "What did the writer notice in afternoon class?",
+          "prompt": "What change suggested that the lunch experiment was helping during the school day?",
           "options": [
             "It became much longer.",
             "There were more assignments.",
@@ -183,7 +183,7 @@
         },
         {
           "id": "r3-q4",
-          "prompt": "Which lesson did the writer take from the week?",
+          "prompt": "Which conclusion is supported even though the experiment didn’t reduce the amount of homework?",
           "options": [
             "Taking a break can improve the way you work.",
             "The best time to study is always lunchtime.",
@@ -193,7 +193,11 @@
           "answer": "Taking a break can improve the way you work.",
           "explanation": "The writer concludes that a proper pause can make later work better."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/b1-b-r3.webp",
+        "alt": "A school courtyard"
+      }
     },
     {
       "id": "r4",
@@ -254,7 +258,11 @@
           "answer": "Once we had spread the wood chips, people could walk over the muddy ground again.",
           "explanation": "The repaired ground explains how the family crossed without stepping in water."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/b1-b-r4.webp",
+        "alt": "The entrance to a wooded path"
+      }
     },
     {
       "id": "r5",

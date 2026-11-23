@@ -118,6 +118,13 @@ async function runPaper(browser, base, id, sizes, engine, { submissionError = fa
     let index = 0;
     for (const [partIndex, part] of paper.parts.entries()) {
       if (partIndex) await page.locator('[data-part="' + partIndex + '"]').click();
+      if (part.illustration) {
+        const art = page.locator(".mock-reading-art");
+        assert.equal(await art.getAttribute("alt"), part.illustration.alt);
+        assert.equal(await art.getAttribute("src"), part.illustration.src);
+        await art.evaluate(image => image.decode());
+        await ensureFits(page);
+      }
       assert.match(await page.locator(".part-workspace h2").innerText(), new RegExp(part.title.replace(/[.*+?^$(){}|[\]\\]/g, "\\$&")));
       if (audioCheck && part.audio) {
         await page.locator("#playAudio").click();

@@ -9,7 +9,7 @@ let paper, questions, state, tick;
 
 async function init() {
   if (!/^(a1|a2|b1)-practice-[ab]$/.test(examId || "")) throw new Error("Choose a practice exam from the catalog.");
-  const response = await fetch(`content/exams/${examId}.json`);
+  const response = await fetch(`content/exams/${examId}.json`, { cache: "no-cache" });
   if (!response.ok) throw new Error("This practice exam could not be loaded. Try refreshing the page.");
   paper = await response.json();
   questions = paper.parts.flatMap((part, partIndex) => part.questions.map(question => ({ ...question, part, partIndex })));
@@ -230,11 +230,17 @@ function renderPart() {
   main.querySelector("audio")?.pause();
   const items = questions.flatMap((q, index) => q.part === part ? [{ q, index }] : []);
   const passage = renderPassage(part, items);
+  const illustration = part.illustration
+    ? `<img class="mock-reading-art" src="${escape(part.illustration.src)}" alt="${escape(part.illustration.alt)}" width="900" height="600" decoding="async">`
+    : "";
+  const reading = passage && illustration
+    ? `<div class="exam-illustrated-reading">${illustration}${passage.html}</div>`
+    : passage?.html || illustration;
   main.innerHTML = `<section class="part-workspace">
     <h2>${escape(part.title)}</h2>
     <p>${escape(part.instructions)}</p>
     ${part.audio ? '<div class="audio-panel"><button type="button" class="button outline" id="playAudio">Play recording</button><audio class="practice-audio" aria-label="Listening recording" preload="metadata" controls></audio><p id="audioStatus" class="status-text" role="status"></p></div>' : ""}
-    <div class="part-grid${passage && !passage.inline ? " with-passage" : ""}">${passage?.html || ""}
+    <div class="part-grid${passage && !passage.inline ? " with-passage" : ""}">${reading}
     ${passage?.inline ? "" : `<div>${items.map(({ q, index }) => renderQuestion(q, index)).join("")}</div>`}
     </div></section>`;
   if (part.audio) bindAudio(part);

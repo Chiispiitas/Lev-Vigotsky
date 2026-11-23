@@ -112,7 +112,11 @@
           "answer": "Corner Café",
           "explanation": "Local musicians play for free."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a2-b-r2.webp",
+        "alt": "A movie theater and cafe on a hillside"
+      }
     },
     {
       "id": "r3",
@@ -123,7 +127,7 @@
       "questions": [
         {
           "id": "r3-q1",
-          "prompt": "Why did they change their travel plan?",
+          "prompt": "What problem did the ride from Jules’s father solve?",
           "options": [
             "The last bus left too early.",
             "The bus stop had moved.",
@@ -134,7 +138,7 @@
         },
         {
           "id": "r3-q2",
-          "prompt": "What did the writer think of the band?",
+          "prompt": "Which answer describes the writer’s feelings about the show as a whole?",
           "options": [
             "She liked the first song best.",
             "She enjoyed most of the music.",
@@ -145,7 +149,7 @@
         },
         {
           "id": "r3-q3",
-          "prompt": "Where did they get a snack?",
+          "prompt": "Which place could they use when their first choice was closed?",
           "options": [
             "At the café",
             "In the concert hall",
@@ -156,7 +160,7 @@
         },
         {
           "id": "r3-q4",
-          "prompt": "Why will they book soon for the next concert?",
+          "prompt": "Why might waiting to book mean they miss the next concert?",
           "options": [
             "There are not many seats.",
             "The band is leaving town.",
@@ -165,7 +169,11 @@
           "answer": "There are not many seats.",
           "explanation": "The next concert hall only has sixty seats."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a2-b-r3.webp",
+        "alt": "Two friends outside a performance venue"
+      }
     },
     {
       "id": "r4",

@@ -1,5 +1,26 @@
 # Practice images
 
+## Timed mock illustrations
+
+Reading passages in both forms at each level use these twelve scenes. Each was created with the built-in ImageGen tool using the corresponding Horizons guide page.
+
+> Create one original 3:2 landscape illustration for a secondary-school English reading mock. Use the artwork in the attached Horizons guide as style calibration, ignoring the printed heading and layout. Author-drawn look with irregular black ink, flat warm cream, brick orange, teal, dusty violet and green, gently skewed shapes, spare detail and a clear silhouette. If people appear, use ordinary proportions, small plain eyes and simple hair. New scene, no text, lettering, logos or borders.
+
+| Asset | Guide page | Scene prompt |
+| --- | --- | --- |
+| [a1-a-r2.webp](mocks/a1-a-r2.webp) | Places | A quiet residential block seen from the sidewalk, with a brick apartment building beside a small row house, simple front doors, and a tree. Frame the street at ground level, no visible balconies or backyards, no implied answers about the homes. |
+| [a1-a-r3.webp](mocks/a1-a-r3.webp) | People | One young adult writing a birthday invitation on a postcard at a kitchen table, with abstract doodles only on the postcard and a small wrapped gift on the other side. No numbers, modes of transport, readable time or calendar. |
+| [a1-b-r2.webp](mocks/a1-b-r2.webp) | Places | A modest residential street in a town with a pale violet corner house and a warm cream apartment building. Show a short sidewalk and low wall. Do not show any landmarks, parks, stations, rooms, or visible balconies. |
+| [a1-b-r3.webp](mocks/a1-b-r3.webp) | People | Two young adults preparing party bunting and a single wrapped gift, shown from waist up with a spare cream wall, flat colored decorations, and no furniture, venue details, vehicles, calendars or clocks. |
+| [a2-a-r2.webp](mocks/a2-a-r2.webp) | Places | A pedestrian district with the exterior of a modest cinema and neighboring arts center, distinct simple facades and a pedestrian crossing, viewed in a small street corner. No signs, restaurant, prices, maps, schedules, or clocks. |
+| [a2-a-r3.webp](mocks/a2-a-r3.webp) | Places | Simple seaside town view in daylight, seen across a promenade from above, three modest houses and a low sea wall with sea in the background. No visible transportation, activities, movie theater, times or writing. |
+| [a2-b-r2.webp](mocks/a2-b-r2.webp) | Places | A sloping pedestrian street with an understated old movie theater and a small cafe, building shapes gently skewed. Show simple facades without any people, readable text, clocks, prices, or schedules. |
+| [a2-b-r3.webp](mocks/a2-b-r3.webp) | People | Two young adult friends standing outside a modest performance venue at dusk, speaking as they approach the entrance. No band, food, signs, clocks, cars, buses, or other modes of travel. |
+| [b1-a-r3.webp](mocks/b1-a-r3.webp) | Places | A quiet pedestrian sidewalk in a small town during the late afternoon, with a low wall, school building in the distance, and warm color on the walls. No people and no specific alternate routes, signs, weather events or text. |
+| [b1-a-r4.webp](mocks/b1-a-r4.webp) | People | Two adult volunteers standing chatting next to the gate of a community garden, spare background with low fencing and one soft green tree. Do not show sprouts, shelters, labels, a storm, a visitors table, herbs, gifts or any work being carried out. |
+| [b1-b-r3.webp](mocks/b1-b-r3.webp) | Places | A simple school courtyard seen from a covered walkway at lunchtime. No people, food or lists, only a paved open space, a single small tree and school windows. |
+| [b1-b-r4.webp](mocks/b1-b-r4.webp) | Places | A quiet entrance to a tree-lined park trail, untitled simple gate and a winding clear path, muted scene with no featured birds, litter or people making repairs. No signage, words or equipment. |
+
 ## Exercise illustrations
 
 The six images in `drills/` were made with the built-in ImageGen tool. Each prompt used the corresponding people or places page from the supplied Horizons illustration guide.

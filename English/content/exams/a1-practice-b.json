@@ -70,7 +70,7 @@
       "questions": [
         {
           "id": "r2-q1",
-          "prompt": "Who can see the park from home?",
+          "prompt": "Who can see the park without leaving their apartment?",
           "options": [
             "Rosa",
             "Tom",
@@ -81,7 +81,7 @@
         },
         {
           "id": "r2-q2",
-          "prompt": "Who lives near a supermarket?",
+          "prompt": "Who lives next door to a place where people buy food?",
           "options": [
             "Rosa",
             "Tom",
@@ -92,7 +92,7 @@
         },
         {
           "id": "r2-q3",
-          "prompt": "Who often eats outside in summer?",
+          "prompt": "Whose family often has a meal outside at the end of a summer day?",
           "options": [
             "Rosa",
             "Tom",
@@ -103,7 +103,7 @@
         },
         {
           "id": "r2-q4",
-          "prompt": "Who has one bedroom at home?",
+          "prompt": "Who has fewer bedrooms than the other two people?",
           "options": [
             "Rosa",
             "Tom",
@@ -112,7 +112,11 @@
           "answer": "Tom",
           "explanation": "Tom has a one-bedroom apartment."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a1-b-r2.webp",
+        "alt": "A house and an apartment building"
+      }
     },
     {
       "id": "r3",
@@ -165,7 +169,11 @@
           "answer": "are",
           "explanation": "Use there are for more than one table."
         }
-      ]
+      ],
+      "illustration": {
+        "src": "images/mocks/a1-b-r3.webp",
+        "alt": "Two people preparing party decorations"
+      }
     },
     {
       "id": "l1",
