@@ -76,6 +76,10 @@
 .choice-row:has(:checked) { border-color: var(--navy); background: var(--exam-soft); }
 .choice-row input { accent-color: var(--navy); }
 .gap-input { width: min(100%, 350px); }
+.exam-cloze { max-width: 820px; background: #fff; line-height: 1.9; }
+.english-page .exam-inline-gap { width: auto; min-width: 4ch; min-height: 44px; padding: 4px 8px; margin-block: 2px; border-width: 1px !important; border-color: #79849a; background: #f6f7fb; }
+.english-page input.exam-inline-gap { width: min(10ch, 100%); text-align: center; }
+.exam-sentence-bank { max-width: 820px; margin: 0; }
 .practice-audio { width: min(425px, 100%); display: block; margin: 8px 0; }
 .audio-panel { margin: 11px 0; }
 .player-footer { border-top: 1px solid var(--exam-border); padding: 7px 12px max(7px, env(safe-area-inset-bottom)); }

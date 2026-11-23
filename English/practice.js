@@ -200,17 +200,43 @@ function revealQuestion(index) {
   const panel = main.querySelector(`[data-panel="${index}"]`);
   if (panel) main.scrollTop += panel.getBoundingClientRect().top - main.getBoundingClientRect().top - 10;
 }
+
+function renderPassage(part, items) {
+  if (!part.passage) return null;
+  const text = escape(part.passage);
+  const marker = /\((\d+)\)\s+_{3,}|\[(\d+)\]/g;
+  const markers = [...text.matchAll(marker)];
+  const inline = markers.length === items.length && markers.every((match, position) =>
+    Number(match[1] || match[2]) === position + 1 && items[position].q.prompt === `Gap ${position + 1}`);
+  if (!inline) return { inline: false, html: `<div class="passage">${text}</div>` };
+  const sentences = markers[0][2] ? (items[0].q.options || part.options) : null;
+  const bank = sentences ? `<ol type="A" class="exam-sentence-bank">${sentences.map(choice => `<li>${escape(choice)}</li>`).join("")}</ol>` : "";
+  const completed = text.replace(marker, (_, number, sentenceNumber) => {
+    const gap = Number(number || sentenceNumber);
+    const { q, index } = items[gap - 1];
+    const value = state.answers[q.id] || "";
+    const options = q.options || part.options;
+    const attributes = `class="exam-inline-gap" data-panel="${index}" data-answer="${index}" aria-label="Gap ${gap}"`;
+    if (!options?.length) return `<input ${attributes} type="text" value="${escape(value)}" placeholder="${gap}" maxlength="250" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">`;
+    return `<select ${attributes}><option value="">${gap}</option>${options.map((choice, i) =>
+      `<option value="${escape(choice)}"${choice === value ? " selected" : ""}>${sentences ? String.fromCharCode(65 + i) : escape(choice)}</option>`
+    ).join("")}</select>`;
+  });
+  return { inline: true, html: `<div class="passage exam-cloze">${completed}</div>${bank}` };
+}
+
 function renderPart() {
   const part = paper.parts[state.part];
   main.querySelector("audio")?.pause();
-  const passage = part.passage ? `<div class="passage">${escape(part.passage)}</div>` : "";
+  const items = questions.flatMap((q, index) => q.part === part ? [{ q, index }] : []);
+  const passage = renderPassage(part, items);
   main.innerHTML = `<section class="part-workspace">
     <h2>${escape(part.title)}</h2>
     <p>${escape(part.instructions)}</p>
     ${part.audio ? '<div class="audio-panel"><button type="button" class="button outline" id="playAudio">Play recording</button><audio class="practice-audio" aria-label="Listening recording" preload="metadata" controls></audio><p id="audioStatus" class="status-text" role="status"></p></div>' : ""}
-    <div class="part-grid${passage ? " with-passage" : ""}">${passage}<div>
-    ${questions.map((q, index) => q.part === part ? renderQuestion(q, index) : "").join("")}
-    </div></div></section>`;
+    <div class="part-grid${passage && !passage.inline ? " with-passage" : ""}">${passage?.html || ""}
+    ${passage?.inline ? "" : `<div>${items.map(({ q, index }) => renderQuestion(q, index)).join("")}</div>`}
+    </div></section>`;
   if (part.audio) bindAudio(part);
   main.scrollTop = 0;
   renderNav();
@@ -238,6 +264,12 @@ main.addEventListener("input", event => {
   const index = Number(event.target.dataset.answer);
   state.answers[questions[index].id] = event.target.value;
   state.current = index;
+  save();
+  renderNav();
+});
+main.addEventListener("focusin", event => {
+  if (!event.target.matches(".exam-inline-gap") || state.payload) return;
+  state.current = Number(event.target.dataset.answer);
   save();
   renderNav();
 });

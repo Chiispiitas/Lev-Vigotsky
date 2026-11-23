@@ -137,11 +137,18 @@ async function runPaper(browser, base, id, sizes, engine, { submissionError = fa
         }
         const expected = answers[index];
         assert.equal(question.id, expected.id);
-        assert.equal(await panel.locator("legend").textContent(), (index + 1) + ". " + question.prompt);
         const choices = question.options || part.options;
         const intentionallyWrong = submissionError && index === 1;
         const answer = intentionallyWrong ? choices.find(choice => !expected.answers.includes(choice)) : expected.answers[0];
-        if (choices) {
+        if (await panel.evaluate(element => element.matches(".exam-inline-gap"))) {
+          assert.equal(await panel.getAttribute("aria-label"), question.prompt);
+          if (choices) {
+            assert.deepEqual(await panel.locator("option").evaluateAll(options => options.slice(1).map(option => option.value)), choices);
+            await panel.selectOption(answer);
+          } else await panel.fill(answer);
+          assert.equal(await panel.inputValue(), answer);
+        } else if (choices) {
+          assert.equal(await panel.locator("legend").textContent(), (index + 1) + ". " + question.prompt);
           assert.deepEqual(await panel.locator("input").evaluateAll(inputs => inputs.map(input => input.value)), choices);
           const choice = choices.indexOf(answer);
           assert.ok(choice >= 0, "expected option must be rendered");
@@ -150,6 +157,7 @@ async function runPaper(browser, base, id, sizes, engine, { submissionError = fa
           else await label.click();
           assert.ok(await panel.locator("input").nth(choice).isChecked());
         } else {
+          assert.equal(await panel.locator("legend").textContent(), (index + 1) + ". " + question.prompt);
           await panel.locator("input").fill(answer);
         }
         assert.ok(await page.locator('[data-question="' + index + '"].answered').count());
