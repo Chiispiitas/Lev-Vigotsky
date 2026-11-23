@@ -13,7 +13,7 @@ const ids = ["a1", "a2", "b1"].flatMap(level => ["a", "b"].map(form => level + "
 const mime = {
   ".html": "text/html; charset=utf-8", ".js": "application/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".json": "application/json", ".mp3": "audio/mpeg",
-  ".webp": "image/webp", ".pdf": "application/pdf", ".png": "image/png", ".svg": "image/svg+xml"
+  ".webp": "image/webp", ".jpg": "image/jpeg", ".pdf": "application/pdf", ".png": "image/png", ".svg": "image/svg+xml"
 };
 
 function serve(request, response) {
@@ -311,7 +311,15 @@ async function teacherAndMaterials(browser, base, receipt) {
     for (const view of ["study", "speaking"]) {
       await page.goto(base + "materials.html?level=" + level + "&view=" + view);
       await page.locator("#material[data-ready]").waitFor();
-      if (view === "speaking") assert.equal(await page.locator(".speaking-card").count(), 2);
+      if (view === "speaking") {
+        assert.equal(await page.locator(".speaking-card").count(), 2);
+        const expected = [topic.speaking, topic.speaking.variationB].map(form => form.individual.photo.src);
+        const photos = await page.locator(".speaking-card img.speaking-photo").evaluateAll(async images => {
+          await Promise.all(images.map(image => image.decode()));
+          return images.map(image => image.getAttribute("src"));
+        });
+        assert.deepEqual(photos, expected);
+      }
       if (process.argv.includes("--pdf")) {
         await page.evaluate(async () => {
           await document.fonts.ready;

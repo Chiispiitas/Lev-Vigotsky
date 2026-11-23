@@ -43,15 +43,13 @@ function study(data) {
 function speaking(data) {
   const alternate = data.variationB ? { ...data, ...data.variationB } : null;
   root.innerHTML = `<section class="material-block"><p>Work with a partner. Take turns and give a reason for each preference. Allow about ${escape(data.minutes)} minutes per pair.</p></section>
-    <div lang="en" class="speaking-cards">${speakingCard("Practice A", data, "a")}${alternate ? speakingCard("Variation B", alternate, "b") : ""}
+    <div lang="en" class="speaking-cards">${speakingCard("Practice A", data)}${alternate ? speakingCard("Variation B", alternate) : ""}
     <section class="material-block"><h2>What to listen for</h2>${list(data.rubric || [])}</section></div>`;
 }
-function speakingCard(label, data, form) {
-  const stock = form === "a"
-    ? { alt: "Four volunteers push wheelbarrows past garden plots.", author: "Zack Gilbert", url: "https://www.pexels.com/photo/community-gardening-project-in-bloomington-39778110/" }
-    : { alt: "Volunteers collecting litter in blue bags on a riverbank.", author: "Vitaly Gariev", url: "https://www.pexels.com/photo/community-volunteers-cleaning-riverbank-outdoors-36713110/" };
-  const photo = level.id === "b1"
-    ? `<figure><img class="speaking-photo" src="images/b1-speaking-${form}.jpg" alt="${stock.alt}"><figcaption class="photo-credit"><a href="${stock.url}">${stock.author} / Pexels</a></figcaption></figure>`
+function speakingCard(label, data) {
+  const stock = data.individual?.photo;
+  const photo = stock
+    ? `<figure><img class="speaking-photo" src="${escape(stock.src)}" alt="${escape(stock.alt)}"><figcaption class="photo-credit"><a href="${escape(stock.url)}">${escape(stock.author)} / Pexels</a></figcaption></figure>`
     : "";
   return `<section class="material-block speaking-card"><h2>${label}</h2>
   <h3>Interview</h3>${list(data.interview || [])}

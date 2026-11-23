@@ -1,5 +1,16 @@
 # Practice images
 
+## Speaking practice stock photos
+
+Each practice form has a photograph for the individual speaking turn. The new A1 and A2 photos are distributed under the [Pexels license](https://www.pexels.com/license/).
+
+| Form | Photo | Photographer |
+| --- | --- | --- |
+| A1 · Practice A | A living room with a sofa and a coffee table | [Curtis Adams](https://www.pexels.com/photo/a-living-room-with-a-couch-and-coffee-table-14495885/) |
+| A1 · Variation B | Benches beside a path in a green park | [Julia Filirovska](https://www.pexels.com/photo/wooden-bench-in-the-park-8244139/) |
+| A2 · Practice A | A family walking together on a beach | [Asad Photo Maldives](https://www.pexels.com/photo/family-enjoying-a-day-at-the-beach-together-30225582/) |
+| A2 · Variation B | An outdoor music festival crowd with colorful beach balls in the air | [Wendy Wei](https://www.pexels.com/photo/people-standing-under-white-and-blue-sky-1555896/) |
+
 ## Timed mock illustrations
 
 Reading passages in both forms at each level use these twelve scenes. Each was created with the built-in ImageGen tool using the corresponding Horizons guide page.

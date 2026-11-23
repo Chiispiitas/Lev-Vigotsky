@@ -245,13 +245,19 @@
       "What can you do well?"
     ],
     "individual": {
-      "prompt": "Talk about a room where you like to spend time.",
+      "prompt": "Look at the photo for ideas. Talk about a room where you like to spend time.",
       "cues": [
         "Where it is",
         "Two things in the room",
         "What you do there",
         "Why you like it"
-      ]
+      ],
+      "photo": {
+        "src": "images/a1-speaking-a.jpg",
+        "alt": "A living room with a sofa and a coffee table",
+        "author": "Curtis Adams",
+        "url": "https://www.pexels.com/photo/a-living-room-with-a-couch-and-coffee-table-14495885/"
+      }
     },
     "pair": {
       "prompt": "You and your partner have free time on Saturday. Talk about the choices. Ask your partner what they like, give a reason and choose one together.",
@@ -279,13 +285,19 @@
         "Which hobby do you like?"
       ],
       "individual": {
-        "prompt": "Talk about a place near your home.",
+        "prompt": "Look at the photo for ideas. Talk about a place near your home.",
         "cues": [
           "What the place is",
           "Where it is",
           "What you can do there",
           "Why you like it"
-        ]
+        ],
+        "photo": {
+          "src": "images/a1-speaking-b.jpg",
+          "alt": "Benches beside a path in a green park",
+          "author": "Julia Filirovska",
+          "url": "https://www.pexels.com/photo/wooden-bench-in-the-park-8244139/"
+        }
       },
       "pair": {
         "prompt": "Plan a birthday afternoon. Talk about the choices and choose one together. Ask your partner a question and give a reason.",

@@ -262,7 +262,13 @@
         "What the people are doing",
         "How they might feel",
         "Why the project could be useful"
-      ]
+      ],
+      "photo": {
+        "src": "images/b1-speaking-a.jpg",
+        "alt": "Four volunteers push wheelbarrows past garden plots.",
+        "author": "Zack Gilbert",
+        "url": "https://www.pexels.com/photo/community-gardening-project-in-bloomington-39778110/"
+      }
     },
     "pair": {
       "prompt": "Your class wants to make school breaks more relaxing. Compare the ideas with your partner, respond to each other and agree on one to try.",
@@ -297,7 +303,13 @@
           "What the volunteers are doing",
           "Why they decided to help",
           "What you would do if you joined them"
-        ]
+        ],
+        "photo": {
+          "src": "images/b1-speaking-b.jpg",
+          "alt": "Volunteers collecting litter in blue bags on a riverbank.",
+          "author": "Vitaly Gariev",
+          "url": "https://www.pexels.com/photo/community-volunteers-cleaning-riverbank-outdoors-36713110/"
+        }
       },
       "pair": {
         "prompt": "Your class can choose one new outdoor activity. Compare the choices, explain risks or advantages and make a decision with your partner.",

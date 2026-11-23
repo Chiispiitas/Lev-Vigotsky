@@ -256,13 +256,19 @@
       "Have you ever been to a live show?"
     ],
     "individual": {
-      "prompt": "Talk about a day out you remember.",
+      "prompt": "Look at the photo for ideas. Talk about a day out you remember.",
       "cues": [
         "Where and when you went",
         "How you got there",
         "What you did",
         "Whether you would recommend it and why"
-      ]
+      ],
+      "photo": {
+        "src": "images/a2-speaking-a.jpg",
+        "alt": "A family walking together on a beach",
+        "author": "Asad Photo Maldives",
+        "url": "https://www.pexels.com/photo/family-enjoying-a-day-at-the-beach-together-30225582/"
+      }
     },
     "pair": {
       "prompt": "Plan an afternoon out with a visiting friend. Compare the choices, then agree on where to go and how to get there.",
@@ -291,13 +297,19 @@
         "Have you ever stayed in a hotel?"
       ],
       "individual": {
-        "prompt": "Talk about an event you would like to attend.",
+        "prompt": "Look at the photo for ideas. Talk about an event you would like to attend.",
         "cues": [
           "Where it is",
           "How you’re going to travel",
           "What you have to organize",
           "Why it interests you"
-        ]
+        ],
+        "photo": {
+          "src": "images/a2-speaking-b.jpg",
+          "alt": "An outdoor music festival crowd with colorful beach balls in the air",
+          "author": "Wendy Wei",
+          "url": "https://www.pexels.com/photo/people-standing-under-white-and-blue-sky-1555896/"
+        }
       },
       "pair": {
         "prompt": "Plan a short trip. Discuss the choices and agree on one. Confirm a meeting time and one thing a visitor needs to bring.",
