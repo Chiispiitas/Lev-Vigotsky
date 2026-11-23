@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="258" viewBox="0 0 400 258">
+<g stroke="#282824" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path fill="#fbefd5" d="M10 13L390 8l1 241-383 2Z"/><path fill="#d89363" d="m15 18 369-4 1 54-370 1Z"/><path fill="none" d="m15 242 369 1"/><circle cx="20" cy="234" r="2" fill="#d89363"/><circle cx="380" cy="234" r="2" fill="#d89363"/><g transform="translate(327 16) scale(.83)" fill="none"><path fill="#d89363" d="M3 44 16 18l9 13 11-21 15 34z"/><path fill="#fbefd5" d="m31 20 5-10 6 13-7-2-3 1m-22 7 6-11 8 11-8-4z"/><path d="m7 48 40 1"/></g></g>
+<g fill="#202220" font-family="Arial,sans-serif"><text x="32" y="50" font-size="22" font-weight="700">RIDGE TRAIL</text>
+<text x="32" y="96" font-size="23">The upper path is open</text>
+<text x="32" y="122" font-size="23">again. However, if it rains,</text>
+<text x="32" y="148" font-size="23">walkers should use the</text>
+<text x="32" y="174" font-size="23">lower route because the</text>
+<text x="32" y="200" font-size="23">rocks become slippery.</text></g></svg>

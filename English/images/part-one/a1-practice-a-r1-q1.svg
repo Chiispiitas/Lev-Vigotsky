@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="258" viewBox="0 0 400 258">
+<g stroke="#282824" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path fill="#fbefd5" d="M10 13L390 8l1 241-383 2Z"/><path fill="#d89363" d="m15 18 369-4 1 54-370 1Z"/><path fill="none" d="m15 242 369 1"/><circle cx="20" cy="234" r="2" fill="#d89363"/><circle cx="380" cy="234" r="2" fill="#d89363"/><g transform="translate(327 16) scale(.83)" fill="none"><path fill="#d89363" d="M8 24L45 22l2 24-38 1z"/><path fill="#fbefd5" d="M8 24l-3-9L42 7l3 10z"/><path d="m13 14 7 6m5-8 7 6m4-9 7 6m-27 17 23-1"/></g></g>
+<g fill="#202220" font-family="Arial,sans-serif"><text x="32" y="50" font-size="22" font-weight="700">FRIDAY FILM CLUB</text>
+<text x="32" y="96" font-size="23">Today’s film starts at 4:30.</text>
+<text x="32" y="122" font-size="23">Please wait by the library</text>
+<text x="32" y="148" font-size="23">door.</text></g></svg>

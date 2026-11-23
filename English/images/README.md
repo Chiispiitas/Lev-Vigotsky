@@ -1,5 +1,7 @@
 # Practice images
 
+Part 1 uses original vector drawings with the guide’s ink outlines and flat colors. The notice lettering comes directly from each exam’s question text. To update the images, run `node English/build-notice-images.mjs` and verify them with `node English/build-notice-images.mjs --check`.
+
 The B1 Speaking forms use stock photographs. The local JPEGs are sized for web and print.
 
 - Form A: “Community Gardening Project in Bloomington” by Zack Gilbert. [Photo](https://www.pexels.com/photo/community-gardening-project-in-bloomington-39778110/)

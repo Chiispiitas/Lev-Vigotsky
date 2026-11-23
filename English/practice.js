@@ -219,12 +219,20 @@ function renderQuestion(q, index) {
   const answer = state.answers[q.id] || "";
   const label = q.prompt || "Answer";
   const options = q.options || q.part.options;
-  const context = q.context ? `<p class="question-context">${escape(q.context)}</p>` : "";
+  const context = q.part.id === "r1" && q.context
+    ? `<img class="notice-image" width="400" height="258" src="images/part-one/${escape(examId)}-${escape(q.id)}.svg" alt="${escape(q.context)}"><p class="question-context" hidden>${escape(q.context)}</p>`
+    : q.context ? `<p class="question-context">${escape(q.context)}</p>` : "";
   const controls = options?.length
     ? options.map(option => `<label class="choice-row radio-row"><input type="radio" name="answer-${index}" data-answer="${index}" value="${escape(option)}" ${answer === option ? "checked" : ""}><span>${escape(option)}</span></label>`).join("")
     : `<input class="gap-input" aria-label="Answer ${index + 1}" type="text" data-answer="${index}" autocomplete="off" maxlength="250" value="${escape(answer)}">`;
   return `<fieldset class="question-panel" data-panel="${index}"><legend>${index + 1}. ${escape(label)}</legend><div class="question-controls">${context}${controls}</div></fieldset>`;
 }
+main.addEventListener("error", event => {
+  if (!event.target.matches(".notice-image")) return;
+  event.target.hidden = true;
+  event.target.nextElementSibling.hidden = false;
+}, true);
+
 main.addEventListener("input", event => {
   if (!event.target.hasAttribute("data-answer") || state.payload) return;
   const index = Number(event.target.dataset.answer);

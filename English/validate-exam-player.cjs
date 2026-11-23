@@ -13,7 +13,7 @@ const ids = ["a1", "a2", "b1"].flatMap(level => ["a", "b"].map(form => level + "
 const mime = {
   ".html": "text/html; charset=utf-8", ".js": "application/javascript; charset=utf-8",
   ".css": "text/css; charset=utf-8", ".json": "application/json", ".mp3": "audio/mpeg",
-  ".webp": "image/webp", ".pdf": "application/pdf", ".png": "image/png"
+  ".webp": "image/webp", ".pdf": "application/pdf", ".png": "image/png", ".svg": "image/svg+xml"
 };
 
 function serve(request, response) {
@@ -129,6 +129,12 @@ async function runPaper(browser, base, id, sizes, engine, { submissionError = fa
       }
       for (const question of part.questions) {
         const panel = page.locator('[data-panel="' + index + '"]');
+        if (part.id === "r1") {
+          const notice = panel.locator(".notice-image");
+          assert.equal(await notice.getAttribute("alt"), question.context);
+          await notice.evaluate(image => image.decode());
+          assert.ok(await notice.isVisible());
+        }
         const expected = answers[index];
         assert.equal(question.id, expected.id);
         assert.equal(await panel.locator("legend").textContent(), (index + 1) + ". " + question.prompt);

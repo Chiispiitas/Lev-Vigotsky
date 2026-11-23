@@ -68,6 +68,7 @@
 .part-grid.with-passage { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
 .passage, .question-context { white-space: pre-line; background: var(--exam-soft); padding: 13px 16px; border-radius: 6px; color: var(--navy); overflow-wrap: anywhere; }
 .question-context { margin: 0 0 10px; }
+.notice-image { width: min(100%, 470px); height: auto; margin: 0 0 12px; }
 .question-panel { border: 1px solid var(--exam-border); border-radius: 8px; padding: 14px; background: white; margin: 0 0 14px; min-inline-size: 0; scroll-margin: 10px; }
 .question-panel legend { display: block; float: left; width: 100%; font-weight: 600; margin-bottom: 8px; }
 .question-controls { clear: both; }
