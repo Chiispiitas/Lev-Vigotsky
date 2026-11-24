@@ -5,14 +5,25 @@ const escape = App.escapeHtml;
 const examId = new URLSearchParams(location.search).get("exam");
 const key = `ueplv-practice:${config.VERSION}:${examId}`;
 const main = el("mainContent");
-let paper, questions, state, tick;
+let paper, questions, state, tick, feedbackKey;
 
 async function init() {
   if (!/^(a1|a2|b1)-practice-[ab]$/.test(examId || "")) throw new Error("Choose a practice exam from the catalog.");
-  const response = await fetch(`content/exams/${examId}.json`, { cache: "no-cache" });
-  if (!response.ok) throw new Error("This practice exam could not be loaded. Try refreshing the page.");
+  const [response, keyResponse] = await Promise.all([
+    fetch(`content/exams/${examId}.json`, { cache: "no-cache" }),
+    fetch(`answer-keys/versions/${config.VERSION}/${examId}.json`)
+  ]);
+  if (!response.ok || !keyResponse.ok) throw new Error("This practice exam could not be loaded. Try refreshing the page.");
   paper = await response.json();
+  const answerKey = await keyResponse.json();
+  if (answerKey.examId !== examId || answerKey.keyVersion !== config.VERSION) {
+    throw new Error("The answer key could not be loaded. Try refreshing the page.");
+  }
+  feedbackKey = new Map(answerKey.sections.flatMap(section => section.items.map(item => [item.id, item.answers])));
   questions = paper.parts.flatMap((part, partIndex) => part.questions.map(question => ({ ...question, part, partIndex })));
+  if (feedbackKey.size !== questions.length || questions.some(question => !feedbackKey.get(question.id)?.length)) {
+    throw new Error("The answer key could not be loaded. Try refreshing the page.");
+  }
   const level = config.levels.find(item => item.level === paper.level);
   const title = `${paper.level} Practice${paper.variation === "B" ? " · Variation B" : ""}`;
   document.title = `${title} | Lev Vigotsky`;
@@ -201,6 +212,27 @@ function revealQuestion(index) {
   if (panel) main.scrollTop += panel.getBoundingClientRect().top - main.getBoundingClientRect().top - 10;
 }
 
+const normalizeAnswer = value => value.normalize("NFKC").trim().toLowerCase()
+  .replace(/[‘’]/g, "'").replace(/\s+/g, " ");
+
+function feedbackMarkup(index) {
+  return `<span id="feedback-${index}" class="question-feedback" role="status" aria-atomic="true"></span>`;
+}
+
+function showQuestionFeedback(index, answer) {
+  const output = el("feedback-" + index);
+  if (!output) return;
+  const normalized = normalizeAnswer(answer);
+  if (!normalized) {
+    output.textContent = "";
+    return;
+  }
+  const accepted = feedbackKey.get(questions[index].id);
+  const correct = accepted.some(value => normalizeAnswer(value) === normalized);
+  output.dataset.correct = String(correct);
+  output.textContent = correct ? "Correct" : "Incorrect. Answer: " + accepted.join(" / ");
+}
+
 function renderPassage(part, items) {
   if (!part.passage) return null;
   const text = escape(part.passage);
@@ -216,11 +248,11 @@ function renderPassage(part, items) {
     const { q, index } = items[gap - 1];
     const value = state.answers[q.id] || "";
     const options = q.options || part.options;
-    const attributes = `class="exam-inline-gap" data-panel="${index}" data-answer="${index}" aria-label="Gap ${gap}"`;
-    if (!options?.length) return `<input ${attributes} type="text" value="${escape(value)}" placeholder="${gap}" maxlength="250" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">`;
+    const attributes = `class="exam-inline-gap" data-panel="${index}" data-answer="${index}" aria-label="Gap ${gap}" aria-describedby="feedback-${index}"`;
+    if (!options?.length) return `<input ${attributes} type="text" value="${escape(value)}" placeholder="${gap}" maxlength="250" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">${feedbackMarkup(index)}`;
     return `<select ${attributes}><option value="">${gap}</option>${options.map((choice, i) =>
       `<option value="${escape(choice)}"${choice === value ? " selected" : ""}>${sentences ? String.fromCharCode(65 + i) : escape(choice)}</option>`
-    ).join("")}</select>`;
+    ).join("")}</select>${feedbackMarkup(index)}`;
   });
   return { inline: true, html: `<div class="passage exam-cloze">${completed}</div>${bank}` };
 }
@@ -243,6 +275,7 @@ function renderPart() {
     <div class="part-grid${passage && !passage.inline ? " with-passage" : ""}">${reading}
     ${passage?.inline ? "" : `<div>${items.map(({ q, index }) => renderQuestion(q, index)).join("")}</div>`}
     </div></section>`;
+  for (const { q, index } of items) showQuestionFeedback(index, state.answers[q.id] || "");
   if (part.audio) bindAudio(part);
   main.scrollTop = 0;
   renderNav();
@@ -255,9 +288,9 @@ function renderQuestion(q, index) {
     ? `<img class="notice-image" width="400" height="258" src="images/part-one/${escape(examId)}-${escape(q.id)}.svg" alt="${escape(q.context)}"><p class="question-context" hidden>${escape(q.context)}</p>`
     : q.context ? `<p class="question-context">${escape(q.context)}</p>` : "";
   const controls = options?.length
-    ? options.map(option => `<label class="choice-row radio-row"><input type="radio" name="answer-${index}" data-answer="${index}" value="${escape(option)}" ${answer === option ? "checked" : ""}><span>${escape(option)}</span></label>`).join("")
-    : `<input class="gap-input" aria-label="Answer ${index + 1}" type="text" data-answer="${index}" autocomplete="off" maxlength="250" value="${escape(answer)}">`;
-  return `<fieldset class="question-panel" data-panel="${index}"><legend>${index + 1}. ${escape(label)}</legend><div class="question-controls">${context}${controls}</div></fieldset>`;
+    ? options.map(option => `<label class="choice-row radio-row"><input type="radio" name="answer-${index}" data-answer="${index}" aria-describedby="feedback-${index}" value="${escape(option)}" ${answer === option ? "checked" : ""}><span>${escape(option)}</span></label>`).join("")
+    : `<input class="gap-input" aria-label="Answer ${index + 1}" type="text" data-answer="${index}" aria-describedby="feedback-${index}" autocomplete="off" maxlength="250" value="${escape(answer)}">`;
+  return `<fieldset class="question-panel" data-panel="${index}"><legend>${index + 1}. ${escape(label)}</legend><div class="question-controls">${context}${controls}${feedbackMarkup(index)}</div></fieldset>`;
 }
 main.addEventListener("error", event => {
   if (!event.target.matches(".notice-image")) return;
@@ -269,9 +302,21 @@ main.addEventListener("input", event => {
   if (!event.target.hasAttribute("data-answer") || state.payload) return;
   const index = Number(event.target.dataset.answer);
   state.answers[questions[index].id] = event.target.value;
+  showQuestionFeedback(index, event.target.matches('input[type="text"]') ? "" : event.target.value);
   state.current = index;
   save();
   renderNav();
+});
+main.addEventListener("focusout", event => {
+  if (event.target.matches('input[type="text"][data-answer]') && !state.payload) {
+    showQuestionFeedback(Number(event.target.dataset.answer), event.target.value);
+  }
+});
+main.addEventListener("keydown", event => {
+  if (event.key === "Enter" && event.target.matches('input[type="text"][data-answer]') && !state.payload) {
+    event.preventDefault();
+    showQuestionFeedback(Number(event.target.dataset.answer), event.target.value);
+  }
 });
 main.addEventListener("focusin", event => {
   if (!event.target.matches(".exam-inline-gap") || state.payload) return;

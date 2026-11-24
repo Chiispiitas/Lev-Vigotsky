@@ -177,3 +177,18 @@
   .study-topics ul { margin-block: 3px 0; }
   @page { size: A4; margin: 16mm; }
 }
+
+.question-feedback:empty { display: none; }
+.question-feedback {
+  display: block;
+  margin-block: 6px;
+  font-size: .9rem;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.question-feedback[data-correct="true"] { color: #255e43; }
+.question-feedback[data-correct="false"] { color: #8a3529; }
+.exam-cloze .question-feedback:not(:empty) {
+  display: inline;
+  margin-inline: .35em;
+}
