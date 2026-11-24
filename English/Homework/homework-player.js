@@ -80,7 +80,7 @@ async function load() {
         audio.src = "audio/" + quiz.slug + ".mp3";
         form.append(node("h2", "Listen"), node("p", "Play it again if you need to."), audio);
       } else {
-        form.append(node("h2", "Quick practice"));
+        form.append(node("h2", section.title || "Quick practice"));
         if (section.stimulus) form.append(node("p", section.stimulus));
       }
       for (const question of section.questions) {

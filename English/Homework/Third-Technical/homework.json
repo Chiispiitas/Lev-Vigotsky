@@ -1,5 +1,5 @@
 {
-  "version": "homework-third-technical-2026-11-24.2",
+  "version": "homework-third-technical-2026-11-24.3",
   "quizzes": [
     {
       "slug": "gerunds-vs-infinitives",
@@ -10,13 +10,13 @@
       "pages": "94–95",
       "availableFrom": "2026-11-24T00:00:00-05:00",
       "dueAt": "2026-12-01T23:59:59-05:00",
-      "intro": "Listen to Ana talk about her room and answer questions 1–5. Then choose the right verb form in questions 6–16.",
+      "intro": "Read Ana’s post and answer questions 1–5. Then choose the right verb form in questions 6–16.",
       "sections": [
         {
-          "id": "listening",
+          "id": "comprehension",
           "questions": [
             {
-              "id": "listening-1",
+              "id": "comprehension-1",
               "prompt": "What does Ana plan to move?",
               "options": [
                 "The rug",
@@ -25,7 +25,7 @@
               ]
             },
             {
-              "id": "listening-2",
+              "id": "comprehension-2",
               "prompt": "What does Ana enjoy doing after school?",
               "options": [
                 "Reading by the window",
@@ -34,7 +34,7 @@
               ]
             },
             {
-              "id": "listening-3",
+              "id": "comprehension-3",
               "prompt": "What will Ana do before buying anything?",
               "options": [
                 "Ask her cousin for help",
@@ -43,7 +43,7 @@
               ]
             },
             {
-              "id": "listening-4",
+              "id": "comprehension-4",
               "prompt": "Where will the chest of drawers go?",
               "options": [
                 "Next to the closet",
@@ -52,7 +52,7 @@
               ]
             },
             {
-              "id": "listening-5",
+              "id": "comprehension-5",
               "prompt": "What does Ana want to get for her room?",
               "options": [
                 "A different chair",
@@ -60,7 +60,9 @@
                 "A new rug"
               ]
             }
-          ]
+          ],
+          "title": "Ana’s room makeover",
+          "stimulus": "I’m giving my room a little makeover this weekend. I plan to move the chest of drawers next to the closet. I enjoy reading by the window after school, so I’m leaving my chair right where it is. I still want to get a new rug, but before buying anything, I’ll measure the room."
         },
         {
           "id": "reading",
@@ -164,7 +166,8 @@
                 "move"
               ]
             }
-          ]
+          ],
+          "title": "Choose the right form"
         }
       ]
     }
