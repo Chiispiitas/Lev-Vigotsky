@@ -1,0 +1,2039 @@
+{
+  "version": "homework-second-technical-2026-11-24",
+  "quizzes": [
+    {
+      "slug": "advice-after-class",
+      "id": "homework-second-technical-english-advice-after-class",
+      "title": "Advice after class",
+      "track": "english",
+      "lesson": "5A/5C",
+      "pages": "40–41, 44–45",
+      "availableFrom": "2026-11-24T00:00:00-05:00",
+      "dueAt": "2026-12-01T23:59:59-05:00",
+      "topic": "English · 5A/5C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Why does Mia need help?",
+              "options": [
+                "She has a sore throat.",
+                "She has a toothache.",
+                "She has a sprained ankle."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Who will lead the rehearsal?",
+              "options": [
+                "The librarian",
+                "Leo",
+                "Mia"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Where will they go if the library is full?",
+              "options": [
+                "The gym",
+                "The cafeteria",
+                "Room 8"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "You have a test tomorrow. You ___ go to bed very late.",
+              "options": [
+                "don't should",
+                "shouldn't",
+                "should to"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If we ___ now, we'll finish before lunch.",
+              "options": [
+                "will start",
+                "would start",
+                "start"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Sofia finally found her missing notebook. She felt ___.",
+              "options": [
+                "relieved",
+                "jealous",
+                "guilty"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "quieter-classroom",
+      "id": "homework-second-technical-english-quieter-classroom",
+      "title": "A quieter classroom",
+      "track": "english",
+      "lesson": "5C",
+      "pages": "44–45",
+      "availableFrom": "2026-12-01T00:00:00-05:00",
+      "dueAt": "2026-12-08T23:59:59-05:00",
+      "topic": "English · 5C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What will the group try on Monday?",
+              "options": [
+                "A new seating plan",
+                "A quiet start",
+                "A longer break"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When will they repeat the activity if it works?",
+              "options": [
+                "Tuesday",
+                "Friday",
+                "Thursday"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will students write down?",
+              "options": [
+                "Their questions",
+                "Their grades",
+                "Their names"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "If we ___ a list, everyone will know what to do.",
+              "options": [
+                "will make",
+                "made",
+                "make"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If the room is noisy, we ___ the door.",
+              "options": [
+                "will close",
+                "would close",
+                "closing"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Ben helped the group finish the poster. He was ___ of their work.",
+              "options": [
+                "guilty",
+                "proud",
+                "jealous"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "school-day-fixes",
+      "id": "homework-second-technical-english-school-day-fixes",
+      "title": "School day fixes",
+      "track": "english",
+      "lesson": "5A/5C",
+      "pages": "40–41, 44–45",
+      "availableFrom": "2026-12-03T00:00:00-05:00",
+      "dueAt": "2026-12-10T23:59:59-05:00",
+      "topic": "English · 5A/5C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What does Nina often forget?",
+              "options": [
+                "Her bus card",
+                "Her lunch",
+                "The group materials"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Where should she put them?",
+              "options": [
+                "By the front door",
+                "In the kitchen",
+                "Under her desk"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When might she stop using the reminder?",
+              "options": [
+                "Monday",
+                "Sunday",
+                "Saturday"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "You should ___ your bag before you leave.",
+              "options": [
+                "check",
+                "checking",
+                "to check"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If she ___ a reminder, she'll remember the folder.",
+              "options": [
+                "set",
+                "sets",
+                "will set"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "I felt ___ when I saw that everyone else had a better seat.",
+              "options": [
+                "relieved",
+                "cheerful",
+                "jealous"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "tried-it-once",
+      "id": "homework-second-technical-english-tried-it-once",
+      "title": "I tried it once",
+      "track": "english",
+      "lesson": "6A",
+      "pages": "48–49",
+      "availableFrom": "2026-12-08T00:00:00-05:00",
+      "dueAt": "2026-12-15T23:59:59-05:00",
+      "topic": "English · 6A",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What activity has the speaker tried?",
+              "options": [
+                "Rock climbing",
+                "Horseback riding",
+                "Surfing"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Who went with the speaker?",
+              "options": [
+                "A neighbor",
+                "A cousin",
+                "A teacher"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Why hasn't the speaker been back?",
+              "options": [
+                "The gym closed.",
+                "The cousin moved away.",
+                "The gym is far away."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Have you ever ___ a short film?",
+              "options": [
+                "making",
+                "made",
+                "make"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "We ___ our first video last June.",
+              "options": [
+                "have made",
+                "make",
+                "made"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "I want to take ___ a new hobby this year.",
+              "options": [
+                "up",
+                "out",
+                "off"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "day-by-the-lake",
+      "id": "homework-second-technical-english-day-by-the-lake",
+      "title": "A day by the lake",
+      "track": "english",
+      "lesson": "6C",
+      "pages": "52–53",
+      "availableFrom": "2026-12-15T00:00:00-05:00",
+      "dueAt": "2026-12-22T23:59:59-05:00",
+      "topic": "English · 6C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What would the speaker take to the lake?",
+              "options": [
+                "A guitar",
+                "A camera",
+                "A notebook"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Where would Anna rather go?",
+              "options": [
+                "To the beach",
+                "To the mountains",
+                "To the stream"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What would both of them bring?",
+              "options": [
+                "Food",
+                "Bicycles",
+                "Extra shoes"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "If I ___ near a forest, I'd go there every weekend.",
+              "options": [
+                "live",
+                "will live",
+                "lived"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If I had a map, I ___ which path to take.",
+              "options": [
+                "would know",
+                "will know",
+                "would knew"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "We ate lunch on the ___ of the lake.",
+              "options": [
+                "wildlife",
+                "shore",
+                "sunrise"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "new-hobby-challenge",
+      "id": "homework-second-technical-english-new-hobby-challenge",
+      "title": "The new hobby challenge",
+      "track": "english",
+      "lesson": "6A/6C",
+      "pages": "48–49, 52–53",
+      "availableFrom": "2026-12-16T00:00:00-05:00",
+      "dueAt": "2026-12-23T23:59:59-05:00",
+      "topic": "English · 6A/6C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "When did Sam sign up?",
+              "options": [
+                "Last Saturday",
+                "Yesterday morning",
+                "Last Friday"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What has Sam never photographed?",
+              "options": [
+                "A wild animal",
+                "A plant",
+                "A city street"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When would he try to photograph birds?",
+              "options": [
+                "After dark",
+                "At sunrise",
+                "At noon"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "I've never ___ part in a photo challenge.",
+              "options": [
+                "taken",
+                "took",
+                "take"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "She signed ___ for a class on Saturday.",
+              "options": [
+                "over",
+                "up",
+                "out"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "If we ___ more time, we'd visit the other side of the lake.",
+              "options": [
+                "have",
+                "would have",
+                "had"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "which-form-fits",
+      "id": "homework-second-technical-english-which-form-fits",
+      "title": "Which form fits?",
+      "track": "english",
+      "lesson": "5–6 Review",
+      "pages": "40–41, 44–45, 48–49, 52–53",
+      "availableFrom": "2027-01-05T00:00:00-05:00",
+      "dueAt": "2027-01-12T23:59:59-05:00",
+      "topic": "English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What has Pablo never done?",
+              "options": [
+                "Given a talk in English",
+                "Written an email in English",
+                "Spoken to his teacher"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Who should he practice with first?",
+              "options": [
+                "The whole group",
+                "Two friends",
+                "His family"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When might he practice with the whole group?",
+              "options": [
+                "Monday",
+                "Wednesday",
+                "Friday"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "You shouldn't ___ every word from your notes.",
+              "options": [
+                "to read",
+                "read",
+                "reading"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Has Ana ever ___ a school event?",
+              "options": [
+                "organize",
+                "organizing",
+                "organized"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "If I were you, I ___ with a short example.",
+              "options": [
+                "would start",
+                "will start",
+                "started"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "my-next-challenge",
+      "id": "homework-second-technical-english-my-next-challenge",
+      "title": "My next challenge",
+      "track": "english",
+      "lesson": "5C/6A",
+      "pages": "44–45, 48–49",
+      "availableFrom": "2027-01-12T00:00:00-05:00",
+      "dueAt": "2027-01-19T23:59:59-05:00",
+      "topic": "English · 5C/6A",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which activity has the speaker tried before?",
+              "options": [
+                "Swimming",
+                "Drawing",
+                "Running"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When will the short runs usually happen?",
+              "options": [
+                "Before school",
+                "At lunchtime",
+                "After school"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When will the speaker run if Tuesday is rainy?",
+              "options": [
+                "Wednesday",
+                "Thursday",
+                "Friday"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Have you ever ___ a new skill online?",
+              "options": [
+                "learn",
+                "learning",
+                "learned"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If I get home early, I ___ for twenty minutes.",
+              "options": [
+                "will practice",
+                "practiced",
+                "would practice"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Sara wants to stop doing judo. She wants to give it ___.",
+              "options": [
+                "out",
+                "up",
+                "on"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "what-would-you-do",
+      "id": "homework-second-technical-english-what-would-you-do",
+      "title": "What would you do?",
+      "track": "english",
+      "lesson": "5A/6C",
+      "pages": "40–41, 52–53",
+      "availableFrom": "2027-01-14T00:00:00-05:00",
+      "dueAt": "2027-01-21T23:59:59-05:00",
+      "topic": "English · 5A/6C",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which place would the speaker choose?",
+              "options": [
+                "A beach",
+                "A park",
+                "A waterfall"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When did the speaker go there?",
+              "options": [
+                "Last year",
+                "Last week",
+                "Last month"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What should students wear?",
+              "options": [
+                "Hats",
+                "Boots",
+                "Gloves"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "If we ___ the shorter trail, we would get there before lunch.",
+              "options": [
+                "took",
+                "take",
+                "will take"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "You ___ bring plastic cups if the school already has reusable ones.",
+              "options": [
+                "ought",
+                "shouldn't",
+                "should to"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "There was a lot of ___ near the river. We saw birds, frogs, and insects.",
+              "options": [
+                "sunrise",
+                "shore",
+                "wildlife"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "listen-for-the-change",
+      "id": "homework-second-technical-english-listen-for-the-change",
+      "title": "Listen for the change",
+      "track": "english",
+      "lesson": "5–6 Review",
+      "pages": "56–57",
+      "availableFrom": "2027-01-19T00:00:00-05:00",
+      "dueAt": "2027-01-26T23:59:59-05:00",
+      "topic": "English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What time is the meeting now?",
+              "options": [
+                "Ten",
+                "Nine",
+                "Eleven"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Where is the new meeting point?",
+              "options": [
+                "The stream",
+                "The visitor center",
+                "The shore"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When will they walk to the stream?",
+              "options": [
+                "Before the meeting",
+                "If the center closes",
+                "If the weather improves"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "If the rain stops, we ___ outside.",
+              "options": [
+                "would ate",
+                "will eat",
+                "ate"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Have you ever ___ a campsite online?",
+              "options": [
+                "book",
+                "booking",
+                "booked"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "If I had a warmer jacket, I ___ it.",
+              "options": [
+                "would bring",
+                "will bring",
+                "brought"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "before-you-choose",
+      "id": "homework-second-technical-english-before-you-choose",
+      "title": "Before you choose",
+      "track": "english",
+      "lesson": "5–6 Review",
+      "pages": "56–57",
+      "availableFrom": "2027-01-26T00:00:00-05:00",
+      "dueAt": "2027-02-02T23:59:59-05:00",
+      "topic": "English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which place is cheaper?",
+              "options": [
+                "They cost the same.",
+                "The nature reserve",
+                "The sports center"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "How long does the trip to the reserve take?",
+              "options": [
+                "Half an hour",
+                "Two hours",
+                "An hour"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Which place has Daniela visited before?",
+              "options": [
+                "The sports center",
+                "The nature reserve",
+                "Both places"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "If we go to the reserve, we ___ need to leave early.",
+              "options": [
+                "would to",
+                "had",
+                "will"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If I ___ more money, I'd pay for the bus.",
+              "options": [
+                "had",
+                "have",
+                "will have"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "You ___ check the opening times before you buy tickets.",
+              "options": [
+                "are should",
+                "should",
+                "should to"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "two-replies",
+      "id": "homework-second-technical-english-two-replies",
+      "title": "Two replies",
+      "track": "english",
+      "lesson": "5–6 Review",
+      "pages": "56–57",
+      "availableFrom": "2027-01-28T00:00:00-05:00",
+      "dueAt": "2027-02-04T23:59:59-05:00",
+      "topic": "English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Why can't the speaker join the art club now?",
+              "options": [
+                "It costs too much.",
+                "It meets too late.",
+                "It's full."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When will the speaker join the art club?",
+              "options": [
+                "If a second group opens",
+                "If chess is canceled",
+                "If the price changes"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What hasn't the speaker tried?",
+              "options": [
+                "Painting",
+                "Chess",
+                "Drawing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "I haven't ___ any of the new clubs yet.",
+              "options": [
+                "visited",
+                "visit",
+                "visiting"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If a place becomes free, the teacher ___ me.",
+              "options": [
+                "would told",
+                "will tell",
+                "told"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "If I knew how to play, I ___ the team.",
+              "options": [
+                "will join",
+                "would joined",
+                "would join"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pitch-a-small-change",
+      "id": "homework-second-technical-english-pitch-a-small-change",
+      "title": "Pitch a small change",
+      "track": "english",
+      "lesson": "Project practice",
+      "pages": "40–41, 44–45, 48–49, 52–53",
+      "availableFrom": "2027-02-03T00:00:00-05:00",
+      "dueAt": "2027-02-10T23:59:59-05:00",
+      "topic": "English · Project practice",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "How many students answered the survey?",
+              "options": [
+                "Twelve",
+                "Eight",
+                "Twenty"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What did most students ask for?",
+              "options": [
+                "A weekly email",
+                "A box for reusable paper",
+                "More printers"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Where will the team put the first box?",
+              "options": [
+                "By the door",
+                "Outside the office",
+                "Beside the printer"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "We ___ start with one box and see how it goes.",
+              "options": [
+                "should starting",
+                "should",
+                "should to"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "If the school agrees, we ___ the plan on Monday.",
+              "options": [
+                "started",
+                "would started",
+                "will start"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Has your team ever ___ survey results to the class?",
+              "options": [
+                "presented",
+                "present",
+                "presenting"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "busy-week-at-work",
+      "id": "homework-second-technical-business-busy-week-at-work",
+      "title": "A busy week at work",
+      "track": "business",
+      "lesson": "5B/5D",
+      "pages": "42–43, 46–47",
+      "availableFrom": "2026-11-24T00:00:00-05:00",
+      "dueAt": "2026-12-01T23:59:59-05:00",
+      "topic": "Business English · 5B/5D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which file is the priority?",
+              "options": [
+                "A customer invoice",
+                "The payroll file",
+                "The stock report"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When is the payroll file due?",
+              "options": [
+                "At nine",
+                "At the end of the day",
+                "At noon"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will Luis check?",
+              "options": [
+                "The stock report",
+                "The payroll file",
+                "A price list"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Dear Ms. Lee, ___ advise us on how to split the work?",
+              "options": [
+                "you could to",
+                "do you could",
+                "could you"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "A deadline tells you ___.",
+              "options": [
+                "when the work must be ready",
+                "who paid the invoice",
+                "how many workers are absent"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which phrase fits a polite request for advice?",
+              "options": [
+                "That isn't my problem.",
+                "I'd appreciate your advice.",
+                "Fix it now."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "move-the-deadline",
+      "id": "homework-second-technical-business-move-the-deadline",
+      "title": "Can we move the deadline?",
+      "track": "business",
+      "lesson": "5D",
+      "pages": "46–47",
+      "availableFrom": "2026-12-01T00:00:00-05:00",
+      "dueAt": "2026-12-08T23:59:59-05:00",
+      "topic": "Business English · 5D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Why is the budget delayed?",
+              "options": [
+                "Ava lost the budget.",
+                "The office is closed.",
+                "Two prices are missing."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When was it originally due?",
+              "options": [
+                "Tuesday",
+                "Wednesday",
+                "Thursday"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When does the speaker want to send it?",
+              "options": [
+                "Friday morning",
+                "Thursday morning",
+                "Tuesday afternoon"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which sentence asks for an extension politely?",
+              "options": [
+                "Could we send the budget by Thursday?",
+                "You need to wait.",
+                "We don't want a deadline."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which subject line is clearest?",
+              "options": [
+                "A quick thing",
+                "Request to extend the budget deadline",
+                "Hello again"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "A supplier is someone who ___.",
+              "options": [
+                "sets your school timetable",
+                "records your attendance",
+                "provides goods or services"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "better-shift-plan",
+      "id": "homework-second-technical-business-better-shift-plan",
+      "title": "A better shift plan",
+      "track": "business",
+      "lesson": "5B/5D",
+      "pages": "42–43, 46–47",
+      "availableFrom": "2026-12-03T00:00:00-05:00",
+      "dueAt": "2026-12-10T23:59:59-05:00",
+      "topic": "Business English · 5B/5D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which shift has the problem?",
+              "options": [
+                "The morning shift",
+                "The evening shift",
+                "The weekend shift"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What will the second person do?",
+              "options": [
+                "Write an invoice",
+                "Check stock",
+                "Answer calls"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "How long does Elena want to test the plan?",
+              "options": [
+                "Two days",
+                "One month",
+                "One week"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which sentence explains the benefit?",
+              "options": [
+                "We have two telephones.",
+                "This would give each person one clear task.",
+                "The morning shift starts at eight."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "What is a shift?",
+              "options": [
+                "A payment request",
+                "A list of prices",
+                "A period of work"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which closing fits a message to the manager?",
+              "options": [
+                "Thank you for considering the proposal.",
+                "Let me know right now.",
+                "Cool, bye."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "missing-order",
+      "id": "homework-second-technical-business-missing-order",
+      "title": "Where did the order go?",
+      "track": "business",
+      "lesson": "6B",
+      "pages": "50–51",
+      "availableFrom": "2026-12-08T00:00:00-05:00",
+      "dueAt": "2026-12-15T23:59:59-05:00",
+      "topic": "Business English · 6B",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Why did the customer call?",
+              "options": [
+                "She got the wrong product.",
+                "Her order hadn't arrived.",
+                "She wanted a discount."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What was wrong with the address?",
+              "options": [
+                "The city",
+                "The customer's name",
+                "The street number"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When was the new package sent?",
+              "options": [
+                "The next morning",
+                "That evening",
+                "One week later"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "A delivery delay means an item ___.",
+              "options": [
+                "arrives before the due date",
+                "has no price",
+                "arrives later than expected"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "We updated the address. We ___ sent the customer a message.",
+              "options": [
+                "also",
+                "too",
+                "as well"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which line briefly reports the cause?",
+              "options": [
+                "We should use a different carrier.",
+                "The street number on the label was wrong.",
+                "The new package left on Monday."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "what-could-go-wrong",
+      "id": "homework-second-technical-business-what-could-go-wrong",
+      "title": "What could go wrong?",
+      "track": "business",
+      "lesson": "6D",
+      "pages": "54–55",
+      "availableFrom": "2026-12-15T00:00:00-05:00",
+      "dueAt": "2026-12-22T23:59:59-05:00",
+      "topic": "Business English · 6D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "When does the fair start?",
+              "options": [
+                "Friday afternoon",
+                "Saturday morning",
+                "Friday morning"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Why is Friday delivery a risk?",
+              "options": [
+                "The boxes could arrive after the fair begins.",
+                "The boxes cost too much.",
+                "There are too many boxes."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What does Rosa suggest?",
+              "options": [
+                "Ordering fewer boxes",
+                "Contacting a local supplier",
+                "Canceling the fair"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which phrase invites someone else to speak?",
+              "options": [
+                "What do you think, David?",
+                "Let me finish my report.",
+                "That's the end of the meeting."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "A backup supplier is ___.",
+              "options": [
+                "the person who checks staff hours",
+                "another supplier you can use if needed",
+                "the first person to buy from you"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which response politely raises a concern?",
+              "options": [
+                "That idea is useless.",
+                "There's nothing to discuss.",
+                "I see your point, but what if delivery is late?"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "wrong-invoice",
+      "id": "homework-second-technical-business-wrong-invoice",
+      "title": "The wrong invoice",
+      "track": "business",
+      "lesson": "6B/6D",
+      "pages": "50–51, 54–55",
+      "availableFrom": "2026-12-16T00:00:00-05:00",
+      "dueAt": "2026-12-23T23:59:59-05:00",
+      "topic": "Business English · 6B/6D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What quantity is on the invoice?",
+              "options": [
+                "Thirty",
+                "Twenty",
+                "Thirteen"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Which document will Paula check next?",
+              "options": [
+                "The bank statement",
+                "The purchase order",
+                "The shift schedule"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When will she email the supplier?",
+              "options": [
+                "If the invoice says thirty",
+                "When the folders arrive",
+                "If the order says twenty"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Invoice #108: 30 folders. Delivery note #108: 20 folders. Purchase order #108: 20 folders.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which document requests payment?",
+              "options": [
+                "A staff schedule",
+                "An invoice",
+                "A delivery note"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "We checked the quantity and the unit price ___.",
+              "options": [
+                "also with",
+                "also did",
+                "as well"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which line makes a clear request?",
+              "options": [
+                "Could you send a corrected invoice for 20 folders?",
+                "I guess it's wrong.",
+                "We need something different."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "read-the-office-note",
+      "id": "homework-second-technical-business-read-the-office-note",
+      "title": "Read the office note",
+      "track": "business",
+      "lesson": "5–6 Review",
+      "pages": "42–43, 46–47, 50–51, 54–55",
+      "availableFrom": "2027-01-05T00:00:00-05:00",
+      "dueAt": "2027-01-12T23:59:59-05:00",
+      "topic": "Business English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which invoice did the speaker receive?",
+              "options": [
+                "060",
+                "061",
+                "016"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Which item was missing from the quotation?",
+              "options": [
+                "The product name",
+                "The due date",
+                "The delivery charge"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the speaker do after the call?",
+              "options": [
+                "Send a short email",
+                "Pay the invoice",
+                "Place another order"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Quote #061: Office paper, $45. Invoice #061: Office paper, $45. Delivery, $8. Total, $53.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which document usually states the price before purchase?",
+              "options": [
+                "A receipt",
+                "A delivery note",
+                "A quotation"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which request is most specific?",
+              "options": [
+                "Could you confirm the final total in writing?",
+                "Could you check the thing?",
+                "Could you tell us something?"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "What is a delivery charge?",
+              "options": [
+                "A tax refund",
+                "A fee for bringing the order to you",
+                "A discount on the goods"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "which-supplier-works",
+      "id": "homework-second-technical-business-which-supplier-works",
+      "title": "Which supplier works?",
+      "track": "business",
+      "lesson": "6D",
+      "pages": "54–55",
+      "availableFrom": "2027-01-12T00:00:00-05:00",
+      "dueAt": "2027-01-19T23:59:59-05:00",
+      "topic": "Business English · 6D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Which supplier can deliver on Thursday?",
+              "options": [
+                "Pack Right",
+                "Neither supplier",
+                "Quick Box"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What is the spending limit?",
+              "options": [
+                "Eighty dollars",
+                "Seventy-five dollars",
+                "Sixty dollars"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Why should the team choose Quick Box?",
+              "options": [
+                "It offers Friday delivery.",
+                "It sells recycled boxes.",
+                "It charges less."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Pack Right: $60, delivery Monday, standard boxes. Quick Box: $75, delivery Thursday, recycled boxes. Requirements: recycled boxes, delivery before Friday, maximum $80.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which sentence recommends an option with a reason?",
+              "options": [
+                "I recommend Quick Box because it meets our recycled-box requirement.",
+                "Quick Box is a supplier.",
+                "Can we leave the room?"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "A budget is ___.",
+              "options": [
+                "a message asking for a meeting",
+                "a plan for how much you can spend",
+                "a list of past deliveries"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which reply checks agreement?",
+              "options": [
+                "Can I change the subject?",
+                "Why are you still talking?",
+                "Does that work for everyone?"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "clear-follow-up",
+      "id": "homework-second-technical-business-clear-follow-up",
+      "title": "A clear follow-up",
+      "track": "business",
+      "lesson": "5D/6B",
+      "pages": "46–47, 50–51",
+      "availableFrom": "2027-01-14T00:00:00-05:00",
+      "dueAt": "2027-01-21T23:59:59-05:00",
+      "topic": "Business English · 5D/6B",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What did the team agree to check?",
+              "options": [
+                "The figures",
+                "The address",
+                "The stockroom"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Who will confirm the price?",
+              "options": [
+                "The speaker",
+                "Marta",
+                "The client"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When will the quotation go out?",
+              "options": [
+                "Today",
+                "Next week",
+                "Tomorrow morning"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which sentence refers back to the meeting?",
+              "options": [
+                "This is a different client.",
+                "As agreed yesterday, we'll check the figures first.",
+                "Would you like a cup of coffee?"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which line clearly assigns an action?",
+              "options": [
+                "Someone could look at it.",
+                "There are prices in the file.",
+                "Marta will confirm the price by the end of today."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which word means the numbers in a document?",
+              "options": [
+                "figures",
+                "attachments",
+                "signatures"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "check-the-totals",
+      "id": "homework-second-technical-business-check-the-totals",
+      "title": "Check the totals",
+      "track": "business",
+      "lesson": "6B/6D",
+      "pages": "50–51, 54–55",
+      "availableFrom": "2027-01-19T00:00:00-05:00",
+      "dueAt": "2027-01-26T23:59:59-05:00",
+      "topic": "Business English · 6B/6D",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "How much does the report show?",
+              "options": [
+                "$30",
+                "$48",
+                "$42"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "How much do the two receipts add up to?",
+              "options": [
+                "$48",
+                "$60",
+                "$42"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the speaker ask about?",
+              "options": [
+                "A possible third receipt",
+                "A new price list",
+                "A late delivery"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Office supplies report: $48. Receipt A: $30. Receipt B: $12.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "The amount a business spends on something is an ___.",
+              "options": [
+                "asset",
+                "invoice number",
+                "expense"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which sentence is a useful follow-up?",
+              "options": [
+                "Could you confirm whether there's another receipt?",
+                "Tell me why the office has paper.",
+                "There isn't anything to check."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which document shows that money was paid?",
+              "options": [
+                "A purchase order",
+                "A receipt",
+                "A quotation"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "client-needs-an-answer",
+      "id": "homework-second-technical-business-client-needs-an-answer",
+      "title": "A client needs an answer",
+      "track": "business",
+      "lesson": "5–6 Review",
+      "pages": "42–43, 46–47, 50–51, 54–55",
+      "availableFrom": "2027-01-26T00:00:00-05:00",
+      "dueAt": "2027-02-02T23:59:59-05:00",
+      "topic": "Business English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What did the client ask about?",
+              "options": [
+                "Whether the order was paid",
+                "Whether the store was open",
+                "Whether delivery is included"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Until when is the quotation valid?",
+              "options": [
+                "Wednesday",
+                "Thursday",
+                "Friday"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the speaker attach?",
+              "options": [
+                "The payment receipt",
+                "The updated quotation",
+                "A delivery note"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which line answers the client clearly?",
+              "options": [
+                "Yes, the quoted price includes delivery.",
+                "Please check the page again.",
+                "Your question is on delivery."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which sentence points to an attachment?",
+              "options": [
+                "We have a new supplier.",
+                "I've attached the updated quotation for you.",
+                "I will give you a call later."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "If a quote is valid until Wednesday, you can ___.",
+              "options": [
+                "use that price all year",
+                "only ask about it after Wednesday",
+                "use that price through Wednesday"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "payment-reminder",
+      "id": "homework-second-technical-business-payment-reminder",
+      "title": "The payment reminder",
+      "track": "business",
+      "lesson": "5–6 Review",
+      "pages": "42–43, 46–47, 50–51, 54–55",
+      "availableFrom": "2027-01-28T00:00:00-05:00",
+      "dueAt": "2027-02-04T23:59:59-05:00",
+      "topic": "Business English · 5–6 Review",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "When was the invoice due?",
+              "options": [
+                "Last Tuesday",
+                "Last Thursday",
+                "This Tuesday"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "When does the client say they paid?",
+              "options": [
+                "Friday",
+                "Thursday",
+                "Tuesday"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the speaker ask the client to send?",
+              "options": [
+                "A new purchase order",
+                "An updated quotation",
+                "A copy of the transfer receipt"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Invoice #84 · Total $92 · Due last Tuesday · Transfer receipt pending.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which message is polite and specific?",
+              "options": [
+                "Send whatever you have now.",
+                "Could you send us a copy of the transfer receipt?",
+                "You never pay us."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "An overdue invoice is one that ___.",
+              "options": [
+                "has no invoice number",
+                "lists more than one product",
+                "has passed its payment deadline"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which phrase keeps the message neutral?",
+              "options": [
+                "We haven't been able to confirm the payment yet.",
+                "You obviously didn't pay.",
+                "Your story doesn't make sense."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "explain-the-budget",
+      "id": "homework-second-technical-business-explain-the-budget",
+      "title": "Explain the budget",
+      "track": "business",
+      "lesson": "Project practice",
+      "pages": "42–43, 46–47, 50–51, 54–55",
+      "availableFrom": "2027-02-03T00:00:00-05:00",
+      "dueAt": "2027-02-10T23:59:59-05:00",
+      "topic": "Business English · Project practice",
+      "intro": "Listen and answer the first three questions. Then try the last three.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What is the total budget?",
+              "options": [
+                "$60",
+                "$100",
+                "$80"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "How much is set aside for materials?",
+              "options": [
+                "$20",
+                "$40",
+                "$60"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the team do if printing costs more?",
+              "options": [
+                "Print fewer copies",
+                "Buy fewer materials",
+                "Increase the total budget"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "stimulus": "Project budget: $100. Materials: $60. Printing: $20. Extra costs: $20.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Money set aside for unexpected costs is a ___.",
+              "options": [
+                "discount",
+                "receipt",
+                "reserve"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which sentence explains the cost plan clearly?",
+              "options": [
+                "We expect to spend $60 on materials and $20 on printing.",
+                "We're buying some things later.",
+                "Money is part of the project."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which line states the next step?",
+              "options": [
+                "There's a page in the file.",
+                "We'll confirm the printing price before we order.",
+                "We made a chart last week."
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

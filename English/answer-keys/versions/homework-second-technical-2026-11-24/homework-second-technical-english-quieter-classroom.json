@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-quieter-classroom",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2026-12-01T00:00:00-05:00",
+  "dueAt": "2026-12-08T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "A quiet start"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Thursday"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Their questions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "make"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "will close"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "proud"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-client-needs-an-answer",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-26T00:00:00-05:00",
+  "dueAt": "2027-02-02T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Whether delivery is included"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Wednesday"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "The updated quotation"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Yes, the quoted price includes delivery."
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "I've attached the updated quotation for you."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "use that price through Wednesday"
+          ]
+        }
+      ]
+    }
+  ]
+}

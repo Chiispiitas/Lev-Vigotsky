@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-before-you-choose",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-26T00:00:00-05:00",
+  "dueAt": "2027-02-02T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "The nature reserve"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "An hour"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "The sports center"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "will"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "had"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "should"
+          ]
+        }
+      ]
+    }
+  ]
+}

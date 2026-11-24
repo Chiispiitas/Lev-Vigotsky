@@ -44,7 +44,7 @@ function readAttempt(body, keys) {
       throw new AttemptError(400, "The attempt contains an invalid answer.");
     }
   }
-  if (key.availableFrom && (group !== "science" || [...ids].some(id => !Object.hasOwn(answers, id) || !answers[id].trim()))) {
+  if (key.availableFrom && (group !== (key.group || "science") || [...ids].some(id => !Object.hasOwn(answers, id) || !answers[id].trim()))) {
     throw new AttemptError(400, "Answer every homework question before submitting.");
   }
 

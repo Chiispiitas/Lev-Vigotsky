@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-my-next-challenge",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-12T00:00:00-05:00",
+  "dueAt": "2027-01-19T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Drawing"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "After school"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Wednesday"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "learned"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "will practice"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "up"
+          ]
+        }
+      ]
+    }
+  ]
+}

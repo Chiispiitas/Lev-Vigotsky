@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-move-the-deadline",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2026-12-01T00:00:00-05:00",
+  "dueAt": "2026-12-08T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Two prices are missing."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Tuesday"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Thursday morning"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Could we send the budget by Thursday?"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Request to extend the budget deadline"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "provides goods or services"
+          ]
+        }
+      ]
+    }
+  ]
+}

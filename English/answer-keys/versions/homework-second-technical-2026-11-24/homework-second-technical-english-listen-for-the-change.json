@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-listen-for-the-change",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-19T00:00:00-05:00",
+  "dueAt": "2027-01-26T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Ten"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "The visitor center"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "If the weather improves"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "will eat"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "booked"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "would bring"
+          ]
+        }
+      ]
+    }
+  ]
+}

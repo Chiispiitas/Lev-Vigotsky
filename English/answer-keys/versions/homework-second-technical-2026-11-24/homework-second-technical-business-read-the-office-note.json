@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-read-the-office-note",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-05T00:00:00-05:00",
+  "dueAt": "2027-01-12T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "061"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "The delivery charge"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Send a short email"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "A quotation"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Could you confirm the final total in writing?"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "A fee for bringing the order to you"
+          ]
+        }
+      ]
+    }
+  ]
+}

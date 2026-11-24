@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-explain-the-budget",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-02-03T00:00:00-05:00",
+  "dueAt": "2027-02-10T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "$100"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "$60"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Print fewer copies"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "reserve"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "We expect to spend $60 on materials and $20 on printing."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "We'll confirm the printing price before we order."
+          ]
+        }
+      ]
+    }
+  ]
+}

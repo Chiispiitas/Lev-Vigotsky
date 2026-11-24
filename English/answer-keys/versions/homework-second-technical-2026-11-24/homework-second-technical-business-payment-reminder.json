@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-payment-reminder",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-28T00:00:00-05:00",
+  "dueAt": "2027-02-04T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Last Tuesday"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Thursday"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "A copy of the transfer receipt"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Could you send us a copy of the transfer receipt?"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "has passed its payment deadline"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "We haven't been able to confirm the payment yet."
+          ]
+        }
+      ]
+    }
+  ]
+}

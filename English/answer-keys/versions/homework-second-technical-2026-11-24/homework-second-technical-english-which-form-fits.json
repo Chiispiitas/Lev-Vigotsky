@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-which-form-fits",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-05T00:00:00-05:00",
+  "dueAt": "2027-01-12T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Given a talk in English"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Two friends"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Friday"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "read"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "organized"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "would start"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-clear-follow-up",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-14T00:00:00-05:00",
+  "dueAt": "2027-01-21T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "The figures"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Marta"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Tomorrow morning"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "As agreed yesterday, we'll check the figures first."
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Marta will confirm the price by the end of today."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "figures"
+          ]
+        }
+      ]
+    }
+  ]
+}

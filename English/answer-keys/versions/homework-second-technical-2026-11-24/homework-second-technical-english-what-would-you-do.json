@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-what-would-you-do",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-14T00:00:00-05:00",
+  "dueAt": "2027-01-21T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "A waterfall"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Last year"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Boots"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "took"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "shouldn't"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "wildlife"
+          ]
+        }
+      ]
+    }
+  ]
+}

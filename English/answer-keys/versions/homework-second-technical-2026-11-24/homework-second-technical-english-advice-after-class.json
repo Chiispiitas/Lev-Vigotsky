@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-advice-after-class",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2026-11-24T00:00:00-05:00",
+  "dueAt": "2026-12-01T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "She has a sore throat."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Leo"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Room 8"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "shouldn't"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "start"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "relieved"
+          ]
+        }
+      ]
+    }
+  ]
+}

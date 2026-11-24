@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-missing-order",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2026-12-08T00:00:00-05:00",
+  "dueAt": "2026-12-15T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Her order hadn't arrived."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "The street number"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "The next morning"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "arrives later than expected"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "also"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "The street number on the label was wrong."
+          ]
+        }
+      ]
+    }
+  ]
+}

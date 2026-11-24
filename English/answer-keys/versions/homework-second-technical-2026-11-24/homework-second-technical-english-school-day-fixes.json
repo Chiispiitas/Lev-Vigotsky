@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-english-school-day-fixes",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2026-12-03T00:00:00-05:00",
+  "dueAt": "2026-12-10T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "The group materials"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "By the front door"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Sunday"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "check"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "sets"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "jealous"
+          ]
+        }
+      ]
+    }
+  ]
+}

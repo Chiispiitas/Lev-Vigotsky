@@ -1,0 +1,55 @@
+{
+  "examId": "homework-second-technical-business-check-the-totals",
+  "keyVersion": "homework-second-technical-2026-11-24",
+  "group": "technical",
+  "availableFrom": "2027-01-19T00:00:00-05:00",
+  "dueAt": "2027-01-26T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "$48"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "$42"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "A possible third receipt"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "expense"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Could you confirm whether there's another receipt?"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "A receipt"
+          ]
+        }
+      ]
+    }
+  ]
+}
