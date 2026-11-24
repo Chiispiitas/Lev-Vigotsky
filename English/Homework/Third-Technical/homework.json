@@ -1,5 +1,5 @@
 {
-  "version": "homework-third-technical-2026-11-24",
+  "version": "homework-third-technical-2026-11-24.2",
   "quizzes": [
     {
       "slug": "gerunds-vs-infinitives",
@@ -10,7 +10,7 @@
       "pages": "94–95",
       "availableFrom": "2026-11-24T00:00:00-05:00",
       "dueAt": "2026-12-01T23:59:59-05:00",
-      "intro": "Listen to Ana talk about her room. Then choose the form that fits in each sentence.",
+      "intro": "Listen to Ana talk about her room and answer questions 1–5. Then choose the right verb form in questions 6–16.",
       "sections": [
         {
           "id": "listening",
@@ -40,6 +40,24 @@
                 "Ask her cousin for help",
                 "Make a list",
                 "Measure the room"
+              ]
+            },
+            {
+              "id": "listening-4",
+              "prompt": "Where will the chest of drawers go?",
+              "options": [
+                "Next to the closet",
+                "Under the window",
+                "Beside the bed"
+              ]
+            },
+            {
+              "id": "listening-5",
+              "prompt": "What does Ana want to get for her room?",
+              "options": [
+                "A different chair",
+                "A desk lamp",
+                "A new rug"
               ]
             }
           ]
@@ -72,6 +90,78 @@
                 "Rearrange",
                 "To rearranging",
                 "Rearranging"
+              ]
+            },
+            {
+              "id": "reading-4",
+              "prompt": "My sister enjoys ___ to music in her room.",
+              "options": [
+                "listen",
+                "listening",
+                "to listen"
+              ]
+            },
+            {
+              "id": "reading-5",
+              "prompt": "We agreed ___ the old lamp to our cousin.",
+              "options": [
+                "to give",
+                "giving",
+                "give"
+              ]
+            },
+            {
+              "id": "reading-6",
+              "prompt": "He finished ___ his room before lunch.",
+              "options": [
+                "to clean",
+                "clean",
+                "cleaning"
+              ]
+            },
+            {
+              "id": "reading-7",
+              "prompt": "I'm thinking about ___ my desk by the window.",
+              "options": [
+                "to move",
+                "moving",
+                "move"
+              ]
+            },
+            {
+              "id": "reading-8",
+              "prompt": "I hope ___ my room this weekend.",
+              "options": [
+                "to paint",
+                "painting",
+                "paint"
+              ]
+            },
+            {
+              "id": "reading-9",
+              "prompt": "She avoided ___ the heavy shelf by herself.",
+              "options": [
+                "to lift",
+                "lift",
+                "lifting"
+              ]
+            },
+            {
+              "id": "reading-10",
+              "prompt": "We can't afford ___ a new washing machine right now.",
+              "options": [
+                "buying",
+                "to buy",
+                "buy"
+              ]
+            },
+            {
+              "id": "reading-11",
+              "prompt": "Before ___ the shelves, take the books off.",
+              "options": [
+                "moving",
+                "to move",
+                "move"
               ]
             }
           ]

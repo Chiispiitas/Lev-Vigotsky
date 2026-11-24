@@ -1,0 +1,115 @@
+{
+  "examId": "homework-third-technical-gerunds-vs-infinitives",
+  "keyVersion": "homework-third-technical-2026-11-24.2",
+  "group": "technical",
+  "availableFrom": "2026-11-24T00:00:00-05:00",
+  "dueAt": "2026-12-01T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "The chest of drawers"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Reading by the window"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Measure the room"
+          ]
+        },
+        {
+          "id": "listening-4",
+          "answers": [
+            "Next to the closet"
+          ]
+        },
+        {
+          "id": "listening-5",
+          "answers": [
+            "A new rug"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "to buy"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "helping"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Rearranging"
+          ]
+        },
+        {
+          "id": "reading-4",
+          "answers": [
+            "listening"
+          ]
+        },
+        {
+          "id": "reading-5",
+          "answers": [
+            "to give"
+          ]
+        },
+        {
+          "id": "reading-6",
+          "answers": [
+            "cleaning"
+          ]
+        },
+        {
+          "id": "reading-7",
+          "answers": [
+            "moving"
+          ]
+        },
+        {
+          "id": "reading-8",
+          "answers": [
+            "to paint"
+          ]
+        },
+        {
+          "id": "reading-9",
+          "answers": [
+            "lifting"
+          ]
+        },
+        {
+          "id": "reading-10",
+          "answers": [
+            "to buy"
+          ]
+        },
+        {
+          "id": "reading-11",
+          "answers": [
+            "moving"
+          ]
+        }
+      ]
+    }
+  ]
+}
