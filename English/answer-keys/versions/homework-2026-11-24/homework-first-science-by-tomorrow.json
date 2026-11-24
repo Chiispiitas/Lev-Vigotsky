@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-by-tomorrow",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2026-12-03T00:00:00-05:00",
+  "dueAt": "2026-12-10T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "By six."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "The speaker’s brother."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Two hours."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "packed"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "driving"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "We will have reached the beach by ten."
+          ]
+        }
+      ]
+    }
+  ]
+}

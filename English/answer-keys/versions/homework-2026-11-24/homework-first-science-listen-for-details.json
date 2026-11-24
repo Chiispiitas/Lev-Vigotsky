@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-listen-for-details",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-28T00:00:00-05:00",
+  "dueAt": "2027-02-04T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "At the café."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "6:45."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Both tickets."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Bring a jacket."
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "to"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "next"
+          ]
+        }
+      ]
+    }
+  ]
+}

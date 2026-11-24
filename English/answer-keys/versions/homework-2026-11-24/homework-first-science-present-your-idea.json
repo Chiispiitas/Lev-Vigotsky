@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-present-your-idea",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-02-03T00:00:00-05:00",
+  "dueAt": "2027-02-10T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Leo."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Walking."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Ask the class to choose and give a reason."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "First, let’s look at walking."
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "The bus can be crowded."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "is going to"
+          ]
+        }
+      ]
+    }
+  ]
+}

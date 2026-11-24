@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-going-out",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-05T00:00:00-05:00",
+  "dueAt": "2027-01-12T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Ana."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "A cushion."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Seen a live band."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "been"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "seen"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "watched"
+          ]
+        }
+      ]
+    }
+  ]
+}

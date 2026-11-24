@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-trip-and-show",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-26T00:00:00-05:00",
+  "dueAt": "2027-02-02T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "The train ticket."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Leave their bags at the hotel."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Last summer."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "No, you don’t have to."
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "seen"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "at"
+          ]
+        }
+      ]
+    }
+  ]
+}

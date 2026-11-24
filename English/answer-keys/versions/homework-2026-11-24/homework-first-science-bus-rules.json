@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-bus-rules",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2026-12-08T00:00:00-05:00",
+  "dueAt": "2026-12-15T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "A bus ticket."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "No, lunch is included."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "7:15."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "has to"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "don’t have to"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Do"
+          ]
+        }
+      ]
+    }
+  ]
+}

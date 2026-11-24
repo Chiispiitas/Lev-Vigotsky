@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-tense-check",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-19T00:00:00-05:00",
+  "dueAt": "2027-01-26T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "At the library."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Reading."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "The notes."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "have been studying"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "was reading"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "will be studying"
+          ]
+        }
+      ]
+    }
+  ]
+}

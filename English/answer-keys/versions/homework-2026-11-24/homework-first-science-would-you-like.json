@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-would-you-like",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-14T00:00:00-05:00",
+  "dueAt": "2027-01-21T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "A film festival."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "He has practice."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "A different day."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "to come"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "I’d love to."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "I can’t tonight, but I’m free tomorrow."
+          ]
+        }
+      ]
+    }
+  ]
+}

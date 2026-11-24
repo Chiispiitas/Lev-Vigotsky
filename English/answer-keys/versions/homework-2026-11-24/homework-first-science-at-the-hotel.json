@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-at-the-hotel",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2026-12-16T00:00:00-05:00",
+  "dueAt": "2026-12-23T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "2:00 p.m."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Leave a bag at reception."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Parking."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Is breakfast included?"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "confirm"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "single"
+          ]
+        }
+      ]
+    }
+  ]
+}

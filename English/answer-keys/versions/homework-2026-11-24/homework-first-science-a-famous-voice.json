@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-a-famous-voice",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2027-01-12T00:00:00-05:00",
+  "dueAt": "2027-01-19T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Twelve."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Three."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "Sung in another country."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "recorded"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "has worked"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "sung"
+          ]
+        }
+      ]
+    }
+  ]
+}

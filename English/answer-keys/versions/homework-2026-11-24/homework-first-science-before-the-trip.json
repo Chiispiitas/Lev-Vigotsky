@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-before-the-trip",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2026-12-01T00:00:00-05:00",
+  "dueAt": "2026-12-08T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "Bought the tickets."
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "Twenty minutes."
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "They got on the train."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "had bought"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "had been waiting"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "arrived"
+          ]
+        }
+      ]
+    }
+  ]
+}

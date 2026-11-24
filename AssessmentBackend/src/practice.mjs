@@ -44,6 +44,9 @@ function readAttempt(body, keys) {
       throw new AttemptError(400, "The attempt contains an invalid answer.");
     }
   }
+  if (key.availableFrom && (group !== "science" || [...ids].some(id => !Object.hasOwn(answers, id) || !answers[id].trim()))) {
+    throw new AttemptError(400, "Answer every homework question before submitting.");
+  }
 
   return {
     attemptId: attemptId.toLowerCase(),
@@ -113,6 +116,9 @@ export async function submitAttempt(body, keys, store, now = () => new Date()) {
   };
 
   try {
+    if (attempt.key.availableFrom && (timestamp < new Date(attempt.key.availableFrom) || timestamp > new Date(attempt.key.dueAt))) {
+      throw new AttemptError(410, "This homework is outside its submission window.");
+    }
     await store.insert(record);
     return result;
   } catch (insertError) {

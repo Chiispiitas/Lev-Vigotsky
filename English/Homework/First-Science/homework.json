@@ -1,0 +1,980 @@
+{
+  "version": "homework-2026-11-24",
+  "quizzes": [
+    {
+      "id": "homework-first-science-getting-around",
+      "slug": "getting-around",
+      "title": "Getting around",
+      "topic": "11A · Transportation",
+      "intro": "Listen for the transport words, then finish the sentences.",
+      "availableFrom": "2026-11-24T00:00:00-05:00",
+      "dueAt": "2026-12-01T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "How does the speaker usually get to school?",
+              "options": [
+                "by bus",
+                "by bicycle",
+                "on foot"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What took them to the island?",
+              "options": [
+                "a ferry",
+                "a coach",
+                "a train"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Why was a bicycle useful?",
+              "options": [
+                "It was faster than a plane.",
+                "It was easy to park.",
+                "It carried their bags."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "A ___ is a bus people often take between cities.",
+              "options": [
+                "tram",
+                "ferry",
+                "coach"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "We went across the water ___ ferry.",
+              "options": [
+                "by",
+                "on",
+                "with"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which is a disadvantage of taking a taxi?",
+              "options": [
+                "It takes you to your door.",
+                "It can cost a lot.",
+                "It can save time."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-before-the-trip",
+      "slug": "before-the-trip",
+      "title": "Before the trip",
+      "topic": "Class notes · Past perfect",
+      "intro": "Listen for what happened first. Then choose the form that fits.",
+      "availableFrom": "2026-12-01T00:00:00-05:00",
+      "dueAt": "2026-12-08T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What had the friends already done?",
+              "options": [
+                "Bought the tickets.",
+                "Got on the train.",
+                "Missed the train."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "How long had they been waiting when the speaker arrived?",
+              "options": [
+                "Five minutes.",
+                "Twenty minutes.",
+                "Twenty-five minutes."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What happened last?",
+              "options": [
+                "They bought the tickets.",
+                "The speaker got to the station.",
+                "They got on the train."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "By the time I arrived, Rosa ___ the tickets.",
+              "options": [
+                "had bought",
+                "has bought",
+                "is buying"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "They ___ for twenty minutes before I arrived.",
+              "options": [
+                "will be waiting",
+                "had been waiting",
+                "have been waiting"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "The train hadn’t ___ yet.",
+              "options": [
+                "arrive",
+                "arriving",
+                "arrived"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-by-tomorrow",
+      "slug": "by-tomorrow",
+      "title": "By tomorrow",
+      "topic": "Class notes · Future perfect",
+      "intro": "Listen to the plan and pay attention to the two deadlines.",
+      "availableFrom": "2026-12-03T00:00:00-05:00",
+      "dueAt": "2026-12-10T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "When will both bags be ready?",
+              "options": [
+                "By four.",
+                "By seven.",
+                "By six."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Which person will be driving?",
+              "options": [
+                "The speaker’s brother.",
+                "The speaker.",
+                "Their father."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "How long will the drive have lasted by nine?",
+              "options": [
+                "One hour.",
+                "Two hours.",
+                "Three hours."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "By six, I will have ___ both bags.",
+              "options": [
+                "pack",
+                "packing",
+                "packed"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "By nine, he will have been ___ for two hours.",
+              "options": [
+                "driving",
+                "drove",
+                "drive"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which sentence focuses on a finished result?",
+              "options": [
+                "We will be driving at nine.",
+                "We will have reached the beach by ten.",
+                "We will have been traveling for three hours."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-bus-rules",
+      "slug": "bus-rules",
+      "title": "Bus rules",
+      "topic": "11A–11B · Getting to work",
+      "intro": "Listen to the announcement. Decide what you have to do.",
+      "availableFrom": "2026-12-08T00:00:00-05:00",
+      "dueAt": "2026-12-15T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What must students show?",
+              "options": [
+                "A bus ticket.",
+                "A receipt for lunch.",
+                "A school photo."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Do students have to bring food?",
+              "options": [
+                "Yes, everyone must bring lunch.",
+                "No, lunch is included.",
+                "No, the bus stops at a café."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When should they be at the gate?",
+              "options": [
+                "7:30.",
+                "7:45.",
+                "7:15."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Mia ___ show her ticket.",
+              "options": [
+                "has to",
+                "have to",
+                "don’t have to"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Lunch is included. We ___ bring food.",
+              "options": [
+                "doesn’t have to",
+                "don’t have to",
+                "have to"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "___ we have to wait at the main gate?",
+              "options": [
+                "Are",
+                "Have",
+                "Do"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-road-trip",
+      "slug": "road-trip",
+      "title": "Road trip",
+      "topic": "11C · Road trip",
+      "intro": "Listen to the weekend plan, then complete the sentences.",
+      "availableFrom": "2026-12-15T00:00:00-05:00",
+      "dueAt": "2026-12-22T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Where are they going on Saturday morning?",
+              "options": [
+                "To the mountains.",
+                "To the coast.",
+                "To the city center."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What are they going to do in the afternoon?",
+              "options": [
+                "Drive to the hotel.",
+                "Walk around the lake.",
+                "Go swimming."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Why aren’t they going to camp?",
+              "options": [
+                "The campsite is full.",
+                "They don’t have a car.",
+                "It may rain."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "We’re going ___ visit the village.",
+              "options": [
+                "to",
+                "for",
+                "at"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Marta ___ going to take her camera.",
+              "options": [
+                "are",
+                "is",
+                "am"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "What ___ you going to do on Sunday?",
+              "options": [
+                "do",
+                "is",
+                "are"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-at-the-hotel",
+      "slug": "at-the-hotel",
+      "title": "At the hotel",
+      "topic": "11D · At a hotel",
+      "intro": "Listen to the hotel message. Check the details before you finish.",
+      "availableFrom": "2026-12-16T00:00:00-05:00",
+      "dueAt": "2026-12-23T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "When is the room ready?",
+              "options": [
+                "2:00 p.m.",
+                "12:00 p.m.",
+                "6:00 p.m."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What can a guest do before check-in?",
+              "options": [
+                "Go straight to the room.",
+                "Leave a bag at reception.",
+                "Get free parking."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What costs extra?",
+              "options": [
+                "Breakfast.",
+                "Leaving a bag.",
+                "Parking."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which question checks the price of breakfast?",
+              "options": [
+                "Is breakfast included?",
+                "What time is breakfast?",
+                "Where is the restaurant?"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Could you ___ the check-in time?",
+              "options": [
+                "arrive",
+                "confirm",
+                "stay"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "A room for one person is a ___ room.",
+              "options": [
+                "return",
+                "double",
+                "single"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-going-out",
+      "slug": "going-out",
+      "title": "Going out",
+      "topic": "12A–12B · Going out",
+      "intro": "Listen to the recommendation. Then practice ever, never, and the past participle.",
+      "availableFrom": "2027-01-05T00:00:00-05:00",
+      "dueAt": "2027-01-12T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Who went with the speaker?",
+              "options": [
+                "Ana.",
+                "The speaker went alone.",
+                "Their brother."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What does the speaker suggest bringing?",
+              "options": [
+                "A snack.",
+                "A cushion.",
+                "A jacket."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "Which activity has the speaker never done in that park?",
+              "options": [
+                "Watched an outdoor movie.",
+                "Sat outside.",
+                "Seen a live band."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Have you ever ___ to a concert?",
+              "options": [
+                "been",
+                "went",
+                "going"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "I’ve never ___ that film.",
+              "options": [
+                "saw",
+                "seen",
+                "see"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "I ___ it last June.",
+              "options": [
+                "have watched",
+                "watching",
+                "watched"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-a-famous-voice",
+      "slug": "a-famous-voice",
+      "title": "A famous voice",
+      "topic": "12C · Past simple and present perfect",
+      "intro": "Listen to the short profile. Decide which events are finished and which experiences continue to matter now.",
+      "availableFrom": "2027-01-12T00:00:00-05:00",
+      "dueAt": "2027-01-19T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "How old was Lina when she started singing at school?",
+              "options": [
+                "Thirteen.",
+                "Twenty-one.",
+                "Twelve."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "How many bands has she worked with since 2021?",
+              "options": [
+                "Three.",
+                "Two.",
+                "Four."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What has Lina never done?",
+              "options": [
+                "Recorded a song.",
+                "Sung in another country.",
+                "Worked with a band."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "She ___ her first song in 2021.",
+              "options": [
+                "has recorded",
+                "records",
+                "recorded"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Since then she ___ with three bands.",
+              "options": [
+                "has worked",
+                "will work",
+                "was working"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "She has never ___ abroad.",
+              "options": [
+                "sang",
+                "sung",
+                "sing"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-would-you-like",
+      "slug": "would-you-like",
+      "title": "Would you like to come?",
+      "topic": "12D · Invitations",
+      "intro": "Listen to the invitation and reply. Then choose what you would say.",
+      "availableFrom": "2027-01-14T00:00:00-05:00",
+      "dueAt": "2027-01-21T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What is the invitation for?",
+              "options": [
+                "A sports practice.",
+                "A school concert.",
+                "A film festival."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "Why can’t Joel go on Friday?",
+              "options": [
+                "He has practice.",
+                "His sister needs a ride.",
+                "The festival is full."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What does he ask about?",
+              "options": [
+                "A cheaper ticket.",
+                "A different day.",
+                "A later ride on Friday."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Would you like ___ with us?",
+              "options": [
+                "come",
+                "coming",
+                "to come"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which reply accepts an invitation?",
+              "options": [
+                "I’d love to.",
+                "I can’t make it.",
+                "Maybe another time."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Which reply suggests another time?",
+              "options": [
+                "Yes, tonight works for me.",
+                "I can’t tonight, but I’m free tomorrow.",
+                "Thanks, but I can’t come this week."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-tense-check",
+      "slug": "tense-check",
+      "title": "Tense check",
+      "topic": "Class notes · Mixed tense review",
+      "intro": "Listen for the time clues, then choose the tense that fits.",
+      "availableFrom": "2027-01-19T00:00:00-05:00",
+      "dueAt": "2027-01-26T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Where does the speaker usually study?",
+              "options": [
+                "At home.",
+                "At a friend’s house.",
+                "At the library."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What was the speaker doing when the friend called?",
+              "options": [
+                "Reading.",
+                "Writing notes.",
+                "Walking to the library."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What was already finished?",
+              "options": [
+                "The phone call.",
+                "The notes.",
+                "Next week’s work."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "This week I ___ at home because the library is closed.",
+              "options": [
+                "had studied",
+                "will be studying",
+                "have been studying"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "While I ___, my friend called.",
+              "options": [
+                "was reading",
+                "have read",
+                "will be reading"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "At this time tomorrow, we ___ together.",
+              "options": [
+                "were studying",
+                "will be studying",
+                "had studied"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-trip-and-show",
+      "slug": "trip-and-show",
+      "title": "A trip and a show",
+      "topic": "Units 11–12 · Review and practice",
+      "intro": "Listen to the message. Use the details to answer, then review travel and going-out language.",
+      "availableFrom": "2027-01-26T00:00:00-05:00",
+      "dueAt": "2027-02-02T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What do they need to keep on their phone?",
+              "options": [
+                "The hotel bill.",
+                "The train ticket.",
+                "The concert program."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What will they do before the show?",
+              "options": [
+                "Buy tickets at the station.",
+                "Get dinner at eight.",
+                "Leave their bags at the hotel."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "When did the speaker see the group before?",
+              "options": [
+                "Last summer.",
+                "Last Saturday.",
+                "Last winter."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Is it necessary to print the ticket?",
+              "options": [
+                "No, you don’t have one.",
+                "No, you don’t have to.",
+                "Yes, you have to."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Have you ever ___ this group?",
+              "options": [
+                "see",
+                "saw",
+                "seen"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "The show starts ___ eight.",
+              "options": [
+                "at",
+                "on",
+                "in"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-listen-for-details",
+      "slug": "listen-for-details",
+      "title": "Listen for details",
+      "topic": "Units 11–12 · Listening review",
+      "intro": "Listen for times and changes. Watch for the first plan and what actually happens.",
+      "availableFrom": "2027-01-28T00:00:00-05:00",
+      "dueAt": "2027-02-04T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Where should Eva meet the speaker?",
+              "options": [
+                "At the café.",
+                "At the cinema.",
+                "At the station."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What time are they meeting?",
+              "options": [
+                "7:00.",
+                "6:45.",
+                "7:15."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What have they already bought?",
+              "options": [
+                "Two jackets.",
+                "Drinks at the café.",
+                "Both tickets."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which sentence gives an instruction?",
+              "options": [
+                "Bring a jacket.",
+                "The tickets are ready.",
+                "The concert is at seven."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "We’re going ___ walk back.",
+              "options": [
+                "for",
+                "to",
+                "at"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "The meeting place is ___ to the cinema.",
+              "options": [
+                "front",
+                "between",
+                "next"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "homework-first-science-present-your-idea",
+      "slug": "present-your-idea",
+      "title": "Present your idea",
+      "topic": "Project week · Speaking and review",
+      "intro": "Listen to a short presentation. Notice how the group introduces and supports its idea.",
+      "availableFrom": "2027-02-03T00:00:00-05:00",
+      "dueAt": "2027-02-10T23:59:59-05:00",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "Who will introduce the topic?",
+              "options": [
+                "Maya.",
+                "The speaker.",
+                "Leo."
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What will Maya talk about?",
+              "options": [
+                "Walking.",
+                "Taking the bus.",
+                "Riding a scooter."
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will the group do at the end?",
+              "options": [
+                "Give everyone a bus ticket.",
+                "Ask the class to choose and give a reason.",
+                "Tell the class to write a new presentation."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which phrase is best for starting the first point?",
+              "options": [
+                "In the end, thank you.",
+                "That’s all from us.",
+                "First, let’s look at walking."
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Which gives a disadvantage?",
+              "options": [
+                "The bus can be crowded.",
+                "The bus is usually cheap.",
+                "The bus stops near the school."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "Maya ___ explain the first advantage.",
+              "options": [
+                "has been",
+                "is going to",
+                "was going"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

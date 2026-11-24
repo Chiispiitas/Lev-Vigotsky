@@ -1,0 +1,54 @@
+{
+  "examId": "homework-first-science-getting-around",
+  "keyVersion": "homework-2026-11-24",
+  "availableFrom": "2026-11-24T00:00:00-05:00",
+  "dueAt": "2026-12-01T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "listening",
+      "items": [
+        {
+          "id": "listening-1",
+          "answers": [
+            "on foot"
+          ]
+        },
+        {
+          "id": "listening-2",
+          "answers": [
+            "a ferry"
+          ]
+        },
+        {
+          "id": "listening-3",
+          "answers": [
+            "It was easy to park."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "coach"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "by"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "It can cost a lot."
+          ]
+        }
+      ]
+    }
+  ]
+}
