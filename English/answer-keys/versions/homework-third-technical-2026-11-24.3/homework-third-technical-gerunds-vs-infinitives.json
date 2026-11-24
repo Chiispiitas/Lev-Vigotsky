@@ -6,7 +6,7 @@
   "dueAt": "2026-12-01T23:59:59-05:00",
   "sections": [
     {
-      "id": "comprehension",
+      "id": "reading",
       "items": [
         {
           "id": "comprehension-1",
@@ -37,12 +37,7 @@
           "answers": [
             "A new rug"
           ]
-        }
-      ]
-    },
-    {
-      "id": "reading",
-      "items": [
+        },
         {
           "id": "reading-1",
           "answers": [
