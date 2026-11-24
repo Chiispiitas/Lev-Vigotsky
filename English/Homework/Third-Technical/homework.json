@@ -1,0 +1,82 @@
+{
+  "version": "homework-third-technical-2026-11-24",
+  "quizzes": [
+    {
+      "slug": "gerunds-vs-infinitives",
+      "id": "homework-third-technical-gerunds-vs-infinitives",
+      "title": "Gerunds vs. Infinitives",
+      "track": "english",
+      "topic": "English · 11A Dream home",
+      "pages": "94–95",
+      "availableFrom": "2026-11-24T00:00:00-05:00",
+      "dueAt": "2026-12-01T23:59:59-05:00",
+      "intro": "Listen to Ana talk about her room. Then choose the form that fits in each sentence.",
+      "sections": [
+        {
+          "id": "listening",
+          "questions": [
+            {
+              "id": "listening-1",
+              "prompt": "What does Ana plan to move?",
+              "options": [
+                "The rug",
+                "The bed",
+                "The chest of drawers"
+              ]
+            },
+            {
+              "id": "listening-2",
+              "prompt": "What does Ana enjoy doing after school?",
+              "options": [
+                "Reading by the window",
+                "Watching TV on her bed",
+                "Drawing at her desk"
+              ]
+            },
+            {
+              "id": "listening-3",
+              "prompt": "What will Ana do before buying anything?",
+              "options": [
+                "Ask her cousin for help",
+                "Make a list",
+                "Measure the room"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "reading",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "I decided ___ a bigger rug for my room.",
+              "options": [
+                "buy",
+                "to buy",
+                "buying"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Thanks for ___ me move the bed.",
+              "options": [
+                "helping",
+                "to help",
+                "help"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "___ a room can take longer than you think.",
+              "options": [
+                "Rearrange",
+                "To rearranging",
+                "Rearranging"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
