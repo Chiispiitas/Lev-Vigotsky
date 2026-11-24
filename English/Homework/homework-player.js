@@ -14,7 +14,33 @@ function node(tag, content) {
   return element;
 }
 
-async function load() {
+function showResult(container, quiz, receipt) {
+  if (!receipt || typeof receipt !== "object") {
+    container.replaceChildren(node("p", "Submitted. Your answers are saved."));
+    return;
+  }
+  const heading = node("h2", "Your result");
+  heading.tabIndex = -1;
+  const summary = node("p", "Score: " + receipt.score + " / " + receipt.maxScore + " · " +
+    (receipt.score * 10 / receipt.maxScore).toFixed(2) + " / 10");
+  const details = node("details");
+  details.append(node("summary", "Review your answers"));
+  const questions = quiz.sections.flatMap(section => section.questions);
+  const list = node("ol");
+  for (const item of receipt.items || []) {
+    const question = questions.find(entry => entry.id === item.id);
+    if (!question) continue;
+    const row = node("li");
+    row.append(node("strong", question.prompt), node("p", "Your answer: " + item.studentAnswer));
+    if (!item.correct) row.append(node("p", "Correct answer: " + item.correctAnswers.join(" / ")));
+    list.append(row);
+  }
+  details.append(list);
+  container.replaceChildren(heading, summary, details, node("p", "Your answers are saved."));
+  heading.focus();
+}
+
+async function load(nameError = "") {
   const response = await fetch("homework.json", { cache: "no-cache" });
   if (!response.ok) throw new Error("Couldn’t load the homework. Please refresh.");
   const { version, quizzes } = await response.json();
@@ -48,7 +74,9 @@ async function load() {
   try { draft = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch { /* Storage is optional. */ }
   const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(draft)); } catch { /* Storage is optional. */ } };
   if (draft.receipt) {
-    root.append(node("p", "Submitted. Your answers are saved."));
+    const result = node("section");
+    root.append(result);
+    showResult(result, quiz, draft.receipt);
     return;
   }
   const now = Date.now();
@@ -59,16 +87,21 @@ async function load() {
 
   const form = node("form");
   const started = Date.now();
-  const nameLabel = node("label", "Full name");
+  const nameLabel = node("label", "First and last name");
   const name = node("input");
   name.name = "student";
   name.className = "student-name";
   name.required = true;
   name.maxLength = 100;
   name.autocomplete = "name";
+  name.setAttribute("aria-describedby", "homework-name-message");
   name.value = draft.student || "";
   nameLabel.append(name);
-  form.append(nameLabel);
+  const nameMessage = node("p", nameError || "Use at least one first name and one last name from Runachay.");
+  nameMessage.id = "homework-name-message";
+  nameMessage.setAttribute("aria-live", "polite");
+  if (nameError) name.setAttribute("aria-invalid", "true");
+  form.append(nameLabel, nameMessage);
   if (!draft.pending) {
     let number = 0;
     for (const section of quiz.sections) {
@@ -112,6 +145,7 @@ async function load() {
   status.setAttribute("role", "status");
   form.append(button, status);
   root.append(node("p", quiz.intro), form);
+  if (nameError) name.focus();
   form.addEventListener("input", () => {
     if (draft.pending) return;
     const values = new FormData(form);
@@ -124,8 +158,9 @@ async function load() {
     event.preventDefault();
     if (button.disabled) return;
     const student = name.value.trim();
-    if (!/\p{L}/u.test(student)) {
-      status.textContent = "Please enter your full name.";
+    if (!draft.pending && !/^\p{L}+(?:[-'’]\p{L}+)*(?:\s+\p{L}+(?:[-'’]\p{L}+)*)+$/u.test(student)) {
+      nameMessage.textContent = "Enter at least one first name and one last name.";
+      name.setAttribute("aria-invalid", "true");
       name.focus();
       return;
     }
@@ -148,10 +183,16 @@ async function load() {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft.pending)
       });
       const receipt = await res.json();
+      if (res.status === 422) {
+        delete draft.pending;
+        save();
+        await load(receipt.error || "Check your name in Runachay.");
+        return;
+      }
       if (!res.ok || receipt.attemptId !== draft.pending.attemptId) throw new Error(receipt.error || receipt.message || "Couldn’t confirm your submission.");
-      draft = { receipt: receipt.attemptId };
+      draft = { receipt };
       save();
-      form.replaceChildren(node("p", "Submitted. Your answers are saved."));
+      showResult(form, quiz, receipt);
     } catch (error) {
       status.textContent = error.message;
       button.textContent = "Retry submission";

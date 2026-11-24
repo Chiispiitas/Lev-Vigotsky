@@ -49,3 +49,7 @@ To provision a separate environment, install Wix CMS, create the private collect
 Release the build ZIP on the site in `wix.config.json` with the Wix server upload tools. Use the current Code Store head revision for a source update. Use the source ZIP as the separate source artifact. Do not package local environment files. Wix provides its private SDK runtime credentials.
 
 Verify `/api/assessment/health` before connecting the frontend. It must return HTTP 200 and list every intended exam under its release. Verify CORS preflight and invalid payload rejection. Run grading, retry and CMS failure checks with the injected in-memory store or intercepted browser requests.
+
+## Homework names and results
+
+The homework submission route validates the roster on the server and records the official name in PracticeAttempts. Supply src/homework-rosters.private.json from Runachay before building. It maps first-science, second-technical, and third-technical to arrays of records with givenNames and surnames arrays. Both Second Technical subjects currently share the same roster. Keep this file private and excluded from Git. The private Wix source archive retains the roster for subsequent builds. Homework results come from the persisted submission receipt.

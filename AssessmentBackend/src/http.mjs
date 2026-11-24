@@ -55,7 +55,7 @@ async function readJson(request) {
   }
 }
 
-export function createSubmitHandler(keys, store) {
+export function createSubmitHandler(keys, store, validateName) {
   return async request => {
     if (!origins.has(request.headers.get("Origin"))) {
       return json(request, { error: "Open the practice on the UEPLV website." }, 403);
@@ -65,7 +65,7 @@ export function createSubmitHandler(keys, store) {
       return json(request, { error: "Use POST to submit the attempt." }, 405);
     }
     try {
-      return json(request, await submitAttempt(await readJson(request), keys, store));
+      return json(request, await submitAttempt(await readJson(request), keys, store, undefined, validateName));
     } catch (error) {
       if (error instanceof AttemptError) return json(request, { error: error.message }, error.status);
       console.error("UEPLV practice CMS write failed", error?.code ?? error?.name ?? "Error");

@@ -94,7 +94,7 @@ export function gradeAttempt(attempt, submittedAt) {
   };
 }
 
-export async function submitAttempt(body, keys, store, now = () => new Date()) {
+export async function submitAttempt(body, keys, store, now = () => new Date(), validateName = attempt => attempt.studentName) {
   const attempt = readAttempt(body, keys);
   const fingerprint = createHash("sha256").update(JSON.stringify([
     attempt.examId, attempt.keyVersion, attempt.studentName, attempt.group, attempt.answers
@@ -119,6 +119,7 @@ export async function submitAttempt(body, keys, store, now = () => new Date()) {
     if (attempt.key.availableFrom && (timestamp < new Date(attempt.key.availableFrom) || timestamp > new Date(attempt.key.dueAt))) {
       throw new AttemptError(410, "This homework is outside its submission window.");
     }
+    record.title = validateName(attempt);
     await store.insert(record);
     return result;
   } catch (insertError) {
