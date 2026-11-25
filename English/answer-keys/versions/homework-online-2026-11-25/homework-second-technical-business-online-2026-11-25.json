@@ -1,0 +1,74 @@
+{
+  "examId": "homework-second-technical-business-online-2026-11-25",
+  "keyVersion": "homework-online-2026-11-25",
+  "group": "technical",
+  "availableFrom": "2026-11-25T00:00:00-05:00",
+  "dueAt": "2026-11-25T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "Sending the order"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Answering customer calls"
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Count the boxes."
+          ]
+        },
+        {
+          "id": "reading-4",
+          "answers": [
+            "After lunch"
+          ]
+        },
+        {
+          "id": "reading-5",
+          "answers": [
+            "Order twenty more."
+          ]
+        },
+        {
+          "id": "language-1",
+          "answers": [
+            "Stock check before noon"
+          ]
+        },
+        {
+          "id": "language-2",
+          "answers": [
+            "Could you advise me on which order to send first?"
+          ]
+        },
+        {
+          "id": "language-3",
+          "answers": [
+            "The latest time to finish something"
+          ]
+        },
+        {
+          "id": "language-4",
+          "answers": [
+            "We’re waiting for the supplier to confirm the price."
+          ]
+        },
+        {
+          "id": "language-5",
+          "answers": [
+            "Thank you for your advice."
+          ]
+        }
+      ]
+    }
+  ]
+}

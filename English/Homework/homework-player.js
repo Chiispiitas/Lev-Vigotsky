@@ -48,7 +48,7 @@ async function load(nameError = "") {
   if (!quiz) throw new Error("That quiz link doesn’t match a homework assignment.");
   title.textContent = quiz.title;
   document.title = quiz.title + " · " + course;
-  root.append(node("p", quiz.topic + (quiz.pages ? " · Personal Best B1 pp. " + quiz.pages : "")), node("p", "Due " + dateLabel(quiz.dueAt) + " at 11:59 p.m."));
+  root.append(node("p", quiz.topic + (quiz.pages ? " · " + (quiz.book || "Personal Best B1") + " pp. " + quiz.pages : "")), node("p", "Due " + dateLabel(quiz.dueAt) + " at 11:59 p.m."));
   const storageKey = "ueplv-homework:" + version + ":" + slug;
   let draft = {};
   try { draft = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch { /* Storage is optional. */ }
@@ -156,7 +156,7 @@ async function load(nameError = "") {
       draft.student = student;
       draft.pending = {
         attemptId: crypto.randomUUID(), examId: quiz.id, keyVersion: version,
-        studentName: student, group, answers: Object.fromEntries(values),
+        studentName: student, group: quiz.group || group, answers: Object.fromEntries(values),
         durationSeconds: Math.min(86400, Math.round((Date.now() - started) / 1000))
       };
       save();

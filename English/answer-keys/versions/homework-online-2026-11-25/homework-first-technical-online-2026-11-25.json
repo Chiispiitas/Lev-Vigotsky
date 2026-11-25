@@ -1,0 +1,74 @@
+{
+  "examId": "homework-first-technical-online-2026-11-25",
+  "keyVersion": "homework-online-2026-11-25",
+  "group": "technical",
+  "availableFrom": "2026-11-25T00:00:00-05:00",
+  "dueAt": "2026-11-25T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "A single room"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Tuesday at 3 p.m."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Breakfast"
+          ]
+        },
+        {
+          "id": "reading-4",
+          "answers": [
+            "8:15 a.m."
+          ]
+        },
+        {
+          "id": "reading-5",
+          "answers": [
+            "Her ID"
+          ]
+        },
+        {
+          "id": "language-1",
+          "answers": [
+            "Park Hotel booking confirmation"
+          ]
+        },
+        {
+          "id": "language-2",
+          "answers": [
+            "Is Wi-Fi included, please?"
+          ]
+        },
+        {
+          "id": "language-3",
+          "answers": [
+            "has to"
+          ]
+        },
+        {
+          "id": "language-4",
+          "answers": [
+            "doesn’t have to"
+          ]
+        },
+        {
+          "id": "language-5",
+          "answers": [
+            "I’ll arrive at 9:30 p.m. on Tuesday."
+          ]
+        }
+      ]
+    }
+  ]
+}

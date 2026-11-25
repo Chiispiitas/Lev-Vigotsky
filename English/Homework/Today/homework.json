@@ -1,0 +1,473 @@
+{
+  "version": "homework-online-2026-11-25",
+  "quizzes": [
+    {
+      "slug": "third-technical",
+      "id": "homework-third-technical-online-2026-11-25",
+      "title": "A room for two · Third Technical B · English",
+      "topic": "Third Technical B · English",
+      "pages": "94–95",
+      "book": "Personal Best B1",
+      "group": "technical",
+      "availableFrom": "2026-11-25T00:00:00-05:00",
+      "dueAt": "2026-11-25T23:59:59-05:00",
+      "intro": "Read the text and answer questions 1–5. Then choose the best answer for questions 6–10. Use your first and last name before you submit.",
+      "sections": [
+        {
+          "id": "reading",
+          "title": "Read",
+          "stimulus": "Leo shares a room with his brother. He wants to move the desk closer to the window because he enjoys drawing in daylight. His brother agreed to move the chest of drawers, but he asked Leo to wait until Saturday. Before moving anything, they plan to measure the wall. Leo wants to keep the rug because it makes the room feel warmer.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Who shares Leo’s room?",
+              "options": [
+                "His brother",
+                "His cousin",
+                "His friend"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "Why does Leo want the desk near the window?",
+              "options": [
+                "He wants to watch TV.",
+                "The window is warmer.",
+                "He likes drawing in daylight."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "When can they move the chest of drawers?",
+              "options": [
+                "Sunday",
+                "Saturday",
+                "Friday"
+              ]
+            },
+            {
+              "id": "reading-4",
+              "prompt": "What will they do first?",
+              "options": [
+                "Measure the wall",
+                "Buy a rug",
+                "Move the desk"
+              ]
+            },
+            {
+              "id": "reading-5",
+              "prompt": "Why does Leo want to keep the rug?",
+              "options": [
+                "It was a gift.",
+                "It matches the drawers.",
+                "It makes the room feel warmer."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "language",
+          "title": "Choose the best answer",
+          "questions": [
+            {
+              "id": "language-1",
+              "prompt": "Leo enjoys ___ by the window.",
+              "options": [
+                "to draw",
+                "draw",
+                "drawing"
+              ]
+            },
+            {
+              "id": "language-2",
+              "prompt": "They agreed ___ the furniture on Saturday.",
+              "options": [
+                "move",
+                "to move",
+                "moving"
+              ]
+            },
+            {
+              "id": "language-3",
+              "prompt": "Before ___ the desk, measure the wall.",
+              "options": [
+                "moving",
+                "to move",
+                "move"
+              ]
+            },
+            {
+              "id": "language-4",
+              "prompt": "They decided ___ the old rug.",
+              "options": [
+                "keeping",
+                "keep",
+                "to keep"
+              ]
+            },
+            {
+              "id": "language-5",
+              "prompt": "___ a room with someone means making decisions together.",
+              "options": [
+                "To sharing",
+                "Sharing",
+                "Share"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "first-technical",
+      "id": "homework-first-technical-online-2026-11-25",
+      "title": "A room for Tuesday · First Technical B · Business English",
+      "topic": "First Technical B · Business English",
+      "pages": "96–97, 100–101",
+      "book": "Personal Best A2",
+      "group": "technical",
+      "availableFrom": "2026-11-25T00:00:00-05:00",
+      "dueAt": "2026-11-25T23:59:59-05:00",
+      "intro": "Read the text and answer questions 1–5. Then choose the best answer for questions 6–10. Use your first and last name before you submit.",
+      "sections": [
+        {
+          "id": "reading",
+          "title": "Read",
+          "stimulus": "Dear Ms. Cruz, thanks for booking with Park Hotel. Your single room is ready from 3 p.m. on Tuesday. Breakfast is included and starts at 7 a.m. Your airport shuttle leaves at 8:15 on Wednesday. Please bring your ID to reception. If you arrive after 9 p.m., please call us first. Best, Rosa, Reception",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "What kind of room did Ms. Cruz book?",
+              "options": [
+                "A double room",
+                "A meeting room",
+                "A single room"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "When can she get her room?",
+              "options": [
+                "Tuesday at 9 p.m.",
+                "Tuesday at 3 p.m.",
+                "Wednesday at 8:15 a.m."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "What is included in the booking?",
+              "options": [
+                "Breakfast",
+                "Dinner",
+                "A city tour"
+              ]
+            },
+            {
+              "id": "reading-4",
+              "prompt": "What time does the airport shuttle leave?",
+              "options": [
+                "7 a.m.",
+                "9 p.m.",
+                "8:15 a.m."
+              ]
+            },
+            {
+              "id": "reading-5",
+              "prompt": "What should she bring to reception?",
+              "options": [
+                "A printed menu",
+                "Her ID",
+                "A ticket"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "language",
+          "title": "Choose the best answer",
+          "questions": [
+            {
+              "id": "language-1",
+              "prompt": "Which is the clearest email subject?",
+              "options": [
+                "A question about lunch",
+                "Park Hotel booking confirmation",
+                "Hello there"
+              ]
+            },
+            {
+              "id": "language-2",
+              "prompt": "How can Ms. Cruz ask about Wi-Fi politely?",
+              "options": [
+                "Is Wi-Fi included, please?",
+                "Give me Wi-Fi now.",
+                "Wi-Fi?"
+              ]
+            },
+            {
+              "id": "language-3",
+              "prompt": "The hotel says she ___ bring her ID.",
+              "options": [
+                "doesn’t have to",
+                "can’t",
+                "has to"
+              ]
+            },
+            {
+              "id": "language-4",
+              "prompt": "Breakfast comes with the room. She ___ pay extra for it.",
+              "options": [
+                "have to",
+                "doesn’t have to",
+                "has to"
+              ]
+            },
+            {
+              "id": "language-5",
+              "prompt": "Which message confirms a late arrival clearly?",
+              "options": [
+                "I’ll arrive at 9:30 p.m. on Tuesday.",
+                "I might see you some time.",
+                "What’s the weather like?"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "second-technical",
+      "id": "homework-second-technical-business-online-2026-11-25",
+      "title": "Which job comes first? · Second Technical B · Business English",
+      "topic": "Second Technical B · Business English",
+      "pages": "42–43, 46–47",
+      "book": "Personal Best B1",
+      "group": "technical",
+      "availableFrom": "2026-11-25T00:00:00-05:00",
+      "dueAt": "2026-11-25T23:59:59-05:00",
+      "intro": "Read the text and answer questions 1–5. Then choose the best answer for questions 6–10. Use your first and last name before you submit.",
+      "sections": [
+        {
+          "id": "reading",
+          "title": "Read",
+          "stimulus": "Hi Eva, the supplier needs our order by noon, and the stock report is due at 4 p.m. Alex is answering customer calls this morning. Could you check how many boxes we have before I place the order? If we have fewer than ten, I’ll order twenty more. We can start the report after lunch. Thanks, Mara",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Which job has the earlier deadline?",
+              "options": [
+                "Returning the calls",
+                "Sending the order",
+                "Finishing the stock report"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "What is Alex doing this morning?",
+              "options": [
+                "Answering customer calls",
+                "Counting boxes",
+                "Writing the stock report"
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "What does Mara ask Eva to do?",
+              "options": [
+                "Call the supplier.",
+                "Finish the stock report.",
+                "Count the boxes."
+              ]
+            },
+            {
+              "id": "reading-4",
+              "prompt": "When will they start the report?",
+              "options": [
+                "Tomorrow morning",
+                "After lunch",
+                "Before noon"
+              ]
+            },
+            {
+              "id": "reading-5",
+              "prompt": "What will Mara do if there are only eight boxes?",
+              "options": [
+                "Order twenty more.",
+                "Wait until tomorrow.",
+                "Cancel the order."
+              ]
+            }
+          ]
+        },
+        {
+          "id": "language",
+          "title": "Choose the best answer",
+          "questions": [
+            {
+              "id": "language-1",
+              "prompt": "Which subject line is clearest?",
+              "options": [
+                "Stock check before noon",
+                "Hello again",
+                "Our lunch plans"
+              ]
+            },
+            {
+              "id": "language-2",
+              "prompt": "Which line is a polite request for advice?",
+              "options": [
+                "Tell me now.",
+                "Why don’t you do it?",
+                "Could you advise me on which order to send first?"
+              ]
+            },
+            {
+              "id": "language-3",
+              "prompt": "What does deadline mean?",
+              "options": [
+                "A day off work",
+                "The latest time to finish something",
+                "The number of items in stock"
+              ]
+            },
+            {
+              "id": "language-4",
+              "prompt": "Which line explains a delay clearly?",
+              "options": [
+                "We’re waiting for the supplier to confirm the price.",
+                "Something happened with it.",
+                "There are some things."
+              ]
+            },
+            {
+              "id": "language-5",
+              "prompt": "Which closing fits a message to a manager?",
+              "options": [
+                "Whatever.",
+                "Gotta go.",
+                "Thank you for your advice."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "second-science",
+      "id": "homework-second-science-online-2026-11-25",
+      "title": "A better school day · Second Science A · English",
+      "topic": "Second Science A · English",
+      "pages": "40–41, 44–45",
+      "book": "Personal Best B1",
+      "group": "science",
+      "availableFrom": "2026-11-25T00:00:00-05:00",
+      "dueAt": "2026-11-25T23:59:59-05:00",
+      "intro": "Read the text and answer questions 1–5. Then choose the best answer for questions 6–10. Use your first and last name before you submit.",
+      "sections": [
+        {
+          "id": "reading",
+          "title": "Read",
+          "stimulus": "Lucía has a headache and feels tired. She stayed up late to finish a poster. Her friend Ben thinks she should drink some water and take a short break. If she feels better at lunchtime, she’ll help Ben practice his talk. If she still feels unwell, she’ll ask the teacher if she can go to the school nurse.",
+          "questions": [
+            {
+              "id": "reading-1",
+              "prompt": "Why did Lucía stay up late?",
+              "options": [
+                "To finish a poster",
+                "To practice a talk",
+                "To help the nurse"
+              ]
+            },
+            {
+              "id": "reading-2",
+              "prompt": "How does she feel today?",
+              "options": [
+                "Excited and hungry.",
+                "Bored and has a sore throat.",
+                "Tired and has a headache."
+              ]
+            },
+            {
+              "id": "reading-3",
+              "prompt": "What does Ben suggest first?",
+              "options": [
+                "Go home immediately.",
+                "Drink water and rest briefly.",
+                "Finish another poster."
+              ]
+            },
+            {
+              "id": "reading-4",
+              "prompt": "What will she do if she feels better?",
+              "options": [
+                "Help Ben practice.",
+                "Call her parents.",
+                "Go to the nurse."
+              ]
+            },
+            {
+              "id": "reading-5",
+              "prompt": "Who will she ask if she still feels unwell?",
+              "options": [
+                "Ben’s parents",
+                "The whole class",
+                "The teacher"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "language",
+          "title": "Choose the best answer",
+          "questions": [
+            {
+              "id": "language-1",
+              "prompt": "You should ___ a short break.",
+              "options": [
+                "to take",
+                "taking",
+                "take"
+              ]
+            },
+            {
+              "id": "language-2",
+              "prompt": "If she ___ better, she’ll help Ben.",
+              "options": [
+                "feel",
+                "feels",
+                "will feel"
+              ]
+            },
+            {
+              "id": "language-3",
+              "prompt": "You ___ stay up late before a test.",
+              "options": [
+                "shouldn’t",
+                "shouldn’t to",
+                "don’t should"
+              ]
+            },
+            {
+              "id": "language-4",
+              "prompt": "If we finish early, we ___ time to practice.",
+              "options": [
+                "would had",
+                "having",
+                "will have"
+              ]
+            },
+            {
+              "id": "language-5",
+              "prompt": "Ben was worried, but he felt ___ when Lucía said she was okay.",
+              "options": [
+                "guilty",
+                "relieved",
+                "jealous"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

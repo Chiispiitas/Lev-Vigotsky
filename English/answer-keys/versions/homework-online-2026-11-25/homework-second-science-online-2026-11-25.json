@@ -1,0 +1,74 @@
+{
+  "examId": "homework-second-science-online-2026-11-25",
+  "keyVersion": "homework-online-2026-11-25",
+  "group": "science",
+  "availableFrom": "2026-11-25T00:00:00-05:00",
+  "dueAt": "2026-11-25T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "To finish a poster"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "Tired and has a headache."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Drink water and rest briefly."
+          ]
+        },
+        {
+          "id": "reading-4",
+          "answers": [
+            "Help Ben practice."
+          ]
+        },
+        {
+          "id": "reading-5",
+          "answers": [
+            "The teacher"
+          ]
+        },
+        {
+          "id": "language-1",
+          "answers": [
+            "take"
+          ]
+        },
+        {
+          "id": "language-2",
+          "answers": [
+            "feels"
+          ]
+        },
+        {
+          "id": "language-3",
+          "answers": [
+            "shouldn’t"
+          ]
+        },
+        {
+          "id": "language-4",
+          "answers": [
+            "will have"
+          ]
+        },
+        {
+          "id": "language-5",
+          "answers": [
+            "relieved"
+          ]
+        }
+      ]
+    }
+  ]
+}

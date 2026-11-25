@@ -1,0 +1,74 @@
+{
+  "examId": "homework-third-technical-online-2026-11-25",
+  "keyVersion": "homework-online-2026-11-25",
+  "group": "technical",
+  "availableFrom": "2026-11-25T00:00:00-05:00",
+  "dueAt": "2026-11-25T23:59:59-05:00",
+  "sections": [
+    {
+      "id": "reading",
+      "items": [
+        {
+          "id": "reading-1",
+          "answers": [
+            "His brother"
+          ]
+        },
+        {
+          "id": "reading-2",
+          "answers": [
+            "He likes drawing in daylight."
+          ]
+        },
+        {
+          "id": "reading-3",
+          "answers": [
+            "Saturday"
+          ]
+        },
+        {
+          "id": "reading-4",
+          "answers": [
+            "Measure the wall"
+          ]
+        },
+        {
+          "id": "reading-5",
+          "answers": [
+            "It makes the room feel warmer."
+          ]
+        },
+        {
+          "id": "language-1",
+          "answers": [
+            "drawing"
+          ]
+        },
+        {
+          "id": "language-2",
+          "answers": [
+            "to move"
+          ]
+        },
+        {
+          "id": "language-3",
+          "answers": [
+            "moving"
+          ]
+        },
+        {
+          "id": "language-4",
+          "answers": [
+            "to keep"
+          ]
+        },
+        {
+          "id": "language-5",
+          "answers": [
+            "Sharing"
+          ]
+        }
+      ]
+    }
+  ]
+}
