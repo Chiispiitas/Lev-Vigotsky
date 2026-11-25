@@ -94,6 +94,44 @@ export function gradeAttempt(attempt, submittedAt) {
   };
 }
 
+function homeworkRecordId(examId, officialName) {
+  const id = createHash("sha256").update(JSON.stringify([examId, officialName])).digest("hex").slice(0, 32);
+  return id.replace(/^(........)(....)(....)(....)(............)$/, "$1-$2-$3-$4-$5");
+}
+
+async function saveHomework(attempt, record, store, timestamp, validateName) {
+  const receipt = { attemptId: attempt.attemptId };
+  record.title = validateName(attempt);
+  record._id = homeworkRecordId(attempt.examId, record.title);
+  const saved = await store.get(record._id);
+  if (saved) return { ...receipt, alreadySubmitted: saved.requestDigest !== record.requestDigest };
+
+  // Records created before the unique ID was introduced may use an alias.
+  for await (const old of store.homeworkAttempts(attempt.examId)) {
+    let official;
+    try {
+      official = validateName({ ...attempt, studentName: old.title }, { legacy: true });
+    } catch (error) {
+      if (!(error instanceof AttemptError && error.status === 422)) throw error;
+      continue;
+    }
+    if (official === record.title) {
+      return { ...receipt, alreadySubmitted: old.requestDigest !== record.requestDigest };
+    }
+  }
+  if (timestamp < new Date(attempt.key.availableFrom) || timestamp > new Date(attempt.key.dueAt)) {
+    throw new AttemptError(410, "This homework is outside its submission window.");
+  }
+  try {
+    await store.insert(record);
+    return receipt;
+  } catch (error) {
+    const existing = await store.get(record._id);
+    if (!existing) throw error;
+    return { ...receipt, alreadySubmitted: existing.requestDigest !== record.requestDigest };
+  }
+}
+
 export async function submitAttempt(body, keys, store, now = () => new Date(), validateName = attempt => attempt.studentName) {
   const attempt = readAttempt(body, keys);
   const fingerprint = createHash("sha256").update(JSON.stringify([
@@ -115,10 +153,9 @@ export async function submitAttempt(body, keys, store, now = () => new Date(), v
     review: JSON.stringify(result)
   };
 
+  if (attempt.key.availableFrom) return saveHomework(attempt, record, store, timestamp, validateName);
+
   try {
-    if (attempt.key.availableFrom && (timestamp < new Date(attempt.key.availableFrom) || timestamp > new Date(attempt.key.dueAt))) {
-      throw new AttemptError(410, "This homework is outside its submission window.");
-    }
     record.title = validateName(attempt);
     await store.insert(record);
     return result;

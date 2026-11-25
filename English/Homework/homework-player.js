@@ -14,30 +14,10 @@ function node(tag, content) {
   return element;
 }
 
-function showResult(container, quiz, receipt) {
-  if (!receipt || typeof receipt !== "object") {
-    container.replaceChildren(node("p", "Submitted. Your answers are saved."));
-    return;
-  }
-  const heading = node("h2", "Your result");
-  heading.tabIndex = -1;
-  const summary = node("p", "Score: " + receipt.score + " / " + receipt.maxScore + " · " +
-    (receipt.score * 10 / receipt.maxScore).toFixed(2) + " / 10");
-  const details = node("details");
-  details.append(node("summary", "Review your answers"));
-  const questions = quiz.sections.flatMap(section => section.questions);
-  const list = node("ol");
-  for (const item of receipt.items || []) {
-    const question = questions.find(entry => entry.id === item.id);
-    if (!question) continue;
-    const row = node("li");
-    row.append(node("strong", question.prompt), node("p", "Your answer: " + item.studentAnswer));
-    if (!item.correct) row.append(node("p", "Correct answer: " + item.correctAnswers.join(" / ")));
-    list.append(row);
-  }
-  details.append(list);
-  container.replaceChildren(heading, summary, details, node("p", "Your answers are saved."));
-  heading.focus();
+function showConfirmation(container, alreadySubmitted = false) {
+  const message = node("p", alreadySubmitted ? "You already submitted this quiz." : "Submitted. Your answers are saved.");
+  message.setAttribute("role", "status");
+  container.replaceChildren(message);
 }
 
 async function load(nameError = "") {
@@ -73,10 +53,16 @@ async function load(nameError = "") {
   let draft = {};
   try { draft = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch { /* Storage is optional. */ }
   const save = () => { try { localStorage.setItem(storageKey, JSON.stringify(draft)); } catch { /* Storage is optional. */ } };
-  if (draft.receipt) {
-    const result = node("section");
-    root.append(result);
-    showResult(result, quiz, draft.receipt);
+  const cookieName = "ueplv-submitted-" + quiz.id;
+  const hasCookie = document.cookie.split(";").some(value => value.trim() === cookieName + "=1");
+  if (draft.receipt || hasCookie) {
+    if (typeof draft.receipt === "object") {
+      draft = { receipt: true, alreadySubmitted: Boolean(draft.receipt.alreadySubmitted) };
+      save();
+    }
+    const confirmation = node("section");
+    root.append(confirmation);
+    showConfirmation(confirmation, draft.alreadySubmitted);
     return;
   }
   const now = Date.now();
@@ -190,9 +176,11 @@ async function load(nameError = "") {
         return;
       }
       if (!res.ok || receipt.attemptId !== draft.pending.attemptId) throw new Error(receipt.error || receipt.message || "Couldn’t confirm your submission.");
-      draft = { receipt };
+      draft = { receipt: true, alreadySubmitted: Boolean(receipt.alreadySubmitted) };
       save();
-      showResult(form, quiz, receipt);
+      const remaining = Math.max(0, Math.ceil((Date.parse(quiz.dueAt) - Date.now()) / 1000));
+      document.cookie = cookieName + "=1; Max-Age=" + remaining + "; Path=/English/Homework/; SameSite=Lax; Secure";
+      showConfirmation(form, draft.alreadySubmitted);
     } catch (error) {
       status.textContent = error.message;
       button.textContent = "Retry submission";
