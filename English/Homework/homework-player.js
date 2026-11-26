@@ -4,6 +4,7 @@ const course = document.body.dataset.course || "First Science";
 const group = document.body.dataset.group || "science";
 const selectedTrack = new URLSearchParams(location.search).get("subject");
 const schoolExam = document.body.dataset.schoolExam;
+const localize = (english, spanish) => schoolExam ? spanish : english;
 const slug = schoolExam || new URLSearchParams(location.search).get("quiz");
 const dateLabel = value => new Intl.DateTimeFormat("en-US", {
   weekday: "short", month: "short", day: "numeric", timeZone: "America/Guayaquil"
@@ -16,7 +17,7 @@ function node(tag, content) {
 }
 
 function showConfirmation(container, alreadySubmitted = false) {
-  const message = node("p", alreadySubmitted ? "You already submitted this quiz." : "Submitted. Your answers are saved.");
+  const message = node("p", alreadySubmitted ? localize("You already submitted this quiz.", "Ya enviaste este examen.") : localize("Submitted. Your answers are saved.", "Examen enviado. Tus respuestas se guardaron."));
   message.setAttribute("role", "status");
   container.replaceChildren(message);
 }
@@ -75,7 +76,7 @@ async function load(nameError = "") {
 
   const form = node("form");
   const started = Date.now();
-  const nameLabel = node("label", "First and last name");
+  const nameLabel = node("label", localize("First and last name", "Nombres y apellidos"));
   const name = node("input");
   name.name = "student";
   name.className = "student-name";
@@ -85,7 +86,7 @@ async function load(nameError = "") {
   name.setAttribute("aria-describedby", "homework-name-message");
   name.value = draft.student || "";
   nameLabel.append(name);
-  const nameMessage = node("p", nameError || (schoolExam ? "Enter your name as it appears in Runachay." : "Use at least one first name and one last name from Runachay."));
+  const nameMessage = node("p", nameError || (schoolExam ? "Escribe tu nombre tal como aparece en Runachay." : "Use at least one first name and one last name from Runachay."));
   nameMessage.id = "homework-name-message";
   nameMessage.setAttribute("aria-live", "polite");
   if (nameError) name.setAttribute("aria-invalid", "true");
@@ -127,7 +128,7 @@ async function load(nameError = "") {
       }
     }
   }
-  const button = node("button", draft.pending ? "Retry submission" : schoolExam ? "Submit exam" : "Submit quiz");
+  const button = node("button", draft.pending ? localize("Retry submission", "Volver a enviar") : localize("Submit quiz", "Enviar examen"));
   button.className = "button primary";
   const status = node("p");
   status.setAttribute("role", "status");
@@ -147,7 +148,7 @@ async function load(nameError = "") {
     if (button.disabled) return;
     const student = name.value.trim();
     if (!draft.pending && !/^\p{L}+(?:[-'’]\p{L}+)*(?:\s+\p{L}+(?:[-'’]\p{L}+)*)+$/u.test(student)) {
-      nameMessage.textContent = "Enter at least one first name and one last name.";
+      nameMessage.textContent = localize("Enter at least one first name and one last name.", "Escribe al menos un nombre y un apellido.");
       name.setAttribute("aria-invalid", "true");
       name.focus();
       return;
@@ -165,7 +166,7 @@ async function load(nameError = "") {
     }
     for (const input of form.querySelectorAll("input")) input.disabled = true;
     button.disabled = true;
-    status.textContent = "Sending your answers…";
+    status.textContent = localize("Sending your answers…", "Enviando tus respuestas…");
     try {
       const res = await fetch(window.UEPLV_SITE_CONFIG.API_BASE_URL + "/submit", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(draft.pending)
@@ -185,7 +186,7 @@ async function load(nameError = "") {
       showConfirmation(form, draft.alreadySubmitted);
     } catch (error) {
       status.textContent = error.message;
-      button.textContent = "Retry submission";
+      button.textContent = localize("Retry submission", "Volver a enviar");
       button.disabled = false;
     }
   });
