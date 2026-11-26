@@ -155,6 +155,25 @@ export async function submitAttempt(body, keys, store, now = () => new Date(), v
 
   if (attempt.key.availableFrom) return saveHomework(attempt, record, store, timestamp, validateName);
 
+  if (attempt.key.schoolExam) {
+    const name = attempt.studentName;
+    if (!/^\p{L}+(?:[-'’]\p{L}+)*(?:\s+\p{L}+(?:[-'’]\p{L}+)*)+$/u.test(name)) {
+      throw new AttemptError(422, "Enter at least one first name and one last name.");
+    }
+    if (Object.values(attempt.answers).some(answer => !answer)) {
+      throw new AttemptError(400, "Answer every exam question before submitting.");
+    }
+    record._id = homeworkRecordId(attempt.examId, normalizeAnswer(name).normalize("NFD").replace(/\p{M}/gu, ""));
+    try {
+      await store.insert(record);
+      return { attemptId: attempt.attemptId };
+    } catch (error) {
+      const existing = await store.get(record._id);
+      if (!existing) throw error;
+      return { attemptId: attempt.attemptId, alreadySubmitted: existing.requestDigest !== fingerprint };
+    }
+  }
+
   try {
     record.title = validateName(attempt);
     await store.insert(record);

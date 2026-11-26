@@ -19,12 +19,21 @@ for (const candidate of candidates) {
 if (!root) throw new Error("The immutable practice answer-key folders are missing.");
 
 const versions = {};
-for (const version of (await readdir(root, { withFileTypes: true })).filter(entry => entry.isDirectory())) {
-  const versionDir = join(root, version.name);
+const privateRoot = fileURLToPath(new URL("../private-keys/", import.meta.url));
+const privateReleases = await readdir(privateRoot, { withFileTypes: true }).catch(error => {
+  if (error.code !== "ENOENT") throw error;
+  return [];
+});
+const releaseFolders = [
+  ...(await readdir(root, { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => [root, entry.name]),
+  ...privateReleases.filter(entry => entry.isDirectory()).map(entry => [privateRoot, entry.name])
+];
+for (const [parent, version] of releaseFolders) {
+  const versionDir = join(parent, version);
   const keys = {};
   for (const file of (await readdir(versionDir)).filter(name => name.endsWith(".json")).sort()) {
     const key = JSON.parse(await readFile(join(versionDir, file), "utf8"));
-    if (key.keyVersion !== version.name || key.examId !== file.slice(0, -5) ||
+    if (key.keyVersion !== version || key.examId !== file.slice(0, -5) ||
         !/^[a-z0-9-]+$/.test(key.examId) || !Array.isArray(key.sections) || !key.sections.length) {
       throw new Error("Invalid key " + file);
     }
@@ -44,7 +53,10 @@ for (const version of (await readdir(root, { withFileTypes: true })).filter(entr
     }
     keys[key.examId] = key;
   }
-  if (Object.keys(keys).length) versions[version.name] = keys;
+  if (Object.keys(keys).length) {
+    if (Object.hasOwn(versions, version)) throw new Error("Duplicate answer-key release " + version);
+    versions[version] = keys;
+  }
 }
 if (!Object.keys(versions).length) throw new Error("No valid practice keys found.");
 

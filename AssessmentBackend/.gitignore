@@ -6,3 +6,4 @@ dist/
 .env*
 src/generated/
 *.zip
+private-keys/

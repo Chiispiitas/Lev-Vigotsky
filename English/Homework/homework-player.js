@@ -3,7 +3,8 @@ const title = document.getElementById("title");
 const course = document.body.dataset.course || "First Science";
 const group = document.body.dataset.group || "science";
 const selectedTrack = new URLSearchParams(location.search).get("subject");
-const slug = new URLSearchParams(location.search).get("quiz");
+const schoolExam = document.body.dataset.schoolExam;
+const slug = schoolExam || new URLSearchParams(location.search).get("quiz");
 const dateLabel = value => new Intl.DateTimeFormat("en-US", {
   weekday: "short", month: "short", day: "numeric", timeZone: "America/Guayaquil"
 }).format(new Date(value));
@@ -48,7 +49,8 @@ async function load(nameError = "") {
   if (!quiz) throw new Error("That quiz link doesn’t match a homework assignment.");
   title.textContent = quiz.title;
   document.title = quiz.title + " · " + course;
-  root.append(node("p", quiz.topic + (quiz.pages ? " · " + (quiz.book || "Personal Best B1") + " pp. " + quiz.pages : "")), node("p", "Due " + dateLabel(quiz.dueAt) + " at 11:59 p.m."));
+  root.append(node("p", quiz.topic + (quiz.pages ? " · " + (quiz.book || "Personal Best B1") + " pp. " + quiz.pages : "")));
+  if (!schoolExam) root.append(node("p", "Due " + dateLabel(quiz.dueAt) + " at 11:59 p.m."));
   const storageKey = "ueplv-homework:" + version + ":" + slug;
   let draft = {};
   try { draft = JSON.parse(localStorage.getItem(storageKey)) || {}; } catch { /* Storage is optional. */ }
@@ -66,7 +68,7 @@ async function load(nameError = "") {
     return;
   }
   const now = Date.now();
-  if (now < Date.parse(quiz.availableFrom) || now > Date.parse(quiz.dueAt) && !draft.pending) {
+  if (!schoolExam && (now < Date.parse(quiz.availableFrom) || now > Date.parse(quiz.dueAt) && !draft.pending)) {
     root.append(node("p", now < Date.parse(quiz.availableFrom) ? "Opens " + dateLabel(quiz.availableFrom) + "." : "This quiz is closed."));
     return;
   }
@@ -83,7 +85,7 @@ async function load(nameError = "") {
   name.setAttribute("aria-describedby", "homework-name-message");
   name.value = draft.student || "";
   nameLabel.append(name);
-  const nameMessage = node("p", nameError || "Use at least one first name and one last name from Runachay.");
+  const nameMessage = node("p", nameError || (schoolExam ? "Enter your name as it appears in Runachay." : "Use at least one first name and one last name from Runachay."));
   nameMessage.id = "homework-name-message";
   nameMessage.setAttribute("aria-live", "polite");
   if (nameError) name.setAttribute("aria-invalid", "true");
@@ -125,7 +127,7 @@ async function load(nameError = "") {
       }
     }
   }
-  const button = node("button", draft.pending ? "Retry submission" : "Submit quiz");
+  const button = node("button", draft.pending ? "Retry submission" : schoolExam ? "Submit exam" : "Submit quiz");
   button.className = "button primary";
   const status = node("p");
   status.setAttribute("role", "status");
@@ -156,7 +158,7 @@ async function load(nameError = "") {
       draft.student = student;
       draft.pending = {
         attemptId: crypto.randomUUID(), examId: quiz.id, keyVersion: version,
-        studentName: student, group: quiz.group || group, answers: Object.fromEntries(values),
+        studentName: student, group: schoolExam ? "" : quiz.group || group, answers: Object.fromEntries(values),
         durationSeconds: Math.min(86400, Math.round((Date.now() - started) / 1000))
       };
       save();
@@ -178,7 +180,7 @@ async function load(nameError = "") {
       if (!res.ok || receipt.attemptId !== draft.pending.attemptId) throw new Error(receipt.error || receipt.message || "Couldn’t confirm your submission.");
       draft = { receipt: true, alreadySubmitted: Boolean(receipt.alreadySubmitted) };
       save();
-      const remaining = Math.max(0, Math.ceil((Date.parse(quiz.dueAt) - Date.now()) / 1000));
+      const remaining = schoolExam ? 31536000 : Math.max(0, Math.ceil((Date.parse(quiz.dueAt) - Date.now()) / 1000));
       document.cookie = cookieName + "=1; Max-Age=" + remaining + "; Path=/English/Homework/; SameSite=Lax; Secure";
       showConfirmation(form, draft.alreadySubmitted);
     } catch (error) {

@@ -1,0 +1,403 @@
+{
+  "version": "school-exam-2026-11-26",
+  "quizzes": [
+    {
+      "id": "10th-solidarity-quarter-2-no-listening",
+      "slug": "written",
+      "title": "English Exam | Second Quarter",
+      "topic": "10th Solidarity C · 40 questions · 10 points",
+      "intro": "Choose one answer for each question. Check your answers before you submit.",
+      "sections": [
+        {
+          "id": "part-1",
+          "title": "1. Choose the correct family word. ",
+          "questions": [
+            {
+              "id": "p1q1",
+              "prompt": "Your mother’s sister is your: ____.",
+              "options": [
+                "aunt",
+                "cousin"
+              ]
+            },
+            {
+              "id": "p1q2",
+              "prompt": "Your aunt’s child is your: ____.",
+              "options": [
+                "grandfather",
+                "cousin"
+              ]
+            },
+            {
+              "id": "p1q3",
+              "prompt": "Your father’s father is your: ____.",
+              "options": [
+                "grandfather",
+                "uncle"
+              ]
+            },
+            {
+              "id": "p1q4",
+              "prompt": "Your mother’s brother is your: ____.",
+              "options": [
+                "cousin",
+                "uncle"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-2",
+          "title": "2. Choose the correct word. Use the clues. ",
+          "questions": [
+            {
+              "id": "p2q1",
+              "prompt": "I ____ eat fish. (0% of the time)",
+              "options": [
+                "always",
+                "never"
+              ]
+            },
+            {
+              "id": "p2q2",
+              "prompt": "She ____ eats breakfast. (100% of the time)",
+              "options": [
+                "always",
+                "never"
+              ]
+            },
+            {
+              "id": "p2q3",
+              "prompt": "I play tennis ____ a week. (1 time)",
+              "options": [
+                "once",
+                "twice"
+              ]
+            },
+            {
+              "id": "p2q4",
+              "prompt": "I visit my aunt ____ a month. (2 times)",
+              "options": [
+                "once",
+                "twice"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-3",
+          "title": "3. Choose the correct form after like or love. ",
+          "questions": [
+            {
+              "id": "p3q1",
+              "prompt": "I like ____.",
+              "options": [
+                "swim",
+                "swimming"
+              ]
+            },
+            {
+              "id": "p3q2",
+              "prompt": "She loves ____.",
+              "options": [
+                "dancing",
+                "dance"
+              ]
+            },
+            {
+              "id": "p3q3",
+              "prompt": "We like ____.",
+              "options": [
+                "cook",
+                "cooking"
+              ]
+            },
+            {
+              "id": "p3q4",
+              "prompt": "He loves ____.",
+              "options": [
+                "reading",
+                "read"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-4",
+          "title": "4. Is the English correct?",
+          "questions": [
+            {
+              "id": "p4q1",
+              "prompt": "She plays tennis every day.",
+              "options": [
+                "Correct",
+                "Incorrect"
+              ]
+            },
+            {
+              "id": "p4q2",
+              "prompt": "I am read a book now.",
+              "options": [
+                "Correct",
+                "Incorrect"
+              ]
+            },
+            {
+              "id": "p4q3",
+              "prompt": "They were watching TV last night.",
+              "options": [
+                "Correct",
+                "Incorrect"
+              ]
+            },
+            {
+              "id": "p4q4",
+              "prompt": "He will goes to school tomorrow.",
+              "options": [
+                "Correct",
+                "Incorrect"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-5",
+          "title": "5. Choose the correct words. The tense is given. ",
+          "questions": [
+            {
+              "id": "p5q1",
+              "prompt": "Present perfect: I ____ finished my homework.",
+              "options": [
+                "have",
+                "has"
+              ]
+            },
+            {
+              "id": "p5q2",
+              "prompt": "Past perfect: She ____ finished before lunch.",
+              "options": [
+                "had",
+                "have"
+              ]
+            },
+            {
+              "id": "p5q3",
+              "prompt": "Future perfect: By Friday, I ____ finished.",
+              "options": [
+                "will have",
+                "has"
+              ]
+            },
+            {
+              "id": "p5q4",
+              "prompt": "Present continuous: We ____ studying now.",
+              "options": [
+                "are",
+                "is"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-6",
+          "title": "6. Read about Rosa. Choose True or False.",
+          "questions": [
+            {
+              "id": "p6q1",
+              "prompt": "Rosa plays tennis on Saturdays.",
+              "options": [
+                "True",
+                "False"
+              ]
+            },
+            {
+              "id": "p6q2",
+              "prompt": "Rosa plays tennis with her cousin.",
+              "options": [
+                "True",
+                "False"
+              ]
+            },
+            {
+              "id": "p6q3",
+              "prompt": "Rosa likes sport.",
+              "options": [
+                "True",
+                "False"
+              ]
+            },
+            {
+              "id": "p6q4",
+              "prompt": "Rosa is reading now.",
+              "options": [
+                "True",
+                "False"
+              ]
+            }
+          ],
+          "stimulus": "Rosa plays tennis with her aunt on Saturdays. She likes sport. Now she is doing her homework. Tomorrow, she will visit her grandfather."
+        },
+        {
+          "id": "part-7",
+          "title": "7. Choose the correct verb. Use the time clues. ",
+          "questions": [
+            {
+              "id": "p7q1",
+              "prompt": "Every day, I ____ football.",
+              "options": [
+                "play",
+                "played"
+              ]
+            },
+            {
+              "id": "p7q2",
+              "prompt": "Yesterday, we ____ Grandma.",
+              "options": [
+                "visit",
+                "visited"
+              ]
+            },
+            {
+              "id": "p7q3",
+              "prompt": "Tomorrow, she ____ to school.",
+              "options": [
+                "will go",
+                "went"
+              ]
+            },
+            {
+              "id": "p7q4",
+              "prompt": "Last night, he ____ TV.",
+              "options": [
+                "watched",
+                "watch"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-8",
+          "title": "8. Choose the correct word to complete each continuous tense. ",
+          "questions": [
+            {
+              "id": "p8q1",
+              "prompt": "Now, I ____ studying.",
+              "options": [
+                "am",
+                "is"
+              ]
+            },
+            {
+              "id": "p8q2",
+              "prompt": "Now, she ____ cooking.",
+              "options": [
+                "are",
+                "is"
+              ]
+            },
+            {
+              "id": "p8q3",
+              "prompt": "Now, they ____ playing.",
+              "options": [
+                "is",
+                "are"
+              ]
+            },
+            {
+              "id": "p8q4",
+              "prompt": "At eight last night, I ____ sleeping.",
+              "options": [
+                "were",
+                "was"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-9",
+          "title": "9. Choose the correct form. The perfect tense is given. ",
+          "questions": [
+            {
+              "id": "p9q1",
+              "prompt": "Present perfect: She has ____ her work.",
+              "options": [
+                "finished",
+                "finishing"
+              ]
+            },
+            {
+              "id": "p9q2",
+              "prompt": "Present perfect: We have ____ lunch.",
+              "options": [
+                "eaten",
+                "eating"
+              ]
+            },
+            {
+              "id": "p9q3",
+              "prompt": "Past perfect: He had ____ before I arrived.",
+              "options": [
+                "left",
+                "leaving"
+              ]
+            },
+            {
+              "id": "p9q4",
+              "prompt": "Future perfect: By six, I will have ____ my work.",
+              "options": [
+                "done",
+                "doing"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "part-10",
+          "title": "10. Choose the matching family word.",
+          "questions": [
+            {
+              "id": "p10q1",
+              "prompt": "mother",
+              "options": [
+                "uncle",
+                "grandfather",
+                "father",
+                "brother"
+              ]
+            },
+            {
+              "id": "p10q2",
+              "prompt": "sister",
+              "options": [
+                "uncle",
+                "grandfather",
+                "father",
+                "brother"
+              ]
+            },
+            {
+              "id": "p10q3",
+              "prompt": "aunt",
+              "options": [
+                "uncle",
+                "grandfather",
+                "father",
+                "brother"
+              ]
+            },
+            {
+              "id": "p10q4",
+              "prompt": "grandmother",
+              "options": [
+                "uncle",
+                "grandfather",
+                "father",
+                "brother"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
